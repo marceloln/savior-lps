@@ -1,0 +1,294 @@
+/* ============================================================
+   SAVIOR · Design tokens + reset + tipografia base
+   Identidade visual aprovada em abril 2026
+   ============================================================ */
+
+/* ============ Self-hosted fonts via @fontsource (Onda 2 auditoria) ============ */
+/* Elimina dependência do Google Fonts externo */
+/* Inter: weights usados (400, 500, 600, 700, 800) — subset latin */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/inter/800.css';
+/* IBM Plex Mono: weights usados (400, 500) */
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root {
+  /* Paleta — navy dominante */
+  --navy: #0B2540;
+  --navy-deep: #07182B;
+  --navy-mid: #143458;
+  --navy-soft: #1C3958;
+
+  /* Acento — verde */
+  --green: #00B87C;
+  --green-dark: #00A06C;
+  --green-bright: #1FD29A;
+
+  /* Neutras */
+  --cream: #F4EFE6;
+  --cream-light: #FAF6EC;
+  --cream-dark: #E8DFCC;
+  --white: #FFFFFF;
+  --gray: #6B7785;
+  --gray-light: #D5DAE0;
+
+  /* Alerta — uso restrito */
+  --alert: #D9534F;
+
+  /* Tipografia */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Escala tipográfica */
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 18px;
+  --fs-lg: 22px;
+  --fs-xl: clamp(24px, 3vw, 32px);
+  --fs-2xl: clamp(28px, 4vw, 42px);
+  --fs-3xl: clamp(36px, 5.5vw, 56px);
+  --fs-4xl: clamp(44px, 7vw, 76px);
+
+  /* Espaçamento */
+  --space-block: clamp(60px, 8vw, 100px);
+  --space-gutter: clamp(20px, 5vw, 48px);
+
+  /* Largura de conteúdo */
+  --wrap-max: 1180px;
+  --wrap-prose: 680px;
+}
+
+/* ============ Reset ============ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: var(--fs-base);
+  line-height: 1.55;
+  color: var(--navy);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ============ Tipografia base ============ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--sans);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--navy);
+}
+
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-2xl); }
+
+p {
+  line-height: 1.65;
+}
+
+strong { font-weight: 600; }
+
+/* ============ Utilitários ============ */
+.wrap {
+  max-width: var(--wrap-max);
+  margin: 0 auto;
+  padding: 0 var(--space-gutter);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--green-dark);
+}
+
+.eyebrow.on-dark {
+  color: var(--green-bright);
+}
+
+.section {
+  padding: var(--space-block) 0;
+}
+
+.section.dark {
+  background: var(--navy-deep);
+  color: white;
+}
+
+.section.dark h1,
+.section.dark h2,
+.section.dark h3 {
+  color: white;
+}
+
+.section.navy {
+  background: var(--navy);
+  color: white;
+}
+
+.section.navy h1,
+.section.navy h2,
+.section.navy h3 {
+  color: white;
+}
+
+/* ============ Botões ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  white-space: nowrap;
+  min-height: 48px;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: var(--navy-deep);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 184, 124, 0.35);
+}
+
+.btn-primary.on-dark {
+  background: var(--green-bright);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--navy);
+}
+
+.btn-secondary.on-dark {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn-secondary:hover {
+  background: var(--navy);
+  color: white;
+}
+
+.btn-secondary.on-dark:hover {
+  background: white;
+  color: var(--navy);
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 720px) {
+  h1 { line-height: 1.02; }
+  .btn { width: 100%; }
+}
+
+/* ============ Skip link (WCAG 2.1 AA) ============ */
+/* Invisível até receber foco via Tab — salta direto ao conteúdo pra quem usa teclado/leitor */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+  padding: 12px 20px;
+  background: var(--green);
+  color: white;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ============ Focus acessível ============ */
+:focus-visible {
+  outline: 3px solid var(--green-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ============ Screen reader only ============ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============ Impressão ============ */
+@media print {
+  .no-print { display: none !important; }
+}

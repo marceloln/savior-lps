@@ -1,0 +1,227 @@
+---
+// ============================================================
+// NOT WHAT — Bloco educacional
+// "A Savior não é" — diferencia do serviço público
+// Ícones Lucide padrão (siren, heart-pulse, flame)
+// Títulos acolhedores ("Liga pro SAMU!" etc.)
+// ============================================================
+
+const alternatives = [
+  {
+    key: 'samu',
+    name: 'Liga pro SAMU!',
+    number: '192',
+    href: 'tel:192',
+    description: 'Atendimento público de urgência e emergência. Gratuito.',
+  },
+  {
+    key: 'sus',
+    name: 'Conta com o SUS!',
+    number: '136',
+    href: 'tel:136',
+    description: 'Central de atendimento do Sistema Único de Saúde. Gratuito.',
+  },
+  {
+    key: 'bombeiros',
+    name: 'Chama os Bombeiros!',
+    number: '193',
+    href: 'tel:193',
+    description: 'Resgate em emergência, incêndio e acidentes. Gratuito.',
+  },
+];
+---
+
+<section class="notwhat">
+  <div class="wrap">
+    <div class="nw-head">
+      <span class="eyebrow">Importante</span>
+      <h2 class="nw-h2">A Savior <em>não é</em> serviço público</h2>
+      <p class="nw-intro">
+        Somos serviço particular, pago por atendimento. Se você precisa do serviço público gratuito,
+        estes são os canais oficiais — e eles existem exatamente para isso.
+      </p>
+    </div>
+
+    <div class="nw-grid">
+      {alternatives.map((alt) => (
+        <a class="nw-card" href={alt.href}>
+          <div class="nw-icon" aria-hidden="true">
+            {/* SAMU: siren (Lucide) — sirene de emergência, símbolo universal */}
+            {alt.key === 'samu' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 18v-6a5 5 0 1 1 10 0v6"/>
+                <path d="M5 21a1 1 0 0 0 1-1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 0 1 1"/>
+                <path d="M21 12h1"/>
+                <path d="M18.5 4.5 19 5"/>
+                <path d="M2 12h1"/>
+                <path d="M12 2v1"/>
+                <path d="m4.929 4.929.707.707"/>
+                <path d="M12 12v6"/>
+              </svg>
+            )}
+
+            {/* SUS: heart-pulse (Lucide) — coração com linha de pulso, saúde */}
+            {alt.key === 'sus' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>
+              </svg>
+            )}
+
+            {/* Bombeiros: flame (Lucide) — chama estilizada, reconhecível */}
+            {alt.key === 'bombeiros' && (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+              </svg>
+            )}
+          </div>
+          <div class="nw-name">{alt.name}</div>
+          <div class="nw-number">Ligue <strong>{alt.number}</strong></div>
+          <div class="nw-desc">{alt.description}</div>
+        </a>
+      ))}
+    </div>
+
+    <p class="nw-note">
+      Quando o tempo, o equipamento e o hospital de destino fazem diferença,
+      <strong>a gente entra em cena</strong>.
+    </p>
+  </div>
+</section>
+
+<style>
+  .notwhat {
+    padding: var(--space-block) 0;
+    background: var(--cream);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .nw-head {
+    max-width: 720px;
+    margin-bottom: 40px;
+  }
+
+  .nw-head .eyebrow {
+    display: block;
+    margin-bottom: 14px;
+    color: var(--gray);
+  }
+
+  .nw-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .nw-h2 em {
+    font-style: normal;
+    color: var(--alert);
+  }
+
+  .nw-intro {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+
+  .nw-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .nw-card {
+    background: white;
+    border-radius: 6px;
+    padding: 28px 28px;
+    border: 1px solid var(--cream-dark);
+    display: block;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+
+  .nw-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--navy);
+  }
+
+  /* Ícone Lucide — viewBox 24×24, stroke 2px, estilo clássico */
+  .nw-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--navy);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .nw-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .nw-card:hover .nw-icon {
+    color: var(--green-dark);
+  }
+
+  .nw-name {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  .nw-number {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 10px;
+  }
+
+  .nw-number strong {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+    margin-left: 6px;
+  }
+
+  .nw-desc {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  .nw-note {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--navy);
+    padding: 20px 24px;
+    background: white;
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+    max-width: 720px;
+  }
+
+  .nw-note strong {
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  @media (max-width: 720px) {
+    .nw-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,267 @@
+---
+// ============================================================
+// PRICE TABLE — Bloco 4
+// Tabela de preços com intro "por serviço, não por minuto"
+// ============================================================
+---
+
+<section class="prices">
+  <div class="wrap">
+    <div class="prices-head">
+      <span class="eyebrow">Tipos e preços</span>
+      <h2 class="prices-h2">Três tipos de ambulância, <em>uma para cada caso</em></h2>
+      <p class="prices-intro">
+        A gente conversa com você no WhatsApp, entende o caso e combina o valor antes da equipe sair.
+        Pix com 5% de desconto, cartão em até 3x sem juros.
+      </p>
+    </div>
+
+    <div class="price-grid">
+      <!-- Básica -->
+      <article class="price-card">
+        <div class="price-tag">Básica</div>
+        <div class="price-value">
+          A partir de<br />
+          <strong>R$ 1.200</strong>
+        </div>
+        <p class="price-desc">
+          Motorista + enfermeiro. Para remoção programada ou transferência de pacientes estáveis.
+        </p>
+        <ul class="price-includes">
+          <li>Maca articulada</li>
+          <li>Oxigênio</li>
+          <li>Kit de primeiros socorros</li>
+          <li>Monitorização básica</li>
+        </ul>
+      </article>
+
+      <!-- UTI — destaque -->
+      <article class="price-card featured">
+        <div class="price-highlight">Mais escolhida</div>
+        <div class="price-tag">UTI</div>
+        <div class="price-value">
+          A partir de<br />
+          <strong>R$ 2.200</strong>
+        </div>
+        <p class="price-desc">
+          Motorista + enfermeiro + <strong>médico</strong>. Para emergência, pós-operatório e pacientes graves.
+        </p>
+        <ul class="price-includes">
+          <li>Monitor multiparâmetro</li>
+          <li>Respirador mecânico</li>
+          <li>Desfibrilador</li>
+          <li>Toda medicação de emergência</li>
+        </ul>
+      </article>
+
+      <!-- UTI Neonatal -->
+      <article class="price-card">
+        <div class="price-tag">UTI Neonatal</div>
+        <div class="price-value">
+          Sob<br />
+          <strong>consulta</strong>
+        </div>
+        <p class="price-desc">
+          Equipe com <strong>incubadora e médico neonatologista</strong>. Para transporte de recém-nascidos.
+        </p>
+        <ul class="price-includes">
+          <li>Incubadora de transporte</li>
+          <li>Ventilador neonatal</li>
+          <li>Monitorização completa</li>
+          <li>Protocolo específico</li>
+        </ul>
+      </article>
+    </div>
+
+    <p class="price-note">
+      Valores de referência. O valor final depende de origem, destino e equipamentos específicos, e é combinado na confirmação do chamado, antes da equipe sair.
+      Se a espera na origem ou destino passar de 1 hora, a gente te avisa antes da cobrança adicional começar a contar (R$ 150 por hora).
+    </p>
+  </div>
+</section>
+
+<style>
+  .prices {
+    padding: var(--space-block) 0;
+    background: var(--cream-light);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .prices-head {
+    max-width: var(--wrap-prose);
+    margin-bottom: 48px;
+  }
+
+  .prices-head .eyebrow {
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .prices-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .prices-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .prices-intro {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .price-card {
+    background: white;
+    border-radius: 6px;
+    padding: 36px 30px;
+    border: 1px solid var(--cream-dark);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .price-card.featured {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+    transform: scale(1.02);
+  }
+
+  .price-highlight {
+    position: absolute;
+    top: -11px;
+    left: 28px;
+    background: var(--green-bright);
+    color: var(--navy-deep);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 3px;
+  }
+
+  .price-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .price-card.featured .price-tag {
+    color: var(--green-bright);
+  }
+
+  .price-value {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.3;
+  }
+
+  .price-card.featured .price-value {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .price-value strong {
+    display: block;
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 36px;
+    color: var(--navy);
+    letter-spacing: -0.035em;
+    margin-top: 4px;
+  }
+
+  .price-card.featured .price-value strong {
+    color: white;
+  }
+
+  .price-desc {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--navy);
+  }
+
+  .price-card.featured .price-desc {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .price-card.featured .price-desc strong {
+    color: white;
+  }
+
+  .price-includes {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cream-dark);
+    font-size: 13.5px;
+    color: var(--navy);
+  }
+
+  .price-card.featured .price-includes {
+    border-top-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .price-includes li {
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .price-includes li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 10px;
+    height: 5px;
+    border-left: 2px solid var(--green-dark);
+    border-bottom: 2px solid var(--green-dark);
+    transform: rotate(-45deg);
+  }
+
+  .price-card.featured .price-includes li::before {
+    border-color: var(--green-bright);
+  }
+
+  .price-note {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--gray);
+    max-width: 780px;
+  }
+
+  @media (max-width: 960px) {
+    .price-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .price-card.featured {
+      transform: none;
+    }
+  }
+</style>

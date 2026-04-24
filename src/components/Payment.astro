@@ -1,0 +1,233 @@
+---
+// ============================================================
+// PAYMENT — Bloco de formas de pagamento
+// Ícones SVG inline (Lucide-style) + card Pix destacado em verde
+// ============================================================
+---
+
+<section class="payment">
+  <div class="wrap">
+    <div class="pay-head">
+      <span class="eyebrow">Pagamento</span>
+      <h2 class="pay-h2">Pagamento na hora. <em>Sem burocracia depois</em></h2>
+    </div>
+
+    <div class="pay-grid">
+      <!-- PIX — destaque em verde -->
+      <div class="pay-card pay-featured">
+        <div class="pay-icon-wrap">
+          <!-- Ícone do Pix: losango com linhas diagonais (glifo oficial simplificado) -->
+          <svg class="pay-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path
+              d="M22.6 20.4a3.4 3.4 0 01-2.4-1L17 16.2a1.3 1.3 0 00-1.8 0L12 19.4a3.4 3.4 0 01-2.4 1h-.6l4 4a3.4 3.4 0 004.8 0l4-4h-.2zM9.6 11.6a3.4 3.4 0 012.4 1l3.2 3.2a1.3 1.3 0 001.8 0l3.2-3.2a3.4 3.4 0 012.4-1h.3l-4-4a3.4 3.4 0 00-4.8 0l-4 4h.5zM27 13.6l-2.4-2.4H22.6a2.1 2.1 0 00-1.4.6l-3.2 3.2a2.1 2.1 0 01-3 0L11.7 11.8a2.1 2.1 0 00-1.4-.6H7l-2 2a3.4 3.4 0 000 4.8l2 2h3.2a2.1 2.1 0 001.4-.6L15 15.9a2.1 2.1 0 013 0l3.2 3.2a2.1 2.1 0 001.4.6h2L27 17.4a2.6 2.6 0 000-3.8z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+        <div class="pay-content">
+          <div class="pay-name">Pix</div>
+          <div class="pay-badge">5% de desconto</div>
+          <p class="pay-desc">Aprovação em segundos. Recibo automático por e-mail.</p>
+        </div>
+      </div>
+
+      <!-- Cartão de crédito -->
+      <div class="pay-card">
+        <div class="pay-icon-wrap">
+          <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <line x1="6" y1="15" x2="8" y2="15"/>
+            <line x1="11" y1="15" x2="14" y2="15"/>
+          </svg>
+        </div>
+        <div class="pay-content">
+          <div class="pay-name">Cartão de crédito</div>
+          <p class="pay-desc">Até <strong>3x sem juros</strong>, todas as bandeiras. Cobrança na fatura.</p>
+        </div>
+      </div>
+
+      <!-- Débito na ambulância (maquininha) -->
+      <div class="pay-card">
+        <div class="pay-icon-wrap">
+          <!-- Ícone de máquina de cartão (POS terminal) -->
+          <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="2" width="14" height="20" rx="2"/>
+            <line x1="5" y1="7" x2="19" y2="7"/>
+            <line x1="8" y1="11" x2="16" y2="11"/>
+            <line x1="8" y1="15" x2="16" y2="15"/>
+            <line x1="8" y1="18.5" x2="10" y2="18.5"/>
+          </svg>
+        </div>
+        <div class="pay-content">
+          <div class="pay-name">Débito na ambulância</div>
+          <p class="pay-desc">Máquina a bordo. <strong>Paga quando a equipe chega</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="pay-note">
+      <strong>56% dos clientes escolhem Pix.</strong> Mais rápido, 5% mais barato.
+    </p>
+  </div>
+</section>
+
+<style>
+  .payment {
+    padding: var(--space-block) 0;
+    background: white;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .pay-head {
+    max-width: 680px;
+    margin-bottom: 44px;
+  }
+
+  .pay-head .eyebrow {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .pay-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--navy);
+  }
+
+  .pay-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .pay-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  /* ============ CARDS ============ */
+  .pay-card {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 32px 28px;
+    border: 1px solid var(--cream-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .pay-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(11, 37, 64, 0.06);
+  }
+
+  /* Card Pix destacado em verde */
+  .pay-card.pay-featured {
+    background: var(--green-dark);
+    border-color: var(--green-dark);
+    color: white;
+    position: relative;
+  }
+
+  .pay-card.pay-featured:hover {
+    box-shadow: 0 8px 28px rgba(0, 160, 108, 0.25);
+  }
+
+  /* Ícones */
+  .pay-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  .pay-featured .pay-icon-wrap {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+
+  .pay-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Conteúdo */
+  .pay-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pay-name {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.025em;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+
+  .pay-featured .pay-name {
+    color: white;
+  }
+
+  .pay-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    background: white;
+    color: var(--green-dark);
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .pay-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--navy);
+  }
+
+  .pay-desc strong {
+    font-weight: 600;
+  }
+
+  .pay-featured .pay-desc {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .pay-featured .pay-desc strong {
+    color: white;
+  }
+
+  /* Footnote */
+  .pay-note {
+    font-size: 14.5px;
+    color: var(--navy);
+    padding: 18px 24px;
+    background: var(--cream);
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+  }
+
+  @media (max-width: 720px) {
+    .pay-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,122 @@
+---
+// ============================================================
+// HOW IT WORKS — Bloco 3
+// 3 passos com sujeito ativo em cada etapa
+// ============================================================
+---
+
+<section class="how">
+  <div class="wrap">
+    <div class="how-head">
+      <span class="eyebrow">Como funciona</span>
+      <h2 class="how-h2">Três passos. Sem ligação enrolada.</h2>
+    </div>
+
+    <ol class="how-steps">
+      <li class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3 class="step-title">Você chama.</h3>
+          <p class="step-desc">
+            WhatsApp ou telefone. <strong>Atendemos em menos de 1 minuto</strong>, 24h por dia.
+          </p>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3 class="step-title">A gente confirma.</h3>
+          <p class="step-desc">
+            Tipo de ambulância, origem, destino e valor. <strong>Tudo na mesma conversa</strong>, em 2 minutos.
+          </p>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3 class="step-title">A equipe sai.</h3>
+          <p class="step-desc">
+            4 minutos depois do chamado validado, ambulância na rua. <strong>Zona Sul em 18 minutos</strong>.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding: var(--space-block) 0;
+    background: var(--cream);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .how-head {
+    max-width: var(--wrap-prose);
+    margin-bottom: 56px;
+  }
+
+  .how-head .eyebrow {
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .how-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--navy);
+  }
+
+  .how-steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--cream-dark);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .step {
+    background: white;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 4px solid var(--green);
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--green-dark);
+    font-weight: 600;
+  }
+
+  .step-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+
+  .step-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+
+  @media (max-width: 720px) {
+    .how-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

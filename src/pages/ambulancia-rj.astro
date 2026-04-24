@@ -1,0 +1,339 @@
+---
+// ============================================================
+// LP1 — /ambulancia-rj
+// Landing page de emergência RJ — prioridade 1, semana 1
+// Copy reescrita com tom Savior, UX writer e comercial
+// ============================================================
+
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SocialProof from '../components/SocialProof.astro';
+import PriceTable from '../components/PriceTable.astro';
+import CTAInline from '../components/CTAInline.astro';
+import Comparison from '../components/Comparison.astro';
+import NotWhat from '../components/NotWhat.astro';
+import FleetBand from '../components/FleetBand.astro';
+import Urgency from '../components/Urgency.astro';
+import ServicesDetail from '../components/ServicesDetail.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Payment from '../components/Payment.astro';
+import FAQ from '../components/FAQ.astro';
+import FinalCTA from '../components/FinalCTA.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import Footer from '../components/Footer.astro';
+
+// ============ SEO ============
+const title = 'Ambulância Particular RJ | UTI 24 Horas | Savior Medical Service';
+const description =
+  'Ambulância particular no Rio de Janeiro com equipe UTI completa. Médico e enfermeiro. A gente chega em 18 minutos na Zona Sul. Pix com 5% de desconto ou cartão em até 3x. Ligue agora: (21) 3171-3030.';
+const canonical = 'https://www.savior.com.br/ambulancia-rj';
+
+// ============ FAQ — items ============
+const faqItems = [
+  {
+    q: 'Quanto custa uma ambulância particular no RJ?',
+    a: 'Básica a partir de <strong>R$ 1.200</strong>, UTI a partir de <strong>R$ 2.200</strong>. O valor final depende de origem, destino e tipo de equipamento. A gente confirma o preço na mesma conversa do WhatsApp, <strong>antes da equipe sair da base</strong>.',
+  },
+  {
+    q: 'Em quanto tempo a ambulância chega?',
+    a: 'A equipe sai em <strong>4 minutos depois do chamado confirmado</strong>. Tempo médio de chegada: 18 min na Zona Sul, 25 min na Zona Norte/Oeste, 35 min em Niterói e Baixada. Números verificados no primeiro trimestre de 2026.',
+  },
+  {
+    q: 'Vem médico na ambulância?',
+    a: 'Na UTI, <strong>sempre — médico, enfermeiro e socorrista</strong>. Na básica, enfermeiro e socorrista. Quando você liga, a gente escuta o caso primeiro pra indicar o que faz sentido pra sua família. Às vezes a básica resolve, às vezes precisa da UTI.',
+  },
+  {
+    q: 'Vocês atendem transferência entre hospitais?',
+    a: 'Sim. Fazemos transferência inter-hospitalar com equipe médica dedicada, contato prévio entre nosso médico e o médico assistente, e monitorização contínua durante o transporte. Relatório clínico entregue ao hospital de destino.',
+  },
+  {
+    q: 'Atendem 24 horas?',
+    a: 'Sim. Central 24h, <strong>todos os dias do ano</strong>. Atendemos em menos de 1 minuto a maioria dos chamados.',
+  },
+  {
+    q: 'Como posso pagar?',
+    a: 'Pix (com 5% de desconto), cartão de crédito em até 3x sem juros, ou débito na máquina a bordo da ambulância. Você só paga quando a equipe chega.',
+  },
+  {
+    q: 'Qual a diferença entre UTI e básica?',
+    a: 'A <strong>UTI</strong> tem médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador e toda medicação de emergência. A <strong>básica</strong> tem enfermeiro, maca articulada, oxigênio e kit de primeiros socorros. A UTI é indicada para pacientes instáveis, emergências e pós-operatórios.',
+  },
+];
+
+// ============ Schema.org JSON-LD ============
+// Upgrade Onda 1: MedicalClinic + EmergencyService + Offer + sameAs + Speakable
+const schema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    // 1. Organização (entidade principal)
+    {
+      '@type': ['MedicalClinic', 'EmergencyService', 'LocalBusiness'],
+      '@id': `${canonical}#organization`,
+      name: 'Savior Medical Service',
+      alternateName: ['Savior', 'Savior Ambulâncias'],
+      description:
+        'Ambulância particular no Rio de Janeiro com UTI completa (médico e enfermeiro). Tempo médio de chegada: 18 minutos na Zona Sul. Operando desde 1979.',
+      url: canonical,
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.savior.com.br/apple-touch-icon.png',
+        width: 180,
+        height: 180,
+      },
+      image: {
+        '@type': 'ImageObject',
+        url: 'https://www.savior.com.br/og-savior.jpg',
+        width: 1200,
+        height: 630,
+      },
+      telephone: '+552131713030',
+      email: 'comercial@savior.com.br',
+      foundingDate: '1979-01-01',
+      numberOfEmployees: {
+        '@type': 'QuantitativeValue',
+        value: 450,
+      },
+      priceRange: 'R$ 1.200 – R$ 2.200',
+      currenciesAccepted: 'BRL',
+      paymentAccepted: 'Pix, Cartão de crédito, Débito',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'R. Gen. Padilha, 73',
+        addressLocality: 'São Cristóvão',
+        addressRegion: 'RJ',
+        postalCode: '20920-390',
+        addressCountry: 'BR',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: -22.9,
+        longitude: -43.2,
+      },
+      openingHoursSpecification: {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '00:00',
+        closes: '23:59',
+      },
+      areaServed: [
+        { '@type': 'City', name: 'Rio de Janeiro', '@id': 'https://www.wikidata.org/wiki/Q8678' },
+        { '@type': 'City', name: 'Niterói', '@id': 'https://www.wikidata.org/wiki/Q194346' },
+        { '@type': 'City', name: 'São Gonçalo' },
+        { '@type': 'City', name: 'Duque de Caxias' },
+        { '@type': 'City', name: 'Nova Iguaçu' },
+        { '@type': 'City', name: 'São Paulo', '@id': 'https://www.wikidata.org/wiki/Q174' },
+      ],
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.7',
+        reviewCount: '346',
+        bestRating: '5',
+        worstRating: '1',
+      },
+      medicalSpecialty: ['EmergencyMedicine', 'IntensiveCareMedicine'],
+      sameAs: [
+        'https://share.google/GZ7m1GMno4ibRxgYA',
+        'https://www.instagram.com/saviormedicalservice/',
+        'https://www.facebook.com/SaviorAmbulancias/',
+        'https://www.linkedin.com/company/savior-medical-service/',
+        'https://savior.com.br',
+      ],
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          telephone: '+552131713030',
+          contactType: 'emergency',
+          areaServed: 'BR-RJ',
+          availableLanguage: 'Portuguese',
+          hoursAvailable: {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            opens: '00:00',
+            closes: '23:59',
+          },
+        },
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Serviços de ambulância Savior',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            '@id': `${canonical}#offer-basica`,
+            name: 'Ambulância Básica',
+            description:
+              'Motorista e enfermeiro. Para remoção programada ou transferência de pacientes estáveis. Inclui maca articulada, oxigênio, kit de primeiros socorros.',
+            price: '1200.00',
+            priceCurrency: 'BRL',
+            availability: 'https://schema.org/InStock',
+            areaServed: 'BR-RJ',
+          },
+          {
+            '@type': 'Offer',
+            '@id': `${canonical}#offer-uti`,
+            name: 'UTI Móvel',
+            description:
+              'Motorista, enfermeiro e médico. Para emergência, pós-operatório e pacientes graves. Monitor multiparâmetro, respirador mecânico, desfibrilador e medicação completa.',
+            price: '2200.00',
+            priceCurrency: 'BRL',
+            availability: 'https://schema.org/InStock',
+            areaServed: 'BR-RJ',
+          },
+          {
+            '@type': 'Offer',
+            '@id': `${canonical}#offer-neonatal`,
+            name: 'UTI Neonatal',
+            description:
+              'Equipe especializada em recém-nascidos e pacientes pediátricos críticos. Incubadora de transporte, monitorização neonatal.',
+            priceSpecification: {
+              '@type': 'PriceSpecification',
+              priceCurrency: 'BRL',
+              description: 'Sob consulta',
+            },
+            availability: 'https://schema.org/InStock',
+            areaServed: 'BR-RJ',
+          },
+        ],
+      },
+    },
+
+    // 2. WebPage com speakable (AEO/voice search)
+    {
+      '@type': 'WebPage',
+      '@id': canonical,
+      url: canonical,
+      name: title,
+      description: description,
+      inLanguage: 'pt-BR',
+      isPartOf: {
+        '@type': 'WebSite',
+        '@id': 'https://www.savior.com.br/#website',
+        name: 'Savior Medical Service',
+        url: 'https://www.savior.com.br',
+        inLanguage: 'pt-BR',
+      },
+      about: { '@id': `${canonical}#organization` },
+      datePublished: '2026-04-01',
+      dateModified: '2026-04-24',
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: 'https://www.savior.com.br/og-savior.jpg',
+        width: 1200,
+        height: 630,
+      },
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: ['.hero-h1', '.prices-h2', '.urg-h2', '.faq-q'],
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Savior', item: 'https://www.savior.com.br' },
+          { '@type': 'ListItem', position: 2, name: 'Ambulância Rio de Janeiro', item: canonical },
+        ],
+      },
+    },
+
+    // 3. FAQ — com autor linkado à organização (AEO)
+    {
+      '@type': 'FAQPage',
+      '@id': `${canonical}#faq`,
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a.replace(/<[^>]*>/g, ''),
+          author: { '@id': `${canonical}#organization` },
+        },
+      })),
+    },
+  ],
+});
+
+const waCampaign = 'rj-emergencia';
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+>
+  <main id="main">
+    <!-- Bloco 1 — Hero -->
+    <Hero
+      h1="Ambulância particular no Rio de Janeiro"
+      subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A central atende 24 horas, inclusive agora."
+      waCampaign={waCampaign}
+    />
+
+    <!-- Bloco 2 — Prova social -->
+    <SocialProof />
+
+    <!-- Bloco 3 — Preços -->
+    <PriceTable />
+
+    <!-- CTA intermediário 1 — após preços -->
+    <CTAInline
+      variant="soft"
+      text="Cada caso tem um valor. Conta o seu pelo WhatsApp — a gente escuta primeiro, depois combina o preço."
+      cta="Pedir orçamento agora"
+      waCampaign={waCampaign}
+      waMessage="Oi, vim da LP e quero um orçamento pra ambulância."
+      location="after-prices"
+    />
+
+    <!-- Bloco 5 — Comparação -->
+    <Comparison />
+
+    <!-- Bloco 6 — Depoimentos reais -->
+    <Testimonials />
+
+    <!-- Faixa visual: frota em foto -->
+    <FleetBand />
+
+    <!-- Bloco 7 — Urgência -->
+    <Urgency waCampaign={waCampaign} />
+
+    <!-- Bloco 8 — Serviços detalhados -->
+    <ServicesDetail />
+
+    <!-- CTA intermediário 2 — após serviços -->
+    <CTAInline
+      variant="medium"
+      text="Seu caso é um desses, ou tem algo específico que a gente precisa saber? Chama aqui — a gente escuta."
+      cta="Falar no WhatsApp"
+      waCampaign={waCampaign}
+      waMessage="Oi, vim da LP e quero tirar uma dúvida sobre o atendimento."
+      location="after-services"
+    />
+
+    <!-- Bloco 9 — Pagamento -->
+    <Payment />
+
+    <!-- Bloco 10 — A Savior não é (educacional) -->
+    <NotWhat />
+
+    <!-- Bloco 11 — FAQ -->
+    <FAQ items={faqItems} />
+
+    <!-- CTA intermediário 3 — após FAQ -->
+    <CTAInline
+      variant="soft"
+      text="Ficou alguma dúvida? Pergunta no WhatsApp com calma. A gente responde em menos de 1 minuto."
+      cta="Tirar dúvida agora"
+      waCampaign={waCampaign}
+      waMessage="Oi, vim da LP e queria tirar uma dúvida."
+      location="after-faq"
+    />
+
+    <!-- Bloco 12 — CTA final -->
+    <FinalCTA waCampaign={waCampaign} />
+  </main>
+
+  <Footer />
+
+  <!-- WhatsApp flutuante mobile -->
+  <FloatingWhatsApp waCampaign={waCampaign} />
+</Base>

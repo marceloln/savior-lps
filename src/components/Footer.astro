@@ -1,0 +1,112 @@
+---
+// ============================================================
+// FOOTER — rodapé institucional minimalista
+// Sem menu de navegação — LP é funil fechado
+// ============================================================
+
+import { CONTACT_RJ, BRAND } from '../data/savior';
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <svg class="ft-symbol" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="36" fill="none" stroke="#1FD29A" stroke-width="6" />
+          <circle cx="50" cy="50" r="12" fill="#1FD29A" />
+        </svg>
+        <span class="ft-word">Savior</span>
+      </div>
+
+      <div class="ft-info">
+        <p><strong>{BRAND.fullName}</strong></p>
+        <p>Desde {BRAND.yearsFounded} · Rio de Janeiro e São Paulo</p>
+        <p>Central 24h: <a href={`tel:${CONTACT_RJ.phoneHref}`}>{CONTACT_RJ.phone}</a></p>
+        <p>
+          <a href={`mailto:${CONTACT_RJ.email}`}>{CONTACT_RJ.email}</a>
+        </p>
+      </div>
+
+      <div class="ft-legal">
+        <p>CNES: [número] · Responsável técnico: [médico]</p>
+        <p class="ft-copy">© {new Date().getFullYear()} Savior Medical Service. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #050F1C;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 56px 0 40px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .ft-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .ft-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ft-symbol {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ft-word {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.035em;
+    color: white;
+  }
+
+  .ft-info p,
+  .ft-legal p {
+    margin-bottom: 4px;
+  }
+
+  .ft-info strong {
+    color: white;
+    font-weight: 600;
+  }
+
+  .ft-info a {
+    color: var(--green-bright);
+    transition: color 0.15s;
+  }
+
+  .ft-info a:hover {
+    color: white;
+  }
+
+  .ft-legal {
+    text-align: right;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .ft-copy {
+    margin-top: 12px;
+  }
+
+  @media (max-width: 720px) {
+    .ft-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .ft-legal {
+      text-align: left;
+    }
+  }
+</style>

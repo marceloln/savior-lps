@@ -1,0 +1,42 @@
+---
+// ============================================================
+// INDEX — raiz do site
+// Em produção (Cloudflare Pages), o arquivo public/_redirects
+// redireciona / → /ambulancia-rj via HTTP 301 (melhor pra SEO).
+// Este arquivo existe como fallback para dev local e navegação direta.
+// ============================================================
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=/ambulancia-rj" />
+    <link rel="canonical" href="https://www.savior.com.br/ambulancia-rj" />
+    <title>Savior Medical Service</title>
+    <meta name="robots" content="noindex, follow" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0B2540;
+        color: #F4EFE6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        text-align: center;
+      }
+      a {
+        color: #1FD29A;
+        text-decoration: none;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <p>Redirecionando para <a href="/ambulancia-rj">/ambulancia-rj</a>…</p>
+    </div>
+  </body>
+</html>

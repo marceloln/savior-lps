@@ -1,0 +1,236 @@
+---
+// ============================================================
+// Layout base — head completo: SEO + AEO + GEO + LLMO
+// Auditoria V30 aplicada — Onda 1
+// ============================================================
+
+import '../styles/global.css';
+import { ANALYTICS } from '../data/savior';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  schema?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  dateModified?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  schema,
+  ogImage = '/og-savior.jpg',
+  ogImageAlt = 'Ambulância Savior no Rio de Janeiro com Cristo Redentor ao fundo',
+  dateModified = '2026-04-24',
+} = Astro.props;
+
+const absoluteOgImage = ogImage.startsWith('http')
+  ? ogImage
+  : `https://www.savior.com.br${ogImage}`;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ============ SEO essencial ============ -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta http-equiv="content-language" content="pt-BR" />
+    <meta name="author" content="Savior Medical Service" />
+    <meta name="geo.region" content="BR-RJ" />
+    <meta name="geo.placename" content="Rio de Janeiro" />
+    <meta name="geo.position" content="-22.9;-43.2" />
+    <meta name="ICBM" content="-22.9, -43.2" />
+
+    <!-- ============ Theme & PWA ============ -->
+    <meta name="theme-color" content="#0B2540" />
+    <meta name="apple-mobile-web-app-title" content="Savior" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=yes" />
+
+    <!-- ============ Icons ============ -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- ============ OpenGraph — completo ============ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Savior Medical Service" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:image" content={absoluteOgImage} />
+    <meta property="og:image:secure_url" content={absoluteOgImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    <!-- ============ Twitter Card ============ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteOgImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- ============ Data de modificação (AEO/LLMO) ============ -->
+    <meta name="last-modified" content={dateModified} />
+    <meta http-equiv="last-modified" content={dateModified} />
+
+    <!-- ============ Fontes self-hospedadas via @fontsource (Onda 2) ============ -->
+    <!-- Inter + IBM Plex Mono importados direto no global.css, zero request externo -->
+
+    <!-- ============ Schema.org JSON-LD ============ -->
+    {schema && <script type="application/ld+json" set:html={schema} />}
+
+    <!-- ============ Google Tag Manager (head) ============ -->
+    <!-- GTM orquestra GA4, Meta Pixel, LinkedIn e qualquer outra tag via dataLayer.
+         Carrega ASSÍNCRONO — não bloqueia render. Substitua GTM-PLACEHOLDER no data/savior.ts -->
+    <script is:inline define:vars={{ GTM_ID: ANALYTICS.gtm, META_ID: ANALYTICS.metaPixel, LI_ID: ANALYTICS.linkedInPartnerId, GA4_ID: ANALYTICS.ga4, USE_GTM: ANALYTICS.useGtmAsSource }}>
+      // DataLayer inicializado ANTES de qualquer tag carregar — ordem importa
+      window.dataLayer = window.dataLayer || [];
+
+      // ============ GTM container ============
+      // Só carrega se o ID foi configurado (evita 404 em dev)
+      if (GTM_ID && GTM_ID !== 'GTM-PLACEHOLDER') {
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',GTM_ID);
+      }
+
+      // ============ Fallback: GA4 direto (se USE_GTM = false) ============
+      // Permite rodar sem GTM caso o time prefira hardcode temporário
+      if (!USE_GTM && GA4_ID && GA4_ID !== 'G-PLACEHOLDER') {
+        var ga4Script = document.createElement('script');
+        ga4Script.async = true;
+        ga4Script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+        document.head.appendChild(ga4Script);
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', GA4_ID, { anonymize_ip: true, send_page_view: true });
+      }
+
+      // ============ Meta Pixel (fallback direto, não-GTM) ============
+      // Se useGtmAsSource = true, configure o Meta Pixel DENTRO do GTM — ignora este bloco.
+      if (!USE_GTM && META_ID && META_ID !== 'META_PIXEL_PLACEHOLDER') {
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', META_ID);
+        fbq('track', 'PageView');
+      }
+
+      // ============ LinkedIn Insight Tag (fallback direto, não-GTM) ============
+      if (!USE_GTM && LI_ID && LI_ID !== 'LINKEDIN_PARTNER_PLACEHOLDER') {
+        window._linkedin_partner_id = LI_ID;
+        window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+        window._linkedin_data_partner_ids.push(LI_ID);
+        (function(l) {
+          if (!l) {
+            window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+            window.lintrk.q = [];
+          }
+          var s = document.getElementsByTagName('script')[0];
+          var b = document.createElement('script');
+          b.type = 'text/javascript'; b.async = true;
+          b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+          s.parentNode.insertBefore(b, s);
+        })(window.lintrk);
+      }
+
+      // ============ Tracking de conversões via dataLayer ============
+      // Todos os CTAs disparam evento único no dataLayer — GTM decide pra quais
+      // plataformas (GA4, Meta, LinkedIn, Ads) enviar. Evita duplicação.
+      document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t || !t.closest) return;
+
+        // WhatsApp click
+        var wa = t.closest('a[data-whatsapp]');
+        if (wa) {
+          dataLayer.push({
+            event: 'whatsapp_click',
+            campaign: wa.dataset.campaign || 'none',
+            location: wa.dataset.location || 'unknown',
+            value: 1,
+          });
+        }
+
+        // Phone click
+        var ph = t.closest('a[data-phone]');
+        if (ph) {
+          dataLayer.push({
+            event: 'phone_click',
+            campaign: ph.dataset.campaign || 'none',
+            value: 1,
+          });
+        }
+
+        // Generic CTA click (data-event="cta_click")
+        var cta = t.closest('a[data-event], button[data-event]');
+        if (cta && !wa && !ph) {
+          dataLayer.push({
+            event: cta.dataset.event,
+            event_category: cta.dataset.eventCategory || 'engagement',
+            event_label: cta.dataset.eventLabel || 'unknown',
+          });
+        }
+      });
+    </script>
+    <!-- End Google Tag Manager -->
+  </head>
+
+  <body>
+    <!-- ============ GTM (noscript fallback) ============ -->
+    <!-- Para usuários com JavaScript desabilitado. Troque GTM-PLACEHOLDER. -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PLACEHOLDER"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"
+      ></iframe>
+    </noscript>
+
+    <!-- Meta Pixel noscript (fallback sem JS) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        alt=""
+        src="https://www.facebook.com/tr?id=META_PIXEL_PLACEHOLDER&ev=PageView&noscript=1"
+      />
+    </noscript>
+
+    <!-- LinkedIn Insight Tag noscript (fallback sem JS) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none;"
+        alt=""
+        src="https://px.ads.linkedin.com/collect/?pid=LINKEDIN_PARTNER_PLACEHOLDER&fmt=gif"
+      />
+    </noscript>
+
+    <!-- Skip-link (WCAG 2.1 AA — invisível até Tab focar) -->
+    <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
+
+    <slot />
+  </body>
+</html>

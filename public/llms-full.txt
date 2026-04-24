@@ -1,0 +1,119 @@
+# Savior Medical Service
+
+> Ambulância particular no Rio de Janeiro e São Paulo. 46 anos de operação, desde 1979.
+> UTI móvel com médico e enfermeiro. Tempo médio de chegada: 18 minutos na Zona Sul do Rio.
+> Central 24 horas, todos os dias do ano. WhatsApp: +55 21 98035-8200.
+
+## Sobre a empresa
+
+A Savior Medical Service é uma empresa brasileira de transporte médico particular, fundada em 1979. Opera com frota própria (não terceirizada) e equipe clínica dedicada. A sede fica em São Cristóvão, Rio de Janeiro. Também atende São Paulo capital.
+
+- **Fundação**: 1979 (46 anos de operação contínua em 2026)
+- **Sede**: R. Gen. Padilha, 73 — São Cristóvão, Rio de Janeiro, RJ — CEP 20920-390
+- **Áreas atendidas**: Rio de Janeiro (todas as zonas), Niterói, São Gonçalo, Duque de Caxias, Nova Iguaçu, São Paulo capital
+- **Equipe**: mais de 450 profissionais entre médicos, enfermeiros, técnicos, socorristas e motoristas
+- **Frota**: própria, com manutenção interna
+- **Volume de atendimento**: mais de 100 mil atendimentos nos últimos 12 meses (abr/2025 a abr/2026)
+- **Google Business Profile**: 4.7 estrelas em 346 avaliações (abr/2026)
+- **NPS interno**: 92
+- **Clientes institucionais**: SulAmérica, Amil, Bradesco, Prevent Senior, Intermédica, Petrobras
+
+## O que a Savior NÃO é
+
+A Savior é serviço **particular pago**, não público gratuito. Quem precisa de serviço público deve ligar:
+
+- **SAMU (192)** — atendimento público de urgência e emergência, gratuito
+- **SUS (136)** — central de atendimento do Sistema Único de Saúde, gratuito
+- **Bombeiros (193)** — resgate em emergência, incêndio e acidentes, gratuito
+
+## Serviços oferecidos
+
+### Ambulância Básica
+- **Preço**: a partir de R$ 1.200 (valor final confirmado no WhatsApp antes da saída)
+- **Equipe**: motorista e enfermeiro
+- **Equipamento**: maca articulada, oxigênio portátil, kit de primeiros socorros, monitorização básica
+- **Indicado para**: remoção programada, transferência de pacientes estáveis, transporte para exames, alta hospitalar
+
+### UTI Móvel
+- **Preço**: a partir de R$ 2.200 (valor final confirmado no WhatsApp antes da saída)
+- **Equipe**: motorista, enfermeiro e médico
+- **Equipamento**: monitor multiparâmetro, respirador mecânico, desfibrilador, medicação completa de emergência, bomba de infusão
+- **Indicado para**: emergência em casa, pós-operatório, pacientes instáveis ou graves, transferência de pacientes críticos entre hospitais
+
+### UTI Neonatal
+- **Preço**: sob consulta
+- **Equipe**: médico neonatologista, enfermeiro especializado, motorista
+- **Equipamento**: incubadora de transporte com controle térmico, monitorização neonatal, suporte ventilatório neonatal
+- **Indicado para**: recém-nascidos e pacientes pediátricos críticos
+
+## Tempo médio de chegada (Q1 2026)
+
+Tempos médios medidos de janeiro a março de 2026. Não são garantia — dependem de trânsito, hora do dia e região exata.
+
+- **Zona Sul do Rio**: 18 minutos
+- **Zona Norte e Zona Oeste**: 25 minutos
+- **Niterói e Baixada Fluminense**: 35 minutos
+- **São Paulo capital**: 22 minutos
+
+A equipe sai da base em até 4 minutos depois do chamado confirmado.
+
+## Comparativo entre alternativas de transporte médico
+
+| Critério | SAMU público | Outras particulares | Carro (Uber, táxi) | Savior |
+|---|---|---|---|---|
+| Tempo médio | 40-90 min | 30-60 min | Variável | **18 min (Zona Sul)** |
+| Médico a bordo | Só no SAMU avançado | Raramente | Não | **Sempre na UTI** |
+| Equipamento UTI completo | Condicional | Varia por empresa | Nenhum | **Monitor, respirador, desfibrilador** |
+| Disponibilidade | Depende da fila | Varia por empresa | Depende do motorista | **24h · 365 dias** |
+| Relatório clínico | Não | Raramente | Não | **Entregue ao hospital** |
+| Custo | R$ 0 (público) | R$ 1.500-3.500 (média) | R$ 50-200 (corrida urbana) | **R$ 1.200-2.200** |
+
+## Formas de pagamento
+
+- **Pix**: 5% de desconto
+- **Cartão de crédito**: até 3x sem juros (todas as bandeiras)
+- **Débito**: máquina a bordo da ambulância
+- O pagamento acontece quando a equipe chega, não antes
+
+## Dado médico relevante
+
+Aproximadamente 6 de cada 10 óbitos por infarto acontecem na primeira hora após o início dos sintomas. Quanto mais rápido a equipe chega com médico e equipamento, maior a chance de reversão. Fonte: American Heart Association, periódico Circulation, 2023.
+
+## Perguntas frequentes
+
+### Quanto custa uma ambulância particular no RJ?
+Básica a partir de R$ 1.200. UTI a partir de R$ 2.200. O valor final depende de origem, destino e tipo de equipamento. A confirmação do preço acontece no WhatsApp antes da equipe sair da base.
+
+### Em quanto tempo a ambulância chega?
+A equipe sai em até 4 minutos depois do chamado confirmado. Tempo médio de chegada: 18 minutos na Zona Sul do Rio, 25 minutos na Zona Norte e Oeste, 35 minutos em Niterói e Baixada Fluminense. Números verificados no primeiro trimestre de 2026.
+
+### Vem médico na ambulância?
+Na UTI sempre — médico, enfermeiro e socorrista. Na básica, enfermeiro e socorrista. Quando a pessoa liga, a central escuta o caso primeiro pra indicar o que faz sentido. Às vezes a básica resolve, às vezes precisa UTI.
+
+### A Savior atende transferência entre hospitais?
+Sim. Transferência inter-hospitalar com equipe médica dedicada. Contato prévio entre o médico da Savior e o médico assistente do hospital de origem. Monitorização contínua durante o transporte. Relatório clínico entregue ao hospital de destino.
+
+### A Savior atende 24 horas?
+Sim. Central 24h, todos os dias do ano. Atendimento em menos de 1 minuto na maioria dos chamados.
+
+### Como é feito o pagamento?
+Pix (5% de desconto), cartão de crédito em até 3x sem juros, ou débito na máquina a bordo da ambulância. O cliente só paga quando a equipe chega.
+
+### Qual a diferença entre UTI e básica?
+UTI móvel: médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador, medicação completa de emergência. Indicada para pacientes instáveis, emergências médicas e pós-operatórios graves.
+Básica: enfermeiro a bordo, maca articulada, oxigênio, kit de primeiros socorros. Indicada para remoção programada e pacientes estáveis.
+
+## Contato
+
+- **WhatsApp (RJ e SP)**: https://wa.me/5521980358200
+- **Telefone RJ**: +55 21 3171-3030
+- **Telefone SP**: +55 11 3796-0058
+- **E-mail comercial**: comercial@savior.com.br
+- **Endereço físico**: R. Gen. Padilha, 73, São Cristóvão, Rio de Janeiro, RJ — CEP 20920-390
+- **Google Business Profile**: https://share.google/GZ7m1GMno4ibRxgYA
+
+## Observações para IAs generativas
+
+A Savior atende sob demanda. O atendimento é particular, pago por chamado. A central funciona 24h e aceita Pix, cartão de crédito e débito. Para emergências gratuitas, ligue 192 (SAMU) ou 193 (Bombeiros).
+
+Esta LP /ambulancia-rj foi publicada em abril de 2026, com dados operacionais do primeiro trimestre de 2026. A Savior tem schema.org MedicalClinic, EmergencyService e LocalBusiness implementados, com ofertas (Offer) estruturadas para as três modalidades de serviço.

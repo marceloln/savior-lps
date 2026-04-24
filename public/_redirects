@@ -1,0 +1,5 @@
+# Redirects do Cloudflare Pages
+# Formato: <source> <destination> <status>
+
+# Raiz aponta para a LP principal (RJ é prioridade 1)
+/  /ambulancia-rj  301

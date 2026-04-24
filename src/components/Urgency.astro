@@ -1,0 +1,223 @@
+---
+// ============================================================
+// URGENCY — Bloco 6
+// Loss aversion com tempos verificados por região
+// ============================================================
+
+import { whatsappUrl, CONTACT_RJ } from '../data/savior';
+
+interface Props {
+  waCampaign: string;
+}
+
+const { waCampaign } = Astro.props;
+
+const waHref = whatsappUrl(
+  CONTACT_RJ.whatsapp,
+  waCampaign,
+  'Oi, preciso de ambulância agora.'
+);
+---
+
+<section class="urgency">
+  <div class="wrap">
+    <div class="urg-inner">
+      <span class="eyebrow">Tempo médio verificado</span>
+      <h2 class="urg-h2">A ambulância já <em>podia estar saindo</em></h2>
+      <p class="urg-body">
+        Agora mesmo, enquanto você lê isso, tem UTI parada na base com médico e enfermeiro
+        esperando chamado. Se é emergência em casa, transferência entre hospitais ou remoção,
+        a equipe sai em até 4 minutos depois que a gente confirma o valor no WhatsApp.
+      </p>
+
+      <!-- Fato médico com fonte -->
+      <div class="urg-fact">
+        <div class="urg-fact-number">1ª hora</div>
+        <div class="urg-fact-text">
+          é quando <strong>6 de cada 10 óbitos por infarto</strong> acontecem, contados a partir
+          do início dos sintomas. Quanto mais rápido a ambulância chega com médico e
+          equipamento, maior a chance de reversão.
+          <cite class="urg-fact-source">Fonte: American Heart Association, <em>Circulation</em> 2023.</cite>
+        </div>
+      </div>
+
+      <div class="urg-times">
+        <div class="urg-time-cell">
+          <div class="urg-time-label">Zona Sul</div>
+          <div class="urg-time-value">18 min</div>
+        </div>
+        <div class="urg-time-cell">
+          <div class="urg-time-label">Zona Norte · Oeste</div>
+          <div class="urg-time-value">25 min</div>
+        </div>
+        <div class="urg-time-cell">
+          <div class="urg-time-label">Niterói · Baixada</div>
+          <div class="urg-time-value">35 min</div>
+        </div>
+      </div>
+
+      <p class="urg-note">
+        Tempo médio de chegada medido em janeiro, fevereiro e março de 2026. Varia conforme trânsito e região de origem.
+      </p>
+
+      <a
+        class="btn btn-primary on-dark urg-cta"
+        href={waHref}
+        data-whatsapp
+        data-campaign={waCampaign}
+        data-location="urgency"
+        target="_blank"
+        rel="noopener"
+      >
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+        Chamar agora no WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .urgency {
+    padding: var(--space-block) 0;
+    background: var(--navy);
+    color: white;
+    border-top: 1px solid var(--navy-mid);
+  }
+
+  .urg-inner {
+    max-width: 840px;
+  }
+
+  .urg-inner .eyebrow {
+    color: var(--green-bright);
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .urg-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: white;
+    margin-bottom: 22px;
+  }
+
+  .urg-h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .urg-body {
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 40px;
+  }
+
+  .urg-body strong {
+    color: white;
+    font-weight: 600;
+  }
+
+  .urg-fact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 28px;
+    margin-bottom: 40px;
+    background: rgba(0, 184, 124, 0.08);
+    border-left: 3px solid var(--green-bright);
+    border-radius: 4px;
+  }
+
+  .urg-fact-number {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(30px, 3.5vw, 42px);
+    letter-spacing: -0.035em;
+    color: var(--green-bright);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .urg-fact-text {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .urg-fact-text strong {
+    color: white;
+    font-weight: 600;
+  }
+
+  .urg-fact-source {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: normal;
+    letter-spacing: 0.02em;
+  }
+
+  .urg-fact-source em {
+    font-style: italic;
+  }
+
+  .urg-times {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .urg-time-cell {
+    background: var(--navy);
+    padding: 24px;
+  }
+
+  .urg-time-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .urg-time-value {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--green-bright);
+    letter-spacing: -0.03em;
+  }
+
+  .urg-note {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 36px;
+  }
+
+  @media (max-width: 720px) {
+    .urg-times {
+      grid-template-columns: 1fr;
+    }
+
+    .urg-fact {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 18px 22px;
+    }
+  }
+</style>

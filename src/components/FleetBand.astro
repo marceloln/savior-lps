@@ -1,0 +1,144 @@
+---
+// ============================================================
+// FLEET BAND — faixa visual full-width com foto da frota
+// Quebra visual entre blocos editoriais, reforça escala sem texto
+// Imagem responsiva com srcset em 3 tamanhos WebP
+// ============================================================
+
+import { METRICS } from '../data/savior';
+---
+
+<section class="fleet-band" aria-label="Frota Savior">
+  <picture class="fleet-img">
+    <source
+      media="(max-width: 720px)"
+      srcset="/img/gallery/frota-lateral-600.webp"
+      type="image/webp"
+    />
+    <source
+      media="(max-width: 1200px)"
+      srcset="/img/gallery/frota-lateral-1000.webp"
+      type="image/webp"
+    />
+    <source
+      srcset="/img/gallery/frota-lateral-1600.webp"
+      type="image/webp"
+    />
+    <img
+      src="/img/gallery/frota-lateral-1000.webp"
+      alt="Frota própria da Savior alinhada em Copacabana — Rio de Janeiro"
+      width="1600"
+      height="1200"
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+
+  <div class="fleet-overlay"></div>
+
+  <div class="fleet-content">
+    <div class="wrap">
+      <p class="fleet-tag">Frota própria</p>
+      <h2 class="fleet-h">
+        Frota inteira <em>na rua</em>,<br />não terceirizada.
+      </h2>
+      <p class="fleet-sub">
+        Toda ambulância Savior é da Savior. Motorista próprio, equipe fixa, manutenção certificada.
+        Sem intermediários, sem surpresa na origem.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fleet-band {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--navy-deep);
+  }
+
+  .fleet-img,
+  .fleet-img img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fleet-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(7, 24, 43, 0.92) 0%,
+      rgba(11, 37, 64, 0.78) 40%,
+      rgba(7, 24, 43, 0.55) 70%,
+      rgba(7, 24, 43, 0.4) 100%
+    );
+  }
+
+  .fleet-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    color: white;
+    padding: clamp(56px, 8vh, 96px) 0;
+  }
+
+  .fleet-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .fleet-h {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 48px);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: white;
+    margin-bottom: 20px;
+    max-width: 640px;
+  }
+
+  .fleet-h em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .fleet-sub {
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 540px;
+  }
+
+  @media (max-width: 720px) {
+    .fleet-band {
+      min-height: 360px;
+    }
+
+    .fleet-overlay {
+      background: linear-gradient(
+        to bottom,
+        rgba(7, 24, 43, 0.9) 0%,
+        rgba(11, 37, 64, 0.78) 60%,
+        rgba(7, 24, 43, 0.85) 100%
+      );
+    }
+
+    .fleet-sub {
+      font-size: 14.5px;
+    }
+  }
+</style>

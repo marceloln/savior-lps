@@ -1,0 +1,184 @@
+---
+// ============================================================
+// SOCIAL PROOF — Bloco 2
+// Clientes institucionais + números com destaque visual
+// ============================================================
+
+import { CLIENTS, METRICS } from '../data/savior';
+import ClientLogo from './ClientLogo.astro';
+---
+
+<section class="social-proof">
+  <div class="wrap">
+    <!-- Label central -->
+    <div class="sp-label">
+      <span class="eyebrow">Operamos para quem também não pode falhar</span>
+    </div>
+
+    <!-- Logos institucionais -->
+    <div class="sp-logos" aria-label="Clientes institucionais da Savior">
+      {CLIENTS.map((name) => <ClientLogo name={name} />)}
+    </div>
+
+    <!-- Números — versão destacada -->
+    <div class="sp-metrics">
+      <div class="metric">
+        <div class="metric-tag">Operação contínua</div>
+        <div class="metric-value"><span class="metric-prefix">+</span>46</div>
+        <div class="metric-label">anos sem interromper<br />nenhum dia</div>
+      </div>
+      <div class="metric metric-featured">
+        <div class="metric-tag">Volume anual</div>
+        <div class="metric-value">+100<span class="metric-suffix">k</span></div>
+        <div class="metric-label">atendimentos realizados<br />nos últimos 12 meses</div>
+      </div>
+      <div class="metric">
+        <div class="metric-tag">Equipe própria</div>
+        <div class="metric-value">+450</div>
+        <div class="metric-label">médicos, enfermeiros<br />e socorristas</div>
+      </div>
+      <div class="metric">
+        <div class="metric-tag">Satisfação</div>
+        <div class="metric-value">NPS <span class="metric-big">92</span></div>
+        <div class="metric-label">pacientes e<br />familiares</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .social-proof {
+    padding: var(--space-block) 0;
+    background: white;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .sp-label {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .sp-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(20px, 4vw, 48px);
+    flex-wrap: wrap;
+    margin-bottom: 72px;
+    padding: 28px 24px;
+    border-top: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  /* ============ MÉTRICAS DESTACADAS ============ */
+  .sp-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .metric {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 32px 28px;
+    border: 1px solid var(--cream-dark);
+    position: relative;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(11, 37, 64, 0.08);
+  }
+
+  .metric-featured {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+
+  .metric-featured .metric-tag,
+  .metric-featured .metric-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .metric-featured .metric-value {
+    color: white;
+  }
+
+  .metric-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 16px;
+  }
+
+  .metric-value {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(44px, 5vw, 60px);
+    letter-spacing: -0.04em;
+    color: var(--navy);
+    line-height: 0.95;
+    margin-bottom: 14px;
+  }
+
+  .metric-prefix,
+  .metric-suffix {
+    font-size: 0.55em;
+    color: var(--green-dark);
+    font-weight: 700;
+    vertical-align: 0.35em;
+    margin: 0 0.05em;
+  }
+
+  .metric-featured .metric-prefix,
+  .metric-featured .metric-suffix {
+    color: var(--green-bright);
+  }
+
+  .metric-big {
+    color: var(--green-dark);
+  }
+
+  .metric-featured .metric-big {
+    color: var(--green-bright);
+  }
+
+  .metric-label {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--navy);
+    font-weight: 400;
+  }
+
+  @media (max-width: 960px) {
+    .sp-metrics {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 24px 22px;
+    }
+
+    .metric-tag {
+      margin-bottom: 12px;
+    }
+
+    .metric-value {
+      margin-bottom: 10px;
+    }
+  }
+
+  @media (max-width: 440px) {
+    .sp-metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

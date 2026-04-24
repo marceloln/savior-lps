@@ -1,0 +1,62 @@
+---
+// ============================================================
+// CLIENT LOGO — wordmark SVG estilizado dos clientes institucionais
+// Lista oficial exibida na LP atual da Savior (autorização existente)
+// Tom neutro (sem cores oficiais das marcas) para evitar ambiguidade legal
+// Substituir por SVG oficial quando a Savior enviar os arquivos
+// ============================================================
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+
+// Cada wordmark recebe tratamento tipográfico próprio para ter identidade,
+// sem replicar a marca oficial (segurança jurídica).
+const wordmarkConfig: Record<string, { text: string; weight: number; spacing: string; style?: string }> = {
+  'SulAmérica': { text: 'SulAmérica', weight: 700, spacing: '-0.02em' },
+  'Amil': { text: 'Amil', weight: 800, spacing: '-0.03em' },
+  'Bradesco': { text: 'Bradesco', weight: 700, spacing: '-0.025em' },
+  'Prevent Senior': { text: 'Prevent Senior', weight: 500, spacing: '-0.005em' },
+  'Intermédica': { text: 'Intermédica', weight: 600, spacing: '-0.01em' },
+  'Petrobras': { text: 'PETROBRAS', weight: 800, spacing: '0.02em' },
+};
+
+const config = wordmarkConfig[name] || { text: name, weight: 700, spacing: '-0.015em' };
+---
+
+<div class="client-logo" title={name} aria-label={`Cliente: ${name}`}>
+  <span
+    class="client-wordmark"
+    style={`font-weight: ${config.weight}; letter-spacing: ${config.spacing};`}
+  >
+    {config.text}
+  </span>
+</div>
+
+<style>
+  .client-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 6px;
+    color: var(--navy);
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+    filter: grayscale(100%);
+  }
+
+  .client-logo:hover {
+    opacity: 0.9;
+  }
+
+  .client-wordmark {
+    font-family: var(--sans);
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1;
+    color: inherit;
+    white-space: nowrap;
+  }
+</style>

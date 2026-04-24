@@ -1,0 +1,333 @@
+---
+// ============================================================
+// TESTIMONIALS — Depoimentos reais do Google Meu Negócio da Savior
+// 3 reviews de clientes verificados (Bruno, Mara, Beatriz)
+// Fonte linkada: perfil público no Google
+// ============================================================
+
+import { TESTIMONIALS, GOOGLE_BUSINESS } from '../data/savior';
+---
+
+<section class="testimonials">
+  <div class="wrap">
+    <div class="tm-head">
+      <span class="eyebrow">Depoimentos reais do Google</span>
+      <h2 class="tm-h2">O que as famílias contam <em>depois que a gente sai</em></h2>
+      <p class="tm-intro">
+        Reviews reais publicados no Google por famílias que passaram por remoção em casa,
+        transporte de idoso ou procedimento médico fora do hospital. Ninguém pediu pra escrever.
+      </p>
+    </div>
+
+    <div class="tm-grid">
+      {TESTIMONIALS.map((t) => (
+        <article class="tm-card">
+          <div class="tm-card-head">
+            {t.photo ? (
+              <img
+                class="tm-photo"
+                src={t.photo}
+                alt={`Foto de ${t.name}`}
+                width="44"
+                height="44"
+                loading="lazy"
+              />
+            ) : (
+              <div class="tm-avatar" style={`background: ${t.color};`}>
+                <span>{t.initials}</span>
+              </div>
+            )}
+            <div class="tm-meta">
+              <div class="tm-name">{t.name}</div>
+              <div class="tm-context">{t.context}</div>
+            </div>
+            <svg class="tm-stars" viewBox="0 0 100 20" aria-label="5 estrelas">
+              <g fill="#F5A623">
+                <polygon points="10,2 12.5,7.5 18,8 14,12 15,18 10,15 5,18 6,12 2,8 7.5,7.5" />
+                <polygon points="30,2 32.5,7.5 38,8 34,12 35,18 30,15 25,18 26,12 22,8 27.5,7.5" />
+                <polygon points="50,2 52.5,7.5 58,8 54,12 55,18 50,15 45,18 46,12 42,8 47.5,7.5" />
+                <polygon points="70,2 72.5,7.5 78,8 74,12 75,18 70,15 65,18 66,12 62,8 67.5,7.5" />
+                <polygon points="90,2 92.5,7.5 98,8 94,12 95,18 90,15 85,18 86,12 82,8 87.5,7.5" />
+              </g>
+            </svg>
+          </div>
+          <p class="tm-text">{t.text}</p>
+        </article>
+      ))}
+    </div>
+
+    <!-- Rodapé com dados do Google Business Profile + link real -->
+    <div class="tm-footer">
+      <div class="tm-footer-left">
+        <svg class="tm-google-g" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <div class="tm-footer-meta">
+          <div class="tm-footer-title">
+            <span class="tm-footer-rating">{GOOGLE_BUSINESS.rating.toFixed(1).replace('.', ',')}</span>
+            <span class="tm-footer-stars-mini" aria-hidden="true">★★★★★</span>
+            <span class="tm-footer-count">{GOOGLE_BUSINESS.reviewCount} avaliações</span>
+          </div>
+          <div class="tm-footer-source">
+            Fonte: avaliações públicas no Google Meu Negócio da <strong>SAVIOR Medical Service</strong>
+          </div>
+        </div>
+      </div>
+      <a
+        class="tm-footer-cta"
+        href={GOOGLE_BUSINESS.url}
+        target="_blank"
+        rel="noopener"
+        data-event="external_click"
+        data-event-category="social_proof"
+        data-event-label="google-business-profile"
+      >
+        Ver todas no Google
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 17L17 7M7 7h10v10"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: var(--space-block) 0;
+    background: white;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .tm-head {
+    max-width: 760px;
+    margin-bottom: 48px;
+  }
+
+  .tm-head .eyebrow {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .tm-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .tm-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .tm-intro {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+
+  .tm-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .tm-card {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 28px;
+    border: 1px solid var(--cream-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .tm-card-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .tm-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+
+  .tm-photo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tm-meta { min-width: 0; }
+
+  .tm-name {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .tm-context {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  .tm-stars {
+    width: 56px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .tm-text {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+
+  /* ============ Footer Google ============ */
+  .tm-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 24px;
+    background: var(--cream);
+    border-radius: 6px;
+    border: 1px solid var(--cream-dark);
+  }
+
+  .tm-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .tm-google-g {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .tm-footer-meta {
+    min-width: 0;
+  }
+
+  .tm-footer-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .tm-footer-rating {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    letter-spacing: -0.015em;
+  }
+
+  .tm-footer-stars-mini {
+    color: #F5A623;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .tm-footer-count {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  .tm-footer-source {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  .tm-footer-source strong {
+    font-weight: 600;
+  }
+
+  .tm-footer-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid var(--navy);
+    border-radius: 5px;
+    color: var(--navy);
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .tm-footer-cta:hover {
+    background: var(--navy);
+    color: white;
+  }
+
+  .tm-footer-cta svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media (max-width: 960px) {
+    .tm-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .tm-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tm-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .tm-footer-cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
