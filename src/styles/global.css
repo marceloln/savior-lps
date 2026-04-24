@@ -3,17 +3,39 @@
    Identidade visual aprovada em abril 2026
    ============================================================ */
 
-/* ============ Self-hosted fonts via @fontsource (Onda 2 auditoria) ============ */
-/* Elimina dependência do Google Fonts externo */
-/* Inter: weights usados (400, 500, 600, 700, 800) — subset latin */
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
-@import '@fontsource/inter/800.css';
-/* IBM Plex Mono: weights usados (400, 500) */
+/* ============ Self-hosted fonts (Onda 3 perf) ============ */
+/* @import deve vir antes de qualquer @font-face (regra CSS) */
+
+/* IBM Plex Mono — só weight 400 (eyebrows pequenos, 400≈500 visualmente) */
 @import '@fontsource/ibm-plex-mono/400.css';
-@import '@fontsource/ibm-plex-mono/500.css';
+
+/* Inter Variable — @font-face manual com caminho estável em /public/fonts/.
+   Benefícios vs 5 imports individuais:
+   - 1 arquivo (48 KB) vs 5 × 25 KB = 125 KB
+   - URL estável → preload no <head> funciona sem hash desconhecido
+   - font-display: swap → texto visível imediatamente com system font fallback
+   - Cobre pesos 100–900 com interpolação variável */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-variable-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+/* Garante font-display: swap no IBM Plex Mono.
+   O @fontsource padrão usa font-display: block (FOIT).
+   Este @font-face override força swap sem alterar o arquivo do pacote. */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('IBM Plex Mono'), local('IBMPlexMono');
+}
 
 :root {
   /* Paleta — navy dominante */
@@ -39,7 +61,8 @@
   --alert: #D9534F;
 
   /* Tipografia */
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* @fontsource-variable/inter expõe a família como 'Inter Variable' */
+  --sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Escala tipográfica */

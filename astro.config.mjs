@@ -19,8 +19,10 @@ export default defineConfig({
   ],
 
   build: {
-    // Inlinar CSS pequeno (< 4KB) no HTML — elimina request extra
-    inlineStylesheets: 'auto',
+    // Inlinar TODO o CSS no HTML — elimina o request extra de CSS render-blocking.
+    // O arquivo CSS da página tinha 11.1 KiB e bloqueava o render por 150ms.
+    // Para LP estática single-page, inline é preferível: sem round-trip, sem FOUC.
+    inlineStylesheets: 'always',
   },
 
   compressHTML: true,

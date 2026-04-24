@@ -86,8 +86,20 @@ const absoluteOgImage = ogImage.startsWith('http')
     <meta name="last-modified" content={dateModified} />
     <meta http-equiv="last-modified" content={dateModified} />
 
-    <!-- ============ Fontes self-hospedadas via @fontsource (Onda 2) ============ -->
-    <!-- Inter + IBM Plex Mono importados direto no global.css, zero request externo -->
+    <!-- ============ Fontes — preload crítico (Onda 3 perf) ============ -->
+    <!-- Inter Variable: arquivo único para todos os pesos — preload inicia download -->
+    <!-- com o HTML, sem esperar o CSS ser parseado (elimina cadeia de 593ms).   -->
+    <!-- crossorigin obrigatório para fontes self-hosted via fetch interno.       -->
+    <!-- IBM Plex Mono não é preloaded — é decorativo (eyebrows), não é LCP.    -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/fonts/inter-variable-latin.woff2"
+    />
+    <!-- Fallback: system font stack garante texto visível antes da fonte carregar -->
+    <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
     <!-- ============ Schema.org JSON-LD ============ -->
     {schema && <script type="application/ld+json" set:html={schema} />}
