@@ -20,7 +20,6 @@ import Testimonials from '../components/Testimonials.astro';
 import Payment from '../components/Payment.astro';
 import FAQ from '../components/FAQ.astro';
 import FinalCTA from '../components/FinalCTA.astro';
-import StickyHeader from '../components/StickyHeader.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
 
@@ -338,9 +337,6 @@ const waCampaign = 'rj-emergencia';
 
   <Footer />
 
-  <!-- Sticky header — aparece após 80px de scroll — SAVIOR-01 -->
-  <StickyHeader waCampaign={waCampaign} />
-
-  <!-- WhatsApp flutuante mobile -->
+  <!-- WhatsApp flutuante — desktop + mobile -->
   <FloatingWhatsApp waCampaign={waCampaign} />
 </Base>
