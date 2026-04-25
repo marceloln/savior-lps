@@ -325,6 +325,23 @@ strong { font-weight: 600; }
   border: 0;
 }
 
+/* ============ Brand dot pulse ============ */
+/* Ponto central do símbolo Savior — pulsa como sinal de vida */
+.brand-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brand-dot-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes brand-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.65); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-dot { animation: none; }
+}
+
 /* ============ Impressão ============ */
 @media print {
   .no-print { display: none !important; }
