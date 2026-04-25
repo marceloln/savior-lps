@@ -7,6 +7,7 @@
 
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
 import SocialProof from '../components/SocialProof.astro';
 import PriceTable from '../components/PriceTable.astro';
 import CTAInline from '../components/CTAInline.astro';
@@ -19,6 +20,7 @@ import Testimonials from '../components/Testimonials.astro';
 import Payment from '../components/Payment.astro';
 import FAQ from '../components/FAQ.astro';
 import FinalCTA from '../components/FinalCTA.astro';
+import StickyHeader from '../components/StickyHeader.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
 
@@ -267,10 +269,19 @@ const waCampaign = 'rj-emergencia';
       waCampaign={waCampaign}
     />
 
-    <!-- Bloco 2 — Prova social -->
+    <!-- Bloco 2 — Como funciona (3 passos) — SAVIOR-08 -->
+    <HowItWorks />
+
+    <!-- Bloco 3 — Prova social -->
     <SocialProof />
 
-    <!-- Bloco 3 — Preços -->
+    <!-- Bloco 4 — A Savior não é (educacional) — sobe: SAVIOR-06 -->
+    <NotWhat />
+
+    <!-- Bloco 5 — Urgência clínica (fato médico AHA) — sobe: SAVIOR-06 -->
+    <Urgency waCampaign={waCampaign} />
+
+    <!-- Bloco 6 — Preços -->
     <PriceTable />
 
     <!-- CTA intermediário 1 — após preços -->
@@ -283,19 +294,16 @@ const waCampaign = 'rj-emergencia';
       location="after-prices"
     />
 
-    <!-- Bloco 5 — Comparação -->
+    <!-- Bloco 7 — Comparação -->
     <Comparison />
 
-    <!-- Bloco 6 — Depoimentos reais -->
+    <!-- Bloco 8 — Depoimentos reais -->
     <Testimonials />
 
     <!-- Faixa visual: frota em foto -->
     <FleetBand />
 
-    <!-- Bloco 7 — Urgência -->
-    <Urgency waCampaign={waCampaign} />
-
-    <!-- Bloco 8 — Serviços detalhados -->
+    <!-- Bloco 9 — Serviços detalhados -->
     <ServicesDetail />
 
     <!-- CTA intermediário 2 — após serviços -->
@@ -308,11 +316,8 @@ const waCampaign = 'rj-emergencia';
       location="after-services"
     />
 
-    <!-- Bloco 9 — Pagamento -->
+    <!-- Bloco 10 — Pagamento -->
     <Payment />
-
-    <!-- Bloco 10 — A Savior não é (educacional) -->
-    <NotWhat />
 
     <!-- Bloco 11 — FAQ -->
     <FAQ items={faqItems} />
@@ -332,6 +337,9 @@ const waCampaign = 'rj-emergencia';
   </main>
 
   <Footer />
+
+  <!-- Sticky header — aparece após 80px de scroll — SAVIOR-01 -->
+  <StickyHeader waCampaign={waCampaign} />
 
   <!-- WhatsApp flutuante mobile -->
   <FloatingWhatsApp waCampaign={waCampaign} />
