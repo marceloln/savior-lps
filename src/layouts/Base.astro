@@ -98,6 +98,14 @@ const absoluteOgImage = ogImage.startsWith('http')
       crossorigin
       href="/fonts/inter-variable-latin.woff2"
     />
+    <!-- IBM Plex Mono — font-display:optional, preload garante sem FOIT no eyebrow -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/fonts/ibm-plex-mono-latin.woff2"
+    />
     <!-- Fallback: system font stack garante texto visível antes da fonte carregar -->
     <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
@@ -109,6 +117,7 @@ const absoluteOgImage = ogImage.startsWith('http')
       imagesrcset="/img/hero/hero-poster-mobile.webp"
       imagesizes="100vw"
       media="(max-width: 720px)"
+      fetchpriority="high"
     />
     <!-- Poster desktop — preload para viewport acima de 720px -->
     <link
@@ -116,6 +125,7 @@ const absoluteOgImage = ogImage.startsWith('http')
       as="image"
       href="/img/hero/hero-poster.webp"
       media="(min-width: 721px)"
+      fetchpriority="high"
     />
 
     <!-- ============ Schema.org JSON-LD ============ -->

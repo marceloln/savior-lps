@@ -130,7 +130,7 @@ const schema = JSON.stringify({
         bestRating: '5',
         worstRating: '1',
       },
-      medicalSpecialty: ['EmergencyMedicine', 'IntensiveCareMedicine'],
+      medicalSpecialty: 'https://schema.org/Emergency',
       sameAs: [
         'https://share.google/GZ7m1GMno4ibRxgYA',
         'https://www.instagram.com/saviormedicalservice/',
@@ -223,7 +223,7 @@ const schema = JSON.stringify({
       },
       speakable: {
         '@type': 'SpeakableSpecification',
-        cssSelector: ['.hero-h1', '.prices-h2', '.urg-h2', '.faq-q'],
+        cssSelector: '.hero-h1, .prices-h2, .urg-h2, .faq-q',
       },
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -244,7 +244,6 @@ const schema = JSON.stringify({
         acceptedAnswer: {
           '@type': 'Answer',
           text: item.a.replace(/<[^>]*>/g, ''),
-          author: { '@id': `${canonical}#organization` },
         },
       })),
     },

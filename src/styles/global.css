@@ -6,8 +6,19 @@
 /* ============ Self-hosted fonts (Onda 3 perf) ============ */
 /* @import deve vir antes de qualquer @font-face (regra CSS) */
 
-/* IBM Plex Mono — só weight 400 (eyebrows pequenos, 400≈500 visualmente) */
-@import '@fontsource/ibm-plex-mono/400.css';
+/* IBM Plex Mono — @font-face manual com caminho estável em /public/fonts/.
+   Evita que Astro emita /_astro/ibm-plex-....hash.woff2, eliminando o último
+   nó na árvore de dependência de rede detectado pelo Lighthouse. */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: optional;
+  src: url('/fonts/ibm-plex-mono-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
 
 /* Inter Variable — @font-face manual com caminho estável em /public/fonts/.
    Benefícios vs 5 imports individuais:
@@ -26,16 +37,19 @@
     U+FEFF, U+FFFD;
 }
 
-/* Garante font-display: swap no IBM Plex Mono.
-   O @fontsource padrão usa font-display: block (FOIT).
-   Este @font-face override força swap sem alterar o arquivo do pacote. */
+/* Fallback para Inter Variable com métricas ajustadas.
+   Aplica ascent/descent/size-adjust ao Arial para que o swap seja
+   visualmente imperceptível — Lighthouse não captura mudança de layout.
+   Valores derivados das métricas UPM do Inter Variable (ascent 1984, descent 494, UPM 2048). */
 @font-face {
-  font-family: 'IBM Plex Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('IBM Plex Mono'), local('IBMPlexMono');
+  font-family: 'Inter Variable Fallback';
+  src: local('ArialMT'), local('Arial'), local('Helvetica Neue');
+  ascent-override: 96.88%;
+  descent-override: 24.12%;
+  line-gap-override: 0%;
+  size-adjust: 101%;
 }
+
 
 :root {
   /* Paleta — navy dominante */
@@ -46,7 +60,7 @@
 
   /* Acento — verde */
   --green: #00B87C;
-  --green-dark: #00A06C;
+  --green-dark: #006E49; /* era #00A06C (3.1:1 em branco) → #006E49 = 5.7:1 ✓ WCAG AA */
   --green-bright: #1FD29A;
 
   /* Neutras */
@@ -62,7 +76,7 @@
 
   /* Tipografia */
   /* @fontsource-variable/inter expõe a família como 'Inter Variable' */
-  --sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sans: 'Inter Variable', 'Inter Variable Fallback', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Escala tipográfica */
