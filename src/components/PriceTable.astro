@@ -76,6 +76,7 @@
     <p class="price-note">
       Valores de referência. O valor final depende de origem, destino e equipamentos específicos, e é combinado na confirmação do chamado, antes da equipe sair.
       Se a espera na origem ou destino passar de 1 hora, a gente te avisa antes da cobrança adicional começar a contar (R$ 150 por hora).
+      <span class="price-updated">Preços atualizados em abril de 2026.</span>
     </p>
   </div>
 </section>
@@ -253,6 +254,16 @@
     line-height: 1.55;
     color: var(--navy); /* era var(--gray) → 4.1:1 falha; navy ✓ */
     max-width: 780px;
+  }
+
+  .price-updated {
+    display: inline-block;
+    margin-left: 4px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--green-dark);
+    opacity: 0.8;
   }
 
   @media (max-width: 960px) {

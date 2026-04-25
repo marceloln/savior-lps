@@ -1,7 +1,6 @@
 ---
 // ============================================================
-// FOOTER — rodapé institucional minimalista
-// Sem menu de navegação — LP é funil fechado
+// FOOTER — rodapé com contatos completos + cobertura
 // ============================================================
 
 import { CONTACT_RJ, BRAND } from '../data/savior';
@@ -9,104 +8,220 @@ import { CONTACT_RJ, BRAND } from '../data/savior';
 
 <footer class="footer">
   <div class="wrap">
-    <div class="ft-grid">
+
+    <!-- Topo: marca + contatos em grid -->
+    <div class="ft-top">
+
+      <!-- Marca -->
       <div class="ft-brand">
         <svg class="ft-symbol" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="36" fill="none" stroke="#1FD29A" stroke-width="6" />
           <circle class="brand-dot" cx="50" cy="50" r="12" fill="#1FD29A" />
         </svg>
-        <span class="ft-word">Savior</span>
+        <div>
+          <span class="ft-word">Savior</span>
+          <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
+        </div>
       </div>
 
-      <div class="ft-info">
-        <p><strong>{BRAND.fullName}</strong></p>
-        <p>Desde {BRAND.yearsFounded} · Rio de Janeiro e São Paulo</p>
-        <p>Central 24h: <a href={`tel:${CONTACT_RJ.phoneHref}`}>{CONTACT_RJ.phone}</a></p>
-        <p>
-          <a href={`mailto:${CONTACT_RJ.email}`}>{CONTACT_RJ.email}</a>
-        </p>
-      </div>
+      <!-- Contatos -->
+      <div class="ft-contacts">
 
-      <div class="ft-legal">
-        <p>CNES: [número] · Responsável técnico: [médico]</p>
-        <p class="ft-copy">© {new Date().getFullYear()} Savior Medical Service. Todos os direitos reservados.</p>
+        <div class="ft-contact-block">
+          <span class="ft-contact-label">Emergência 24h</span>
+          <a href={`tel:${CONTACT_RJ.phoneHref}`} class="ft-contact-main">{CONTACT_RJ.phone}</a>
+          <a href="tel:+5521980358200" class="ft-contact-secondary">(21) 98035-8200</a>
+        </div>
+
+        <div class="ft-contact-block">
+          <span class="ft-contact-label">Telefone geral</span>
+          <a href="tel:+552131713000" class="ft-contact-secondary">(21) 3171-3000</a>
+        </div>
+
+        <div class="ft-contact-block">
+          <span class="ft-contact-label">E-mail</span>
+          <a href={`mailto:${CONTACT_RJ.email}`} class="ft-contact-secondary">{CONTACT_RJ.email}</a>
+          <a href="mailto:recrutamento@savior.com.br" class="ft-contact-secondary">recrutamento@savior.com.br</a>
+        </div>
+
+        <div class="ft-contact-block">
+          <span class="ft-contact-label">Endereço</span>
+          <address class="ft-address">
+            R. Gen. Padilha, 73 · São Cristóvão<br />
+            Rio de Janeiro · RJ · 20920-390
+          </address>
+        </div>
+
       </div>
     </div>
+
+    <!-- Rodapé: cobertura + legal -->
+    <div class="ft-bottom">
+      <p class="ft-coverage">
+        <strong>Cobertura:</strong> Zona Sul · Zona Norte · Zona Oeste · Centro · Niterói · São Gonçalo · Duque de Caxias · Baixada Fluminense · Região dos Lagos
+      </p>
+      <p class="ft-legal">
+        CNES: [número] · Responsável técnico: [médico] ·
+        © {new Date().getFullYear()} Savior Medical Service. Todos os direitos reservados.
+      </p>
+    </div>
+
   </div>
 </footer>
 
 <style>
   .footer {
     background: #050F1C;
-    color: rgba(255, 255, 255, 0.65);
-    padding: 56px 0 40px;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 56px 0 36px;
     font-size: 13.5px;
     line-height: 1.65;
   }
 
-  .ft-grid {
+  /* ============ Topo ============ */
+  .ft-top {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 48px;
+    grid-template-columns: auto 1fr;
+    gap: 64px;
     align-items: start;
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* ---- Marca ---- */
   .ft-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
 
   .ft-symbol {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
   }
 
   .ft-word {
+    display: block;
     font-family: var(--sans);
     font-weight: 800;
-    font-size: 18px;
+    font-size: 20px;
     letter-spacing: -0.035em;
     color: white;
-  }
-
-  .ft-info p,
-  .ft-legal p {
+    line-height: 1;
     margin-bottom: 4px;
   }
 
-  .ft-info strong {
-    color: white;
-    font-weight: 600;
+  .ft-tagline {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    opacity: 0.8;
   }
 
-  .ft-info a {
+  /* ---- Contatos ---- */
+  .ft-contacts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .ft-contact-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .ft-contact-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
     color: var(--green-bright);
+    opacity: 0.75;
+    margin-bottom: 4px;
+  }
+
+  .ft-contact-main {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
     transition: color 0.15s;
   }
 
-  .ft-info a:hover {
+  .ft-contact-main:hover {
+    color: var(--green-bright);
+  }
+
+  .ft-contact-secondary {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.15s;
+    font-size: 13px;
+  }
+
+  .ft-contact-secondary:hover {
     color: white;
   }
 
-  .ft-legal {
-    text-align: right;
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.45);
+  .ft-address {
+    color: rgba(255, 255, 255, 0.6);
+    font-style: normal;
+    font-size: 13px;
+    line-height: 1.55;
   }
 
-  .ft-copy {
-    margin-top: 12px;
+  /* ============ Rodapé ============ */
+  .ft-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ft-coverage {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.55;
+  }
+
+  .ft-coverage strong {
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+  }
+
+  .ft-legal {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* ============ Mobile ============ */
+  @media (max-width: 960px) {
+    .ft-contacts {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
   }
 
   @media (max-width: 720px) {
-    .ft-grid {
+    .ft-top {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 36px;
     }
 
-    .ft-legal {
-      text-align: left;
+    .ft-contacts {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 440px) {
+    .ft-contacts {
+      grid-template-columns: 1fr;
     }
   }
 </style>
