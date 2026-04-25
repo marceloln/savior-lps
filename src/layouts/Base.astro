@@ -43,7 +43,7 @@ const absoluteOgImage = ogImage.startsWith('http')
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta http-equiv="content-language" content="pt-BR" />
+    <!-- lang="pt-BR" está no <html> — content-language meta é obsoleto, removido -->
     <meta name="author" content="Savior Medical Service" />
     <meta name="geo.region" content="BR-RJ" />
     <meta name="geo.placename" content="Rio de Janeiro" />
@@ -84,7 +84,6 @@ const absoluteOgImage = ogImage.startsWith('http')
 
     <!-- ============ Data de modificação (AEO/LLMO) ============ -->
     <meta name="last-modified" content={dateModified} />
-    <meta http-equiv="last-modified" content={dateModified} />
 
     <!-- ============ Fontes — preload crítico (Onda 3 perf) ============ -->
     <!-- Inter Variable: arquivo único para todos os pesos — preload inicia download -->
@@ -114,7 +113,7 @@ const absoluteOgImage = ogImage.startsWith('http')
     <link
       rel="preload"
       as="image"
-      imagesrcset="/img/hero/hero-poster-mobile.webp"
+      imagesrcset="/img/hero/hero-poster-mobile.webp 720w"
       imagesizes="100vw"
       media="(max-width: 720px)"
       fetchpriority="high"

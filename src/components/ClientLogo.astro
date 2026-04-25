@@ -26,7 +26,7 @@ const wordmarkConfig: Record<string, { text: string; weight: number; spacing: st
 const config = wordmarkConfig[name] || { text: name, weight: 700, spacing: '-0.015em' };
 ---
 
-<div class="client-logo" title={name} aria-label={`Cliente: ${name}`}>
+<div class="client-logo" role="img" title={name} aria-label={`Cliente: ${name}`}>
   <span
     class="client-wordmark"
     style={`font-weight: ${config.weight}; letter-spacing: ${config.spacing};`}
