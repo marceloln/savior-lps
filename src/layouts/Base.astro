@@ -101,6 +101,23 @@ const absoluteOgImage = ogImage.startsWith('http')
     <!-- Fallback: system font stack garante texto visível antes da fonte carregar -->
     <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
+    <!-- ============ Hero poster — preload LCP (Onda 3 perf) ============ -->
+    <!-- Poster mobile é o LCP em 375px — preload antecipa download antes do CSS  -->
+    <link
+      rel="preload"
+      as="image"
+      imagesrcset="/img/hero/hero-poster-mobile.webp"
+      imagesizes="100vw"
+      media="(max-width: 720px)"
+    />
+    <!-- Poster desktop — preload para viewport acima de 720px -->
+    <link
+      rel="preload"
+      as="image"
+      href="/img/hero/hero-poster.webp"
+      media="(min-width: 721px)"
+    />
+
     <!-- ============ Schema.org JSON-LD ============ -->
     {schema && <script type="application/ld+json" set:html={schema} />}
 
