@@ -33,7 +33,7 @@ const services = [
     <div class="services-head">
       <span class="eyebrow">Serviços atendidos</span>
       <h2 class="services-h2">
-        Remoção, transferência, emergência ou exame. <em>A gente opera os quatro</em>
+        Remoção de paciente, transferência hospitalar e emergência no RJ
       </h2>
     </div>
 
@@ -90,6 +90,10 @@ const services = [
         </article>
       ))}
     </div>
+
+    <p class="services-coverage">
+      <strong>Cobertura:</strong> Zona Sul (Copacabana, Ipanema, Leblon, Botafogo, Flamengo) · Zona Norte (Tijuca, Méier, Vila Isabel, Maracanã) · Zona Oeste (Barra da Tijuca, Jacarepaguá, Campo Grande) · Centro · Niterói · São Gonçalo · Duque de Caxias · Nova Iguaçu · Baixada Fluminense · Região dos Lagos
+    </p>
   </div>
 </section>
 
@@ -174,6 +178,22 @@ const services = [
   .service-desc {
     font-size: 15px;
     line-height: 1.65;
+    color: var(--navy);
+  }
+
+  .services-coverage {
+    margin-top: 36px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--navy);
+    opacity: 0.65;
+    padding-top: 24px;
+    border-top: 1px solid var(--cream-dark);
+  }
+
+  .services-coverage strong {
+    opacity: 1;
+    font-weight: 600;
     color: var(--navy);
   }
 

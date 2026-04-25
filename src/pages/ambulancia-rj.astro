@@ -26,7 +26,7 @@ import Footer from '../components/Footer.astro';
 // ============ SEO ============
 const title = 'Ambulância Particular RJ | UTI 24 Horas | Savior Medical Service';
 const description =
-  'Ambulância particular no RJ com UTI completa. Médico e enfermeiro a bordo. Chegamos em 18 min na Zona Sul. Central 24h. Ligue: (21) 3171-3030.';
+  'Ambulância particular no Rio de Janeiro com UTI completa. Médico + enfermeiro. Atendimento 24h. Básica R$1.200, UTI R$2.200. Pix e cartão em 3x. Ligue: (21) 3171-3030.';
 const canonical = 'https://www.savior.com.br/ambulancia-rj';
 
 // ============ FAQ — items ============
@@ -58,6 +58,18 @@ const faqItems = [
   {
     q: 'Qual a diferença entre UTI e básica?',
     a: 'A <strong>UTI</strong> tem médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador e toda medicação de emergência. A <strong>básica</strong> tem enfermeiro, maca articulada, oxigênio e kit de primeiros socorros. A UTI é indicada para pacientes instáveis, emergências e pós-operatórios.',
+  },
+  {
+    q: 'Como chamar ambulância particular no Rio de Janeiro?',
+    a: '<strong>1.</strong> Ligue ou mande mensagem no WhatsApp — atendemos em menos de 1 minuto, 24 horas por dia. <strong>2.</strong> Conta o que está acontecendo: origem, destino e condição do paciente — a gente indica o tipo certo de ambulância. <strong>3.</strong> Confirmamos o valor na hora, antes de sair. <strong>4.</strong> A equipe parte em até 4 minutos.',
+  },
+  {
+    q: 'Vocês atendem plano de saúde ou convênio?',
+    a: 'Atendemos particular (<strong>Pix e cartão</strong>) e convênios selecionados, incluindo Prevent Senior e Unimed. A cobertura depende do plano e da operadora. Ligue pra gente verificar se o seu convênio é aceito antes de confirmar o chamado.',
+  },
+  {
+    q: 'Ambulância particular é mais rápida que o SAMU?',
+    a: 'Em tempo de chegada, sim — na maioria dos casos. O SAMU tem tempo médio de 40 a 90 minutos no Rio de Janeiro. A Savior chega em <strong>18 minutos na Zona Sul</strong>, 25 minutos na Zona Norte/Oeste e 35 minutos em Niterói e Baixada. Além disso, a UTI Savior tem médico a bordo em todos os atendimentos.',
   },
 ];
 
@@ -123,6 +135,15 @@ const schema = JSON.stringify({
         { '@type': 'City', name: 'Duque de Caxias' },
         { '@type': 'City', name: 'Nova Iguaçu' },
         { '@type': 'City', name: 'São Paulo', '@id': 'https://www.wikidata.org/wiki/Q174' },
+        { '@type': 'AdministrativeArea', name: 'Copacabana' },
+        { '@type': 'AdministrativeArea', name: 'Ipanema' },
+        { '@type': 'AdministrativeArea', name: 'Leblon' },
+        { '@type': 'AdministrativeArea', name: 'Botafogo' },
+        { '@type': 'AdministrativeArea', name: 'Flamengo' },
+        { '@type': 'AdministrativeArea', name: 'Barra da Tijuca' },
+        { '@type': 'AdministrativeArea', name: 'Tijuca' },
+        { '@type': 'AdministrativeArea', name: 'Méier' },
+        { '@type': 'AdministrativeArea', name: 'Centro' },
       ],
       aggregateRating: {
         '@type': 'AggregateRating',
