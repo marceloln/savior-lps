@@ -330,12 +330,12 @@ strong { font-weight: 600; }
 .brand-dot {
   transform-box: fill-box;
   transform-origin: center;
-  animation: brand-dot-pulse 2.5s ease-in-out infinite;
+  animation: brand-dot-pulse 4s ease-in-out infinite;
 }
 
 @keyframes brand-dot-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.65); }
+  50%       { opacity: 0.65; transform: scale(0.8); }
 }
 
 @media (prefers-reduced-motion: reduce) {
