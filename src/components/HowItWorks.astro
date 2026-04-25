@@ -213,15 +213,45 @@
   @media (max-width: 860px) {
     .how-steps {
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     .step {
-      padding: 28px 24px 32px;
+      padding: 22px 20px 24px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 0;
     }
 
     .step-icon {
-      margin-bottom: 20px;
+      margin-bottom: 0;
+      margin-right: 16px;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .step-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .step-meta {
+      flex: 1;
+      margin-bottom: 10px;
+      align-self: center;
+    }
+
+    .step-title {
+      width: 100%;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      width: 100%;
+      font-size: 14.5px;
     }
   }
 </style>

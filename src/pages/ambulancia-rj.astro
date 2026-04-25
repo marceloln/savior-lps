@@ -268,19 +268,10 @@ const waCampaign = 'rj-emergencia';
       waCampaign={waCampaign}
     />
 
-    <!-- Bloco 2 — Como funciona (3 passos) — SAVIOR-08 -->
-    <HowItWorks />
-
-    <!-- Bloco 3 — Prova social -->
+    <!-- Bloco 2 — Prova social — SAVIOR-B1: sobe direto após Hero -->
     <SocialProof />
 
-    <!-- Bloco 4 — A Savior não é (educacional) — sobe: SAVIOR-06 -->
-    <NotWhat />
-
-    <!-- Bloco 5 — Urgência clínica (fato médico AHA) — sobe: SAVIOR-06 -->
-    <Urgency waCampaign={waCampaign} />
-
-    <!-- Bloco 6 — Preços -->
+    <!-- Bloco 3 — Preços — SAVIOR-B1: preço antes de processo -->
     <PriceTable />
 
     <!-- CTA intermediário 1 — após preços -->
@@ -293,8 +284,17 @@ const waCampaign = 'rj-emergencia';
       location="after-prices"
     />
 
-    <!-- Faixa visual: frota em foto — entra no "bloco escuro" antes do comparativo -->
+    <!-- Bloco 4 — Como funciona — SAVIOR-B1: após preço, processo faz mais sentido -->
+    <HowItWorks />
+
+    <!-- Bloco 5 — A Savior não é (educacional) -->
+    <NotWhat />
+
+    <!-- Faixa visual: frota em foto — transição para bloco escuro -->
     <FleetBand />
+
+    <!-- Bloco 6 — Urgência clínica — SAVIOR-B1: perto do comparativo, reforça decisão -->
+    <Urgency waCampaign={waCampaign} />
 
     <!-- Bloco 7 — Comparação -->
     <Comparison />

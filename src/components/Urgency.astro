@@ -30,6 +30,12 @@ const waHref = whatsappUrl(
         a equipe sai em até 4 minutos depois que a gente confirma o valor no WhatsApp.
       </p>
 
+      <!-- Stat visual grande — ancora emocional antes do dado médico -->
+      <div class="urg-stat" aria-hidden="true">
+        <span class="urg-stat-n">60<span class="urg-stat-pct">%</span></span>
+        <span class="urg-stat-label">dos óbitos por infarto ocorrem na primeira hora de sintomas</span>
+      </div>
+
       <!-- Fato médico com fonte -->
       <div class="urg-fact">
         <div class="urg-fact-number">1ª hora</div>
@@ -123,6 +129,38 @@ const waHref = whatsappUrl(
     font-weight: 600;
   }
 
+  .urg-stat {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+
+  .urg-stat-n {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(72px, 10vw, 120px);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--green-bright);
+    flex-shrink: 0;
+  }
+
+  .urg-stat-pct {
+    font-size: 0.5em;
+    vertical-align: super;
+    letter-spacing: -0.02em;
+  }
+
+  .urg-stat-label {
+    font-family: var(--sans);
+    font-size: clamp(17px, 2vw, 22px);
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 500;
+    max-width: 320px;
+  }
+
   .urg-fact {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -210,6 +248,12 @@ const waHref = whatsappUrl(
   }
 
   @media (max-width: 720px) {
+    .urg-stat {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
     .urg-times {
       grid-template-columns: 1fr;
     }
