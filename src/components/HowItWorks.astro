@@ -1,7 +1,7 @@
 ---
 // ============================================================
-// HOW IT WORKS — Bloco 3
-// 3 passos com sujeito ativo em cada etapa
+// HOW IT WORKS v2 — copy humanizado, ícones, subtítulo
+// Mata o bloqueio "não sei como funciona ambulância particular"
 // ============================================================
 ---
 
@@ -9,39 +9,78 @@
   <div class="wrap">
     <div class="how-head">
       <span class="eyebrow">Como funciona</span>
-      <h2 class="how-h2">Três passos. Sem ligação enrolada.</h2>
+      <h2 class="how-h2">Do chamado à ambulância na porta.</h2>
+      <p class="how-sub">
+        Você não precisa ter nada resolvido na cabeça. Só conta o que está acontecendo —
+        a gente ouve, indica o que faz sentido e confirma tudo antes de sair.
+      </p>
     </div>
 
     <ol class="how-steps">
+
+      <!-- Passo 1 -->
       <li class="step">
-        <div class="step-num">01</div>
-        <div class="step-content">
-          <h3 class="step-title">Você chama.</h3>
-          <p class="step-desc">
-            WhatsApp ou telefone. <strong>Atendemos em menos de 1 minuto</strong>, 24h por dia.
-          </p>
+        <div class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
         </div>
+        <div class="step-meta">
+          <span class="step-num">01</span>
+          <span class="step-time">atendemos em &lt; 1 min</span>
+        </div>
+        <h3 class="step-title">Você chama.</h3>
+        <p class="step-desc">
+          WhatsApp ou telefone, 24h por dia.
+          <strong>Não precisa saber o tipo de ambulância</strong> —
+          só conta o que está acontecendo. A gente ouve e guia.
+        </p>
       </li>
 
+      <!-- Passo 2 -->
       <li class="step">
-        <div class="step-num">02</div>
-        <div class="step-content">
-          <h3 class="step-title">A gente confirma.</h3>
-          <p class="step-desc">
-            Tipo de ambulância, origem, destino e valor. <strong>Tudo na mesma conversa</strong>, em 2 minutos.
-          </p>
+        <div class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <polyline points="9 11 12 14 16 9"/>
+          </svg>
         </div>
+        <div class="step-meta">
+          <span class="step-num">02</span>
+          <span class="step-time">tudo confirmado em 2 min</span>
+        </div>
+        <h3 class="step-title">A gente resolve junto.</h3>
+        <p class="step-desc">
+          Indicamos o que faz sentido pra sua situação e
+          <strong>confirmamos o valor antes da equipe sair</strong>.
+          Sem surpresa. Você decide com calma.
+        </p>
       </li>
 
+      <!-- Passo 3 -->
       <li class="step">
-        <div class="step-num">03</div>
-        <div class="step-content">
-          <h3 class="step-title">A equipe sai.</h3>
-          <p class="step-desc">
-            4 minutos depois do chamado validado, ambulância na rua. <strong>Zona Sul em 18 minutos</strong>.
-          </p>
+        <div class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <path d="M16 8h4l3 5v4h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+            <line x1="6" y1="6" x2="6" y2="10"/>
+            <line x1="4" y1="8" x2="8" y2="8"/>
+          </svg>
         </div>
+        <div class="step-meta">
+          <span class="step-num">03</span>
+          <span class="step-time">4 min de despacho</span>
+        </div>
+        <h3 class="step-title">A equipe já foi.</h3>
+        <p class="step-desc">
+          Quatro minutos após o chamado confirmado, a ambulância está na rua.
+          <strong>Zona Sul: 18 minutos</strong>. Você ainda está respirando fundo
+          quando a gente já está a caminho.
+        </p>
       </li>
+
     </ol>
   </div>
 </section>
@@ -53,8 +92,9 @@
     border-bottom: 1px solid var(--cream-dark);
   }
 
+  /* ============ Cabeçalho ============ */
   .how-head {
-    max-width: var(--wrap-prose);
+    max-width: 720px;
     margin-bottom: 56px;
   }
 
@@ -70,25 +110,72 @@
     letter-spacing: -0.035em;
     line-height: 1;
     color: var(--navy);
+    margin-bottom: 18px;
   }
 
+  .how-sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--navy);
+    max-width: 600px;
+  }
+
+  /* ============ Grid de passos ============ */
   .how-steps {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    background: var(--cream-dark);
-    border-radius: 6px;
-    overflow: hidden;
+    gap: 16px;
   }
 
   .step {
     background: white;
-    padding: 40px 32px;
+    border-radius: 6px;
+    border: 1px solid var(--cream-dark);
+    padding: 36px 32px 40px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    border-top: 4px solid var(--green);
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Barra verde no topo */
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--green);
+  }
+
+  /* ============ Ícone ============ */
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(0, 184, 124, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: var(--green-dark);
+    flex-shrink: 0;
+  }
+
+  .step-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ============ Meta (número + tempo) ============ */
+  .step-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
   }
 
   .step-num {
@@ -96,27 +183,56 @@
     font-size: 11px;
     letter-spacing: 0.25em;
     color: var(--green-dark);
-    font-weight: 600;
+    font-weight: 700;
   }
 
+  .step-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+    background: var(--navy);
+    padding: 3px 9px;
+    border-radius: 40px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ============ Texto ============ */
   .step-title {
     font-family: var(--sans);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 21px;
     letter-spacing: -0.025em;
     color: var(--navy);
     line-height: 1.1;
+    margin-bottom: 12px;
   }
 
   .step-desc {
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--navy);
   }
 
-  @media (max-width: 720px) {
+  .step-desc strong {
+    font-weight: 600;
+  }
+
+  /* ============ Mobile ============ */
+  @media (max-width: 860px) {
     .how-steps {
       grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .step {
+      padding: 28px 24px 32px;
+    }
+
+    .step-icon {
+      margin-bottom: 20px;
     }
   }
 </style>
