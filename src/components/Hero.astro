@@ -85,11 +85,6 @@ const waHref = whatsappUrl(
           Medicina que chega · Desde 1979
         </p>
 
-        <div class="hero-dispatch" aria-label="4 minutos de despacho, 18 minutos na Zona Sul">
-          <span class="hero-dispatch-dot" aria-hidden="true"></span>
-          <strong>4 min</strong> de despacho · 18 min Zona Sul
-        </div>
-
         <h1 class="hero-h1">
           {h1}{h1Highlight && <> <em>{h1Highlight}</em></>}
         </h1>
@@ -320,38 +315,6 @@ const waHref = whatsappUrl(
 
   @media (prefers-reduced-motion: reduce) {
     .hero-eyebrow-dot { animation: none; }
-  }
-
-  /* ============ Dispatch badge (SAVIOR-03) ============ */
-  .hero-dispatch {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--green-bright);
-    background: rgba(31, 210, 154, 0.1);
-    border: 1px solid rgba(31, 210, 154, 0.3);
-    border-radius: 40px;
-    padding: 6px 14px;
-    margin-bottom: 20px;
-  }
-
-  .hero-dispatch strong {
-    font-weight: 700;
-    color: var(--green-bright);
-  }
-
-  .hero-dispatch-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--green-bright);
-    box-shadow: 0 0 8px rgba(31, 210, 154, 0.6);
-    flex-shrink: 0;
   }
 
   /* ============ H1 ============ */
