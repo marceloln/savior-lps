@@ -57,13 +57,20 @@ const waHref = whatsappUrl(
 <script>
   const el = document.getElementById('floating-desktop-cta');
   if (el) {
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        el.classList.add('fdc--visible');
-        el.removeAttribute('aria-hidden');
-      } else {
-        el.classList.remove('fdc--visible');
-        el.setAttribute('aria-hidden', 'true');
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (window.scrollY > 400) {
+            el.classList.add('fdc--visible');
+            el.removeAttribute('aria-hidden');
+          } else {
+            el.classList.remove('fdc--visible');
+            el.setAttribute('aria-hidden', 'true');
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
   }

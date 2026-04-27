@@ -160,13 +160,17 @@ const absoluteOgImage = ogImage.startsWith('http')
       window.dataLayer = window.dataLayer || [];
 
       // ============ GTM container ============
-      // Só carrega se o ID foi configurado (evita 404 em dev)
+      // Injetado num setTimeout(0) para liberar o browser pintar o LCP antes de
+      // o GTM tomar a main thread. dataLayer e listeners de clique são síncronos
+      // — nenhum evento é perdido mesmo com o atraso de 1 tick.
       if (GTM_ID && GTM_ID !== 'GTM-PLACEHOLDER') {
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',GTM_ID);
+        setTimeout(function(){
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer',GTM_ID);
+        }, 0);
       }
 
       // ============ Fallback: GA4 direto (se USE_GTM = false) ============

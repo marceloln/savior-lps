@@ -83,13 +83,20 @@ const waHref = whatsappUrl(
 <script>
   const h = document.getElementById('sticky-header');
   if (h) {
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 80) {
-        h.classList.add('sh--visible');
-        h.removeAttribute('aria-hidden');
-      } else {
-        h.classList.remove('sh--visible');
-        h.setAttribute('aria-hidden', 'true');
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (window.scrollY > 80) {
+            h.classList.add('sh--visible');
+            h.removeAttribute('aria-hidden');
+          } else {
+            h.classList.remove('sh--visible');
+            h.setAttribute('aria-hidden', 'true');
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
   }
