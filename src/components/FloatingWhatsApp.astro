@@ -14,7 +14,8 @@ const { waCampaign } = Astro.props;
 const waHref = whatsappUrl(
   CONTACT_RJ.whatsapp,
   waCampaign,
-  'Oi, preciso de ambulância agora.'
+  'Oi, preciso de ambulância agora.',
+  'floating'
 );
 ---
 
@@ -37,6 +38,12 @@ const waHref = whatsappUrl(
 </a>
 
 <style>
+  @media (min-width: 960px) {
+    .fw {
+      display: none;
+    }
+  }
+
   .fw {
     position: fixed;
     bottom: 16px;
