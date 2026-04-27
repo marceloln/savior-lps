@@ -21,6 +21,9 @@ import Payment from '../components/Payment.astro';
 import FAQ from '../components/FAQ.astro';
 import FinalCTA from '../components/FinalCTA.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import FloatingDesktopCTA from '../components/FloatingDesktopCTA.astro';
+import StickyHeader from '../components/StickyHeader.astro';
+import TLDRBlock from '../components/TLDRBlock.astro';
 import Footer from '../components/Footer.astro';
 
 // ============ SEO ============
@@ -70,6 +73,18 @@ const faqItems = [
   {
     q: 'Ambulância particular é mais rápida que o SAMU?',
     a: 'Em tempo de chegada, sim — na maioria dos casos. O SAMU tem tempo médio de 40 a 90 minutos no Rio de Janeiro. A Savior chega em <strong>18 minutos na Zona Sul</strong>, 25 minutos na Zona Norte/Oeste e 35 minutos em Niterói e Baixada. Além disso, a UTI Savior tem médico a bordo em todos os atendimentos.',
+  },
+  {
+    q: 'Preciso de receita médica para solicitar ambulância particular?',
+    a: 'Não. Qualquer pessoa pode chamar — <strong>sem receita, sem pedido médico, sem burocracia</strong>. Você liga ou manda mensagem, conta o que está acontecendo, e a gente indica o recurso certo e confirma o valor na hora.',
+  },
+  {
+    q: 'Como saber se preciso de UTI ou ambulância básica?',
+    a: 'A <strong>UTI</strong> é indicada em emergências (infarto, AVC, trauma, queda com impacto, dificuldade respiratória, pós-operatório instável) e transferências de pacientes graves. A <strong>básica</strong> resolve remoções programadas, pacientes estáveis, altas hospitalares sem complicação. Na dúvida, ligue — a gente escuta o caso e indica o que faz sentido, sem empurrar o mais caro.',
+  },
+  {
+    q: 'Ambulância para idoso — o que precisa saber?',
+    a: 'Idosos internados ou em alta hospitalar geralmente precisam de <strong>maca articulada, suporte de oxigênio e equipe treinada para mobilização segura</strong>. Se o paciente é instável ou tem comorbidades graves (insuficiência cardíaca, DPOC, AVC recente), indicamos a UTI com médico. Conte a situação: a gente ajuda a escolher o recurso certo.',
   },
 ];
 
@@ -289,11 +304,14 @@ const waCampaign = 'rj-emergencia';
       waCampaign={waCampaign}
     />
 
+    <!-- TL;DR — SAVIOR-09: resposta direta antes do scroll (AEO/LLMO) -->
+    <TLDRBlock />
+
     <!-- Bloco 2 — Prova social — SAVIOR-B1: sobe direto após Hero -->
     <SocialProof />
 
     <!-- Bloco 3 — Preços — SAVIOR-B1: preço antes de processo -->
-    <PriceTable />
+    <PriceTable waCampaign={waCampaign} />
 
     <!-- CTA intermediário 1 — após preços -->
     <CTAInline
@@ -358,6 +376,12 @@ const waCampaign = 'rj-emergencia';
 
   <Footer />
 
-  <!-- WhatsApp flutuante — desktop + mobile -->
+  <!-- WhatsApp flutuante — mobile -->
   <FloatingWhatsApp waCampaign={waCampaign} />
+
+  <!-- CTA flutuante — desktop only (≥960px) -->
+  <FloatingDesktopCTA waCampaign={waCampaign} />
+
+  <!-- Sticky header — aparece após 80px scroll -->
+  <StickyHeader waCampaign={waCampaign} />
 </Base>

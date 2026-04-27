@@ -1,0 +1,135 @@
+---
+// ============================================================
+// TL;DR BLOCK — SAVIOR-09
+// Bloco semântico após Hero: responde objetivamente as 3
+// perguntas de maior intenção de compra antes do scroll.
+// AEO/LLMO: candidato a snippet "resposta direta" no Google.
+// ============================================================
+---
+
+<section class="tldr" aria-label="Resumo rápido — ambulância Savior RJ">
+  <div class="wrap">
+    <ul class="tldr-list" role="list">
+      <li class="tldr-item">
+        <span class="tldr-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div class="tldr-text">
+          <strong>Em até 4 min a equipe sai da base.</strong>
+          Tempo médio de chegada: 18 min na Zona Sul, 25 min na Norte/Oeste.
+        </div>
+      </li>
+      <li class="tldr-item">
+        <span class="tldr-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="5" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 5V4a3 3 0 0 1 6 0v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div class="tldr-text">
+          <strong>Básica a partir de R$ 1.200, UTI a partir de R$ 2.200.</strong>
+          Pix com 5% de desconto. Cartão em 3x sem juros. Preço confirmado antes de sair.
+        </div>
+      </li>
+      <li class="tldr-item">
+        <span class="tldr-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 2a5 5 0 1 1 0 10A5 5 0 0 1 10 2Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M4.5 16.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div class="tldr-text">
+          <strong>UTI tem médico, enfermeiro e socorrista a bordo.</strong>
+          Sem terceirização. Frota própria operando desde 1979, central 24h todos os dias.
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .tldr {
+    background: var(--cream-light);
+    border-top: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--cream-dark);
+    padding: 28px 0;
+  }
+
+  .tldr-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0;
+    flex-direction: column;
+  }
+
+  @media (min-width: 720px) {
+    .tldr-list {
+      flex-direction: row;
+      gap: 32px;
+      align-items: flex-start;
+    }
+  }
+
+  .tldr-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--cream-dark);
+    flex: 1;
+  }
+
+  .tldr-item:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 720px) {
+    .tldr-item {
+      border-bottom: none;
+      border-right: 1px solid var(--cream-dark);
+      padding: 0 32px 0 0;
+    }
+
+    .tldr-item:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .tldr-item:first-child {
+      padding-left: 0;
+    }
+  }
+
+  .tldr-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    color: var(--green-dark);
+    margin-top: 1px;
+  }
+
+  .tldr-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tldr-text {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--navy);
+  }
+
+  .tldr-text strong {
+    display: block;
+    font-weight: 700;
+    font-size: 14.5px;
+    margin-bottom: 3px;
+    color: var(--navy-deep);
+  }
+</style>

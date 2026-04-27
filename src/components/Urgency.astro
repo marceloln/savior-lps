@@ -15,7 +15,8 @@ const { waCampaign } = Astro.props;
 const waHref = whatsappUrl(
   CONTACT_RJ.whatsapp,
   waCampaign,
-  'Oi, preciso de ambulância agora.'
+  'Oi, preciso de ambulância agora.',
+  'urgency'
 );
 ---
 
@@ -36,7 +37,7 @@ const waHref = whatsappUrl(
         <span class="urg-stat-label">dos óbitos por infarto ocorrem na primeira hora de sintomas</span>
       </div>
 
-      <!-- Fato médico com fonte -->
+      <!-- Fatos médicos com fonte -->
       <div class="urg-fact">
         <div class="urg-fact-number">1ª hora</div>
         <div class="urg-fact-text">
@@ -44,6 +45,16 @@ const waHref = whatsappUrl(
           do início dos sintomas. Quanto mais rápido a ambulância chega com médico e
           equipamento, maior a chance de reversão.
           <cite class="urg-fact-source">Fonte: American Heart Association, <em>Circulation</em> 2023.</cite>
+        </div>
+      </div>
+
+      <div class="urg-fact">
+        <div class="urg-fact-number">1,9 mi</div>
+        <div class="urg-fact-text">
+          de <strong>neurônios morrem a cada minuto</strong> sem atendimento em um AVC. Em 10 minutos
+          sem intervenção, o dano pode ser irreversível. A velocidade de chegada com médico e
+          equipamento define o quanto do cérebro — e da vida — dá pra preservar.
+          <cite class="urg-fact-source">Fonte: American Heart Association, <em>Stroke</em> 2023.</cite>
         </div>
       </div>
 
