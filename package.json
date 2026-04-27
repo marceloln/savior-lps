@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "12",
+    "@astrojs/partytown": "^2.1.7",
     "@astrojs/sitemap": "^3.2.1",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/ibm-plex-mono": "^5.2.7",
@@ -21,6 +22,9 @@
     "astro": "^5.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.2",
+    "axe-core": "^4.11.3",
+    "playwright": "^1.59.1",
     "wrangler": "^4.85.0"
   }
 }

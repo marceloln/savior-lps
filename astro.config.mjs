@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import partytown from '@astrojs/partytown';
 
 import cloudflare from "@astrojs/cloudflare";
 
@@ -17,6 +18,14 @@ export default defineConfig({
       filter: (page) => !page.includes('/preview'),
       changefreq: 'weekly',
       priority: 0.9,
+    }),
+    // Partytown move GTM para Web Worker — libera main thread para renderização
+    // forward: dataLayer.push permite GTM (no worker) empurrar eventos para
+    // o dataLayer da main thread onde os click listeners escutam
+    partytown({
+      config: {
+        forward: ['dataLayer.push'],
+      },
     }),
   ],
 

@@ -152,23 +152,20 @@ const absoluteOgImage = ogImage.startsWith('http')
       })()
     </script>
 
-    <!-- ============ Google Tag Manager (head) ============ -->
-    <!-- GTM orquestra GA4, Meta Pixel, LinkedIn e qualquer outra tag via dataLayer.
-         Carrega ASSÍNCRONO — não bloqueia render. Substitua GTM-PLACEHOLDER no data/savior.ts -->
-    <script is:inline define:vars={{ GTM_ID: ANALYTICS.gtm, META_ID: ANALYTICS.metaPixel, LI_ID: ANALYTICS.linkedInPartnerId, GA4_ID: ANALYTICS.ga4, USE_GTM: ANALYTICS.useGtmAsSource }}>
-      // DataLayer inicializado ANTES de qualquer tag carregar — ordem importa
-      window.dataLayer = window.dataLayer || [];
+    <!-- ============ Preconnect — reduz handshake DNS/TCP/TLS dos terceiros ============ -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
+    <link rel="dns-prefetch" href="https://connect.facebook.net" />
+    <link rel="dns-prefetch" href="https://www.facebook.com" />
 
-      // ============ GTM container ============
-      // Carrega async no head — inicia download em paralelo com HTML parsing.
-      // Não bloqueia render: j.async=true. Só carrega se ID configurado.
-      if (GTM_ID && GTM_ID !== 'GTM-PLACEHOLDER') {
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',GTM_ID);
-      }
+    <!-- ============ Google Tag Manager — roda em Web Worker via Partytown ============ -->
+    <!-- Partytown intercepta type="text/partytown" e move para Worker, liberando
+         a main thread para renderizar o LCP sem bloqueio. dataLayer.push é
+         forwardado do worker → main thread via config forward:["dataLayer.push"] -->
+    <script is:inline define:vars={{ META_ID: ANALYTICS.metaPixel, LI_ID: ANALYTICS.linkedInPartnerId, GA4_ID: ANALYTICS.ga4, USE_GTM: ANALYTICS.useGtmAsSource }}>
+      // DataLayer inicializado na main thread ANTES do Partytown iniciar o worker.
+      // Ordem importa: UTM capture (script anterior) já fez push de utm_loaded.
+      window.dataLayer = window.dataLayer || [];
 
       // ============ Fallback: GA4 direto (se USE_GTM = false) ============
       // Permite rodar sem GTM caso o time prefira hardcode temporário
@@ -252,6 +249,18 @@ const absoluteOgImage = ogImage.startsWith('http')
         }
       });
     </script>
+
+    <!-- GTM no Web Worker — Partytown executa este script fora da main thread.
+         set:html injeta o GTM_ID em build time (valor estático, sem runtime). -->
+    {ANALYTICS.gtm && ANALYTICS.gtm !== 'GTM-PLACEHOLDER' && (
+      <script type="text/partytown" set:html={`
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','${ANALYTICS.gtm}');
+      `} />
+    )}
     <!-- End Google Tag Manager -->
   </head>
 
