@@ -96,181 +96,123 @@ const waHref = whatsappUrl(
 </script>
 
 <style>
+  /* Desktop only — mobile usa FloatingWhatsApp */
   .sh {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: var(--navy-deep);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    transform: translateY(-100%);
-    transition: transform 0.25s ease;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
-  }
-
-  .sh--visible {
-    transform: translateY(0);
-  }
-
-  .sh-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    height: 56px;
-  }
-
-  .sh-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .sh-dot {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-  }
-
-  .sh-name {
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: -0.02em;
-    color: white;
-    white-space: nowrap;
-  }
-
-  .sh-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .sh-phone {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 18px;
-    background: var(--green);
-    color: var(--navy-deep);
-    border-radius: 4px;
-    font-family: var(--sans);
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: -0.01em;
-    text-decoration: none;
-    transition: filter 0.15s;
-    white-space: nowrap;
-  }
-
-  .sh-phone:hover {
-    filter: brightness(1.1);
-  }
-
-  .sh-phone svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-  }
-
-  .sh-wa {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 18px;
-    background: transparent;
-    color: white;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    border-radius: 4px;
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-
-  .sh-wa:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.6);
-  }
-
-  .sh-wa svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-  }
-
-  /* Nav de âncoras — mobile only */
-  .sh-nav {
     display: none;
   }
 
-  @media (max-width: 560px) {
-    .sh-brand {
-      display: none;
+  @media (min-width: 960px) {
+    .sh {
+      position: fixed;
+      display: block;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--navy-deep);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      transform: translateY(-100%);
+      transition: transform 0.25s ease;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .sh--visible {
+      transform: translateY(0);
     }
 
     .sh-inner {
-      justify-content: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      height: 56px;
+    }
+
+    .sh-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .sh-dot {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .sh-name {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      color: white;
+      white-space: nowrap;
     }
 
     .sh-actions {
-      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .sh-phone,
+    .sh-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      background: var(--green);
+      color: var(--navy-deep);
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      transition: filter 0.15s;
+      white-space: nowrap;
+    }
+
+    .sh-phone:hover {
+      filter: brightness(1.1);
+    }
+
+    .sh-phone svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
     .sh-wa {
-      flex: 1;
-      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .sh-wa:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .sh-wa svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
     }
 
     .sh-nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      height: 36px;
-    }
-
-    .sh-nav-link {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: rgba(255, 255, 255, 0.75);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    .sh-nav-link:hover,
-    .sh-nav-link:focus-visible {
-      color: white;
-    }
-
-    .sh-nav-link--wa {
-      color: var(--green-bright);
-    }
-
-    .sh-nav-link--wa:hover,
-    .sh-nav-link--wa:focus-visible {
-      color: #5de8c0;
-    }
-
-    .sh-nav-sep {
-      width: 1px;
-      height: 16px;
-      background: rgba(255, 255, 255, 0.15);
-      flex-shrink: 0;
+      display: none;
     }
   }
 </style>
