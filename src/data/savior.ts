@@ -41,13 +41,13 @@ export const CONTACT_SP = {
 // - LinkedIn: linkedin.com/campaignmanager → Insight Tag → Partner ID numérico
 export const ANALYTICS = {
   // Google Tag Manager — orquestrador principal
-  gtm: 'GTM-PLACEHOLDER',
+  gtm: 'GTM-5GVSJN4Z',
 
-  // GA4 — opcional, pode ser carregado via GTM (preferido)
-  ga4: 'G-PLACEHOLDER',
+  // GA4 — carregado via GTM (Tag do Google G-43FPPY00QR já configurada no container)
+  ga4: 'G-43FPPY00QR',
 
   // Meta Pixel — ID numérico do Pixel no Events Manager
-  metaPixel: 'META_PIXEL_PLACEHOLDER',
+  metaPixel: '571875002833284',
 
   // LinkedIn Insight Tag — Partner ID do Campaign Manager
   linkedInPartnerId: 'LINKEDIN_PARTNER_PLACEHOLDER',
@@ -119,14 +119,19 @@ export const GOOGLE_BUSINESS = {
   name: 'SAVIOR Medical Service',
 };
 
-// Utilitário para gerar link do WhatsApp com UTM + mensagem pré-preenchida
+// Utilitário para gerar link do WhatsApp com tag de atribuição na mensagem
+// O param `location` identifica qual CTA disparou (hero, final-cta, floating, etc.)
+// A tag [campaign-location-v01] é gerada no SSG como fallback — o script
+// wa-enhance.ts a substitui no client com os UTMs reais do cookie.
 export function whatsappUrl(
   number: string,
   utmCampaign: string,
-  message: string = 'Oi, preciso de ambulância.'
+  message: string = 'Oi, preciso de ambulância.',
+  location: string = 'unknown'
 ): string {
+  const tag = `[${utmCampaign}-${location}-v01]`
   const params = new URLSearchParams({
-    text: message,
-  });
-  return `https://wa.me/${number}?${params.toString()}&utm_source=site&utm_medium=lp&utm_campaign=${utmCampaign}`;
+    text: `${message} ${tag}`,
+  })
+  return `https://wa.me/${number}?${params.toString()}`
 }

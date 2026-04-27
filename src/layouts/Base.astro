@@ -130,6 +130,28 @@ const absoluteOgImage = ogImage.startsWith('http')
     <!-- ============ Schema.org JSON-LD ============ -->
     {schema && <script type="application/ld+json" set:html={schema} />}
 
+    <!-- ============ UTM Capture — ANTES do GTM ============ -->
+    <!-- Lê UTM params + gclid da URL, persiste no cookie savior_utm (30d, first-touch),
+         expõe window._saviorUtm e faz push no dataLayer ANTES do GTM iniciar.
+         Fonte documentada em TypeScript: src/scripts/utm-capture.ts -->
+    <script is:inline>
+      (function(){
+        var C='savior_utm',TTL=2592000
+        function parse(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');try{return m?JSON.parse(decodeURIComponent(m[2])):null}catch(e){return null}}
+        function set(n,v,s){try{document.cookie=n+'='+encodeURIComponent(JSON.stringify(v))+';max-age='+s+';path=/;SameSite=Lax'}catch(e){}}
+        var p=new URLSearchParams(location.search),keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'],u={},has=false
+        keys.forEach(function(k){var v=p.get(k);if(v){u[k.replace('utm_','')]=v;has=true}})
+        var g=p.get('gclid');if(g){u.gclid=g;has=true}
+        var s=parse(C),a
+        if(has){a=Object.assign(s||{},u);if(!a.first_landing)a.first_landing=location.pathname;if(!a.first_seen_at)a.first_seen_at=Date.now();set(C,a,TTL)}
+        else if(s){a=s}
+        else{a={source:'direct',medium:'none',campaign:'direct'}}
+        window._saviorUtm=a
+        window.dataLayer=window.dataLayer||[]
+        window.dataLayer.push({event:'utm_loaded',attribution:{source:a.source||'direct',medium:a.medium||'none',campaign:a.campaign||'direct',content:a.content||'',term:a.term||'',gclid:a.gclid||'',first_landing:a.first_landing||location.pathname,first_seen_at:a.first_seen_at||Date.now()}})
+      })()
+    </script>
+
     <!-- ============ Google Tag Manager (head) ============ -->
     <!-- GTM orquestra GA4, Meta Pixel, LinkedIn e qualquer outra tag via dataLayer.
          Carrega ASSÍNCRONO — não bloqueia render. Substitua GTM-PLACEHOLDER no data/savior.ts -->
@@ -201,17 +223,18 @@ const absoluteOgImage = ogImage.startsWith('http')
         if (wa) {
           dataLayer.push({
             event: 'whatsapp_click',
+            event_label: wa.dataset.eventLabel || wa.dataset.location || 'unknown',
             campaign: wa.dataset.campaign || 'none',
-            location: wa.dataset.location || 'unknown',
             value: 1,
           });
         }
 
-        // Phone click
-        var ph = t.closest('a[data-phone]');
+        // Phone click — data-phone OU qualquer link tel:
+        var ph = t.closest('a[data-phone], a[href^="tel:"]');
         if (ph) {
           dataLayer.push({
             event: 'phone_click',
+            event_label: ph.dataset.eventLabel || ph.dataset.location || 'unknown',
             campaign: ph.dataset.campaign || 'none',
             value: 1,
           });
@@ -236,7 +259,7 @@ const absoluteOgImage = ogImage.startsWith('http')
     <!-- Para usuários com JavaScript desabilitado. Troque GTM-PLACEHOLDER. -->
     <noscript>
       <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-PLACEHOLDER"
+        src={`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtm}`}
         height="0"
         width="0"
         style="display:none;visibility:hidden"
@@ -251,7 +274,7 @@ const absoluteOgImage = ogImage.startsWith('http')
         width="1"
         style="display:none"
         alt=""
-        src="https://www.facebook.com/tr?id=META_PIXEL_PLACEHOLDER&ev=PageView&noscript=1"
+        src={`https://www.facebook.com/tr?id=${ANALYTICS.metaPixel}&ev=PageView&noscript=1`}
       />
     </noscript>
 
@@ -270,5 +293,29 @@ const absoluteOgImage = ogImage.startsWith('http')
     <a href="#main" class="skip-link">Pular para o conteúdo principal</a>
 
     <slot />
+
+    <!-- ============ WhatsApp link enhancer ============ -->
+    <!-- Reescreve todos os a[data-whatsapp] com UTMs reais do cookie savior_utm.
+         Roda pós-DOM — substitui a tag base gerada no SSG pelo tag real com gclid.
+         Fonte documentada em TypeScript: src/scripts/wa-enhance.ts -->
+    <script is:inline>
+      (function(){
+        var C='savior_utm',V='v01'
+        function read(){if(window._saviorUtm)return window._saviorUtm;var m=document.cookie.match('(^|;)\\s*'+C+'\\s*=\\s*([^;]+)');try{return m?JSON.parse(decodeURIComponent(m[2])):null}catch(e){return null}}
+        function tag(c,l,g){var b='['+c+'-'+l+'-'+V+']';return g?b+' [gclid:'+g+']':b}
+        function run(){
+          var utm=read();if(!utm)return
+          var c=utm.campaign||'direct',g=utm.gclid
+          document.querySelectorAll('a[data-whatsapp]').forEach(function(a){
+            var loc=a.dataset.location||'unknown',h=a.getAttribute('href');if(!h)return
+            var m=h.match(/[?&]text=([^&]*)/);if(!m)return
+            var raw=decodeURIComponent(m[1]),base=raw.replace(/(\s*\[[^\]]+\])+$/,'').trimEnd()
+            var nh=h.replace(/([?&]text=)[^&]*/,function(_,pre){return pre+encodeURIComponent(base+' '+tag(c,loc,g))})
+            a.setAttribute('href',nh)
+          })
+        }
+        if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',run)}else{run()}
+      })()
+    </script>
   </body>
 </html>
