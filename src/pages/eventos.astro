@@ -1,0 +1,890 @@
+---
+// ============================================================
+// LP4 — /eventos
+// Landing page de cobertura médica para eventos — RJ e SP
+// Migrado do HTML protótipo, integrado ao stack Astro + tracking
+// ============================================================
+
+import Base from '../layouts/Base.astro';
+import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
+
+// ============ SEO ============
+const title = 'Ambulância para Eventos | Posto Médico e UTI Móvel | RJ e SP | Savior';
+const description = 'Locação de ambulância para eventos com equipe médica completa. Posto médico, UTI móvel e documentação para alvará. Shows, corporativos e esportivos. RJ e SP.';
+const canonical = 'https://www.savior.com.br/eventos';
+
+// ============ Schema.org ============
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "Savior Medical Service - Eventos",
+  "description": "Cobertura médica para eventos com ambulância UTI, posto médico e equipe dedicada.",
+  "url": "https://www.savior.com.br/eventos",
+  "telephone": [CONTACT_RJ.phoneHref, CONTACT_SP.phoneLandlineHref],
+  "areaServed": ["Rio de Janeiro", "São Paulo"],
+  "foundingDate": "1979",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.7",
+    "reviewCount": String(GOOGLE_BUSINESS.reviewCount + GOOGLE_BUSINESS_SP.reviewCount)
+  }
+});
+
+// ============ WhatsApp URLs ============
+const WA_MSG = 'Oi, preciso de cobertura médica para um evento.';
+const waHero   = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'hero');
+const waHeader = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'header');
+const waCTA    = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'cta');
+const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
+
+const faqItems = [
+  { q: "Preciso de ambulância para liberar o alvará do evento?", a: "Depende da legislação municipal e do porte do evento. A Savior fornece toda a documentação exigida pela prefeitura e corpo de bombeiros para liberação. Muitos espaços — como o Maracanã, hotéis e centros de convenção — não permitem que o evento inicie sem equipe médica posicionada." },
+  { q: "Quantas ambulâncias preciso para o meu evento?", a: "Depende do porte: até 500 pessoas, 1 ambulância básica. Acima de 500, recomendamos UTI + posto médico. Eventos com mais de 2.000 pessoas podem exigir múltiplas unidades. A Savior dimensiona a cobertura e envia a proposta com o plano médico adequado." },
+  { q: "Qual a diferença entre ambulância básica e UTI?", a: "A básica (tipo B) tem equipamento de suporte básico de vida — oxigênio, desfibrilador, imobilização. A UTI (tipo D) conta com médico a bordo, ventilador, monitor multiparâmetro e equipamento para suporte avançado. Eventos de maior complexidade ou exigência regulatória pedem UTI." },
+  { q: "A equipe chega com quanto tempo de antecedência?", a: "Mínimo de 30 a 60 minutos antes do início do evento. Muitos locais — hotéis, estádios, centros de convenção — não liberam o início sem a equipe médica posicionada. A Savior trata isso como regra operacional, não como exceção." },
+  { q: "Vocês fornecem relatório pós-evento?", a: "Sim. Relatório médico completo entregue em até 48 horas, com registro de atendimentos realizados, responsável técnico nomeado e conformidade ANVISA. O relatório pode ser usado para prestação de contas e compliance." },
+  { q: "Atendem em São Paulo também?", a: "Sim. A Savior opera com centrais no RJ e SP, com equipe dedicada e frota local em ambas as cidades. O orçamento é feito considerando a central mais próxima do evento." },
+  { q: "Quanto custa ambulância para evento?", a: "O valor depende do tipo e duração do evento, número de participantes, localização e tipo de cobertura. Referência: a partir de R$1.500 para eventos de até 4 horas com 1 ambulância básica. Solicite orçamento personalizado — resposta em até 2 horas em dias úteis." },
+  { q: "A equipe fica durante todo o evento?", a: "Sim. A Savior cobre o evento inteiro: chega antes do público, fica posicionada durante toda a execução e só sai depois do último participante e da desmontagem. Eventos com montagem longa incluem cobertura na montagem e desmontagem também." },
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  lcpImageSrcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
+>
+  <!-- FAQ Schema separado -->
+  <script type="application/ld+json" is:inline>{JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(({ q, a }) => ({
+      "@type": "Question",
+      "name": q,
+      "acceptedAnswer": { "@type": "Answer", "text": a }
+    }))
+  })}</script>
+
+  <main id="main">
+
+    <!-- ═══ STICKY HEADER ═══ -->
+    <nav class="ev-sh" id="stickyHeader" aria-label="Navegação rápida">
+      <div class="wrap ev-sh-inner">
+        <div class="ev-sh-brand">
+          <span class="ev-sh-word">SAVIOR</span>
+          <span class="ev-sh-tag">Eventos</span>
+        </div>
+        <div class="ev-sh-actions">
+          <a class="ev-sh-wa" href={waHeader} data-whatsapp data-campaign="eventos" data-location="header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            Orçamento
+          </a>
+          <a class="ev-sh-phone" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos" data-location="header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            {CONTACT_RJ.phone}
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ═══ 1. HERO ═══ -->
+    <section class="ev-hero" aria-label="Savior Medical Service — cobertura médica para eventos">
+      <div class="ev-hero-bg" aria-hidden="true">
+        <img
+          class="ev-hero-poster"
+          srcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
+          sizes="100vw"
+          src="/img/hero/hero-poster-events.webp"
+          alt=""
+          width="1920"
+          height="1280"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <video
+          id="ev-hero-vid"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="/img/hero/hero-poster-events-mobile.webp"
+          width="1920"
+          height="1280"
+          aria-hidden="true"
+        >
+          <source media="(min-width: 961px)" src="/video/events-hero-loop.webm" type="video/webm" />
+          <source media="(min-width: 961px)" src="/video/events-hero-loop.mp4" type="video/mp4" />
+        </video>
+        <script is:inline>
+          if (window.innerWidth > 720) {
+            document.getElementById('ev-hero-vid').poster = '/img/hero/hero-poster-events.webp';
+          }
+        </script>
+        <div class="ev-hero-overlay"></div>
+      </div>
+
+      <div class="wrap ev-hero-content">
+        <div class="ev-hero-brand">
+          <span class="ev-hero-wordmark">SAVIOR</span>
+          <span class="ev-hero-descriptor">Medical Service</span>
+        </div>
+        <div class="ev-hero-grid">
+          <div>
+            <div class="ev-hero-live" aria-label="Cobertura médica para eventos">
+              <span class="ev-hero-live-dot" aria-hidden="true"></span>
+              Cobertura médica para eventos
+            </div>
+            <h1>Seu evento começa<br>quando <em>a gente chega.</em></h1>
+            <p class="ev-hero-sub">Ambulância UTI, posto médico montado e equipe dedicada — do primeiro ao último participante. Documentação para alvará inclusa. Shows, eventos corporativos e esportivos no Rio de Janeiro e São Paulo.</p>
+            <p class="ev-hero-note"><strong>Atenção:</strong> hotéis, estádios e centros de convenção não liberam o início do evento sem equipe médica posicionada. A Savior chega com antecedência — seu evento não atrasa.</p>
+            <div class="ev-hero-ctas">
+              <a class="btn btn-primary" href={waHero} data-whatsapp data-campaign="eventos" data-location="hero">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                Solicitar orçamento
+              </a>
+              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos" data-location="hero">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                {CONTACT_RJ.phone}
+              </a>
+            </div>
+          </div>
+          <aside class="ev-hero-right" aria-label="Números Savior">
+            <div class="ev-kpi">
+              <div class="ev-kpi-label">Operação contínua</div>
+              <div class="ev-kpi-val"><span class="accent">+</span>46</div>
+              <div class="ev-kpi-desc">anos cobrindo eventos no RJ e SP</div>
+            </div>
+            <div class="ev-kpi">
+              <div class="ev-kpi-label">Experiência</div>
+              <div class="ev-kpi-val"><span class="accent">+</span>450</div>
+              <div class="ev-kpi-desc">profissionais de saúde na equipe</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="ev-tldr" aria-label="Resumo da cobertura">
+        <div class="wrap">
+          <div class="ev-tldr-grid">
+            <div class="ev-tldr-item"><p>Posto médico montado no local</p></div>
+            <div class="ev-tldr-item"><p>Ambulância UTI com médico a bordo</p></div>
+            <div class="ev-tldr-item"><p>Operando em eventos há +40 anos</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. EVENTOS QUE JÁ COBRIMOS ═══ -->
+    <section class="ev-logos-band" aria-label="Eventos cobertos pela Savior">
+      <div class="wrap">
+        <div class="ev-logos-eyebrow"><span class="eyebrow on-dark">Eventos que já cobrimos</span></div>
+        <div class="ev-logos-row">
+          <span class="ev-logo ev-logo--heavy">ROCK IN RIO</span>
+          <span class="ev-logo ev-logo--light ev-logo--italic">Cirque du Soleil</span>
+          <span class="ev-logo ev-logo--heavy">FORMULA 1</span>
+          <span class="ev-logo ev-logo--bold">MotoGP</span>
+          <span class="ev-logo ev-logo--semibold ev-logo--spaced">SPFW</span>
+          <span class="ev-logo ev-logo--regular ev-logo--italic">Tour de France</span>
+        </div>
+        <p class="ev-logos-note">De shows de 100 mil pessoas a corridas internacionais</p>
+      </div>
+    </section>
+
+    <!-- ═══ 3. SOCIAL PROOF ═══ -->
+    <section class="ev-proof section" aria-labelledby="proof-heading">
+      <div class="wrap">
+        <div class="ev-section-center"><span class="eyebrow">Números que falam por nós</span></div>
+        <div class="ev-metrics">
+          <div class="ev-metric">
+            <div class="ev-metric-tag">Operação</div>
+            <div class="ev-metric-val"><span class="pre">+</span>46</div>
+            <div class="ev-metric-label">anos sem parar<br>nenhum dia</div>
+          </div>
+          <div class="ev-metric ev-metric--featured">
+            <div class="ev-metric-tag">Volume</div>
+            <div class="ev-metric-val">+100<span class="suf">k</span></div>
+            <div class="ev-metric-label">atendimentos<br>nos últimos 12 meses</div>
+          </div>
+          <div class="ev-metric">
+            <div class="ev-metric-tag">Equipe</div>
+            <div class="ev-metric-val">+450</div>
+            <div class="ev-metric-label">médicos, enfermeiros<br>e socorristas</div>
+          </div>
+          <div class="ev-metric">
+            <div class="ev-metric-tag">Eficiência</div>
+            <div class="ev-metric-val">96<span class="suf">%</span></div>
+            <div class="ev-metric-label">resolutividade<br>dos acionamentos</div>
+          </div>
+          <div class="ev-metric">
+            <div class="ev-metric-tag">Satisfação</div>
+            <div class="ev-metric-val">NPS 92</div>
+            <div class="ev-metric-label">pacientes e<br>famílias</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. O QUE INCLUI ═══ -->
+    <section class="section ev-cream-light" id="servicos" aria-labelledby="servicos-heading">
+      <div class="wrap">
+        <span class="eyebrow">O que entregamos</span>
+        <h2 id="servicos-heading" style="margin-bottom:16px">Cobertura médica <em class="accent-text">completa</em> para seu evento</h2>
+        <p class="ev-section-lead">A Savior chega pronto — não chega se montando. Equipe posicionada antes do público, equipamento instalado, documentação entregue.</p>
+        <div class="ev-svc-grid">
+          <div class="ev-svc-card">
+            <svg class="ev-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <h3>Ambulância UTI de prontidão</h3>
+            <p>Equipe médica completa de plantão durante todo o evento. Suporte avançado de vida pronto para qualquer emergência. Básica ou UTI conforme porte do evento.</p>
+          </div>
+          <div class="ev-svc-card">
+            <svg class="ev-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/><path d="M12 22V12M2 7l10 5 10-5"/></svg>
+            <h3>Posto médico completo</h3>
+            <p>Estrutura com triagem, maca, biombo, equipamento de emergência e farmácia básica. Ideal para eventos com mais de 500 pessoas. Montagem e desmontagem pela Savior.</p>
+          </div>
+          <div class="ev-svc-card">
+            <svg class="ev-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            <h3>Equipe médica dedicada</h3>
+            <p>Médico, enfermeiro e socorrista exclusivos para o seu evento. Uniformizados, com protocolos definidos. Chegam no mínimo 30 minutos antes do público.</p>
+          </div>
+          <div class="ev-svc-card">
+            <svg class="ev-svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <h3>Documentação + Relatório</h3>
+            <p>ART, documentação para alvará da prefeitura e corpo de bombeiros. Relatório médico pós-evento entregue em até 48 horas com responsável técnico nomeado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 5. PHOTO BREAK: MARACANÃ ═══ -->
+    <section class="ev-fleet" aria-label="Savior nos maiores eventos">
+      <div class="ev-fleet-bg" aria-hidden="true">
+        <img src="/img/gallery/event-maracana.webp" alt="Ambulâncias Savior posicionadas no Maracanã" loading="lazy" width="1920" height="1080" />
+        <div class="ev-fleet-over"></div>
+      </div>
+      <div class="wrap ev-fleet-content">
+        <span class="eyebrow on-dark" style="margin-bottom:16px;display:block">Presente nos maiores eventos</span>
+        <h2>Maracanã, Rio Star,<br><em>Fashion Week.</em></h2>
+        <p>Ambulância de prontidão, posto médico montado, equipe dedicada. Dos maiores shows do Brasil aos eventos corporativos de grande porte — a Savior cobre tudo com a mesma estrutura que opera há 46 anos.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 6. TIPOS DE EVENTOS ═══ -->
+    <section class="section ev-navy-deep" id="tipos" aria-labelledby="tipos-heading">
+      <div class="wrap">
+        <span class="eyebrow on-dark">Tipos de evento</span>
+        <h2 id="tipos-heading" class="on-dark" style="margin-bottom:16px">Cobertura médica para <em class="ev-green-bright">qualquer formato</em></h2>
+        <p class="ev-section-lead ev-muted">De bingos beneficentes a shows de 20 mil pessoas. A Savior dimensiona equipe, ambulância e posto médico conforme o porte e o risco de cada evento.</p>
+        <div class="ev-ev-grid">
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <h3>Shows e <em>festivais</em></h3>
+            <p>Ambulância UTI + posto médico. Cobertura de grande porte com equipe para alto volume e risco elevado.</p>
+          </div>
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 010 20M2 12h20"/></svg>
+            <h3>Jogos de <em>futebol</em></h3>
+            <p>Posicionamento no estádio com equipe experiente. Cobertura contínua durante o evento inteiro.</p>
+          </div>
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21h18M9 21V8l-4 4v9m8 0V4l-4 4v13m8 0V12l-4 4v5"/></svg>
+            <h3>Convenções <em>corporativas</em></h3>
+            <p>Cobertura médica para workshops, treinamentos e congressos. Documentação completa para compliance.</p>
+          </div>
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <h3>Corridas e <em>maratonas</em></h3>
+            <p>Equipe especializada em trauma esportivo. Múltiplas ambulâncias posicionadas ao longo do percurso.</p>
+          </div>
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            <h3>Eventos <em>privados</em></h3>
+            <p>Formaturas, festas e celebrações. Ambulância discreta no local. Tranquilidade para o organizador.</p>
+          </div>
+          <div class="ev-ev-card">
+            <svg class="ev-ev-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <h3>Feiras e <em>exposições</em></h3>
+            <p>Cobertura para eventos com montagem longa. Ambulância básica na montagem, UTI no evento, básica na desmontagem.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 7. COMO FUNCIONA ═══ -->
+    <section class="section ev-cream-light" aria-labelledby="steps-heading">
+      <div class="wrap">
+        <div class="ev-section-center" style="margin-bottom:40px">
+          <span class="eyebrow">Como funciona</span>
+          <h2 id="steps-heading" style="margin-top:12px">Três passos. <em class="accent-text">Sem burocracia.</em></h2>
+        </div>
+        <div class="ev-steps">
+          <div class="ev-step">
+            <div class="ev-step-n">Passo 01</div>
+            <h3>Conte sobre o evento</h3>
+            <p>Tipo, data, local, número estimado de participantes e duração. Pode ser por WhatsApp, telefone ou e-mail.</p>
+          </div>
+          <div class="ev-step">
+            <div class="ev-step-n">Passo 02</div>
+            <h3>A gente monta o plano médico</h3>
+            <p>Dimensionamento de equipe, tipo de ambulância, posto médico se necessário, e toda a documentação para alvará.</p>
+          </div>
+          <div class="ev-step">
+            <div class="ev-step-n">Passo 03</div>
+            <h3>Equipe chega antes do público</h3>
+            <p>Mínimo 30 minutos de antecedência. Posicionados, uniformizados e prontos. Cobertura integral até a desmontagem.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 8. PHOTO BREAK: EQUIPE ═══ -->
+    <section class="ev-fleet ev-fleet--right" aria-label="Equipe Savior">
+      <div class="ev-fleet-bg" aria-hidden="true">
+        <img src="/img/gallery/team.webp" alt="Equipe Savior uniformizada e posicionada em evento" loading="lazy" width="1920" height="1280" style="object-position:25% 30%" />
+        <div class="ev-fleet-over ev-fleet-over--left"></div>
+      </div>
+      <div class="wrap ev-fleet-content ev-fleet-content--right">
+        <span class="eyebrow on-dark" style="margin-bottom:16px;display:block;text-align:right">Equipe dedicada</span>
+        <h2>Médico, enfermeiro, socorrista.<br><em>Uniformizados. Pontuais.</em></h2>
+        <p>Profissional da Savior não fuma do lado da ambulância, não deita na maca e não atrasa. Se o evento começa às 20h, a equipe está posicionada às 19h.</p>
+      </div>
+      <div class="ev-fleet-stripe" aria-hidden="true"></div>
+    </section>
+
+    <!-- ═══ 9. POR QUE A SAVIOR ═══ -->
+    <section class="section ev-navy-deep" id="comparativo" aria-labelledby="comp-heading">
+      <div class="wrap">
+        <span class="eyebrow on-dark">Por que a Savior</span>
+        <h2 id="comp-heading" class="on-dark" style="margin-bottom:8px">O que nos separa <em class="ev-green-bright">de todo o resto</em></h2>
+        <p class="ev-section-lead ev-muted">Ambulância para evento tem muita no mercado. Mas poucas têm 46 anos de operação, responsável técnico nomeado em contrato e equipe que não atrasa.</p>
+        <table class="ev-comp-table" role="table" aria-label="Comparativo Savior vs concorrentes">
+          <thead>
+            <tr>
+              <th scope="col" style="min-width:200px"></th>
+              <th scope="col" class="ev-comp-savior" style="text-align:center">Savior</th>
+              <th scope="col" style="text-align:center">Concorrentes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="ev-comp-label">Ambulância própria (não terceirizada)</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Geralmente não">✗</span> geralmente</td></tr>
+            <tr><td class="ev-comp-label">Equipe chega antes do público</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span> 30–60 min antes</td><td style="text-align:center"><span class="cross" aria-label="Sem garantia">✗</span> sem garantia</td></tr>
+            <tr><td class="ev-comp-label">Responsável técnico nomeado (ART)</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Raro">✗</span> raro</td></tr>
+            <tr><td class="ev-comp-label">Documentação para alvará inclusa</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Cobra à parte">✗</span> cobra à parte</td></tr>
+            <tr><td class="ev-comp-label">Relatório pós-evento em 48h</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Não">✗</span></td></tr>
+            <tr><td class="ev-comp-label">Cobertura montagem + evento + desmontagem</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Só o evento">✗</span> só evento</td></tr>
+            <tr><td class="ev-comp-label">Operação em eventos há +40 anos</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Não">✗</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 10. FORMULÁRIO DE ORÇAMENTO ═══ -->
+    <section class="section ev-form-bg" id="orcamento" aria-labelledby="form-heading">
+      <div class="wrap">
+        <div class="ev-form-wrap">
+          <div class="ev-form-left">
+            <span class="eyebrow">Solicite um orçamento</span>
+            <h2 id="form-heading" style="margin-bottom:16px">Conte sobre o evento.<br><em class="accent-text">A gente monta o plano.</em></h2>
+            <p class="ev-section-lead">Preencha os dados abaixo e receba uma proposta personalizada com dimensionamento de equipe, tipo de ambulância e documentação necessária.</p>
+            <div class="ev-form-trust">
+              <div class="ev-form-trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Resposta em até 2 horas em dias úteis</span>
+              </div>
+              <div class="ev-form-trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Proposta com plano médico incluso</span>
+              </div>
+              <div class="ev-form-trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>A partir de R$1.500 (evento de 4h, ambulância básica)</span>
+              </div>
+            </div>
+          </div>
+          <div class="ev-form-right">
+            <div class="ev-form-card" id="leadForm">
+              <div class="ev-form-field">
+                <label class="ev-form-label" for="f-nome">Nome *</label>
+                <input class="ev-form-input" type="text" id="f-nome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
+              </div>
+              <div class="ev-form-field">
+                <label class="ev-form-label" for="f-whatsapp">WhatsApp *</label>
+                <input class="ev-form-input" type="tel" id="f-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required autocomplete="tel" />
+              </div>
+              <div class="ev-form-field">
+                <label class="ev-form-label" for="f-tipo">Tipo de evento *</label>
+                <select class="ev-form-input ev-form-select" id="f-tipo" name="tipo_evento" required>
+                  <option value="" disabled selected>Selecione o tipo</option>
+                  <option value="show">Show ou festival</option>
+                  <option value="corporativo">Evento corporativo</option>
+                  <option value="esportivo">Evento esportivo</option>
+                  <option value="privado">Evento privado / festa</option>
+                  <option value="feira">Feira ou exposição</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+              <div class="ev-form-row">
+                <div class="ev-form-field">
+                  <label class="ev-form-label" for="f-data">Data estimada *</label>
+                  <input class="ev-form-input" type="date" id="f-data" name="data_evento" required />
+                </div>
+                <div class="ev-form-field">
+                  <label class="ev-form-label" for="f-publico">Público estimado</label>
+                  <select class="ev-form-input ev-form-select" id="f-publico" name="publico_estimado">
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="ate-200">Até 200 pessoas</option>
+                    <option value="200-500">200 a 500</option>
+                    <option value="500-2000">500 a 2.000</option>
+                    <option value="2000+">Mais de 2.000</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-primary ev-form-submit" type="button" id="formSubmitBtn">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Solicitar orçamento
+              </button>
+              <p class="ev-form-note">Recomendamos contratação com pelo menos 15 dias de antecedência para garantir disponibilidade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 11. FAQ ═══ -->
+    <section class="section ev-cream-light" id="faq" aria-labelledby="faq-heading">
+      <div class="wrap">
+        <span class="eyebrow">Dúvidas frequentes</span>
+        <h2 id="faq-heading" style="margin-bottom:32px">Perguntas sobre <em class="accent-text">cobertura médica</em> para eventos</h2>
+        <div class="ev-faq-list" role="list">
+          {faqItems.map(({ q, a }) => (
+            <div class="ev-faq-item" role="listitem">
+              <button class="ev-faq-q" type="button" aria-expanded="false">
+                {q}
+                <svg class="ev-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="ev-faq-a" hidden>
+                <div class="ev-faq-a-inner">{a}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 12. CTA FINAL ═══ -->
+    <section class="ev-fcta" aria-labelledby="fcta-heading">
+      <div class="wrap">
+        <h2 id="fcta-heading">Tem um evento?<br><em>A gente cuida da saúde de quem vai.</em></h2>
+        <p>Conte o tipo, a data e o tamanho. A Savior monta o plano médico e envia a proposta.</p>
+        <div class="ev-fcta-btns">
+          <a class="btn btn-primary" href={waCTA} data-whatsapp data-campaign="eventos" data-location="cta">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            Solicitar orçamento por WhatsApp
+          </a>
+          <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos" data-location="cta">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            RJ {CONTACT_RJ.phone}
+          </a>
+          <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_SP.phoneLandlineHref}`} data-phone data-campaign="eventos" data-location="cta-sp">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            SP {CONTACT_SP.phoneLandline}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="ev-footer" role="contentinfo">
+      <div class="wrap">
+        <div class="ev-ft-top">
+          <div>
+            <div class="ev-ft-word">SAVIOR</div>
+            <div class="ev-ft-tag">Medical Service · Desde 1979</div>
+          </div>
+          <div class="ev-ft-contacts">
+            <div>
+              <div class="ev-ft-label">Rio de Janeiro</div>
+              <a class="ev-ft-main" href={`tel:${CONTACT_RJ.phoneHref}`}>{CONTACT_RJ.phone}</a>
+              <a class="ev-ft-sec" href={`https://wa.me/${CONTACT_RJ.whatsapp}`}>WA {CONTACT_RJ.whatsappDisplay}</a>
+            </div>
+            <div>
+              <div class="ev-ft-label">São Paulo</div>
+              <a class="ev-ft-main" href={`tel:${CONTACT_SP.phoneLandlineHref}`}>{CONTACT_SP.phoneLandline}</a>
+              <a class="ev-ft-sec" href={`https://wa.me/${CONTACT_SP.whatsapp}`}>WA {CONTACT_SP.whatsappDisplay}</a>
+            </div>
+            <div>
+              <div class="ev-ft-label">Comercial</div>
+              <a class="ev-ft-main" href={`mailto:${CONTACT_RJ.email}`}>{CONTACT_RJ.email}</a>
+              <a class="ev-ft-sec" href="https://www.savior.com.br">www.savior.com.br</a>
+            </div>
+            <div>
+              <div class="ev-ft-label">Operação</div>
+              <span class="ev-ft-sec">Central 24h · 365 dias/ano</span>
+              <span class="ev-ft-sec">RJ e SP</span>
+            </div>
+          </div>
+        </div>
+        <div class="ev-ft-bottom">© 2026 Savior Medical Service. CNPJ 28.222.118/0001-07. Todos os direitos reservados.</div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ═══ FLOATING WA ═══ -->
+  <a
+    class="ev-fw"
+    href={waFloat}
+    data-whatsapp
+    data-campaign="eventos"
+    data-location="float"
+    aria-label="Solicitar orçamento por WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.616l4.54-1.472A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.322-.724-6.016-1.955a.5.5 0 00-.394-.082l-3.156 1.023 1.04-3.108a.5.5 0 00-.074-.424A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    <span>Orçamento para evento</span>
+  </a>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script is:inline>
+    // Sticky header
+    var sh = document.getElementById('stickyHeader');
+    window.addEventListener('scroll', function() {
+      sh.classList.toggle('ev-sh--visible', window.scrollY > 600);
+    }, { passive: true });
+
+    // FAQ accordion — accessible
+    document.querySelectorAll('.ev-faq-q').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = btn.parentElement;
+        var answer = item.querySelector('.ev-faq-a');
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        answer.hidden = isOpen;
+        item.classList.toggle('ev-faq--open', !isOpen);
+      });
+    });
+
+    // Form submit — WA fallback + GA4 tracking
+    var formBtn = document.getElementById('formSubmitBtn');
+    if (formBtn) {
+      formBtn.addEventListener('click', function() {
+        var nome  = document.getElementById('f-nome').value.trim();
+        var wa    = document.getElementById('f-whatsapp').value.trim();
+        var tipo  = document.getElementById('f-tipo').value;
+        var data  = document.getElementById('f-data').value;
+        var pub   = document.getElementById('f-publico').value;
+
+        if (!nome || !wa || !tipo || !data) {
+          document.getElementById('f-nome').reportValidity();
+          return;
+        }
+
+        // GA4 + Google Ads via dataLayer
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'generate_lead',
+          event_category: 'lead',
+          event_label: 'eventos-form',
+          campaign: 'eventos',
+          location: 'form',
+          value: 1500,
+          currency: 'BRL',
+        });
+
+        // Fallback: abre WhatsApp com dados formatados
+        var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
+          ? '[eventos-form-v01][utm:' + window._saviorUtm.campaign + ']'
+          : '[eventos-form-v01]';
+        var lines = [
+          'Oi, preciso de cobertura m\u00e9dica para um evento.',
+          '',
+          '*Dados:*',
+          'Nome: ' + nome,
+          'Tipo: ' + tipo,
+          'Data: ' + data,
+          'P\u00FAblico: ' + (pub || 'N\u00E3o informado'),
+          '',
+          utmTag,
+        ];
+        window.open('https://wa.me/5521980358200?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+
+        // Sucesso — construído via DOM sem innerHTML
+        var card = document.getElementById('leadForm');
+        while (card.firstChild) { card.removeChild(card.firstChild); }
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'text-align:center;padding:40px 24px';
+        var h3 = document.createElement('h3');
+        h3.style.cssText = 'color:var(--green-dark);margin-bottom:8px';
+        h3.textContent = 'Solicita\u00E7\u00E3o enviada!';
+        var p = document.createElement('p');
+        p.style.cssText = 'color:var(--gray);font-size:14px';
+        p.textContent = 'O Carlos vai entrar em contato em at\u00E9 2 horas em dias \u00FAteis com a proposta para o seu evento.';
+        wrap.appendChild(h3);
+        wrap.appendChild(p);
+        card.appendChild(wrap);
+      });
+    }
+  </script>
+
+</Base>
+
+<style>
+  /* ── Layout tokens ── */
+  .section { padding: var(--space-block) 0; }
+  .ev-cream-light  { background: var(--cream-light); border-bottom: 1px solid var(--cream-dark); }
+  .ev-navy-deep    { background: var(--navy-deep); color: #fff; }
+  .ev-form-bg      { background: #f7f3ec; border-bottom: 1px solid var(--cream-dark); }
+  .on-dark         { color: #fff; }
+  .accent-text     { color: var(--green-dark); font-style: normal; }
+  .ev-green-bright { color: var(--green-bright); font-style: normal; }
+  .ev-muted        { color: rgba(255,255,255,.55); }
+  .ev-section-center { text-align: center; }
+  .ev-section-lead { font-size: 15px; color: var(--gray); max-width: 600px; margin-bottom: 24px; line-height: 1.6; }
+
+  /* ── Sticky Header ── */
+  .ev-sh { display: none; }
+  @media (min-width: 961px) {
+    .ev-sh {
+      position: fixed; display: block; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--navy-deep); border-bottom: 1px solid rgba(255,255,255,.08);
+      transform: translateY(-100%); transition: transform .25s ease;
+      box-shadow: 0 2px 20px #00000059;
+    }
+    .ev-sh--visible { transform: translateY(0); }
+    .ev-sh-inner { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .ev-sh-brand { display: flex; align-items: center; gap: 10px; }
+    .ev-sh-word { font-family: var(--ethno); font-size: 16px; letter-spacing: .08em; color: #fff; }
+    .ev-sh-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; color: var(--green-bright); text-transform: uppercase; margin-left: 8px; }
+    .ev-sh-actions { display: flex; align-items: center; gap: 8px; }
+    .ev-sh-phone {
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+      background: var(--green); color: var(--navy-deep); border-radius: 4px;
+      font-weight: 700; font-size: 14px; white-space: nowrap; transition: filter .15s;
+    }
+    .ev-sh-phone:hover { filter: brightness(1.1); }
+    .ev-sh-phone svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .ev-sh-wa {
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+      background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.35);
+      border-radius: 4px; font-weight: 600; font-size: 14px; white-space: nowrap; transition: all .15s;
+    }
+    .ev-sh-wa:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.55); }
+    .ev-sh-wa svg { width: 16px; height: 16px; flex-shrink: 0; }
+  }
+
+  /* ── Hero ── */
+  .ev-hero {
+    position: relative; min-height: 92vh; display: flex; align-items: center;
+    overflow: hidden; background: var(--navy-deep);
+    padding: clamp(48px,8vh,96px) 0 clamp(72px,10vh,120px);
+  }
+  .ev-hero-bg { position: absolute; inset: 0; }
+  .ev-hero-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .ev-hero-bg video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+  .ev-hero-overlay {
+    position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(135deg, #07182bd1, #0b25409e, #07182bb8);
+  }
+  @media (max-width: 960px) { .ev-hero-overlay { background: linear-gradient(135deg, #07182be0, #0b2540c7); } }
+  .ev-hero-content { position: relative; z-index: 3; width: 100%; color: #fff; }
+  .ev-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .ev-hero-wordmark { font-family: var(--ethno); font-size: 22px; letter-spacing: .08em; color: #fff; line-height: 1; }
+  .ev-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
+  .ev-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
+  @media (max-width: 960px) { .ev-hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .ev-hero-live { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 16px; }
+  .ev-hero-live-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--green-bright); flex-shrink: 0; }
+  .ev-hero-live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--green-bright); animation: ev-live-pulse 2s ease-out infinite; }
+  @keyframes ev-live-pulse { 0% { transform: scale(1); opacity: .6; } 70% { transform: scale(2.5); opacity: 0; } to { transform: scale(2.5); opacity: 0; } }
+  .ev-hero h1 em { font-style: normal; color: var(--green-bright); }
+  .ev-hero-sub { font-size: clamp(15px,1.4vw,17px); color: #ffffffd1; max-width: 520px; margin-bottom: clamp(12px,2vh,20px); line-height: 1.55; }
+  .ev-hero-note { font-size: 13px; color: #fff9; max-width: 520px; margin-bottom: clamp(28px,3.6vh,40px); line-height: 1.55; }
+  .ev-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  @media (max-width: 960px) { .ev-hero-ctas .btn { width: 100%; } }
+  .ev-hero-right { border-left: 1px solid rgba(255,255,255,.12); padding-left: clamp(20px,3vw,40px); }
+  @media (max-width: 960px) { .ev-hero-right { border-left: none; padding-left: 0; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.12); } }
+
+  .ev-kpi { margin-bottom: 24px; }
+  .ev-kpi-label { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; color: var(--green-bright); text-transform: uppercase; margin-bottom: 4px; }
+  .ev-kpi-val { font-weight: 800; font-size: clamp(48px,7vw,72px); color: #fff; letter-spacing: -.05em; line-height: .9; }
+  .ev-kpi-val .accent { color: var(--green-bright); font-size: .55em; vertical-align: super; }
+  .ev-kpi-desc { font-size: 13px; color: #fff9; margin-top: 8px; }
+
+  .ev-tldr {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+    background: rgba(7,24,43,.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(31,210,154,.2);
+  }
+  .ev-tldr-grid { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .ev-tldr-item { display: flex; align-items: center; gap: 8px; padding: 16px clamp(16px,3vw,32px); white-space: nowrap; }
+  .ev-tldr-item p { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: -.01em; margin: 0; }
+  .ev-tldr-item + .ev-tldr-item::before { content: ''; width: 3px; height: 3px; border-radius: 50%; background: var(--green-bright); margin-right: 8px; flex-shrink: 0; }
+  @media (max-width: 768px) { .ev-tldr-item { padding: 12px 16px; } .ev-tldr-item p { font-size: 12px; } }
+
+  /* ── Logos band ── */
+  .ev-logos-band { background: var(--navy); padding: clamp(40px,6vw,64px) 0; border-bottom: 2px solid var(--green-dark); }
+  .ev-logos-eyebrow { text-align: center; margin-bottom: 32px; }
+  .ev-logos-row { display: flex; justify-content: center; align-items: center; gap: clamp(24px,5vw,56px); flex-wrap: wrap; padding: 16px 0; }
+  .ev-logo { color: #fff; opacity: .55; transition: opacity .2s; white-space: nowrap; cursor: default; }
+  .ev-logo:hover { opacity: .9; }
+  .ev-logo--heavy   { font-weight: 900; font-size: clamp(17px,2vw,22px); letter-spacing: -.03em; }
+  .ev-logo--light   { font-weight: 400; font-size: clamp(15px,1.7vw,19px); letter-spacing: .08em; }
+  .ev-logo--bold    { font-weight: 700; font-size: clamp(16px,1.8vw,20px); letter-spacing: .02em; }
+  .ev-logo--semibold{ font-weight: 600; font-size: clamp(15px,1.6vw,18px); letter-spacing: .15em; }
+  .ev-logo--regular { font-weight: 400; font-size: clamp(14px,1.5vw,17px); letter-spacing: .06em; }
+  .ev-logo--italic  { font-style: italic; }
+  .ev-logos-note { text-align: center; font-size: 12px; color: rgba(255,255,255,.35); margin-top: 20px; font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+
+  /* ── Social Proof ── */
+  .ev-proof { background: #fff; border-bottom: 1px solid var(--cream-dark); }
+  .ev-metrics { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+  @media (max-width: 960px) { .ev-metrics { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 440px) { .ev-metrics { grid-template-columns: 1fr; } }
+  .ev-metric { background: var(--cream); border-radius: 8px; padding: 28px 24px; border: 1px solid var(--cream-dark); transition: transform .15s, box-shadow .15s; }
+  .ev-metric:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #0b254014; }
+  .ev-metric--featured { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .ev-metric-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); margin-bottom: 14px; }
+  .ev-metric--featured .ev-metric-tag { color: var(--green-bright); }
+  .ev-metric-val { font-weight: 800; font-size: clamp(36px,4.5vw,52px); letter-spacing: -.04em; line-height: .95; margin-bottom: 10px; }
+  .ev-metric--featured .ev-metric-val { color: #fff; }
+  .ev-metric-val .pre, .ev-metric-val .suf { font-size: .5em; color: var(--green-dark); font-weight: 700; vertical-align: .35em; }
+  .ev-metric--featured .ev-metric-val .pre, .ev-metric--featured .ev-metric-val .suf { color: var(--green-bright); }
+  .ev-metric-label { font-size: 13px; color: var(--gray); line-height: 1.4; }
+  .ev-metric--featured .ev-metric-label { color: #ffffffb3; }
+
+  /* ── Service cards ── */
+  .ev-svc-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+  @media (max-width: 960px) { .ev-svc-grid { grid-template-columns: 1fr; } }
+  .ev-svc-card { background: #fff; border-radius: 6px; padding: 28px 24px; border: 1px solid var(--cream-dark); border-left: 3px solid var(--green); transition: transform .15s, border-color .15s; }
+  .ev-svc-card:hover { transform: translateY(-2px); border-left-color: var(--green-dark); }
+  .ev-svc-icon { width: 32px; height: 32px; color: var(--navy); margin-bottom: 18px; }
+  .ev-svc-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; line-height: 1.2; }
+  .ev-svc-card p { font-size: 14px; color: var(--gray); line-height: 1.55; }
+
+  /* ── Photo breaks ── */
+  .ev-fleet { position: relative; min-height: 420px; display: flex; align-items: center; overflow: hidden; background: var(--navy-deep); }
+  .ev-fleet-bg { position: absolute; inset: 0; }
+  .ev-fleet-bg img { width: 100%; height: 100%; object-fit: cover; }
+  .ev-fleet-over { position: absolute; inset: 0; background: linear-gradient(to right, #07182beb, #0b2540c7 40%, #07182b8c, #07182b66); }
+  @media (max-width: 720px) { .ev-fleet-over { background: linear-gradient(to bottom, #07182be6, #0b2540c7 60%, #07182bd9); } }
+  .ev-fleet-over--left { background: linear-gradient(to left, #07182bf2, #0b2540e0 45%, #07182baa 70%, #07182b88); }
+  .ev-fleet-content { position: relative; z-index: 2; padding: clamp(56px,8vh,96px) 0; color: #fff; width: 100%; }
+  .ev-fleet-content h2 { color: #fff; margin-bottom: 16px; }
+  .ev-fleet-content h2 em { color: var(--green-bright); font-style: normal; }
+  .ev-fleet-content p { font-size: 16px; color: #ffffffd1; max-width: 540px; line-height: 1.6; }
+  .ev-fleet-content--right { text-align: right; }
+  .ev-fleet-content--right p { margin-left: auto; }
+  .ev-fleet-stripe { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--green), var(--green-dark), var(--navy-deep)); }
+
+  /* ── Event types ── */
+  .ev-ev-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  @media (max-width: 960px) { .ev-ev-grid { grid-template-columns: 1fr; } }
+  .ev-ev-card { background: var(--navy); border-radius: 6px; padding: 32px 24px; border: 1px solid var(--navy-mid); transition: transform .15s; }
+  .ev-ev-card:hover { transform: translateY(-2px); }
+  .ev-ev-icon { width: 28px; height: 28px; color: var(--green-bright); margin-bottom: 16px; }
+  .ev-ev-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -.01em; line-height: 1.25; }
+  .ev-ev-card h3 em { font-style: normal; color: var(--green-bright); }
+  .ev-ev-card p { font-size: 13px; color: #ffffff99; line-height: 1.55; }
+
+  /* ── Steps ── */
+  .ev-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  @media (max-width: 960px) { .ev-steps { grid-template-columns: 1fr; gap: 12px; } }
+  .ev-step { background: #fff; padding: 32px 24px; border-radius: 6px; border: 1px solid var(--cream-dark); border-left: 3px solid var(--green); }
+  .ev-step-n { font-family: var(--mono); font-size: 9px; letter-spacing: .25em; color: var(--green-dark); margin-bottom: 10px; }
+  .ev-step h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.3; letter-spacing: -.01em; }
+  .ev-step p { font-size: 13px; color: var(--gray); line-height: 1.55; }
+
+  /* ── Comparison ── */
+  .ev-comp-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 32px; }
+  .ev-comp-table th { text-align: left; padding: 14px 16px; font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); background: var(--navy-deep); border-bottom: 2px solid var(--green-dark); }
+  .ev-comp-table td { padding: 14px 16px; border-bottom: 1px solid var(--navy-mid); color: #ffffffcc; }
+  .ev-comp-table tr:hover td { background: rgba(255,255,255,.03); }
+  .check { color: var(--green-bright); font-weight: 700; font-size: 16px; }
+  .cross { color: var(--alert); font-size: 16px; }
+  .ev-comp-label { font-weight: 600; color: #fff; }
+  .ev-comp-savior { background: rgba(31,210,154,.06); }
+  .ev-comp-table th.ev-comp-savior { background: var(--green-dark); color: #fff; }
+  @media (max-width: 960px) { .ev-comp-table { font-size: 13px; } .ev-comp-table th, .ev-comp-table td { padding: 10px 8px; } }
+
+  /* ── Form ── */
+  .ev-form-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,6vw,64px); align-items: start; }
+  @media (max-width: 960px) { .ev-form-wrap { grid-template-columns: 1fr; } }
+  .ev-form-trust { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .ev-form-trust-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--gray); }
+  .ev-form-card { background: #fff; border-radius: 6px; padding: 28px 24px; border: 1px solid var(--cream-dark); border-top: 3px solid var(--green); box-shadow: 0 4px 16px rgba(11,37,64,.06); }
+  .ev-form-field { margin-bottom: 16px; }
+  .ev-form-label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 6px; font-weight: 600; }
+  .ev-form-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 4px; font-family: var(--sans); font-size: 14px; color: var(--navy); background: #fff; transition: border-color .15s, box-shadow .15s; outline: none; -webkit-appearance: none; appearance: none; }
+  .ev-form-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,184,124,.12); }
+  .ev-form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230B2540' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+  .ev-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .ev-form-row { grid-template-columns: 1fr; } }
+  .ev-form-submit { width: 100%; font-size: 16px; padding: 16px 24px; margin-top: 8px; }
+  .ev-form-note { font-size: 11px; color: var(--gray); margin-top: 12px; text-align: center; line-height: 1.5; }
+
+  /* ── FAQ ── */
+  .ev-faq-list { max-width: 760px; }
+  .ev-faq-item { border-bottom: 1px solid var(--cream-dark); }
+  .ev-faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--navy); text-align: left; line-height: 1.35; }
+  .ev-faq-q:hover { color: var(--green-dark); }
+  .ev-faq-chevron { width: 20px; height: 20px; flex-shrink: 0; color: var(--gray); transition: transform .2s; }
+  .ev-faq--open .ev-faq-chevron { transform: rotate(180deg); }
+  .ev-faq-a[hidden] { display: none; }
+  .ev-faq-a-inner { padding: 0 0 20px; font-size: 14px; color: var(--gray); line-height: 1.65; }
+
+  /* ── Final CTA ── */
+  .ev-fcta { padding: var(--space-block) 0; background: var(--navy-deep); text-align: center; color: #fff; }
+  .ev-fcta h2 { color: #fff; margin-bottom: 16px; }
+  .ev-fcta h2 em { color: var(--green-bright); font-style: normal; }
+  .ev-fcta p { color: #ffffffc7; margin-bottom: 28px; font-size: 16px; }
+  .ev-fcta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Footer ── */
+  .ev-footer { background: #050f1c; color: #fff9; padding: 48px 0 28px; font-size: 13px; }
+  .ev-ft-top { display: grid; grid-template-columns: 240px 1fr; gap: 48px; align-items: start; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  @media (max-width: 960px) { .ev-ft-top { grid-template-columns: 1fr; } }
+  .ev-ft-word { font-family: var(--ethno); font-size: 18px; letter-spacing: .08em; color: #fff; margin-bottom: 4px; }
+  .ev-ft-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--green-bright); opacity: .8; }
+  .ev-ft-contacts { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+  @media (max-width: 960px) { .ev-ft-contacts { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 440px) { .ev-ft-contacts { grid-template-columns: 1fr; } }
+  .ev-ft-label { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--green-bright); opacity: .75; margin-bottom: 4px; }
+  .ev-ft-main { color: #fff; font-weight: 600; font-size: 14px; display: block; }
+  .ev-ft-main:hover { color: var(--green-bright); }
+  .ev-ft-sec { color: #fff9; font-size: 13px; display: block; }
+  .ev-ft-sec:hover { color: #fff; }
+  .ev-ft-bottom { font-size: 11px; color: rgba(255,255,255,.25); text-align: center; margin-top: 32px; }
+
+  /* ── Floating WA ── */
+  .ev-fw {
+    position: fixed; bottom: 16px; right: 16px; z-index: 999;
+    display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+    background: #25d366; color: var(--navy-deep); border-radius: 50px;
+    font-weight: 600; font-size: 14px;
+    box-shadow: 0 6px 20px #25d36666; transition: transform .15s, box-shadow .15s;
+  }
+  .ev-fw:hover { transform: translateY(-2px); box-shadow: 0 10px 28px #25d36680; }
+  .ev-fw svg { width: 22px; height: 22px; flex-shrink: 0; }
+  @media (max-width: 380px) { .ev-fw span { display: none; } .ev-fw { padding: 14px; } }
+  @media (min-width: 961px) { .ev-fw { display: none; } }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px 24px; border-radius: 4px; font-weight: 600; font-size: 15px;
+    line-height: 1; transition: transform .1s, box-shadow .1s; white-space: nowrap;
+    min-height: 48px; border: none; cursor: pointer; font-family: var(--sans);
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--green); color: var(--navy-deep); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px #00b87c59; }
+  .btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+  .btn-secondary.on-dark { color: #fff; border-color: rgba(255,255,255,.35); }
+  .btn-secondary.on-dark:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.55); }
+  .btn-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ── Eyebrow ── */
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .25em; text-transform: uppercase; font-weight: 500; color: var(--green-dark); }
+  .eyebrow.on-dark { color: var(--green-bright); }
+</style>
