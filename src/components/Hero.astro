@@ -9,17 +9,58 @@
 
 import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
+interface HeroBadge {
+  title: string;
+  desc: string;
+}
+
+interface HeroMetric {
+  number: string | number;
+  unit: string;
+  label: string;
+  zones: { label: string; value: string }[];
+  noteZone: string;
+}
+
 interface Props {
   h1: string;
   h1Highlight?: string;
   subhead: string;
   waCampaign: string;
+  eyebrow?: string;
+  contact?: typeof CONTACT_RJ;
+  /** 'metric' = big number à direita (RJ). 'badges' = 3 badges abaixo dos CTAs (SP). */
+  heroVariant?: 'metric' | 'badges';
+  metric?: HeroMetric;
+  badges?: HeroBadge[];
+  ratingCount?: number;
+  noteText?: string;
+  videoPoster?: string;
+  videoPosterMobile?: string;
+  videoWebm?: string;
+  videoMp4?: string;
 }
 
-const { h1, h1Highlight, subhead, waCampaign } = Astro.props;
+const {
+  h1,
+  h1Highlight,
+  subhead,
+  waCampaign,
+  eyebrow,
+  contact = CONTACT_RJ,
+  heroVariant = 'metric',
+  metric,
+  badges,
+  ratingCount = 346,
+  noteText,
+  videoPoster = '/img/hero/hero-poster.webp',
+  videoPosterMobile = '/img/hero/hero-poster-mobile.webp',
+  videoWebm = '/video/hero-loop.webm',
+  videoMp4 = '/video/hero-loop.mp4',
+} = Astro.props;
 
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
   'Oi, preciso de ambulância agora.',
   'hero'
@@ -29,22 +70,17 @@ const waHref = whatsappUrl(
 <section class="hero">
   <!-- Background: vídeo em desktop, poster em mobile/reduced-motion -->
   <div class="hero-bg" aria-hidden="true">
-    <picture class="hero-poster">
-      <source
-        media="(max-width: 720px)"
-        srcset="/img/hero/hero-poster-mobile.webp"
-        type="image/webp"
-      />
-      <source srcset="/img/hero/hero-poster.webp" type="image/webp" />
-      <img
-        src="/img/hero/hero-poster.jpg"
-        alt=""
-        width="1920"
-        height="1080"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </picture>
+    <img
+      class="hero-poster"
+      srcset={`${videoPosterMobile} 720w, ${videoPoster} 1536w`}
+      sizes="(max-width: 720px) 100vw, 100vw"
+      src={videoPoster}
+      alt=""
+      width="1920"
+      height="1080"
+      loading="eager"
+      fetchpriority="high"
+    />
 
     <video
       class="hero-video"
@@ -53,38 +89,34 @@ const waHref = whatsappUrl(
       loop
       playsinline
       preload="none"
-      poster="/img/hero/hero-poster.webp"
+      poster={videoPoster}
       width="1920"
       height="1080"
     >
-      <source media="(min-width: 960px)" src="/video/hero-loop.webm" type="video/webm" />
-      <source media="(min-width: 960px)" src="/video/hero-loop.mp4" type="video/mp4" />
+      <source media="(min-width: 960px)" src={videoWebm} type="video/webm" />
+      <source media="(min-width: 960px)" src={videoMp4} type="video/mp4" />
     </video>
 
     <div class="hero-overlay"></div>
   </div>
 
   <div class="wrap hero-content">
-    <!-- Marca: símbolo solto + wordmark + Medical Service (SEM box por trás) -->
+    <!-- Marca: wordmark Ethnocentric + Medical Service (SEM símbolo, SEM box) -->
     <div class="hero-brand">
-      <svg class="hero-symbol" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#1FD29A" stroke-width="6" />
-        <circle cx="50" cy="50" r="12" fill="#1FD29A" />
-      </svg>
       <div class="hero-brand-text">
-        <span class="hero-wordmark">Savior</span>
+        <span class="hero-wordmark">SAVIOR</span>
         <span class="hero-descriptor">Medical Service</span>
       </div>
     </div>
 
     <!-- Grid 2 colunas em desktop, 1 em mobile -->
-    <div class="hero-grid">
+    <div class={`hero-grid hero-grid--${heroVariant}`}>
       <!-- Coluna esquerda: eyebrow + H1 + subhead + CTAs + disclaimer -->
       <div class="hero-left">
         <!-- B3: sinal de disponibilidade em tempo real -->
         <div class="hero-live">
           <span class="hero-live-dot" aria-hidden="true"></span>
-          Central disponível agora
+          {eyebrow ?? 'Central disponível agora'}
         </div>
 
         <h1 class="hero-h1">
@@ -97,7 +129,7 @@ const waHref = whatsappUrl(
           <!-- SAVIOR-02: Emergência → Ligar (primário) / Orçamento → WhatsApp (secundário) -->
           <a
             class="btn btn-primary on-dark"
-            href={`tel:${CONTACT_RJ.phoneHref}`}
+            href={`tel:${contact.phoneHref}`}
             data-phone
             data-campaign={waCampaign}
             data-event="cta_click"
@@ -129,7 +161,7 @@ const waHref = whatsappUrl(
         </div>
 
         <!-- B2: rating Google inline -->
-        <div class="hero-rating" role="img" aria-label="4,7 estrelas · 346 avaliações no Google">
+        <div class="hero-rating" role="img" aria-label={`4,7 estrelas · ${ratingCount} avaliações no Google`}>
           <svg class="hero-rating-g" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -138,30 +170,54 @@ const waHref = whatsappUrl(
           </svg>
           <span class="hero-rating-score">4,7</span>
           <span class="hero-rating-stars" aria-hidden="true">★★★★★</span>
-          <span class="hero-rating-count">346 avaliações</span>
+          <span class="hero-rating-count">{ratingCount} avaliações</span>
         </div>
 
-        <!-- Disclaimer reforçado: proteção legal + gestão de expectativa -->
-        <p id="tempo-medio-nota" class="hero-note">
-          <span class="hero-note-ast" aria-hidden="true">*</span>
-          <strong>Tempo médio</strong>, não garantido. Medido na Zona Sul entre janeiro, fevereiro e março de 2026.
-          O tempo real depende de trânsito, região de origem e condições operacionais no momento do chamado.
-        </p>
+        <!-- Disclaimer -->
+        {noteText ? (
+          <p id="tempo-medio-nota" class="hero-note">
+            <span class="hero-note-ast" aria-hidden="true">*</span>
+            <Fragment set:html={noteText} />
+          </p>
+        ) : (
+          <p id="tempo-medio-nota" class="hero-note">
+            <span class="hero-note-ast" aria-hidden="true">*</span>
+            <strong>Tempo médio</strong>, não garantido. Medido na Zona Sul entre janeiro, fevereiro e março de 2026.
+            O tempo real depende de trânsito, região de origem e condições operacionais no momento do chamado.
+          </p>
+        )}
+
+        <!-- Badges (heroVariant = 'badges', usado em SP) -->
+        {heroVariant === 'badges' && badges && (
+          <div class="hero-badges">
+            {badges.map((b) => (
+              <div class="hero-badge">
+                <div class="hero-badge-title">{b.title}</div>
+                <div class="hero-badge-desc">{b.desc}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <!-- Coluna direita: número 18 protagonista (tamanho reduzido vs proposta original) -->
-      <aside class="hero-metric" aria-label="Tempo médio de chegada">
-        <div class="hero-metric-label">
-          <span class="hero-metric-dot" aria-hidden="true"></span>
-          Tempo médio Zona Sul
-        </div>
-        <div class="hero-metric-number">18</div>
-        <div class="hero-metric-unit">minutos</div>
-        <p class="hero-metric-explainer">
-          Zona Norte e Zona Oeste: <strong>25 min</strong>.<br>
-          Niterói e Baixada: <strong>35 min</strong>.
-        </p>
-      </aside>
+      <!-- Coluna direita: métrica big number (heroVariant = 'metric', usado em RJ) -->
+      {heroVariant === 'metric' && metric && (
+        <aside class="hero-metric" aria-label="Tempo médio de chegada">
+          <div class="hero-metric-label">
+            <span class="hero-metric-dot" aria-hidden="true"></span>
+            {metric.label}
+          </div>
+          <div class="hero-metric-number">{metric.number}</div>
+          <div class="hero-metric-unit">{metric.unit}</div>
+          <p class="hero-metric-explainer">
+            {metric.zones.map((z, i) => (
+              <>
+                {z.label}: <strong>{z.value}</strong>{i < metric.zones.length - 1 && <br />}
+              </>
+            ))}
+          </p>
+        </aside>
+      )}
     </div>
   </div>
 </section>
@@ -263,10 +319,10 @@ const waHref = whatsappUrl(
   }
 
   .hero-wordmark {
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: 26px;
-    letter-spacing: -0.04em;
+    font-family: 'Ethnocentric', var(--sans);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: 0.08em;
     color: white;
     line-height: 1;
   }
@@ -537,6 +593,46 @@ const waHref = whatsappUrl(
   .hero-metric-explainer strong {
     color: rgba(255, 255, 255, 0.88);
     font-weight: 600;
+  }
+
+  /* ============ Grid variant: badges (SP) — coluna única, full width ============ */
+  .hero-grid--badges {
+    grid-template-columns: 1fr;
+  }
+
+  /* ============ Badges (SP hero) ============ */
+  .hero-badges {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 28px;
+    max-width: 640px;
+  }
+
+  .hero-badge {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 16px;
+    border-radius: 4px;
+  }
+
+  .hero-badge-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .hero-badge-desc {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .hero-badges {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* ============ Mobile ============ */

@@ -6,6 +6,16 @@
 /* ============ Self-hosted fonts (Onda 3 perf) ============ */
 /* @import deve vir antes de qualquer @font-face (regra CSS) */
 
+/* Ethnocentric — marca Savior (uso exclusivo no wordmark do hero e componentes de marca) */
+@font-face {
+  font-family: 'Ethnocentric';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Ethnocentric-Regular.woff2') format('woff2'),
+       url('/fonts/Ethnocentric-Regular.otf') format('opentype');
+}
+
 /* IBM Plex Mono — @font-face manual com caminho estável em /public/fonts/.
    Evita que Astro emita /_astro/ibm-plex-....hash.woff2, eliminando o último
    nó na árvore de dependência de rede detectado pelo Lighthouse. */

@@ -15,6 +15,8 @@ interface Props {
   ogImage?: string;
   ogImageAlt?: string;
   dateModified?: string;
+  /** srcset do LCP hero poster — deve espelhar exatamente o <img srcset> no Hero.astro */
+  lcpImageSrcset?: string;
 }
 
 const {
@@ -25,6 +27,7 @@ const {
   ogImage = '/og-savior.jpg',
   ogImageAlt = 'Ambulância Savior no Rio de Janeiro com Cristo Redentor ao fundo',
   dateModified = '2026-04-24',
+  lcpImageSrcset = '/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w',
 } = Astro.props;
 
 const absoluteOgImage = ogImage.startsWith('http')
@@ -105,25 +108,24 @@ const absoluteOgImage = ogImage.startsWith('http')
       crossorigin
       href="/fonts/ibm-plex-mono-latin.woff2"
     />
+    <!-- Ethnocentric — wordmark SAVIOR; preload elimina do caminho crítico do LCP -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/fonts/Ethnocentric-Regular.woff2"
+    />
     <!-- Fallback: system font stack garante texto visível antes da fonte carregar -->
     <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
-    <!-- ============ Hero poster — preload LCP (Onda 3 perf) ============ -->
-    <!-- Poster mobile é o LCP em 375px — preload antecipa download antes do CSS  -->
+    <!-- ============ Hero poster — preload LCP ============ -->
+    <!-- imagesrcset espelha o srcset do <img> no Hero.astro — mesmo valor passado via lcpImageSrcset -->
     <link
       rel="preload"
       as="image"
-      imagesrcset="/img/hero/hero-poster-mobile.webp 720w"
+      imagesrcset={lcpImageSrcset}
       imagesizes="100vw"
-      media="(max-width: 720px)"
-      fetchpriority="high"
-    />
-    <!-- Poster desktop — preload para viewport acima de 720px -->
-    <link
-      rel="preload"
-      as="image"
-      href="/img/hero/hero-poster.webp"
-      media="(min-width: 721px)"
       fetchpriority="high"
     />
 
@@ -153,65 +155,72 @@ const absoluteOgImage = ogImage.startsWith('http')
     </script>
 
     <!-- ============ Preconnect — reduz handshake DNS/TCP/TLS dos terceiros ============ -->
+    <!-- GA4 usa googletagmanager.com para o script gtag.js -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
     <link rel="dns-prefetch" href="https://www.facebook.com" />
 
-    <!-- ============ Google Tag Manager — roda em Web Worker via Partytown ============ -->
-    <!-- Partytown intercepta type="text/partytown" e move para Worker, liberando
-         a main thread para renderizar o LCP sem bloqueio. dataLayer.push é
-         forwardado do worker → main thread via config forward:["dataLayer.push"] -->
+    <!-- ============ Analytics direto (sem GTM — conta GTM com flag malware herdado) ============ -->
+    <!-- Scripts de terceiros (GA4, Meta Pixel, LinkedIn) são injetados APÓS o evento 'load'   -->
+    <!-- para não bloquear a main thread durante o carregamento inicial (reduz TBT e LCP).      -->
+    <!-- Stubs gtag/fbq/lintrk são definidos aqui para que eventos disparados antes do 'load'   -->
+    <!-- (ex: whatsapp_click imediato) sejam enfileirados e processados quando o script chegar. -->
     <script is:inline define:vars={{ META_ID: ANALYTICS.metaPixel, LI_ID: ANALYTICS.linkedInPartnerId, GA4_ID: ANALYTICS.ga4, USE_GTM: ANALYTICS.useGtmAsSource }}>
-      // DataLayer inicializado na main thread ANTES do Partytown iniciar o worker.
-      // Ordem importa: UTM capture (script anterior) já fez push de utm_loaded.
       window.dataLayer = window.dataLayer || [];
 
-      // ============ Fallback: GA4 direto (se USE_GTM = false) ============
-      // Permite rodar sem GTM caso o time prefira hardcode temporário
+      // ============ Stubs — enfileiram eventos antes dos scripts carregarem ============
       if (!USE_GTM && GA4_ID && GA4_ID !== 'G-PLACEHOLDER') {
-        var ga4Script = document.createElement('script');
-        ga4Script.async = true;
-        ga4Script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
-        document.head.appendChild(ga4Script);
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', GA4_ID, { anonymize_ip: true, send_page_view: true });
+        window.gtag = window.gtag || function(){dataLayer.push(arguments);};
+        window.gtag('js', new Date());
+        window.gtag('config', GA4_ID, { anonymize_ip: true, send_page_view: true });
       }
-
-      // ============ Meta Pixel (fallback direto, não-GTM) ============
-      // Se useGtmAsSource = true, configure o Meta Pixel DENTRO do GTM — ignora este bloco.
       if (!USE_GTM && META_ID && META_ID !== 'META_PIXEL_PLACEHOLDER') {
-        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-        document,'script','https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', META_ID);
-        fbq('track', 'PageView');
+        if (!window.fbq) {
+          var n = window.fbq = function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if (!window._fbq) window._fbq = n;
+          n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+        }
+        window.fbq('init', META_ID);
+        window.fbq('track', 'PageView');
       }
-
-      // ============ LinkedIn Insight Tag (fallback direto, não-GTM) ============
       if (!USE_GTM && LI_ID && LI_ID !== 'LINKEDIN_PARTNER_PLACEHOLDER') {
         window._linkedin_partner_id = LI_ID;
         window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
         window._linkedin_data_partner_ids.push(LI_ID);
-        (function(l) {
-          if (!l) {
-            window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-            window.lintrk.q = [];
-          }
-          var s = document.getElementsByTagName('script')[0];
-          var b = document.createElement('script');
-          b.type = 'text/javascript'; b.async = true;
-          b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
-          s.parentNode.insertBefore(b, s);
-        })(window.lintrk);
+        if (!window.lintrk) { window.lintrk = function(a,b){window.lintrk.q.push([a,b])}; window.lintrk.q = []; }
       }
 
+      // ============ Injeção dos scripts — idle após 'load' para não bloquear LCP/TBT ============
+      // requestIdleCallback aguarda ociosidade da main thread; setTimeout(,3000) é fallback.
+      // Isso garante que os scripts só são injetados depois que o LCP já foi pintado.
+      window.addEventListener('load', function() {
+        var inject = function() {
+          if (!USE_GTM && GA4_ID && GA4_ID !== 'G-PLACEHOLDER') {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+            document.head.appendChild(s);
+          }
+          if (!USE_GTM && META_ID && META_ID !== 'META_PIXEL_PLACEHOLDER') {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+            document.head.appendChild(s);
+          }
+          if (!USE_GTM && LI_ID && LI_ID !== 'LINKEDIN_PARTNER_PLACEHOLDER') {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+            document.head.appendChild(s);
+          }
+        };
+        'requestIdleCallback' in window
+          ? requestIdleCallback(inject, { timeout: 4000 })
+          : setTimeout(inject, 3000);
+      });
+
       // ============ Tracking de conversões via dataLayer ============
-      // Todos os CTAs disparam evento único no dataLayer — GTM decide pra quais
-      // plataformas (GA4, Meta, LinkedIn, Ads) enviar. Evita duplicação.
       document.addEventListener('click', function (e) {
         var t = e.target;
         if (!t || !t.closest) return;
@@ -219,23 +228,23 @@ const absoluteOgImage = ogImage.startsWith('http')
         // WhatsApp click
         var wa = t.closest('a[data-whatsapp]');
         if (wa) {
-          dataLayer.push({
-            event: 'whatsapp_click',
-            event_label: wa.dataset.eventLabel || wa.dataset.location || 'unknown',
-            campaign: wa.dataset.campaign || 'none',
-            value: 1,
-          });
+          var waLabel = wa.dataset.eventLabel || wa.dataset.location || 'unknown';
+          dataLayer.push({ event: 'whatsapp_click', event_label: waLabel, campaign: wa.dataset.campaign || 'none', value: 1 });
+          if (!USE_GTM) {
+            if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { event_label: waLabel, value: 1 });
+            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'WhatsApp Click' });
+          }
         }
 
         // Phone click — data-phone OU qualquer link tel:
         var ph = t.closest('a[data-phone], a[href^="tel:"]');
         if (ph) {
-          dataLayer.push({
-            event: 'phone_click',
-            event_label: ph.dataset.eventLabel || ph.dataset.location || 'unknown',
-            campaign: ph.dataset.campaign || 'none',
-            value: 1,
-          });
+          var phLabel = ph.dataset.eventLabel || ph.dataset.location || 'unknown';
+          dataLayer.push({ event: 'phone_click', event_label: phLabel, campaign: ph.dataset.campaign || 'none', value: 1 });
+          if (!USE_GTM) {
+            if (typeof window.gtag === 'function') window.gtag('event', 'phone_click', { event_label: phLabel, value: 1 });
+            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'Phone Click' });
+          }
         }
 
         // Generic CTA click (data-event="cta_click")
@@ -250,33 +259,11 @@ const absoluteOgImage = ogImage.startsWith('http')
       });
     </script>
 
-    <!-- GTM no Web Worker — Partytown executa este script fora da main thread.
-         set:html injeta o GTM_ID em build time (valor estático, sem runtime). -->
-    {ANALYTICS.gtm && ANALYTICS.gtm !== 'GTM-PLACEHOLDER' && (
-      <script type="text/partytown" set:html={`
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','${ANALYTICS.gtm}');
-      `} />
-    )}
-    <!-- End Google Tag Manager -->
+    <!-- GTM removido: conta 6244498214 com flag de malware herdado bloqueia todas as tags.
+         GA4, Meta Pixel e LinkedIn carregam direto (useGtmAsSource: false). -->
   </head>
 
   <body>
-    <!-- ============ GTM (noscript fallback) ============ -->
-    <!-- Para usuários com JavaScript desabilitado. Troque GTM-PLACEHOLDER. -->
-    <noscript>
-      <iframe
-        src={`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtm}`}
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-        title="Google Tag Manager"
-      ></iframe>
-    </noscript>
-
     <!-- Meta Pixel noscript (fallback sem JS) -->
     <noscript>
       <img

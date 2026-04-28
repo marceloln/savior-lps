@@ -23,11 +23,16 @@ export const CONTACT_RJ = {
 };
 
 export const CONTACT_SP = {
-  phone: '(11) 3796-0058',
-  phoneHref: '+551137960058',
-  whatsapp: '5511971234567',
-  whatsappDisplay: '(11) 97123-4567',
+  // Número principal (mobile/WA) — usado nos CTAs de emergência
+  phone: '(11) 94486-1329',
+  phoneHref: '+5511944861329',
+  whatsapp: '5511944861329',
+  whatsappDisplay: '(11) 94486-1329',
+  // Linha fixa — exibida no footer como contato geral
+  phoneLandline: '(11) 3796-0058',
+  phoneLandlineHref: '+551137960058',
   email: 'comercial@savior.com.br',
+  address: 'Av. do Rio Bonito, 287 · Socorro · São Paulo · SP · 04776-000',
 };
 
 // ============ Analytics & Tracking ============
@@ -40,10 +45,11 @@ export const CONTACT_SP = {
 // - Meta Pixel: business.facebook.com/events_manager → ID numérico 15-16 dígitos
 // - LinkedIn: linkedin.com/campaignmanager → Insight Tag → Partner ID numérico
 export const ANALYTICS = {
-  // Google Tag Manager — orquestrador principal
-  gtm: 'GTM-5GVSJN4Z',
+  // Google Tag Manager — DESATIVADO (conta 6244498214 com flag de malware herdado da agência
+  // anterior netart1.com.br; scanner pausa tags automaticamente em qualquer container da conta)
+  gtm: '',
 
-  // GA4 — carregado via GTM (Tag do Google G-43FPPY00QR já configurada no container)
+  // GA4 — carregado direto via gtag.js (sem GTM)
   ga4: 'G-43FPPY00QR',
 
   // Meta Pixel — ID numérico do Pixel no Events Manager
@@ -52,9 +58,8 @@ export const ANALYTICS = {
   // LinkedIn Insight Tag — Partner ID do Campaign Manager
   linkedInPartnerId: 'LINKEDIN_PARTNER_PLACEHOLDER',
 
-  // Flag: usa GTM como fonte única (recomendado). Se true, os scripts diretos
-  // de GA4/Meta/LinkedIn NÃO são carregados — GTM orquestra tudo.
-  useGtmAsSource: true,
+  // Flag: false = GA4 + Meta + LinkedIn carregam direto no HTML (sem GTM)
+  useGtmAsSource: false,
 };
 
 export const METRICS = {
@@ -117,6 +122,14 @@ export const GOOGLE_BUSINESS = {
   rating: 4.7,
   reviewCount: 346,
   name: 'SAVIOR Medical Service',
+};
+
+// Google Business Profile SP — https://share.google/Hihi3T31m6u9elsnx
+export const GOOGLE_BUSINESS_SP = {
+  url: 'https://share.google/Hihi3T31m6u9elsnx',
+  rating: 4.7,
+  reviewCount: 384,
+  name: 'SAVIOR Medical Service São Paulo',
 };
 
 // Utilitário para gerar link do WhatsApp com tag de atribuição na mensagem

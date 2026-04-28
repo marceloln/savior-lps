@@ -1,17 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  // Configuração Cloudflare Pages (não Workers).
+  // pages_build_output_dir indica onde estão os arquivos estáticos gerados pelo Astro.
   "name": "savior-lps",
   "compatibility_date": "2026-04-25",
-  "observability": {
-    "enabled": true
-  },
-  "main": "dist/_worker.js/index.js",
-  "compatibility_flags": [
-    "global_fetch_strictly_public",
-    "nodejs_compat"
-  ],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "dist"
-  }
+  "pages_build_output_dir": "dist"
 }

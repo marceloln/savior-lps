@@ -3,13 +3,22 @@
 // HOW IT WORKS v2 — copy humanizado, ícones, subtítulo
 // Mata o bloqueio "não sei como funciona ambulância particular"
 // ============================================================
+
+interface Props {
+  city?: 'RJ' | 'SP';
+}
+
+const { city = 'RJ' } = Astro.props;
+const cityLabel = city === 'SP' ? 'em SP' : 'no RJ';
+const zoneTime = city === 'SP' ? '22 minutos' : '18 minutos';
+const zoneLabel = city === 'SP' ? 'Capital' : 'Zona Sul';
 ---
 
 <section class="how">
   <div class="wrap">
     <div class="how-head">
       <span class="eyebrow">Como funciona</span>
-      <h2 class="how-h2">Como solicitar ambulância particular no RJ</h2>
+      <h2 class="how-h2">Como solicitar ambulância particular {cityLabel}</h2>
       <p class="how-sub">
         Você não precisa ter nada resolvido na cabeça. Só conta o que está acontecendo —
         a gente ouve, indica o que faz sentido e confirma tudo antes de sair.
@@ -73,7 +82,7 @@
         <h3 class="step-title">A equipe já foi.</h3>
         <p class="step-desc">
           Quatro minutos após o chamado confirmado, a ambulância está na rua.
-          <strong>Zona Sul: 18 minutos</strong>. Você ainda está respirando fundo
+          <strong>{zoneLabel}: {zoneTime}</strong>. Você ainda está respirando fundo
           quando a gente já está a caminho.
         </p>
       </li>

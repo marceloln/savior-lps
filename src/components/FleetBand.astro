@@ -6,6 +6,13 @@
 // ============================================================
 
 import { METRICS } from '../data/savior';
+
+interface Props {
+  city?: 'RJ' | 'SP';
+}
+
+const { city = 'RJ' } = Astro.props;
+const cityNarrative = city === 'SP' ? null : 'no Rio';
 ---
 
 <section class="fleet-band" aria-label="Frota Savior">
@@ -47,7 +54,7 @@ import { METRICS } from '../data/savior';
         Sem intermediários, sem surpresa na origem.
       </p>
       <p class="fleet-narrative">
-        46 anos levando medicina até onde a família está. Desde 1979, no Rio.
+        46 anos levando medicina até onde a família está. Desde 1979{cityNarrative ? `, ${cityNarrative}` : ''}.
       </p>
     </div>
   </div>

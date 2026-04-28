@@ -10,11 +10,12 @@ import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
 interface Props {
   waCampaign: string;
+  contact?: typeof CONTACT_RJ;
 }
 
-const { waCampaign } = Astro.props;
+const { waCampaign, contact = CONTACT_RJ } = Astro.props;
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
   'Oi, preciso de ambulância agora.',
   'floating-desktop'
@@ -24,7 +25,7 @@ const waHref = whatsappUrl(
 <div class="fdc" id="floating-desktop-cta" aria-hidden="true">
   <a
     class="fdc-phone"
-    href={`tel:${CONTACT_RJ.phoneHref}`}
+    href={`tel:${contact.phoneHref}`}
     data-phone
     data-event-label="floating-desktop-phone"
     aria-label="Ligar para a Savior"

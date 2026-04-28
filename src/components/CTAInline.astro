@@ -14,14 +14,16 @@ interface Props {
   waCampaign: string;
   waMessage?: string;
   location: string;
+  contact?: typeof CONTACT_RJ;
 }
 
-const { variant = 'medium', text, cta, waCampaign, waMessage, location } = Astro.props;
+const { variant = 'medium', text, cta, waCampaign, waMessage, location, contact = CONTACT_RJ } = Astro.props;
 
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
-  waMessage || 'Oi, vim pela landing page e preciso de ambulância.'
+  waMessage || 'Oi, vim pela landing page e preciso de ambulância.',
+  location
 );
 ---
 
@@ -35,6 +37,7 @@ const waHref = whatsappUrl(
         data-whatsapp
         data-campaign={waCampaign}
         data-location={location}
+        data-event-label={location}
         target="_blank"
         rel="noopener"
       >

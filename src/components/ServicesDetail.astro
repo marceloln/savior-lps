@@ -4,6 +4,17 @@
 // 4 serviços com ícones SVG inline customizados
 // ============================================================
 
+interface Props {
+  city?: 'RJ' | 'SP';
+}
+
+const { city = 'RJ' } = Astro.props;
+
+const coverageRJ = 'Zona Sul (Copacabana, Ipanema, Leblon, Botafogo, Flamengo) · Zona Norte (Tijuca, Méier, Vila Isabel, Maracanã) · Zona Oeste (Barra da Tijuca, Jacarepaguá, Campo Grande) · Centro · Niterói · São Gonçalo · Duque de Caxias · Nova Iguaçu · Baixada Fluminense · Região dos Lagos';
+const coverageSP = 'Capital (Zona Sul, Zona Norte, Zona Leste, Zona Oeste, Centro) · ABCD Paulista (Santo André, São Bernardo, São Caetano, Diadema) · Guarulhos · Osasco · Grande São Paulo';
+const coverage = city === 'SP' ? coverageSP : coverageRJ;
+const cityLabel = city === 'SP' ? 'em SP' : 'no RJ';
+
 const services = [
   {
     key: 'transfer',
@@ -33,7 +44,7 @@ const services = [
     <div class="services-head">
       <span class="eyebrow">Serviços atendidos</span>
       <h2 class="services-h2">
-        Remoção de paciente, transferência hospitalar e emergência no RJ
+        Remoção de paciente, transferência hospitalar e emergência {cityLabel}
       </h2>
     </div>
 
@@ -92,7 +103,7 @@ const services = [
     </div>
 
     <p class="services-coverage">
-      <strong>Cobertura:</strong> Zona Sul (Copacabana, Ipanema, Leblon, Botafogo, Flamengo) · Zona Norte (Tijuca, Méier, Vila Isabel, Maracanã) · Zona Oeste (Barra da Tijuca, Jacarepaguá, Campo Grande) · Centro · Niterói · São Gonçalo · Duque de Caxias · Nova Iguaçu · Baixada Fluminense · Região dos Lagos
+      <strong>Cobertura:</strong> {coverage}
     </p>
   </div>
 </section>

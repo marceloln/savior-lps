@@ -4,6 +4,15 @@
 // Tabela comparativa: Savior vs SAMU vs Ambulância pequena vs Carro
 // Neutraliza a objeção "será que tem opção melhor?"
 // ============================================================
+
+interface Props {
+  city?: 'RJ' | 'SP';
+}
+
+const { city = 'RJ' } = Astro.props;
+const cityLabel = city === 'SP' ? 'em São Paulo' : 'no Rio';
+const responseTime = city === 'SP' ? '22 min' : '18 min';
+const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
 ---
 
 <section class="comparison section dark">
@@ -12,7 +21,7 @@
       <span class="eyebrow on-dark">Comparativo</span>
       <h2 class="comp-h2">Comparando a Savior <em>com as outras opções</em></h2>
       <p class="comp-intro">
-        Quando você precisa de ambulância no Rio, aparecem dezenas de empresas e fica difícil
+        Quando você precisa de ambulância {cityLabel}, aparecem dezenas de empresas e fica difícil
         comparar em um momento difícil. A gente organizou aqui pra facilitar sua decisão — inclusive
         os preços médios do mercado, porque vale você saber.
       </p>
@@ -44,11 +53,7 @@
             </th>
             <th scope="col" class="th-savior">
               <div class="th-inner th-savior-inner">
-                <svg class="th-savior-symbol" viewBox="0 0 40 40" aria-hidden="true">
-                  <circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="2.8"/>
-                  <circle cx="20" cy="20" r="5" fill="currentColor"/>
-                </svg>
-                <span class="th-title">Savior</span>
+                <span class="th-title th-savior-wordmark">SAVIOR</span>
                 <span class="th-sub">Frota própria · 46 anos</span>
               </div>
             </th>
@@ -61,7 +66,7 @@
             <td data-col="Outras">30–60 min<br /><small>varia por empresa</small></td>
             <td data-col="Carro">Variável<br /><small>depende do motorista</small></td>
             <td data-col="Savior" class="td-savior">
-              <strong>18 min</strong><br /><small>Zona Sul · Q1 2026</small>
+              <strong>{responseTime}</strong><br /><small>{zoneLabel}</small>
             </td>
           </tr>
           <tr>
@@ -252,23 +257,18 @@
     position: relative;
   }
 
-  /* Coluna Savior: símbolo da marca no topo do header */
-  .th-savior-inner {
-    position: relative;
-  }
-
-  .th-savior-symbol {
-    width: 32px;
-    height: 32px;
-    color: var(--green-bright);
-    margin-bottom: 10px;
-  }
-
   .th-savior .th-title {
     color: var(--green-bright);
     font-weight: 800;
     font-size: 17px;
     letter-spacing: -0.02em;
+  }
+
+  .th-savior-wordmark {
+    font-family: 'Ethnocentric', var(--sans) !important;
+    font-weight: 400 !important;
+    font-size: 18px !important;
+    letter-spacing: 0.08em !important;
   }
 
   .th-savior .th-sub {
@@ -489,11 +489,6 @@
       min-height: 44px;
     }
 
-    .th-savior-symbol {
-      width: 26px;
-      height: 26px;
-      margin-bottom: 6px;
-    }
   }
 
   @media (max-width: 560px) {

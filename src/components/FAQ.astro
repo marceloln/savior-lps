@@ -7,16 +7,18 @@
 
 interface Props {
   items: Array<{ q: string; a: string }>;
+  city?: 'RJ' | 'SP';
 }
 
-const { items } = Astro.props;
+const { items, city = 'RJ' } = Astro.props;
+const faqCityLabel = city === 'SP' ? 'em São Paulo' : 'no Rio de Janeiro';
 ---
 
-<section class="faq">
+<section class="faq" id="faq">
   <div class="wrap">
     <div class="faq-head">
       <span class="eyebrow">FAQ</span>
-      <h2 class="faq-h2">Perguntas sobre ambulância particular <em>no Rio de Janeiro</em></h2>
+      <h2 class="faq-h2">Perguntas sobre ambulância particular <em>{faqCityLabel}</em></h2>
     </div>
 
     <div class="faq-list">

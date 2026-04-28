@@ -3,13 +3,27 @@
 // PRICE TABLE — Bloco 4
 // Tabela de preços com intro "por serviço, não por minuto"
 // ============================================================
+
+import { whatsappUrl, CONTACT_RJ } from '../data/savior';
+
+interface Props {
+  waCampaign: string;
+  contact?: typeof CONTACT_RJ;
+  city?: 'RJ' | 'SP';
+}
+
+const { waCampaign, contact = CONTACT_RJ, city = 'RJ' } = Astro.props;
+
+const waBasica   = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, quero chamar uma ambulância básica.', 'price-basica')
+const waUti      = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, preciso de uma UTI móvel agora.', 'price-uti')
+const waNeonatal = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, preciso de uma UTI neonatal.', 'price-neonatal')
 ---
 
-<section class="prices">
+<section class="prices" id="precos">
   <div class="wrap">
     <div class="prices-head">
       <span class="eyebrow">Tipos e preços</span>
-      <h2 class="prices-h2">Ambulância UTI, básica e neonatal <em>no Rio de Janeiro</em></h2>
+      <h2 class="prices-h2">Ambulância UTI, básica e neonatal <em>{city === 'SP' ? 'em São Paulo' : 'no Rio de Janeiro'}</em></h2>
       <p class="prices-intro">
         A gente conversa com você no WhatsApp, entende o caso e combina o valor antes da equipe sair.
         Pix com 5% de desconto, cartão em até 3x sem juros.
@@ -33,6 +47,17 @@
           <li>Kit de primeiros socorros</li>
           <li>Monitorização básica</li>
         </ul>
+        <a
+          class="price-cta"
+          href={waBasica}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
+          data-location="price-basica"
+          data-event="cta_click"
+          data-event-category="conversion"
+          data-event-label="price-card-basica"
+        >Chamar agora</a>
       </article>
 
       <!-- UTI — destaque -->
@@ -52,6 +77,17 @@
           <li>Desfibrilador</li>
           <li>Toda medicação de emergência</li>
         </ul>
+        <a
+          class="price-cta price-cta--featured"
+          href={waUti}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
+          data-location="price-uti"
+          data-event="cta_click"
+          data-event-category="conversion"
+          data-event-label="price-card-uti"
+        >Chamar agora</a>
       </article>
 
       <!-- UTI Neonatal -->
@@ -70,6 +106,17 @@
           <li>Monitorização completa</li>
           <li>Protocolo específico</li>
         </ul>
+        <a
+          class="price-cta"
+          href={waNeonatal}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
+          data-location="price-neonatal"
+          data-event="cta_click"
+          data-event-category="conversion"
+          data-event-label="price-card-neonatal"
+        >Consultar disponibilidade</a>
       </article>
     </div>
 
@@ -247,6 +294,31 @@
 
   .price-card.featured .price-includes li::before {
     border-color: var(--green-bright);
+  }
+
+  .price-cta {
+    display: block;
+    text-align: center;
+    padding: 13px 20px;
+    background: var(--navy);
+    color: white;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    transition: filter 0.15s;
+    margin-top: auto;
+  }
+
+  .price-cta:hover {
+    filter: brightness(1.15);
+  }
+
+  .price-cta--featured {
+    background: var(--green-bright);
+    color: var(--navy-deep);
   }
 
   .price-note {

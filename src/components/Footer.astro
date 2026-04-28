@@ -4,6 +4,18 @@
 // ============================================================
 
 import { CONTACT_RJ, BRAND } from '../data/savior';
+
+interface Props {
+  contact?: typeof CONTACT_RJ;
+  coverage?: string;
+  showTelGeral?: boolean;
+}
+
+const {
+  contact = CONTACT_RJ,
+  coverage = 'Zona Sul · Zona Norte · Zona Oeste · Centro · Niterói · São Gonçalo · Duque de Caxias · Baixada Fluminense · Região dos Lagos',
+  showTelGeral = true,
+} = Astro.props;
 ---
 
 <footer class="footer">
@@ -14,12 +26,8 @@ import { CONTACT_RJ, BRAND } from '../data/savior';
 
       <!-- Marca -->
       <div class="ft-brand">
-        <svg class="ft-symbol" viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="36" fill="none" stroke="#1FD29A" stroke-width="6" />
-          <circle class="brand-dot" cx="50" cy="50" r="12" fill="#1FD29A" />
-        </svg>
         <div>
-          <span class="ft-word">Savior</span>
+          <span class="ft-word">SAVIOR</span>
           <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
         </div>
       </div>
@@ -29,27 +37,30 @@ import { CONTACT_RJ, BRAND } from '../data/savior';
 
         <div class="ft-contact-block">
           <span class="ft-contact-label">Emergência 24h</span>
-          <a href={`tel:${CONTACT_RJ.phoneHref}`} class="ft-contact-main">{CONTACT_RJ.phone}</a>
-          <a href="tel:+5521980358200" class="ft-contact-secondary">(21) 98035-8200</a>
+          <a href={`tel:${contact.phoneHref}`} class="ft-contact-main">{contact.phone}</a>
         </div>
 
-        <div class="ft-contact-block">
-          <span class="ft-contact-label">Telefone geral</span>
-          <a href="tel:+552131713000" class="ft-contact-secondary">(21) 3171-3000</a>
-        </div>
+        {'phoneLandline' in contact && contact.phoneLandline ? (
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">Telefone geral</span>
+            <a href={`tel:${'phoneLandlineHref' in contact ? contact.phoneLandlineHref as string : contact.phoneHref}`} class="ft-contact-secondary">{contact.phoneLandline as string}</a>
+          </div>
+        ) : showTelGeral && (
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">Telefone geral</span>
+            <a href="tel:+552131713000" class="ft-contact-secondary">(21) 3171-3000</a>
+          </div>
+        )}
 
         <div class="ft-contact-block">
           <span class="ft-contact-label">E-mail</span>
-          <a href={`mailto:${CONTACT_RJ.email}`} class="ft-contact-secondary">{CONTACT_RJ.email}</a>
+          <a href={`mailto:${contact.email}`} class="ft-contact-secondary">{contact.email}</a>
           <a href="mailto:recrutamento@savior.com.br" class="ft-contact-secondary">recrutamento@savior.com.br</a>
         </div>
 
         <div class="ft-contact-block">
           <span class="ft-contact-label">Endereço</span>
-          <address class="ft-address">
-            R. Gen. Padilha, 73 · São Cristóvão<br />
-            Rio de Janeiro · RJ · 20920-390
-          </address>
+          <address class="ft-address">{contact.address ?? 'R. Gen. Padilha, 73 · São Cristóvão · Rio de Janeiro · RJ · 20920-390'}</address>
         </div>
 
       </div>
@@ -58,7 +69,7 @@ import { CONTACT_RJ, BRAND } from '../data/savior';
     <!-- Rodapé: cobertura + legal -->
     <div class="ft-bottom">
       <p class="ft-coverage">
-        <strong>Cobertura:</strong> Zona Sul · Zona Norte · Zona Oeste · Centro · Niterói · São Gonçalo · Duque de Caxias · Baixada Fluminense · Região dos Lagos
+        <strong>Cobertura:</strong> {coverage}
       </p>
       <p class="ft-legal">
         CNES: 7207972 · Responsável técnico: Dr. Alder Drummond ·
@@ -96,18 +107,12 @@ import { CONTACT_RJ, BRAND } from '../data/savior';
     gap: 14px;
   }
 
-  .ft-symbol {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-  }
-
   .ft-word {
     display: block;
-    font-family: var(--sans);
-    font-weight: 800;
+    font-family: 'Ethnocentric', var(--sans);
+    font-weight: 400;
     font-size: 20px;
-    letter-spacing: -0.035em;
+    letter-spacing: 0.08em;
     color: white;
     line-height: 1;
     margin-bottom: 4px;

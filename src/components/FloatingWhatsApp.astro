@@ -7,12 +7,13 @@ import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
 interface Props {
   waCampaign: string;
+  contact?: typeof CONTACT_RJ;
 }
 
-const { waCampaign } = Astro.props;
+const { waCampaign, contact = CONTACT_RJ } = Astro.props;
 
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
   'Oi, preciso de ambulância agora.',
   'floating'

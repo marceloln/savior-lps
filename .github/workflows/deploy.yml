@@ -1,16 +1,31 @@
-name: Deploy to Cloudflare Workers
+name: Deploy → Cloudflare Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancela deploys anteriores do mesmo branch para não acumular filas.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    permissions:
+      contents: read
+      deployments: write   # necessário para registrar deploy no GitHub
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -18,11 +33,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build (Astro static)
         run: npm run build
 
-      - name: Deploy
+      # ── Produção: push em main ──────────────────────────────────────────
+      # Branch 'main' = deploy de produção no domínio principal do projeto Pages.
+      - name: Deploy production (main)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 4f26044db4b747d623cb2710c2fbc87b
-        run: npx wrangler deploy
+        run: npx wrangler pages deploy dist --project-name=savior-lps --branch=main
+
+      # ── Preview: pull request ───────────────────────────────────────────
+      # Gera URL isolada por PR (ex: feat-sp.savior-lps.pages.dev).
+      # Permite testar /ambulancia-rj e /ambulancia-sp antes de subir pra produção.
+      # PAGES_BRANCH usa env var (não inline) para evitar command injection.
+      - name: Deploy preview (PR)
+        if: github.event_name == 'pull_request'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 4f26044db4b747d623cb2710c2fbc87b
+          PAGES_BRANCH: ${{ github.head_ref }}
+        run: npx wrangler pages deploy dist --project-name=savior-lps --branch="$PAGES_BRANCH"

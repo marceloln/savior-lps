@@ -6,14 +6,26 @@
 
 import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
+interface UrgencyTime { label: string; value: string; }
+
 interface Props {
   waCampaign: string;
+  contact?: typeof CONTACT_RJ;
+  times?: UrgencyTime[];
 }
 
-const { waCampaign } = Astro.props;
+const {
+  waCampaign,
+  contact = CONTACT_RJ,
+  times = [
+    { label: 'Zona Sul', value: '18 min' },
+    { label: 'Zona Norte · Oeste', value: '25 min' },
+    { label: 'Niterói · Baixada', value: '35 min' },
+  ],
+} = Astro.props;
 
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
   'Oi, preciso de ambulância agora.',
   'urgency'
@@ -59,18 +71,12 @@ const waHref = whatsappUrl(
       </div>
 
       <div class="urg-times">
-        <div class="urg-time-cell">
-          <div class="urg-time-label">Zona Sul</div>
-          <div class="urg-time-value">18 min</div>
-        </div>
-        <div class="urg-time-cell">
-          <div class="urg-time-label">Zona Norte · Oeste</div>
-          <div class="urg-time-value">25 min</div>
-        </div>
-        <div class="urg-time-cell">
-          <div class="urg-time-label">Niterói · Baixada</div>
-          <div class="urg-time-value">35 min</div>
-        </div>
+        {times.map((t) => (
+          <div class="urg-time-cell">
+            <div class="urg-time-label">{t.label}</div>
+            <div class="urg-time-value">{t.value}</div>
+          </div>
+        ))}
       </div>
 
       <p class="urg-note">

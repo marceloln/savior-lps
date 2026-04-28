@@ -6,6 +6,12 @@
 // ============================================================
 
 import { TESTIMONIALS, GOOGLE_BUSINESS } from '../data/savior';
+
+interface Props {
+  googleBusiness?: typeof GOOGLE_BUSINESS;
+}
+
+const { googleBusiness = GOOGLE_BUSINESS } = Astro.props;
 ---
 
 <section class="testimonials">
@@ -67,9 +73,9 @@ import { TESTIMONIALS, GOOGLE_BUSINESS } from '../data/savior';
         </svg>
         <div class="tm-footer-meta">
           <div class="tm-footer-title">
-            <span class="tm-footer-rating">{GOOGLE_BUSINESS.rating.toFixed(1).replace('.', ',')}</span>
+            <span class="tm-footer-rating">{googleBusiness.rating.toFixed(1).replace('.', ',')}</span>
             <span class="tm-footer-stars-mini" aria-hidden="true">★★★★★</span>
-            <span class="tm-footer-count">{GOOGLE_BUSINESS.reviewCount} avaliações</span>
+            <span class="tm-footer-count">{googleBusiness.reviewCount} avaliações</span>
           </div>
           <div class="tm-footer-source">
             Fonte: avaliações públicas no Google Meu Negócio da <strong>SAVIOR Medical Service</strong>
@@ -78,7 +84,7 @@ import { TESTIMONIALS, GOOGLE_BUSINESS } from '../data/savior';
       </div>
       <a
         class="tm-footer-cta"
-        href={GOOGLE_BUSINESS.url}
+        href={googleBusiness.url}
         target="_blank"
         rel="noopener"
         data-event="external_click"

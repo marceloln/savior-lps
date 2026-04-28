@@ -8,25 +8,27 @@ import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
 interface Props {
   waCampaign: string;
+  contact?: typeof CONTACT_RJ;
+  subText?: string;
 }
 
-const { waCampaign } = Astro.props;
+const {
+  waCampaign,
+  contact = CONTACT_RJ,
+  subText,
+} = Astro.props;
 
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
-  'Oi, preciso de ambulância agora.'
+  'Oi, preciso de ambulância agora.',
+  'final-cta'
 );
 ---
 
 <section class="final-cta">
   <div class="wrap">
     <div class="fc-inner">
-      <svg class="fc-symbol" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="36" fill="none" stroke="#1FD29A" stroke-width="6" />
-        <circle cx="50" cy="50" r="12" fill="#1FD29A" />
-      </svg>
-
       <p class="fc-eyebrow">Medicina que chega</p>
 
       <h2 class="fc-h2">
@@ -34,8 +36,10 @@ const waHref = whatsappUrl(
       </h2>
 
       <p class="fc-sub">
-        Carioca atendendo carioca desde 1979. Central 24h —
-        atendemos em menos de 1 minuto, <strong>todos os dias do ano</strong>.
+        {subText
+          ? <Fragment set:html={subText} />
+          : <>Carioca atendendo carioca desde 1979. Central 24h — atendemos em menos de 1 minuto, <strong>todos os dias do ano</strong>.</>
+        }
       </p>
 
       <div class="fc-ctas">
@@ -55,14 +59,15 @@ const waHref = whatsappUrl(
         </a>
         <a
           class="btn btn-secondary on-dark"
-          href={`tel:${CONTACT_RJ.phoneHref}`}
+          href={`tel:${contact.phoneHref}`}
           data-phone
+          data-event-label="final-cta-phone"
           data-campaign={waCampaign}
         >
           <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
           </svg>
-          {CONTACT_RJ.phone}
+          {contact.phone}
         </a>
       </div>
     </div>
@@ -90,12 +95,6 @@ const waHref = whatsappUrl(
     color: var(--green-bright);
     font-weight: 500;
     margin-bottom: 18px;
-  }
-
-  .fc-symbol {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 32px;
   }
 
   .fc-h2 {

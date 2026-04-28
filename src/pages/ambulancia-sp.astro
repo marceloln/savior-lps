@@ -1,8 +1,8 @@
 ---
 // ============================================================
-// LP1 — /ambulancia-rj
-// Landing page de emergência RJ — prioridade 1, semana 1
-// Copy reescrita com tom Savior, UX writer e comercial
+// LP2 — /ambulancia-sp
+// Landing page de emergência SP — mesma estrutura da RJ
+// Copy e dados ajustados para São Paulo
 // ============================================================
 
 import Base from '../layouts/Base.astro';
@@ -25,33 +25,34 @@ import FloatingDesktopCTA from '../components/FloatingDesktopCTA.astro';
 import StickyHeader from '../components/StickyHeader.astro';
 import TLDRBlock from '../components/TLDRBlock.astro';
 import Footer from '../components/Footer.astro';
+import { CONTACT_SP, GOOGLE_BUSINESS_SP } from '../data/savior';
 
 // ============ SEO ============
-const title = 'Ambulância Particular RJ | UTI 24 Horas | Savior Medical Service';
+const title = 'Ambulância Particular SP | UTI 24 Horas São Paulo | Savior Medical Service';
 const description =
-  'Ambulância particular no Rio de Janeiro com UTI completa. Médico + enfermeiro. Atendimento 24h. Básica R$1.200, UTI R$2.200. Pix e cartão em 3x. Ligue: (21) 3171-3030.';
-const canonical = 'https://www.savior.com.br/ambulancia-rj';
+  'Ambulância particular em São Paulo com UTI completa. Médico + enfermeiro. Atendimento 24h. Básica R$1.200, UTI R$2.200. Pix e cartão em 3x. Ligue: (11) 94486-1329.';
+const canonical = 'https://www.savior.com.br/ambulancia-sp';
 
-// ============ FAQ — items ============
+// ============ FAQ — items SP ============
 const faqItems = [
   {
-    q: 'Quanto custa uma ambulância particular no RJ?',
+    q: 'Quanto custa uma ambulância particular em SP?',
     a: 'Básica a partir de <strong>R$ 1.200</strong>, UTI a partir de <strong>R$ 2.200</strong>. O valor final depende de origem, destino e tipo de equipamento. A gente confirma o preço na mesma conversa do WhatsApp, <strong>antes da equipe sair da base</strong>.',
   },
   {
-    q: 'Em quanto tempo a ambulância chega?',
-    a: 'A equipe sai em <strong>4 minutos depois do chamado confirmado</strong>. Tempo médio de chegada: 18 min na Zona Sul, 25 min na Zona Norte/Oeste, 35 min em Niterói e Baixada. Números verificados no primeiro trimestre de 2026.',
+    q: 'Em quanto tempo a ambulância chega em São Paulo?',
+    a: 'A equipe sai em <strong>4 minutos depois do chamado confirmado</strong>. Tempo médio de chegada: 22 min na Capital, 28 min no ABCD e Guarulhos, 35 min em Osasco e Litoral. Números verificados no primeiro trimestre de 2026.',
   },
   {
-    q: 'Vem médico na ambulância?',
+    q: 'Vem médico na ambulância em SP?',
     a: 'Na UTI, <strong>sempre — médico, enfermeiro e socorrista</strong>. Na básica, enfermeiro e socorrista. Quando você liga, a gente escuta o caso primeiro pra indicar o que faz sentido pra sua família. Às vezes a básica resolve, às vezes precisa da UTI.',
   },
   {
-    q: 'Vocês atendem transferência entre hospitais?',
+    q: 'Vocês atendem transferência entre hospitais em SP?',
     a: 'Sim. Fazemos transferência inter-hospitalar com equipe médica dedicada, contato prévio entre nosso médico e o médico assistente, e monitorização contínua durante o transporte. Relatório clínico entregue ao hospital de destino.',
   },
   {
-    q: 'Atendem 24 horas?',
+    q: 'Atendem 24 horas em São Paulo?',
     a: 'Sim. Central 24h, <strong>todos os dias do ano</strong>. Atendemos em menos de 1 minuto a maioria dos chamados.',
   },
   {
@@ -63,19 +64,19 @@ const faqItems = [
     a: 'A <strong>UTI</strong> tem médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador e toda medicação de emergência. A <strong>básica</strong> tem enfermeiro, maca articulada, oxigênio e kit de primeiros socorros. A UTI é indicada para pacientes instáveis, emergências e pós-operatórios.',
   },
   {
-    q: 'Como chamar ambulância particular no Rio de Janeiro?',
+    q: 'Como chamar ambulância particular em São Paulo?',
     a: '<strong>1.</strong> Ligue ou mande mensagem no WhatsApp — atendemos em menos de 1 minuto, 24 horas por dia. <strong>2.</strong> Conta o que está acontecendo: origem, destino e condição do paciente — a gente indica o tipo certo de ambulância. <strong>3.</strong> Confirmamos o valor na hora, antes de sair. <strong>4.</strong> A equipe parte em até 4 minutos.',
   },
   {
-    q: 'Vocês atendem plano de saúde ou convênio?',
+    q: 'Vocês atendem plano de saúde ou convênio em SP?',
     a: 'Atendemos particular (<strong>Pix e cartão</strong>) e convênios selecionados, incluindo Prevent Senior e Unimed. A cobertura depende do plano e da operadora. Ligue pra gente verificar se o seu convênio é aceito antes de confirmar o chamado.',
   },
   {
-    q: 'Ambulância particular é mais rápida que o SAMU?',
-    a: 'Em tempo de chegada, sim — na maioria dos casos. O SAMU tem tempo médio de 40 a 90 minutos no Rio de Janeiro. A Savior chega em <strong>18 minutos na Zona Sul</strong>, 25 minutos na Zona Norte/Oeste e 35 minutos em Niterói e Baixada. Além disso, a UTI Savior tem médico a bordo em todos os atendimentos.',
+    q: 'Ambulância particular é mais rápida que o SAMU em SP?',
+    a: 'Em tempo de chegada, sim — na maioria dos casos. O SAMU tem tempo médio de 40 a 90 minutos em São Paulo. A Savior chega em <strong>22 minutos na Capital</strong>, 28 minutos no ABCD e Guarulhos, e 35 minutos em Osasco e Litoral. Além disso, a UTI Savior tem médico a bordo em todos os atendimentos.',
   },
   {
-    q: 'Preciso de receita médica para solicitar ambulância particular?',
+    q: 'Preciso de receita médica para solicitar ambulância particular em SP?',
     a: 'Não. Qualquer pessoa pode chamar — <strong>sem receita, sem pedido médico, sem burocracia</strong>. Você liga ou manda mensagem, conta o que está acontecendo, e a gente indica o recurso certo e confirma o valor na hora.',
   },
   {
@@ -83,24 +84,23 @@ const faqItems = [
     a: 'A <strong>UTI</strong> é indicada em emergências (infarto, AVC, trauma, queda com impacto, dificuldade respiratória, pós-operatório instável) e transferências de pacientes graves. A <strong>básica</strong> resolve remoções programadas, pacientes estáveis, altas hospitalares sem complicação. Na dúvida, ligue — a gente escuta o caso e indica o que faz sentido, sem empurrar o mais caro.',
   },
   {
-    q: 'Ambulância para idoso — o que precisa saber?',
+    q: 'Ambulância para idoso em São Paulo — o que precisa saber?',
     a: 'Idosos internados ou em alta hospitalar geralmente precisam de <strong>maca articulada, suporte de oxigênio e equipe treinada para mobilização segura</strong>. Se o paciente é instável ou tem comorbidades graves (insuficiência cardíaca, DPOC, AVC recente), indicamos a UTI com médico. Conte a situação: a gente ajuda a escolher o recurso certo.',
   },
 ];
 
 // ============ Schema.org JSON-LD ============
-// Upgrade Onda 1: MedicalClinic + EmergencyService + Offer + sameAs + Speakable
 const schema = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
-    // 1. Organização (entidade principal)
+    // 1. Organização — unidade SP
     {
       '@type': ['MedicalClinic', 'EmergencyService', 'LocalBusiness'],
       '@id': `${canonical}#organization`,
       name: 'Savior Medical Service',
-      alternateName: ['Savior', 'Savior Ambulâncias'],
+      alternateName: ['Savior', 'Savior Ambulâncias', 'Savior SP'],
       description:
-        'Ambulância particular no Rio de Janeiro com UTI completa (médico e enfermeiro). Tempo médio de chegada: 18 minutos na Zona Sul. Operando desde 1979.',
+        'Ambulância particular em São Paulo com UTI completa (médico e enfermeiro). Tempo médio de chegada: 22 minutos na Capital. Operando desde 1979.',
       url: canonical,
       logo: {
         '@type': 'ImageObject',
@@ -114,7 +114,8 @@ const schema = JSON.stringify({
         width: 1200,
         height: 630,
       },
-      telephone: '+552131713030',
+      telephone: '+5511944861329',
+      alternateTelephone: '+551137960058',
       email: 'comercial@savior.com.br',
       foundingDate: '1979-01-01',
       numberOfEmployees: {
@@ -126,16 +127,16 @@ const schema = JSON.stringify({
       paymentAccepted: 'Pix, Cartão de crédito, Débito',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'R. Gen. Padilha, 73',
-        addressLocality: 'São Cristóvão',
-        addressRegion: 'RJ',
-        postalCode: '20920-390',
+        streetAddress: 'Av. do Rio Bonito, 287',
+        addressLocality: 'Socorro',
+        addressRegion: 'SP',
+        postalCode: '04776-000',
         addressCountry: 'BR',
       },
       geo: {
         '@type': 'GeoCoordinates',
-        latitude: -22.9,
-        longitude: -43.2,
+        latitude: -23.55,
+        longitude: -46.63,
       },
       openingHoursSpecification: {
         '@type': 'OpeningHoursSpecification',
@@ -144,32 +145,27 @@ const schema = JSON.stringify({
         closes: '23:59',
       },
       areaServed: [
-        { '@type': 'City', name: 'Rio de Janeiro', '@id': 'https://www.wikidata.org/wiki/Q8678' },
-        { '@type': 'City', name: 'Niterói', '@id': 'https://www.wikidata.org/wiki/Q194346' },
-        { '@type': 'City', name: 'São Gonçalo' },
-        { '@type': 'City', name: 'Duque de Caxias' },
-        { '@type': 'City', name: 'Nova Iguaçu' },
         { '@type': 'City', name: 'São Paulo', '@id': 'https://www.wikidata.org/wiki/Q174' },
-        { '@type': 'AdministrativeArea', name: 'Copacabana' },
-        { '@type': 'AdministrativeArea', name: 'Ipanema' },
-        { '@type': 'AdministrativeArea', name: 'Leblon' },
-        { '@type': 'AdministrativeArea', name: 'Botafogo' },
-        { '@type': 'AdministrativeArea', name: 'Flamengo' },
-        { '@type': 'AdministrativeArea', name: 'Barra da Tijuca' },
-        { '@type': 'AdministrativeArea', name: 'Tijuca' },
-        { '@type': 'AdministrativeArea', name: 'Méier' },
-        { '@type': 'AdministrativeArea', name: 'Centro' },
+        { '@type': 'City', name: 'Santo André' },
+        { '@type': 'City', name: 'São Bernardo do Campo' },
+        { '@type': 'City', name: 'São Caetano do Sul' },
+        { '@type': 'City', name: 'Diadema' },
+        { '@type': 'City', name: 'Guarulhos' },
+        { '@type': 'City', name: 'Osasco' },
+        { '@type': 'AdministrativeArea', name: 'Capital' },
+        { '@type': 'AdministrativeArea', name: 'ABCD Paulista' },
+        { '@type': 'AdministrativeArea', name: 'Grande São Paulo' },
       ],
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: '4.7',
-        reviewCount: '346',
+        reviewCount: String(GOOGLE_BUSINESS_SP.reviewCount),
         bestRating: '5',
         worstRating: '1',
       },
       medicalSpecialty: 'https://schema.org/Emergency',
       sameAs: [
-        'https://share.google/GZ7m1GMno4ibRxgYA',
+        GOOGLE_BUSINESS_SP.url,
         'https://www.instagram.com/saviormedicalservice/',
         'https://www.facebook.com/SaviorAmbulancias/',
         'https://www.linkedin.com/company/savior-medical-service/',
@@ -178,9 +174,9 @@ const schema = JSON.stringify({
       contactPoint: [
         {
           '@type': 'ContactPoint',
-          telephone: '+552131713030',
+          telephone: '+5511944861329',
           contactType: 'emergency',
-          areaServed: 'BR-RJ',
+          areaServed: 'BR-SP',
           availableLanguage: 'Portuguese',
           hoursAvailable: {
             '@type': 'OpeningHoursSpecification',
@@ -192,7 +188,7 @@ const schema = JSON.stringify({
       ],
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
-        name: 'Serviços de ambulância Savior',
+        name: 'Serviços de ambulância Savior São Paulo',
         itemListElement: [
           {
             '@type': 'Offer',
@@ -203,7 +199,7 @@ const schema = JSON.stringify({
             price: '1200.00',
             priceCurrency: 'BRL',
             availability: 'https://schema.org/InStock',
-            areaServed: 'BR-RJ',
+            areaServed: 'BR-SP',
           },
           {
             '@type': 'Offer',
@@ -214,7 +210,7 @@ const schema = JSON.stringify({
             price: '2200.00',
             priceCurrency: 'BRL',
             availability: 'https://schema.org/InStock',
-            areaServed: 'BR-RJ',
+            areaServed: 'BR-SP',
           },
           {
             '@type': 'Offer',
@@ -228,7 +224,7 @@ const schema = JSON.stringify({
               description: 'Sob consulta',
             },
             availability: 'https://schema.org/InStock',
-            areaServed: 'BR-RJ',
+            areaServed: 'BR-SP',
           },
         ],
       },
@@ -250,8 +246,8 @@ const schema = JSON.stringify({
         inLanguage: 'pt-BR',
       },
       about: { '@id': `${canonical}#organization` },
-      datePublished: '2026-04-01',
-      dateModified: '2026-04-24',
+      datePublished: '2026-04-28',
+      dateModified: '2026-04-28',
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: 'https://www.savior.com.br/og-savior.jpg',
@@ -266,7 +262,7 @@ const schema = JSON.stringify({
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Savior', item: 'https://www.savior.com.br' },
-          { '@type': 'ListItem', position: 2, name: 'Ambulância Rio de Janeiro', item: canonical },
+          { '@type': 'ListItem', position: 2, name: 'Ambulância São Paulo', item: canonical },
         ],
       },
     },
@@ -287,7 +283,7 @@ const schema = JSON.stringify({
   ],
 });
 
-const waCampaign = 'rj-emergencia';
+const waCampaign = 'sp-emergencia';
 ---
 
 <Base
@@ -295,34 +291,43 @@ const waCampaign = 'rj-emergencia';
   description={description}
   canonical={canonical}
   schema={schema}
+  lcpImageSrcset="/img/hero/hero-poster-sp.webp 720w, /img/hero/hero-poster-sp.webp 1536w"
 >
   <main id="main">
     <!-- Bloco 1 — Hero -->
     <Hero
-      h1="Ambulância particular no Rio de Janeiro"
-      subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A central atende 24 horas, inclusive agora."
+      h1="Ambulância particular em"
+      h1Highlight="São Paulo"
+subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A central atende 24 horas, inclusive agora."
       waCampaign={waCampaign}
+      contact={CONTACT_SP}
       heroVariant="metric"
       metric={{
-        number: 18,
+        number: 22,
         unit: 'minutos',
-        label: 'Tempo médio Zona Sul',
+        label: 'Tempo médio Capital',
         zones: [
-          { label: 'Zona Norte e Zona Oeste', value: '25 min' },
-          { label: 'Niterói e Baixada', value: '35 min' },
+          { label: 'ABCD · Guarulhos', value: '28 min' },
+          { label: 'Osasco · Litoral', value: '35 min' },
         ],
-        noteZone: 'Zona Sul · jan–mar 2026',
+        noteZone: 'Capital · jan–mar 2026',
       }}
+      ratingCount={GOOGLE_BUSINESS_SP.reviewCount}
+      noteText="<strong>Tempo médio</strong>, não garantido. Medido na Capital entre janeiro, fevereiro e março de 2026. O tempo real depende de trânsito, região de origem e condições operacionais."
+      videoPoster="/img/hero/hero-poster-sp.webp"
+      videoPosterMobile="/img/hero/hero-poster-sp.webp"
+      videoWebm="/video/hero-loop-sp.webm"
+      videoMp4="/video/hero-loop-sp.mp4"
     />
 
     <!-- TL;DR — SAVIOR-09: resposta direta antes do scroll (AEO/LLMO) -->
     <TLDRBlock />
 
-    <!-- Bloco 2 — Prova social — SAVIOR-B1: sobe direto após Hero -->
+    <!-- Bloco 2 — Prova social -->
     <SocialProof />
 
-    <!-- Bloco 3 — Preços — SAVIOR-B1: preço antes de processo -->
-    <PriceTable waCampaign={waCampaign} />
+    <!-- Bloco 3 — Preços -->
+    <PriceTable waCampaign={waCampaign} contact={CONTACT_SP} city="SP" />
 
     <!-- CTA intermediário 1 — após preços -->
     <CTAInline
@@ -330,30 +335,39 @@ const waCampaign = 'rj-emergencia';
       text="Cada caso tem um valor. Conta o seu pelo WhatsApp — a gente escuta primeiro, depois combina o preço."
       cta="Pedir orçamento agora"
       waCampaign={waCampaign}
-      waMessage="Oi, vim da LP e quero um orçamento pra ambulância."
+      waMessage="Oi, vim da LP SP e quero um orçamento pra ambulância."
       location="after-prices"
+      contact={CONTACT_SP}
     />
 
-    <!-- Bloco 4 — Como funciona — SAVIOR-B1: após preço, processo faz mais sentido -->
-    <HowItWorks />
+    <!-- Bloco 4 — Como funciona -->
+    <HowItWorks city="SP" />
 
     <!-- Bloco 5 — A Savior não é (educacional) -->
     <NotWhat />
 
-    <!-- Faixa visual: frota em foto — transição para bloco escuro -->
-    <FleetBand />
+    <!-- Faixa visual: frota em foto -->
+    <FleetBand city="SP" />
 
-    <!-- Bloco 6 — Urgência clínica — SAVIOR-B1: perto do comparativo, reforça decisão -->
-    <Urgency waCampaign={waCampaign} />
+    <!-- Bloco 6 — Urgência clínica — tempos SP -->
+    <Urgency
+      waCampaign={waCampaign}
+      contact={CONTACT_SP}
+      times={[
+        { label: 'Capital · Centro', value: '22 min' },
+        { label: 'ABCD · Guarulhos', value: '28 min' },
+        { label: 'Osasco · Litoral', value: '35 min' },
+      ]}
+    />
 
     <!-- Bloco 7 — Comparação -->
-    <Comparison />
+    <Comparison city="SP" />
 
     <!-- Bloco 8 — Depoimentos reais -->
-    <Testimonials />
+    <Testimonials googleBusiness={GOOGLE_BUSINESS_SP} />
 
     <!-- Bloco 9 — Serviços detalhados -->
-    <ServicesDetail />
+    <ServicesDetail city="SP" />
 
     <!-- CTA intermediário 2 — após serviços -->
     <CTAInline
@@ -361,15 +375,16 @@ const waCampaign = 'rj-emergencia';
       text="Seu caso é um desses, ou tem algo específico que a gente precisa saber? Chama aqui — a gente escuta."
       cta="Falar no WhatsApp"
       waCampaign={waCampaign}
-      waMessage="Oi, vim da LP e quero tirar uma dúvida sobre o atendimento."
+      waMessage="Oi, vim da LP SP e quero tirar uma dúvida sobre o atendimento."
       location="after-services"
+      contact={CONTACT_SP}
     />
 
     <!-- Bloco 10 — Pagamento -->
     <Payment />
 
     <!-- Bloco 11 — FAQ -->
-    <FAQ items={faqItems} />
+    <FAQ items={faqItems} city="SP" />
 
     <!-- CTA intermediário 3 — após FAQ -->
     <CTAInline
@@ -377,22 +392,30 @@ const waCampaign = 'rj-emergencia';
       text="Ficou alguma dúvida? Pergunta no WhatsApp com calma. A gente responde em menos de 1 minuto."
       cta="Tirar dúvida agora"
       waCampaign={waCampaign}
-      waMessage="Oi, vim da LP e queria tirar uma dúvida."
+      waMessage="Oi, vim da LP SP e queria tirar uma dúvida."
       location="after-faq"
+      contact={CONTACT_SP}
     />
 
     <!-- Bloco 12 — CTA final -->
-    <FinalCTA waCampaign={waCampaign} />
+    <FinalCTA
+      waCampaign={waCampaign}
+      contact={CONTACT_SP}
+      subText="Paulistano atendendo paulistano desde 1979. Central 24h — atendemos em menos de 1 minuto, <strong>todos os dias do ano</strong>."
+    />
   </main>
 
-  <Footer />
+  <Footer
+    contact={CONTACT_SP}
+    coverage="Capital · ABCD Paulista · Guarulhos · Osasco · Grande São Paulo"
+  />
 
   <!-- WhatsApp flutuante — mobile -->
-  <FloatingWhatsApp waCampaign={waCampaign} />
+  <FloatingWhatsApp waCampaign={waCampaign} contact={CONTACT_SP} />
 
   <!-- CTA flutuante — desktop only (≥960px) -->
-  <FloatingDesktopCTA waCampaign={waCampaign} />
+  <FloatingDesktopCTA waCampaign={waCampaign} contact={CONTACT_SP} />
 
   <!-- Sticky header — aparece após 80px scroll -->
-  <StickyHeader waCampaign={waCampaign} />
+  <StickyHeader waCampaign={waCampaign} contact={CONTACT_SP} />
 </Base>

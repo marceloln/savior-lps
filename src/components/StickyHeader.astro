@@ -9,11 +9,12 @@ import { whatsappUrl, CONTACT_RJ } from '../data/savior';
 
 interface Props {
   waCampaign: string;
+  contact?: typeof CONTACT_RJ;
 }
 
-const { waCampaign } = Astro.props;
+const { waCampaign, contact = CONTACT_RJ } = Astro.props;
 const waHref = whatsappUrl(
-  CONTACT_RJ.whatsapp,
+  contact.whatsapp,
   waCampaign,
   'Oi, preciso de ambulância agora.',
   'sticky'
@@ -23,23 +24,20 @@ const waHref = whatsappUrl(
 <div class="sh" id="sticky-header" aria-label="Contato rápido Savior" aria-hidden="true">
   <div class="wrap sh-inner">
     <div class="sh-brand">
-      <svg class="sh-dot" viewBox="0 0 20 20" aria-hidden="true">
-        <circle cx="10" cy="10" r="7" fill="none" stroke="#1FD29A" stroke-width="2.5" />
-        <circle class="brand-dot" cx="10" cy="10" r="3" fill="#1FD29A" />
-      </svg>
-      <span class="sh-name">Savior Medical Service</span>
+      <span class="sh-wordmark">SAVIOR</span>
+      <span class="sh-name">Medical Service</span>
     </div>
     <div class="sh-actions">
       <a
         class="sh-phone"
-        href={`tel:${CONTACT_RJ.phoneHref}`}
+        href={`tel:${contact.phoneHref}`}
         data-phone
         data-event-label="sticky-phone"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
         </svg>
-        {CONTACT_RJ.phone}
+        {contact.phone}
       </a>
       <a
         class="sh-wa"
@@ -142,19 +140,23 @@ const waHref = whatsappUrl(
       flex-shrink: 0;
     }
 
-    .sh-dot {
-      width: 22px;
-      height: 22px;
-      flex-shrink: 0;
+    .sh-wordmark {
+      font-family: 'Ethnocentric', var(--sans);
+      font-weight: 400;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      color: white;
+      white-space: nowrap;
     }
 
     .sh-name {
-      font-family: var(--sans);
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: -0.02em;
-      color: white;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-bright);
       white-space: nowrap;
+      opacity: 0.8;
     }
 
     .sh-actions {
