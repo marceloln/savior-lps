@@ -52,6 +52,9 @@ export const ANALYTICS = {
   // GA4 — carregado direto via gtag.js (sem GTM)
   ga4: 'G-43FPPY00QR',
 
+  // Google Ads — inicializa o Google tag direto (sem GTM) para conversões e remarketing
+  googleAds: 'AW-711046879',
+
   // Meta Pixel — ID numérico do Pixel no Events Manager
   metaPixel: '571875002833284',
 
