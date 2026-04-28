@@ -5,9 +5,18 @@
 // perguntas de maior intenção de compra antes do scroll.
 // AEO/LLMO: candidato a snippet "resposta direta" no Google.
 // ============================================================
+
+interface Props {
+  city?: 'RJ' | 'SP';
+}
+const { city = 'RJ' } = Astro.props;
+
+const tempos = city === 'SP'
+  ? '22 min na Capital, 28 min no ABCD e Guarulhos, 35 min em Osasco.'
+  : '18 min na Zona Sul, 25 min na Norte/Oeste.';
 ---
 
-<section class="tldr" aria-label="Resumo rápido — ambulância Savior RJ">
+<section class="tldr" aria-label={`Resumo rápido — ambulância Savior ${city}`}>
   <div class="wrap">
     <ul class="tldr-list" role="list">
       <li class="tldr-item">
@@ -19,7 +28,7 @@
         </span>
         <div class="tldr-text">
           <strong>Em até 4 min a equipe sai da base.</strong>
-          Tempo médio de chegada: 18 min na Zona Sul, 25 min na Norte/Oeste.
+          Tempo médio de chegada: {tempos}
         </div>
       </li>
       <li class="tldr-item">
