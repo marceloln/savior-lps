@@ -322,16 +322,18 @@ const absoluteOgImage = ogImage.startsWith('http')
       />
     </noscript>
 
-    <!-- LinkedIn Insight Tag noscript (fallback sem JS) -->
+    <!-- LinkedIn Insight Tag noscript (fallback sem JS) — só renderiza quando ID real estiver configurado -->
+    {ANALYTICS.linkedInPartnerId !== 'LINKEDIN_PARTNER_PLACEHOLDER' && (
     <noscript>
       <img
         height="1"
         width="1"
         style="display:none;"
         alt=""
-        src="https://px.ads.linkedin.com/collect/?pid=LINKEDIN_PARTNER_PLACEHOLDER&fmt=gif"
+        src={`https://px.ads.linkedin.com/collect/?pid=${ANALYTICS.linkedInPartnerId}&fmt=gif`}
       />
     </noscript>
+    )}
 
     <!-- Skip-link (WCAG 2.1 AA — invisível até Tab focar) -->
     <a href="#main" class="skip-link">Pular para o conteúdo principal</a>

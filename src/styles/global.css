@@ -12,8 +12,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/Ethnocentric-Regular.woff2') format('woff2'),
-       url('/fonts/Ethnocentric-Regular.otf') format('opentype');
+  src: url('/fonts/Ethnocentric-Regular.woff2') format('woff2');
 }
 
 /* IBM Plex Mono — @font-face manual com caminho estável em /public/fonts/.
