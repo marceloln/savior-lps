@@ -220,7 +220,28 @@ const absoluteOgImage = ogImage.startsWith('http')
           : setTimeout(inject, 3000);
       });
 
-      // ============ Tracking de conversões via dataLayer ============
+      // ============ Tracking de conversões ============
+      // generate_lead é o evento padrão GA4 para leads — importado pelo Google Ads
+      // como conversão e usado pelo Smart Bidding (Target CPA / Target ROAS).
+      // value em BRL por localização = proxy de intenção (preço mínimo do serviço).
+      // Fontes: preços publicados na LP (Básica R$1.200, UTI R$2.200, Neonatal R$2.800).
+      var LEAD_VALUES = {
+        'price-card-uti':              1100,
+        'price-card-neonatal':         1200,
+        'price-card-basica':            600,
+        'hero-whatsapp':                750,
+        'hero-phone':                   750,
+        'sticky-whatsapp':              600,
+        'sticky-nav-whatsapp':          600,
+        'sticky-phone':                 600,
+        'final-cta':                    700,
+        'final-cta-phone':              700,
+        'floating-desktop-whatsapp':    700,
+        'floating-desktop-phone':       700,
+        'floating':                     650,
+        'urgency':                      750,
+      };
+
       document.addEventListener('click', function (e) {
         var t = e.target;
         if (!t || !t.closest) return;
@@ -229,10 +250,20 @@ const absoluteOgImage = ogImage.startsWith('http')
         var wa = t.closest('a[data-whatsapp]');
         if (wa) {
           var waLabel = wa.dataset.eventLabel || wa.dataset.location || 'unknown';
-          dataLayer.push({ event: 'whatsapp_click', event_label: waLabel, campaign: wa.dataset.campaign || 'none', value: 1 });
+          var waValue = LEAD_VALUES[waLabel] || 700;
+          var waCamp  = wa.dataset.campaign || 'none';
+
+          // 1. Evento GA4 padrão — Google Ads importa como conversão
+          dataLayer.push({ event: 'generate_lead', value: waValue, currency: 'BRL', method: 'whatsapp', lead_source: waLabel, campaign: waCamp });
+          // 2. Evento interno para relatórios por posição na página
+          dataLayer.push({ event: 'whatsapp_click', lead_source: waLabel, campaign: waCamp, value: waValue, currency: 'BRL' });
+
           if (!USE_GTM) {
-            if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { event_label: waLabel, value: 1 });
-            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'WhatsApp Click' });
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'generate_lead',  { value: waValue, currency: 'BRL', method: 'whatsapp', lead_source: waLabel });
+              window.gtag('event', 'whatsapp_click', { value: waValue, currency: 'BRL', lead_source: waLabel });
+            }
+            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: waValue, currency: 'BRL', content_name: 'WhatsApp - ' + waLabel });
           }
         }
 
@@ -240,20 +271,28 @@ const absoluteOgImage = ogImage.startsWith('http')
         var ph = t.closest('a[data-phone], a[href^="tel:"]');
         if (ph) {
           var phLabel = ph.dataset.eventLabel || ph.dataset.location || 'unknown';
-          dataLayer.push({ event: 'phone_click', event_label: phLabel, campaign: ph.dataset.campaign || 'none', value: 1 });
+          var phValue = LEAD_VALUES[phLabel] || 700;
+          var phCamp  = ph.dataset.campaign || 'none';
+
+          dataLayer.push({ event: 'generate_lead', value: phValue, currency: 'BRL', method: 'phone', lead_source: phLabel, campaign: phCamp });
+          dataLayer.push({ event: 'phone_click', lead_source: phLabel, campaign: phCamp, value: phValue, currency: 'BRL' });
+
           if (!USE_GTM) {
-            if (typeof window.gtag === 'function') window.gtag('event', 'phone_click', { event_label: phLabel, value: 1 });
-            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { content_name: 'Phone Click' });
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'generate_lead', { value: phValue, currency: 'BRL', method: 'phone', lead_source: phLabel });
+              window.gtag('event', 'phone_click',   { value: phValue, currency: 'BRL', lead_source: phLabel });
+            }
+            if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: phValue, currency: 'BRL', content_name: 'Phone - ' + phLabel });
           }
         }
 
-        // Generic CTA click (data-event="cta_click")
+        // Generic CTA click
         var cta = t.closest('a[data-event], button[data-event]');
         if (cta && !wa && !ph) {
           dataLayer.push({
             event: cta.dataset.event,
             event_category: cta.dataset.eventCategory || 'engagement',
-            event_label: cta.dataset.eventLabel || 'unknown',
+            lead_source: cta.dataset.eventLabel || 'unknown',
           });
         }
       });
