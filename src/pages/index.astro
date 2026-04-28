@@ -1,42 +1,1889 @@
 ---
 // ============================================================
-// INDEX — raiz do site
-// Em produção (Cloudflare Pages), o arquivo public/_redirects
-// redireciona / → /ambulancia-rj via HTTP 301 (melhor pra SEO).
-// Este arquivo existe como fallback para dev local e navegação direta.
+// HOME CORPORATIVA — savior.com.br/
+// Página principal: apresentação institucional + serviços + cobertura RJ e SP
+// Tracking: GA4 + Google Ads + Meta Pixel via Base.astro (sem GTM)
 // ============================================================
+
+import Base from '../layouts/Base.astro';
+import SocialProof from '../components/SocialProof.astro';
+import FleetBand from '../components/FleetBand.astro';
+import Testimonials from '../components/Testimonials.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import StickyHeader from '../components/StickyHeader.astro';
+import {
+  CONTACT_RJ,
+  CONTACT_SP,
+  BRAND,
+  GOOGLE_BUSINESS,
+  GOOGLE_BUSINESS_SP,
+  whatsappUrl,
+} from '../data/savior';
+
+// ============ WA links ============
+const waB2BHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-b2b', 'Oi, quero falar sobre minha empresa.', 'hero-b2b');
+const waCovRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso de ambulância.', 'coverage-rj');
+const waCovSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corp-sp', 'Oi, preciso de ambulância.', 'coverage-sp');
+const waFinalRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso de ambulância.', 'final-cta');
+const waFinalSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corp-sp', 'Oi, preciso de ambulância.', 'final-cta');
+
+// ============ SEO ============
+const title = 'Savior Medical Service | Ambulância Particular 24h RJ e SP | Desde 1979';
+const description =
+  'Savior Medical Service — a empresa de transporte médico mais antiga do Brasil desde 1979. Ambulância com UTI e médico a bordo, transferência hospitalar e eventos. Rio de Janeiro e São Paulo.';
+const canonical = 'https://www.savior.com.br/';
+
+// ============ Schema.org ============
+const schema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.savior.com.br/#website',
+      url: 'https://www.savior.com.br',
+      name: 'Savior Medical Service',
+      description,
+      inLanguage: 'pt-BR',
+    },
+    {
+      '@type': ['MedicalBusiness', 'EmergencyService', 'LocalBusiness'],
+      '@id': 'https://www.savior.com.br/#org',
+      name: 'Savior Medical Service',
+      description:
+        'Empresa de transporte médico mais antiga do Brasil. Fundada em 1979 no Rio de Janeiro. Ambulância com UTI e médico a bordo, transferência hospitalar, cobertura de eventos, área protegida e APH. Atende Rio de Janeiro e São Paulo.',
+      url: 'https://www.savior.com.br',
+      logo: 'https://www.savior.com.br/favicon.svg',
+      foundingDate: '1979',
+      telephone: [CONTACT_RJ.phone, CONTACT_SP.phone],
+      email: CONTACT_RJ.email,
+      openingHours: 'Mo-Su 00:00-23:59',
+      numberOfEmployees: { '@type': 'QuantitativeValue', value: 450 },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.7',
+        reviewCount: '730',
+        bestRating: '5',
+      },
+      location: [
+        {
+          '@type': 'Place',
+          name: 'Savior Medical Service — Rio de Janeiro',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'R. Gen. Padilha, 73',
+            addressLocality: 'Rio de Janeiro',
+            addressRegion: 'RJ',
+            postalCode: '20920-390',
+            addressCountry: 'BR',
+          },
+          geo: { '@type': 'GeoCoordinates', latitude: -22.8997, longitude: -43.2202 },
+        },
+        {
+          '@type': 'Place',
+          name: 'Savior Medical Service — São Paulo',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Av. do Rio Bonito, 287',
+            addressLocality: 'São Paulo',
+            addressRegion: 'SP',
+            postalCode: '04776-000',
+            addressCountry: 'BR',
+          },
+          geo: { '@type': 'GeoCoordinates', latitude: -23.7128, longitude: -46.6971 },
+        },
+      ],
+      areaServed: [
+        { '@type': 'City', name: 'Rio de Janeiro', sameAs: 'https://www.wikidata.org/wiki/Q8678' },
+        { '@type': 'City', name: 'São Paulo', sameAs: 'https://www.wikidata.org/wiki/Q174' },
+        { '@type': 'City', name: 'Niterói', sameAs: 'https://www.wikidata.org/wiki/Q194346' },
+        { '@type': 'City', name: 'Guarulhos' },
+        { '@type': 'City', name: 'Santo André' },
+        { '@type': 'City', name: 'Osasco' },
+        { '@type': 'City', name: 'São Bernardo do Campo' },
+      ],
+      sameAs: [
+        'https://www.instagram.com/savior.ambulancia/',
+        'https://facebook.com/SaviorMedicalService',
+        'https://www.linkedin.com/company/savior-medical-service/',
+      ],
+    },
+  ],
+});
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/ambulancia-rj" />
-    <link rel="canonical" href="https://www.savior.com.br/ambulancia-rj" />
-    <title>Savior Medical Service</title>
-    <meta name="robots" content="noindex, follow" />
-    <style>
-      body {
-        font-family: system-ui, sans-serif;
-        background: #0B2540;
-        color: #F4EFE6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        text-align: center;
-      }
-      a {
-        color: #1FD29A;
-        text-decoration: none;
-        font-weight: 600;
-      }
-    </style>
-  </head>
-  <body>
-    <div>
-      <p>Redirecionando para <a href="/ambulancia-rj">/ambulancia-rj</a>…</p>
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  ogImageAlt="Savior Medical Service — frota de ambulâncias própria no Rio de Janeiro e São Paulo"
+>
+  <StickyHeader waCampaign="corp-rj" />
+
+  <main id="main">
+
+    <!-- ============================================================ -->
+    <!-- HERO                                                         -->
+    <!-- ============================================================ -->
+    <section class="corp-hero" aria-label="Savior Medical Service — ambulância particular 24h">
+      <div class="corp-hero-bg">
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          poster="/img/hero/hero-poster.webp"
+          aria-hidden="true"
+        >
+          <source src="/video/hero-loop.webm" type="video/webm" />
+          <source src="/video/hero-loop.mp4" type="video/mp4" />
+        </video>
+        <div class="corp-hero-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="wrap corp-hero-content">
+        <!-- Marca no topo -->
+        <div class="corp-hero-brand">
+          <span class="corp-hero-wordmark">SAVIOR</span>
+          <span class="corp-hero-descriptor">Medical Service</span>
+        </div>
+
+        <!-- Grid 2 colunas: copy + KPIs -->
+        <div class="corp-hero-grid">
+          <!-- Coluna esquerda -->
+          <div>
+            <div class="corp-hero-live" aria-label="Operação ativa desde 1979">
+              <span class="corp-hero-live-dot" aria-hidden="true"></span>
+              Soluções em saúde · Desde {BRAND.yearsFounded}
+            </div>
+
+            <h1>
+              Quando alguém precisa,<br /><em>a gente chega.</em>
+            </h1>
+
+            <p class="corp-hero-sub">
+              Ambulância com UTI e médico a bordo. Transferência hospitalar, eventos e atendimento
+              domiciliar. Frota própria, equipe fixa, central que atende em menos de 1&nbsp;minuto.
+              Rio de Janeiro e São Paulo.
+            </p>
+
+            <div class="corp-hero-ctas">
+              <a class="btn btn-primary" href="#ambulancia">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                Preciso de ambulância agora
+              </a>
+              <a
+                class="btn btn-secondary on-dark"
+                href={waB2BHref}
+                target="_blank"
+                rel="noopener"
+                data-whatsapp
+                data-campaign="corp-b2b"
+                data-location="hero-b2b"
+              >
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 21h18M9 21V8l-4 4v9m8 0V4l-4 4v13m8 0V12l-4 4v5" />
+                </svg>
+                Falar sobre minha empresa
+              </a>
+            </div>
+
+            <div class="corp-hero-rating" aria-label="4,7 estrelas no Google — 346 avaliações">
+              <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+                <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span class="corp-hero-rating-score">4,7</span>
+              <span class="corp-hero-rating-stars" aria-hidden="true">★★★★★</span>
+              <span class="corp-hero-rating-count">730+ avaliações no Google</span>
+            </div>
+          </div>
+
+          <!-- Coluna direita: KPIs -->
+          <aside class="corp-hero-right" aria-label="Números da Savior">
+            <div class="corp-kpi">
+              <div class="corp-kpi-label">Operação contínua</div>
+              <div class="corp-kpi-val"><span class="corp-kpi-accent">+</span>46</div>
+              <div class="corp-kpi-desc">anos sem interromper nenhum dia</div>
+            </div>
+            <div class="corp-kpi">
+              <div class="corp-kpi-label">Volume anual</div>
+              <div class="corp-kpi-val"><span class="corp-kpi-accent">+</span>100k</div>
+              <div class="corp-kpi-desc">atendimentos nos últimos 12 meses</div>
+            </div>
+            <div class="corp-kpi">
+              <div class="corp-kpi-label">Equipe própria</div>
+              <div class="corp-kpi-val"><span class="corp-kpi-accent">+</span>450</div>
+              <div class="corp-kpi-desc">médicos, enfermeiros e socorristas</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SOCIAL PROOF                                                 -->
+    <!-- ============================================================ -->
+    <SocialProof />
+
+    <!-- ============================================================ -->
+    <!-- SERVIÇOS                                                     -->
+    <!-- ============================================================ -->
+    <section class="corp-services" id="servicos" aria-labelledby="svc-h2">
+      <div class="wrap">
+        <span class="eyebrow">O que fazemos</span>
+        <h2 id="svc-h2">O que a gente faz <em>todo dia</em></h2>
+        <p class="corp-section-lead">
+          Seis frentes de atuação, todas com frota própria e equipe fixa.
+          Nenhuma ambulância terceirizada, nenhum profissional emprestado.
+        </p>
+
+        <div class="svc-grid">
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <h3>Emergência 24h</h3>
+            <p>UTI completa com médico, enfermeiro e socorrista. Saída em 4&nbsp;minutos. Chegada média: 18–22&nbsp;min na capital.</p>
+            <a href="#ambulancia" class="svc-cta" aria-label="Ver ambulância de emergência">Ver ambulância →</a>
+          </article>
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 6v4M14 14h-4M14 18h-4M14 8h-4M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h2M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/>
+            </svg>
+            <h3>Transferência hospitalar</h3>
+            <p>Contato prévio entre médicos, monitorização contínua, relatório clínico entregue ao destino.</p>
+            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-transfer" aria-label="Solicitar transferência hospitalar">Solicitar →</a>
+          </article>
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+              <circle cx="12" cy="16" r="2"/>
+            </svg>
+            <h3>Eventos & Posto Médico</h3>
+            <p>Shows, jogos, convenções. Posto médico montado no local com equipe dedicada e ambulância de prontidão.</p>
+            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-events" aria-label="Solicitar orçamento para eventos">Orçamento →</a>
+          </article>
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M3 21h18M9 21V8l-4 4v9m8 0V4l-4 4v13m8 0V12l-4 4v5"/>
+            </svg>
+            <h3>Área Protegida</h3>
+            <p>Ambulância dedicada em shoppings, fábricas, universidades. Equipe fixa cobrindo funcionários e clientes.</p>
+            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-area" aria-label="Falar sobre área protegida">Falar →</a>
+          </article>
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <h3>Remoção & Transporte</h3>
+            <p>Casa → hospital, hospital → casa. Preço confirmado antes de sair. Básica ou UTI conforme quadro clínico.</p>
+            <a href="#ambulancia" class="svc-cta" aria-label="Ver preços de remoção">Ver preços →</a>
+          </article>
+
+          <article class="svc-card">
+            <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"/><path d="M2 20c0-4 4.5-7 10-7s10 3 10 7"/>
+            </svg>
+            <h3>UTI Neonatal</h3>
+            <p>Incubadora, ventilador neonatal e médico neonatologista. Protocolo específico para cada caso.</p>
+            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-neo" aria-label="Consultar UTI Neonatal">Consultar →</a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- FLEET BAND                                                   -->
+    <!-- ============================================================ -->
+    <FleetBand />
+
+    <!-- ============================================================ -->
+    <!-- ESPECIALIDADES                                               -->
+    <!-- ============================================================ -->
+    <section class="corp-specialties" id="especialidades" aria-labelledby="spec-h2">
+      <div class="wrap">
+        <span class="eyebrow on-dark">Especialidades Savior</span>
+        <h2 id="spec-h2">O que nos separa <em>de todo o resto</em></h2>
+        <p class="corp-section-lead on-dark">
+          Ambulância particular tem muita no mercado. Mas nem toda tem médico regulando antes de
+          sair, frota certificada com menos de 3&nbsp;anos e equipe que sabe conversar com família
+          em crise.
+        </p>
+
+        <div class="spec-grid">
+
+          <div class="spec-card">
+            <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <h3>Especialistas em <em>humanização</em></h3>
+            <p>Equipe treinada pra lidar com família em crise. Comunicação clara, sem jargão. O motorista espera, o enfermeiro explica.</p>
+          </div>
+
+          <div class="spec-card">
+            <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <h3>Frota própria <em>certificada</em></h3>
+            <p>Veículos com até 3 anos de uso. Portaria 2.048. Telemetria em tempo real. Manutenção interna.</p>
+          </div>
+
+          <div class="spec-card">
+            <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            <h3>Regulação médica <em>24h</em></h3>
+            <p>Médico na central classificando risco antes da ambulância sair. Protocolo Manchester, não script.</p>
+          </div>
+
+          <div class="spec-card">
+            <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <h3>Telemedicina & <em>APH</em></h3>
+            <p>Triagem por vídeo, consulta remota, gestão de vidas para operadoras. Resolução domiciliar que reduz sinistralidade.</p>
+          </div>
+
+          <div class="spec-card">
+            <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <h3>Educação <em>continuada</em></h3>
+            <p>ACLS, PHTLS, Manchester. Profissionais que operam ambulância também sabem estabilizar, intubar e desfibrilar.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- EVENTS BAND                                                  -->
+    <!-- ============================================================ -->
+    <section class="corp-events-band" aria-label="Savior em eventos — Maracanã, Rio Star e convenções">
+      <div class="corp-events-bg">
+        <picture>
+          <source media="(max-width: 720px)" srcset="/img/gallery/event-maracana-mobile.webp" type="image/webp" />
+          <img
+            src="/img/gallery/event-maracana.webp"
+            alt="Equipe Savior em prontidão no Maracanã"
+            width="1600"
+            height="900"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        <div class="corp-events-overlay" aria-hidden="true"></div>
+      </div>
+      <div class="wrap corp-events-content">
+        <p class="corp-events-tag">Eventos & Área Protegida</p>
+        <h2>Presente nos maiores <em>eventos do Brasil</em></h2>
+        <p class="corp-events-desc">Maracanã, Rio Star, convenções corporativas. Equipe dedicada, posto médico montado, ambulância de prontidão.</p>
+        <a
+          href={waB2BHref}
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener"
+          data-whatsapp
+          data-campaign="corp-b2b"
+          data-location="events-band"
+        >
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+          Solicitar orçamento para evento
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- COBERTURA RJ + SP                                            -->
+    <!-- ============================================================ -->
+    <section class="corp-coverage" id="ambulancia" aria-labelledby="cov-h2">
+      <!-- SVG Brazil map watermark (decorativo, aria-hidden) -->
+      <svg class="corp-coverage-map" viewBox="0 0 800 500" fill="none" stroke="var(--navy)" stroke-width=".5" aria-hidden="true">
+        <path d="M250 50 L380 30 L450 60 L520 40 L580 70 L620 50 L650 80 L670 120 L700 140 L720 180 L710 220 L730 260 L720 300 L700 340 L670 370 L640 390 L600 410 L560 430 L520 440 L480 450 L440 440 L400 430 L360 440 L320 430 L280 420 L250 400 L220 370 L200 340 L180 300 L170 260 L160 220 L170 180 L180 140 L200 110 L220 80 L250 50Z" stroke-width="1"/>
+        <path d="M580 300 L620 290 L650 310 L670 340 L650 360 L620 370 L590 360 L570 340 L580 300Z" stroke-width="1.5" fill="var(--navy)" fill-opacity=".03"/>
+        <circle cx="630" cy="330" r="6" fill="var(--green)" fill-opacity=".25"/>
+        <path d="M420 320 L480 300 L530 310 L560 330 L570 360 L550 390 L510 400 L460 400 L420 380 L400 350 L420 320Z" stroke-width="1.5" fill="var(--navy)" fill-opacity=".03"/>
+        <circle cx="490" cy="350" r="6" fill="var(--green)" fill-opacity=".25"/>
+        <line x1="100" y1="0" x2="100" y2="500" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="300" y1="0" x2="300" y2="500" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="500" y1="0" x2="500" y2="500" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="700" y1="0" x2="700" y2="500" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="0" y1="100" x2="800" y2="100" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="0" y1="250" x2="800" y2="250" stroke-dasharray="4 8" opacity=".25"/>
+        <line x1="0" y1="400" x2="800" y2="400" stroke-dasharray="4 8" opacity=".25"/>
+      </svg>
+
+      <div class="wrap corp-coverage-inner">
+        <span class="eyebrow">Onde atendemos</span>
+        <h2 id="cov-h2">A gente está <em>perto de você</em></h2>
+        <p class="corp-section-lead">
+          Duas bases operacionais, central 24&nbsp;horas integrada, cobertura metropolitana.
+        </p>
+
+        <div class="cov-grid">
+
+          <!-- RJ -->
+          <div class="cov-card">
+            <h3>Rio de <em>Janeiro</em></h3>
+            <div class="cov-phone">
+              <a href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-event-label="coverage-phone-rj">{CONTACT_RJ.phone}</a>
+            </div>
+            <div class="cov-wa">
+              <a href={waCovRJHref} target="_blank" rel="noopener" data-whatsapp data-campaign="corp-rj" data-location="coverage-rj">
+                WhatsApp: {CONTACT_RJ.whatsappDisplay}
+              </a>
+            </div>
+            <p class="cov-areas">
+              <strong>Capital:</strong> Zona Sul · Norte · Oeste · Centro<br />
+              <strong>Metropolitana:</strong> Niterói · São Gonçalo · Duque de Caxias · Nova Iguaçu · Baixada<br />
+              <strong>Litoral:</strong> Região dos Lagos
+            </p>
+            <address class="cov-addr">{CONTACT_RJ.address}</address>
+            <a
+              href={waCovRJHref}
+              class="btn btn-primary cov-btn"
+              target="_blank"
+              rel="noopener"
+              data-whatsapp
+              data-campaign="corp-rj"
+              data-location="coverage-rj-btn"
+            >
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+              Chamar ambulância RJ
+            </a>
+            <a href="/ambulancia-rj" class="cov-lp-link">Ver ambulância RJ com preços e FAQ →</a>
+          </div>
+
+          <!-- SP -->
+          <div class="cov-card">
+            <h3>São <em>Paulo</em></h3>
+            <div class="cov-phone">
+              <a href={`tel:${CONTACT_SP.phoneLandlineHref}`} data-phone data-event-label="coverage-phone-sp">{CONTACT_SP.phoneLandline}</a>
+            </div>
+            <div class="cov-wa">
+              <a href={waCovSPHref} target="_blank" rel="noopener" data-whatsapp data-campaign="corp-sp" data-location="coverage-sp">
+                WhatsApp: {CONTACT_SP.whatsappDisplay}
+              </a>
+            </div>
+            <p class="cov-areas">
+              <strong>Capital:</strong> Zona Sul · Norte · Leste · Oeste · Centro<br />
+              <strong>ABCD:</strong> Santo André · São Bernardo · São Caetano · Diadema<br />
+              <strong>Metropolitana:</strong> Guarulhos · Osasco · Campinas · Santos
+            </p>
+            <address class="cov-addr">{CONTACT_SP.address}</address>
+            <a
+              href={waCovSPHref}
+              class="btn btn-primary cov-btn"
+              target="_blank"
+              rel="noopener"
+              data-whatsapp
+              data-campaign="corp-sp"
+              data-location="coverage-sp-btn"
+            >
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+              </svg>
+              Chamar ambulância SP
+            </a>
+            <a href="/ambulancia-sp" class="cov-lp-link">Ver ambulância SP com preços e FAQ →</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- DEPOIMENTOS                                                  -->
+    <!-- ============================================================ -->
+    <Testimonials googleBusiness={GOOGLE_BUSINESS} />
+
+    <!-- Google Business Ratings bar -->
+    <section class="corp-ratings" aria-label="Avaliações Google — RJ e SP">
+      <div class="wrap corp-ratings-inner">
+        <div class="rating-bar">
+          <div class="rating-bar-score">
+            <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <strong>{GOOGLE_BUSINESS.rating}</strong>
+            <span class="rating-stars" aria-hidden="true">★★★★★</span>
+            <span class="rating-count">{GOOGLE_BUSINESS.reviewCount} avaliações</span>
+          </div>
+          <div class="rating-bar-label">SAVIOR Medical Service <strong>RJ</strong></div>
+          <a href={GOOGLE_BUSINESS.url} target="_blank" rel="noopener" class="rating-bar-link">
+            Ver no Google
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+
+        <div class="rating-bar">
+          <div class="rating-bar-score">
+            <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <strong>{GOOGLE_BUSINESS_SP.rating}</strong>
+            <span class="rating-stars" aria-hidden="true">★★★★★</span>
+            <span class="rating-count">{GOOGLE_BUSINESS_SP.reviewCount} avaliações</span>
+          </div>
+          <div class="rating-bar-label">SAVIOR Medical Service <strong>SP</strong></div>
+          <a href={GOOGLE_BUSINESS_SP.url} target="_blank" rel="noopener" class="rating-bar-link">
+            Ver no Google
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TEAM BAND                                                    -->
+    <!-- ============================================================ -->
+    <section class="corp-team-band" aria-label="Equipe Savior — médicos, paramédicos e enfermeiros">
+      <div class="corp-team-bg">
+        <picture>
+          <source media="(max-width: 720px)" srcset="/img/gallery/team-mobile.webp" type="image/webp" />
+          <img
+            src="/img/gallery/team.webp"
+            alt="Médico, paramédico e enfermeiro da Savior em prontidão"
+            width="1600"
+            height="900"
+            loading="lazy"
+            decoding="async"
+            style="object-position: 65% 20%"
+          />
+        </picture>
+        <div class="corp-team-overlay" aria-hidden="true"></div>
+      </div>
+      <div class="wrap corp-team-content">
+        <p class="corp-team-tag">Especialistas em humanização</p>
+        <h2>A equipe que cuida de <em>gente</em>,<br />não só de paciente.</h2>
+        <p class="corp-team-desc">
+          Médico, paramédico e enfermeiro, treinados pra estabilizar, transportar e conversar
+          com a família no pior momento. Sem pressa, sem jargão. O uniforme é técnico,
+          o olhar é humano.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SOBRE + MVV                                                  -->
+    <!-- ============================================================ -->
+    <div class="corp-mvv-sep" aria-hidden="true"></div>
+    <section class="corp-mvv" id="sobre" aria-labelledby="mvv-h2">
+      <div class="wrap">
+        <div class="corp-mvv-grid">
+
+          <!-- Esquerda: texto + M+V -->
+          <div>
+            <span class="eyebrow on-dark">Sobre a Savior</span>
+            <p class="corp-mvv-about">
+              A empresa de transporte médico mais antiga do Brasil. Fundada em 1979 no Rio de
+              Janeiro, a Savior nasceu com uma ambulância e uma missão: levar medicina até onde
+              a família está. Hoje operamos em RJ e SP com mais de 450&nbsp;profissionais,
+              frota própria certificada e central que atende 24&nbsp;horas, todos os dias do ano.
+              Ao longo de quase cinco décadas, construímos parcerias com Petrobras, Prevent Senior,
+              Rede D'Or e Unimed. Não somos só transporte. Somos regulação médica, telemedicina,
+              cobertura de eventos e atendimento pré-hospitalar. Uma empresa de soluções em saúde
+              construída por quem entende que cada minuto conta.
+            </p>
+
+            <div class="corp-mv-grid">
+              <div>
+                <span class="eyebrow on-dark" style="font-size:10px;display:block;margin-bottom:8px">Missão</span>
+                <p class="corp-mv-text">Levar medicina até onde a família está, com equipamento certo, gente preparada e respeito por quem está passando pelo pior momento.</p>
+              </div>
+              <div>
+                <span class="eyebrow on-dark" style="font-size:10px;display:block;margin-bottom:8px">Visão</span>
+                <p class="corp-mv-text">Ser referência nacional em soluções em saúde, aliando inovação, eficiência e cuidado em cada atendimento.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Direita: Valores -->
+          <div>
+            <span class="eyebrow on-dark" style="display:block;margin-bottom:14px">Valores</span>
+            <div class="corp-vals">
+              <div class="corp-val"><strong>Foco no Paciente</strong><p>Cada decisão guiada pelo bem-estar de quem mais importa.</p></div>
+              <div class="corp-val"><strong>Segurança em Primeiro Lugar</strong><p>Rigor técnico e responsabilidade em cada atendimento.</p></div>
+              <div class="corp-val"><strong>Inovação Contínua</strong><p>Tecnologia e soluções inteligentes para antecipar necessidades.</p></div>
+              <div class="corp-val"><strong>Humanização</strong><p>Empatia, respeito e sensibilidade em cada chamado.</p></div>
+              <div class="corp-val"><strong>Excelência Operacional</strong><p>Eficiência, qualidade e agilidade em todos os processos.</p></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- FINAL CTA — dual city                                        -->
+    <!-- ============================================================ -->
+    <section class="corp-fcta" aria-labelledby="fcta-h2">
+      <div class="wrap">
+        <p class="corp-fcta-eyebrow">Medicina que chega</p>
+        <h2 id="fcta-h2">Manda mensagem.<br />A gente já está <em>a caminho</em></h2>
+        <p class="corp-fcta-sub">Central 24&nbsp;horas, todos os dias do ano. Rio de Janeiro e São Paulo.</p>
+        <div class="corp-fcta-btns">
+          <a
+            class="btn btn-primary"
+            href={waFinalRJHref}
+            target="_blank"
+            rel="noopener"
+            data-whatsapp
+            data-campaign="corp-rj"
+            data-location="final-cta"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+            </svg>
+            WhatsApp RJ
+          </a>
+          <a
+            class="btn btn-primary"
+            href={waFinalSPHref}
+            target="_blank"
+            rel="noopener"
+            data-whatsapp
+            data-campaign="corp-sp"
+            data-location="final-cta"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+            </svg>
+            WhatsApp SP
+          </a>
+          <a
+            class="btn btn-secondary on-dark"
+            href={`tel:${CONTACT_RJ.phoneHref}`}
+            data-phone
+            data-event-label="final-cta-phone"
+            data-campaign="corp-rj"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            {CONTACT_RJ.phone}
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- FOOTER — dual city corporativo                               -->
+  <!-- ============================================================ -->
+  <footer class="corp-footer" aria-label="Rodapé Savior Medical Service">
+    <div class="wrap">
+      <div class="corp-ft-top">
+
+        <!-- Marca -->
+        <div class="corp-ft-brand">
+          <span class="corp-ft-word">SAVIOR</span>
+          <span class="corp-ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
+          <div class="corp-ft-social" aria-label="Redes sociais Savior">
+            <a href="https://www.instagram.com/savior.ambulancia/" target="_blank" rel="noopener" aria-label="Instagram Savior">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="https://facebook.com/SaviorMedicalService" target="_blank" rel="noopener" aria-label="Facebook Savior">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/company/savior-medical-service/" target="_blank" rel="noopener" aria-label="LinkedIn Savior">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Contatos: 4 colunas -->
+        <div class="corp-ft-contacts">
+          <div class="corp-ft-block">
+            <span class="corp-ft-label">Emergência RJ</span>
+            <a href={`tel:${CONTACT_RJ.phoneHref}`} class="corp-ft-main" data-phone data-event-label="footer-phone-rj">{CONTACT_RJ.phone}</a>
+            <a href={`tel:${CONTACT_RJ.phoneHref}`} class="corp-ft-sec">{CONTACT_RJ.whatsappDisplay}</a>
+          </div>
+          <div class="corp-ft-block">
+            <span class="corp-ft-label">Emergência SP</span>
+            <a href={`tel:${CONTACT_SP.phoneLandlineHref}`} class="corp-ft-main" data-phone data-event-label="footer-phone-sp">{CONTACT_SP.phoneLandline}</a>
+            <a href={`tel:${CONTACT_SP.phoneHref}`} class="corp-ft-sec">{CONTACT_SP.whatsappDisplay}</a>
+          </div>
+          <div class="corp-ft-block">
+            <span class="corp-ft-label">E-mail</span>
+            <a href={`mailto:${CONTACT_RJ.email}`} class="corp-ft-sec">{CONTACT_RJ.email}</a>
+            <a href="mailto:recrutamento@savior.com.br" class="corp-ft-sec">recrutamento@savior.com.br</a>
+          </div>
+          <div class="corp-ft-block">
+            <span class="corp-ft-label">Endereços</span>
+            <address class="corp-ft-addr">
+              <span>RJ: R. Gen. Padilha, 73 · São Cristóvão</span>
+              <span>SP: Av. do Rio Bonito, 287 · Socorro</span>
+            </address>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="corp-ft-bottom">
+        <p class="corp-ft-coverage">
+          <strong>Cobertura RJ:</strong> Zona Sul · Norte · Oeste · Centro · Niterói · Baixada &nbsp;|&nbsp;
+          <strong>SP:</strong> Capital · ABCD · Guarulhos · Osasco · Campinas · Santos
+        </p>
+        <p class="corp-ft-legal">
+          CNES: 7207972 · Responsável técnico: Dr. Alder Drummond ·
+          © {new Date().getFullYear()} Savior Medical Service. Todos os direitos reservados.
+        </p>
+      </div>
     </div>
-  </body>
-</html>
+  </footer>
+
+  <FloatingWhatsApp waCampaign="corp-rj" />
+
+</Base>
+
+<style>
+  /* ============================================================ */
+  /* HERO                                                         */
+  /* ============================================================ */
+  .corp-hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--navy-deep);
+    padding: clamp(48px, 8vh, 96px) 0;
+  }
+
+  .corp-hero-bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .corp-hero-bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .corp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(7, 24, 43, 0.82), rgba(11, 37, 64, 0.62), rgba(7, 24, 43, 0.74));
+  }
+
+  @media (max-width: 960px) {
+    .corp-hero-overlay {
+      background: linear-gradient(135deg, rgba(7, 24, 43, 0.88), rgba(11, 37, 64, 0.78));
+    }
+  }
+
+  .corp-hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    color: white;
+  }
+
+  .corp-hero-brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: clamp(56px, 9vh, 108px);
+  }
+
+  .corp-hero-wordmark {
+    font-family: 'Ethnocentric', var(--sans);
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    color: white;
+    line-height: 1;
+  }
+
+  .corp-hero-descriptor {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--green-bright);
+    text-transform: uppercase;
+  }
+
+  .corp-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  @media (max-width: 960px) {
+    .corp-hero-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  .corp-hero-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 16px;
+  }
+
+  .corp-hero-live-dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-bright);
+    flex-shrink: 0;
+  }
+
+  .corp-hero-live-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--green-bright);
+    animation: live-pulse 2s ease-out infinite;
+  }
+
+  @keyframes live-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    70% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .corp-hero h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(36px, 5.5vw, 56px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .corp-hero h1 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .corp-hero-sub {
+    font-size: clamp(15px, 1.4vw, 17px);
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 520px;
+    margin-bottom: clamp(28px, 3.6vh, 40px);
+    line-height: 1.55;
+  }
+
+  .corp-hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 560px) {
+    .corp-hero-ctas .btn {
+      width: 100%;
+    }
+  }
+
+  .corp-hero-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .corp-hero-rating-score {
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+  }
+
+  .corp-hero-rating-stars {
+    color: #f5a623;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  .corp-hero-rating-count {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .corp-hero-right {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    padding-left: clamp(20px, 3vw, 40px);
+  }
+
+  @media (max-width: 960px) {
+    .corp-hero-right {
+      border-left: none;
+      padding-left: 0;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+  }
+
+  .corp-kpi {
+    margin-bottom: 28px;
+  }
+
+  .corp-kpi:last-child {
+    margin-bottom: 0;
+  }
+
+  .corp-kpi-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--green-bright);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .corp-kpi-val {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(44px, 6.5vw, 68px);
+    color: white;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+  }
+
+  .corp-kpi-accent {
+    color: var(--green-bright);
+    font-size: 0.55em;
+    vertical-align: super;
+    font-weight: 700;
+  }
+
+  .corp-kpi-desc {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 8px;
+  }
+
+  /* ============================================================ */
+  /* SERVIÇOS                                                     */
+  /* ============================================================ */
+  .corp-services {
+    padding: var(--space-block) 0;
+    background: var(--cream-light);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .corp-services h2 {
+    font-size: var(--fs-2xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+  }
+
+  .corp-services h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .corp-section-lead {
+    font-size: 16px;
+    color: var(--gray, #6B7785);
+    max-width: 600px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+
+  .corp-section-lead.on-dark {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 960px) {
+    .svc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 561px) and (max-width: 960px) {
+    .svc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .svc-card {
+    background: white;
+    border-radius: 6px;
+    padding: 28px 24px;
+    border: 1px solid var(--cream-dark);
+    border-left: 3px solid var(--green);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+
+  .svc-card:hover {
+    transform: translateY(-2px);
+    border-left-color: var(--green-dark);
+  }
+
+  .svc-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--navy);
+    margin-bottom: 18px;
+  }
+
+  .svc-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    color: var(--navy);
+  }
+
+  .svc-card p {
+    font-size: 14px;
+    color: var(--gray, #6B7785);
+    line-height: 1.55;
+  }
+
+  .svc-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--green-dark);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .svc-cta:hover {
+    color: var(--green);
+  }
+
+  /* ============================================================ */
+  /* ESPECIALIDADES                                               */
+  /* ============================================================ */
+  .corp-specialties {
+    padding: var(--space-block) 0;
+    background: var(--navy-deep);
+    color: white;
+  }
+
+  .corp-specialties h2 {
+    font-size: var(--fs-2xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .corp-specialties h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 960px) {
+    .spec-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 561px) and (max-width: 960px) {
+    .spec-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .spec-card {
+    background: var(--navy);
+    border-radius: 6px;
+    padding: 32px 24px;
+    border: 1px solid var(--navy-mid);
+    transition: transform 0.15s;
+  }
+
+  .spec-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .spec-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--green-bright);
+    margin-bottom: 16px;
+  }
+
+  .spec-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .spec-card h3 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .spec-card p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.55;
+  }
+
+  /* ============================================================ */
+  /* EVENTS BAND                                                  */
+  /* ============================================================ */
+  .corp-events-band {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--navy-deep);
+  }
+
+  .corp-events-bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .corp-events-bg picture,
+  .corp-events-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .corp-events-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to left, rgba(7, 24, 43, 0.92), rgba(11, 37, 64, 0.78) 40%, rgba(7, 24, 43, 0.55), rgba(7, 24, 43, 0.4));
+  }
+
+  @media (max-width: 720px) {
+    .corp-events-overlay {
+      background: linear-gradient(to bottom, rgba(7, 24, 43, 0.9), rgba(11, 37, 64, 0.78) 60%, rgba(7, 24, 43, 0.85));
+    }
+  }
+
+  .corp-events-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    color: white;
+    padding: clamp(56px, 8vh, 96px) 0;
+    text-align: right;
+  }
+
+  @media (max-width: 960px) {
+    .corp-events-content {
+      text-align: left;
+    }
+  }
+
+  .corp-events-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .corp-events-content h2 {
+    font-size: clamp(30px, 4.2vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: white;
+    margin-bottom: 16px;
+    margin-left: auto;
+    max-width: 560px;
+  }
+
+  .corp-events-content h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .corp-events-desc {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.6;
+    margin-bottom: 28px;
+    margin-left: auto;
+    max-width: 480px;
+  }
+
+  @media (max-width: 960px) {
+    .corp-events-content h2,
+    .corp-events-desc {
+      margin-left: 0;
+    }
+  }
+
+  /* ============================================================ */
+  /* COBERTURA                                                    */
+  /* ============================================================ */
+  .corp-coverage {
+    padding: var(--space-block) 0;
+    background: var(--cream-light);
+    border-bottom: 1px solid var(--cream-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .corp-coverage-map {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    opacity: 0.035;
+    pointer-events: none;
+  }
+
+  .corp-coverage-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .corp-coverage h2 {
+    font-size: var(--fs-2xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+  }
+
+  .corp-coverage h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .cov-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 720px) {
+    .cov-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cov-card {
+    background: white;
+    border-radius: 6px;
+    padding: 32px 28px;
+    border: 1px solid var(--cream-dark);
+    border-left: 3px solid var(--green);
+  }
+
+  .cov-card h3 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    margin-bottom: 12px;
+    color: var(--navy);
+  }
+
+  .cov-card h3 em {
+    font-style: normal;
+    color: var(--green);
+  }
+
+  .cov-phone {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .cov-phone a {
+    color: var(--navy);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .cov-phone a:hover {
+    color: var(--green-dark);
+  }
+
+  .cov-wa {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .cov-wa a {
+    color: var(--green-dark);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .cov-wa a:hover {
+    color: var(--green);
+  }
+
+  .cov-areas {
+    font-size: 13px;
+    color: var(--gray, #6B7785);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .cov-areas strong {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  .cov-addr {
+    font-size: 12px;
+    color: var(--gray, #6B7785);
+    font-style: normal;
+    border-top: 1px solid var(--cream-dark);
+    padding-top: 12px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+    line-height: 1.55;
+  }
+
+  .cov-btn {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .cov-lp-link {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--green-dark);
+    text-decoration: none;
+    text-align: center;
+    transition: color 0.15s;
+  }
+
+  .cov-lp-link:hover {
+    color: var(--green);
+  }
+
+  /* ============================================================ */
+  /* RATINGS BAR                                                  */
+  /* ============================================================ */
+  .corp-ratings {
+    padding: 28px 0;
+    background: var(--cream);
+    border-top: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .corp-ratings-inner {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .rating-bar {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--cream-dark);
+  }
+
+  .rating-bar-score {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rating-bar-score strong {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .rating-stars {
+    color: #f5a623;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .rating-count {
+    font-size: 13px;
+    color: var(--gray, #6B7785);
+  }
+
+  .rating-bar-label {
+    font-size: 13px;
+    color: var(--gray, #6B7785);
+    flex: 1;
+  }
+
+  .rating-bar-label strong {
+    color: var(--navy);
+  }
+
+  .rating-bar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid var(--navy);
+    border-radius: 5px;
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .rating-bar-link:hover {
+    background: var(--navy);
+    color: white;
+  }
+
+  /* ============================================================ */
+  /* TEAM BAND                                                    */
+  /* ============================================================ */
+  .corp-team-band {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--navy-deep);
+  }
+
+  .corp-team-bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .corp-team-bg picture,
+  .corp-team-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .corp-team-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(7, 24, 43, 0.96), rgba(7, 24, 43, 0.9) 35%, rgba(7, 24, 43, 0.47) 55%, rgba(7, 24, 43, 0.07) 75%, rgba(7, 24, 43, 0.0));
+  }
+
+  @media (max-width: 720px) {
+    .corp-team-overlay {
+      background: linear-gradient(to bottom, rgba(7, 24, 43, 0.92), rgba(11, 37, 64, 0.78) 60%, rgba(7, 24, 43, 0.88));
+    }
+  }
+
+  .corp-team-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    color: white;
+    padding: clamp(56px, 8vh, 96px) 0;
+  }
+
+  .corp-team-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .corp-team-content h2 {
+    font-size: clamp(30px, 4.2vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    color: white;
+    margin-bottom: 20px;
+    max-width: 620px;
+  }
+
+  .corp-team-content h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .corp-team-desc {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.6;
+    max-width: 460px;
+  }
+
+  /* ============================================================ */
+  /* MVV — SOBRE + VALORES                                        */
+  /* ============================================================ */
+  .corp-mvv-sep {
+    height: 1px;
+    background: linear-gradient(to right, var(--green-bright), var(--green-dark), transparent);
+  }
+
+  .corp-mvv {
+    padding: var(--space-block) 0;
+    background: var(--navy);
+    color: white;
+  }
+
+  .corp-mvv-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+  }
+
+  @media (max-width: 960px) {
+    .corp-mvv-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
+  .corp-mvv-about {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.65;
+    margin-bottom: 32px;
+  }
+
+  .corp-mv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 560px) {
+    .corp-mv-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .corp-mv-text {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.55;
+  }
+
+  .corp-vals {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .corp-val {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 14px 16px;
+    border-radius: 4px;
+    border-left: 3px solid var(--green);
+  }
+
+  .corp-val strong {
+    color: white;
+    font-size: 13.5px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .corp-val p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+  }
+
+  /* ============================================================ */
+  /* FINAL CTA                                                    */
+  /* ============================================================ */
+  .corp-fcta {
+    padding: var(--space-block) 0;
+    background: var(--navy-deep);
+    color: white;
+    text-align: center;
+  }
+
+  .corp-fcta-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    font-weight: 500;
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  .corp-fcta h2 {
+    font-size: var(--fs-3xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .corp-fcta h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .corp-fcta-sub {
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.78);
+    margin-bottom: 36px;
+  }
+
+  .corp-fcta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 560px) {
+    .corp-fcta-btns {
+      flex-direction: column;
+    }
+
+    .corp-fcta-btns .btn {
+      width: 100%;
+    }
+  }
+
+  /* ============================================================ */
+  /* FOOTER — CORPORATIVO                                         */
+  /* ============================================================ */
+  .corp-footer {
+    background: #050F1C;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 56px 0 36px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .corp-ft-top {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 64px;
+    align-items: start;
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  @media (max-width: 720px) {
+    .corp-ft-top {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
+  .corp-ft-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .corp-ft-word {
+    font-family: 'Ethnocentric', var(--sans);
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+    color: white;
+    line-height: 1;
+  }
+
+  .corp-ft-tagline {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    opacity: 0.8;
+  }
+
+  .corp-ft-social {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .corp-ft-social a {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .corp-ft-social a:hover {
+    background: var(--green-dark);
+    color: white;
+  }
+
+  .corp-ft-social svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .corp-ft-contacts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  @media (max-width: 960px) {
+    .corp-ft-contacts {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 440px) {
+    .corp-ft-contacts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .corp-ft-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .corp-ft-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    opacity: 0.75;
+    margin-bottom: 4px;
+  }
+
+  .corp-ft-main {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .corp-ft-main:hover {
+    color: var(--green-bright);
+  }
+
+  .corp-ft-sec {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+
+  .corp-ft-sec:hover {
+    color: white;
+  }
+
+  .corp-ft-addr {
+    font-style: normal;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .corp-ft-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .corp-ft-coverage {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1.55;
+  }
+
+  .corp-ft-coverage strong {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .corp-ft-legal {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.25);
+  }
+</style>
