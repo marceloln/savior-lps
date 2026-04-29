@@ -63,6 +63,17 @@ const schema = JSON.stringify({
         { "@type": "Question", "name": "A equipe é própria ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "100% própria. Médicos, enfermeiros e condutores socorristas são contratados, treinados e avaliados pela Savior. Não terceirizamos equipe." } },
         { "@type": "Question", "name": "Vocês cobrem RJ e SP ao mesmo tempo?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. A Savior opera com bases próprias no Rio de Janeiro (R. Gen. Padilha 73, São Cristóvão) e São Paulo (Av. do Rio Bonito 287, Socorro). Contratos multiestado são comuns entre nossos clientes corporativos." } }
       ]
+    },
+    {
+      "@type": "SpeakableSpecification",
+      "cssSelector": ["h1", ".corp-hero-sub", ".corp-section-intro", "#proposta"]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Savior Medical Service", "item": "https://www.savior.com.br/" },
+        { "@type": "ListItem", "position": 2, "name": "Cobertura Corporativa", "item": "https://www.savior.com.br/corporativo" }
+      ]
     }
   ]
 });
@@ -558,6 +569,7 @@ const schema = JSON.stringify({
           <a href="/ambulancia-rj">Ambulância RJ</a>
           <a href="/ambulancia-sp">Ambulância SP</a>
           <a href="/eventos">Eventos</a>
+          <a href="/">Savior.com.br</a>
         </p>
       </div>
       <div class="corp-footer-col">

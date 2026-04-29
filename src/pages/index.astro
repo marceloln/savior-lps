@@ -277,7 +277,7 @@ const schema = JSON.stringify({
             </svg>
             <h3>Eventos & Posto Médico</h3>
             <p>Shows, jogos, convenções. Posto médico montado no local com equipe dedicada e ambulância de prontidão.</p>
-            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-events" aria-label="Solicitar orçamento para eventos">Orçamento →</a>
+            <a href="/eventos" class="svc-cta" aria-label="Ver cobertura médica para eventos">Ver cobertura →</a>
           </article>
 
           <article class="svc-card">
@@ -286,7 +286,7 @@ const schema = JSON.stringify({
             </svg>
             <h3>Área Protegida</h3>
             <p>Ambulância dedicada em shoppings, fábricas, universidades. Equipe fixa cobrindo funcionários e clientes.</p>
-            <a href={waB2BHref} class="svc-cta" target="_blank" rel="noopener" data-whatsapp data-campaign="corp-b2b" data-location="svc-area" aria-label="Falar sobre área protegida">Falar →</a>
+            <a href="/corporativo" class="svc-cta" aria-label="Ver planos corporativos Savior">Planos corporativos →</a>
           </article>
 
           <article class="svc-card">
@@ -754,6 +754,13 @@ const schema = JSON.stringify({
         </div>
 
       </div>
+
+      <nav class="corp-ft-nav" aria-label="Serviços Savior">
+        <a href="/ambulancia-rj">Ambulância RJ</a>
+        <a href="/ambulancia-sp">Ambulância SP</a>
+        <a href="/eventos">Cobertura de Eventos</a>
+        <a href="/corporativo">Planos Corporativos</a>
+      </nav>
 
       <div class="corp-ft-bottom">
         <p class="corp-ft-coverage">
@@ -1888,6 +1895,30 @@ const schema = JSON.stringify({
     display: flex;
     flex-direction: column;
     gap: 2px;
+  }
+
+  .corp-ft-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 24px;
+  }
+
+  .corp-ft-nav a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .corp-ft-nav a:hover {
+    color: var(--green-bright);
   }
 
   .corp-ft-bottom {

@@ -27,7 +27,20 @@ const schema = JSON.stringify({
     "@type": "AggregateRating",
     "ratingValue": 4.7,
     "reviewCount": String(GOOGLE_BUSINESS.reviewCount + GOOGLE_BUSINESS_SP.reviewCount)
+  },
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": ["h1", ".ev-hero-sub", ".ev-tldr-list", "#faq"]
   }
+});
+
+const breadcrumbSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Savior Medical Service", "item": "https://www.savior.com.br/" },
+    { "@type": "ListItem", "position": 2, "name": "Ambulância para Eventos", "item": "https://www.savior.com.br/eventos" }
+  ]
 });
 
 // ============ WhatsApp URLs ============
@@ -56,6 +69,9 @@ const faqItems = [
   schema={schema}
   lcpImageSrcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
 >
+  <!-- BreadcrumbList -->
+  <script type="application/ld+json" is:inline>{breadcrumbSchema}</script>
+
   <!-- FAQ Schema separado -->
   <script type="application/ld+json" is:inline>{JSON.stringify({
     "@context": "https://schema.org",
@@ -547,6 +563,12 @@ const faqItems = [
             </div>
           </div>
         </div>
+        <nav class="ev-ft-nav" aria-label="Serviços Savior">
+          <a href="/ambulancia-rj">Ambulância RJ</a>
+          <a href="/ambulancia-sp">Ambulância SP</a>
+          <a href="/corporativo">Planos Corporativos</a>
+          <a href="/">Savior.com.br</a>
+        </nav>
         <div class="ev-ft-bottom">© 2026 Savior Medical Service. CNPJ 28.222.118/0001-07. Todos os direitos reservados.</div>
       </div>
     </footer>
@@ -880,6 +902,9 @@ const faqItems = [
   .ev-ft-main:hover { color: var(--green-bright); }
   .ev-ft-sec { color: #fff9; font-size: 13px; display: block; }
   .ev-ft-sec:hover { color: #fff; }
+  .ev-ft-nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .ev-ft-nav a { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); text-decoration: none; transition: color .15s; }
+  .ev-ft-nav a:hover { color: var(--green-bright); }
   .ev-ft-bottom { font-size: 11px; color: rgba(255,255,255,.25); text-align: center; margin-top: 32px; }
 
   /* ── Floating WA ── */
