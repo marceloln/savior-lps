@@ -637,6 +637,19 @@ const faqItems = [
     }
   </script>
 
+  <!-- ═══ BLIP CHAT — Eventos ═══ -->
+  <!-- Carrega após window.onload — não bloqueia LCP/FID -->
+  <script src="https://unpkg.com/blip-chat-widget" type="text/javascript" is:inline></script>
+  <script is:inline>
+    window.addEventListener('load', function () {
+      new BlipChat()
+        .withAppKey('c2F2aW9ycHJpbmNpcGFsOjFlMmY2NTA1LWI2OGUtNGZmOC04NzllLWUzMDhiZmZiNDkyMw==')
+        .withButton({ color: '#00B87C', icon: '' })
+        .withCustomCommonUrl('https://savior.chat.blip.ai/')
+        .build();
+    });
+  </script>
+
 </Base>
 
 <style>
