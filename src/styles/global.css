@@ -165,8 +165,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: var(--fs-4xl); }
-h2 { font-size: var(--fs-3xl); }
-h3 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-3xl); margin-bottom: 16px; }
+h3 { font-size: var(--fs-2xl); margin-bottom: 14px; }
 
 p {
   line-height: 1.65;
