@@ -363,46 +363,38 @@ const faqItems = [
         <table class="ev-comp-table" role="table" aria-label="Comparativo Savior vs concorrentes">
           <thead>
             <tr>
-              <th scope="col" class="ev-comp-th-feat"></th>
               <th scope="col" class="ev-comp-th-savior">SAVIOR</th>
               <th scope="col" class="ev-comp-th-conc">Concorrentes</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="ev-comp-feat">Ambulância própria (não terceirizada)</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-note">geralmente</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Ambulância própria</strong><span class="ev-ci-sub">não terceirizada</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Geralmente terceirizada</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Equipe chega antes do público</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-note ev-ci-note--savior">30–60 min antes</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-note">sem garantia</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Equipe chega antes do público</strong><span class="ev-ci-sub">30–60 min antes</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Sem garantia de pontualidade</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Responsável técnico nomeado (ART)</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-note">raro</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Responsável técnico nomeado</strong><span class="ev-ci-sub">ART em contrato</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Responsável técnico raro</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Documentação para alvará inclusa</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-note">cobra à parte</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Documentação para alvará</strong><span class="ev-ci-sub">inclusa no contrato</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Documentação cobrada à parte</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Relatório pós-evento em 48h</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Relatório pós-evento</strong><span class="ev-ci-sub">entregue em 48h</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Sem relatório pós-evento</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Cobertura montagem + evento + desmontagem</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-note">só evento</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>Cobertura completa</strong><span class="ev-ci-sub">montagem + evento + desmontagem</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Só cobre o período do evento</strong></span></td>
             </tr>
             <tr>
-              <td class="ev-comp-feat">Operação em eventos há +40 anos</td>
-              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span></td>
-              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span></td>
+              <td class="ev-comp-col-savior"><span class="ev-ci-check">✓</span><span class="ev-ci-body"><strong>46 anos de operação em eventos</strong><span class="ev-ci-sub">desde 1979</span></span></td>
+              <td class="ev-comp-col-conc"><span class="ev-ci-cross">✗</span><span class="ev-ci-body ev-ci-body--conc"><strong>Sem histórico comprovado</strong></span></td>
             </tr>
           </tbody>
         </table>
@@ -819,23 +811,24 @@ const faqItems = [
 
   /* ── Comparison ── */
   .ev-comp-table { width: 100%; border-collapse: collapse; }
-  /* Header */
-  .ev-comp-th-feat { width: 55%; padding: 16px 20px; background: var(--navy-deep); }
-  .ev-comp-th-savior { width: 22.5%; padding: 16px 20px; text-align: center; background: var(--green-dark); font-family: 'Ethnocentric', var(--sans); font-size: 13px; letter-spacing: .1em; color: #fff; border-bottom: 2px solid rgba(31,210,154,.4); }
-  .ev-comp-th-conc { width: 22.5%; padding: 16px 20px; text-align: center; background: var(--navy-deep); font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.35); border-bottom: 2px solid var(--navy-mid); }
-  /* Rows */
+  .ev-comp-th-savior { width: 50%; padding: 16px 24px; text-align: left; background: var(--green-dark); font-family: 'Ethnocentric', var(--sans); font-size: 13px; letter-spacing: .1em; color: #fff; border-bottom: 2px solid rgba(31,210,154,.4); }
+  .ev-comp-th-conc { width: 50%; padding: 16px 24px; text-align: left; background: var(--navy-deep); font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.35); border-bottom: 2px solid var(--navy-mid); }
   .ev-comp-table tbody tr { border-bottom: 1px solid var(--navy-mid); }
   .ev-comp-table tbody tr:last-child { border-bottom: none; }
-  .ev-comp-table tbody tr:hover td { background: rgba(255,255,255,.02); }
-  .ev-comp-feat { padding: 18px 20px; font-size: 14px; font-weight: 600; color: #ffffffcc; }
-  .ev-comp-col-savior { background: rgba(31,210,154,.05); text-align: center; vertical-align: middle; padding: 18px 16px; }
-  .ev-comp-col-conc { text-align: center; vertical-align: middle; padding: 18px 16px; }
-  /* Icons */
-  .ev-ci-check { display: block; color: var(--green-bright); font-size: 18px; font-weight: 700; }
-  .ev-ci-cross { display: block; color: var(--alert); font-size: 18px; opacity: .7; }
-  .ev-ci-note { display: block; font-size: 11px; color: rgba(255,255,255,.3); font-family: var(--mono); letter-spacing: .04em; margin-top: 4px; }
-  .ev-ci-note--savior { color: rgba(31,210,154,.5); }
-  @media (max-width: 640px) { .ev-comp-feat { font-size: 13px; padding: 14px 12px; } .ev-comp-col-savior, .ev-comp-col-conc { padding: 14px 10px; } }
+  .ev-comp-table tbody tr:hover .ev-comp-col-savior { background: rgba(31,210,154,.08); }
+  .ev-comp-table tbody tr:hover .ev-comp-col-conc { background: rgba(255,255,255,.02); }
+  .ev-comp-col-savior { background: rgba(31,210,154,.04); padding: 18px 24px; vertical-align: top; }
+  .ev-comp-col-conc { padding: 18px 24px; vertical-align: top; }
+  /* Cell inner layout */
+  .ev-comp-col-savior, .ev-comp-col-conc { display: table-cell; }
+  .ev-ci-check, .ev-ci-cross { float: left; margin-right: 14px; margin-top: 2px; font-size: 16px; font-weight: 700; line-height: 1; }
+  .ev-ci-check { color: var(--green-bright); }
+  .ev-ci-cross { color: var(--alert); opacity: .75; }
+  .ev-ci-body { display: block; overflow: hidden; }
+  .ev-ci-body strong { display: block; font-size: 14px; font-weight: 700; color: var(--green-bright); line-height: 1.3; }
+  .ev-ci-body--conc strong { color: rgba(255,255,255,.45); font-weight: 400; }
+  .ev-ci-sub { display: block; font-size: 11px; color: rgba(255,255,255,.3); font-family: var(--mono); letter-spacing: .04em; margin-top: 4px; }
+  @media (max-width: 600px) { .ev-comp-col-savior, .ev-comp-col-conc { padding: 14px 14px; } .ev-ci-body strong { font-size: 13px; } }
 
   /* ── Form ── */
   .ev-form-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,6vw,64px); align-items: start; }
