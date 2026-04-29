@@ -5,6 +5,8 @@
 // Auditoria de consistência aplicada: tokens, ícones, tipografia
 // ============================================================
 import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import { CONTACT_RJ } from '../data/savior';
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -286,6 +288,23 @@ const schema = JSON.stringify({
   </div>
 </section>
 
+<!-- ═══ 6. PHOTO BREAK: FROTA ═══ -->
+<section class="corp-photo-break" aria-label="Frota própria Savior">
+  <div class="corp-photo-break-bg" aria-hidden="true">
+    <picture>
+      <source media="(max-width: 720px)" srcset="/img/gallery/frota-copacabana-768.webp" type="image/webp" />
+      <source media="(max-width: 1280px)" srcset="/img/gallery/frota-copacabana-1280.webp" type="image/webp" />
+      <img src="/img/gallery/frota-copacabana-1920.webp" alt="" width="1920" height="915" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <div class="corp-photo-break-over" aria-hidden="true"></div>
+  <div class="corp-photo-break-content wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:16px">Frota própria</p>
+    <h2>Frota inteira <em class="corp-green-bright">na rua</em>,<br>não terceirizada.</h2>
+    <p>Toda ambulância Savior é da Savior. Motorista próprio, equipe fixa, manutenção certificada. Sem intermediários, sem surpresa na origem. 46 anos levando medicina até onde a empresa precisa.</p>
+  </div>
+</section>
+
 <!-- ═══ 7. MODELOS DE CONTRATAÇÃO ═══ -->
 <section class="section corp-models-section" aria-labelledby="models-heading">
   <div class="wrap">
@@ -318,23 +337,6 @@ const schema = JSON.stringify({
         <a href="#proposta" class="corp-model-cta">Solicitar proposta →</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ═══ 6. PHOTO BREAK: FROTA ═══ -->
-<section class="corp-photo-break" aria-label="Frota própria Savior">
-  <div class="corp-photo-break-bg" aria-hidden="true">
-    <picture>
-      <source media="(max-width: 720px)" srcset="/img/gallery/frota-lateral-600.webp" type="image/webp" />
-      <source media="(max-width: 1200px)" srcset="/img/gallery/frota-lateral-1000.webp" type="image/webp" />
-      <img src="/img/gallery/frota-lateral-1600.webp" alt="" width="1600" height="1200" loading="lazy" decoding="async" />
-    </picture>
-  </div>
-  <div class="corp-photo-break-over" aria-hidden="true"></div>
-  <div class="corp-photo-break-content wrap">
-    <p class="eyebrow on-dark" style="margin-bottom:16px">Frota própria</p>
-    <h2>Frota inteira <em class="corp-green-bright">na rua</em>,<br>não terceirizada.</h2>
-    <p>Toda ambulância Savior é da Savior. Motorista próprio, equipe fixa, manutenção certificada. Sem intermediários, sem surpresa na origem. 46 anos levando medicina até onde a empresa precisa.</p>
   </div>
 </section>
 
@@ -640,33 +642,10 @@ const schema = JSON.stringify({
 </section>
 
 <!-- ═══ 17. FOOTER ═══ -->
-<footer class="corp-footer">
-  <div class="wrap">
-    <div class="corp-footer-grid">
-      <div>
-        <p class="corp-footer-wordmark">SAVIOR</p>
-        <p class="corp-footer-desc">Medical Service desde 1979.<br>Cobertura médica dedicada para empresas.</p>
-        <p class="corp-footer-nav">
-          <a href="/ambulancia-rj">Ambulância RJ</a>
-          <a href="/ambulancia-sp">Ambulância SP</a>
-          <a href="/eventos">Eventos</a>
-          <a href="/">Savior.com.br</a>
-        </p>
-      </div>
-      <div class="corp-footer-col">
-        <h4>Rio de Janeiro</h4>
-        <p>R. Gen. Padilha 73, São Cristóvão</p>
-        <p><a href="tel:+552131713030">(21) 3171-3030</a></p>
-      </div>
-      <div class="corp-footer-col">
-        <h4>São Paulo</h4>
-        <p>Av. do Rio Bonito 287, Socorro</p>
-        <p><a href="tel:+551137960058">(11) 3796-0058</a></p>
-      </div>
-    </div>
-    <p class="corp-footer-legal">© 2026 Savior Medical Service. Todos os direitos reservados. CNES registrado. Resp. Técnico: Dr. Alder.</p>
-  </div>
-</footer>
+<Footer
+  contact={CONTACT_RJ}
+  coverage="Rio de Janeiro · São Paulo · Grande RJ · Grande SP · Baixada Fluminense · Região dos Lagos"
+/>
 
 <!-- ═══ FLOATING WHATSAPP ═══ -->
 <a
@@ -1058,19 +1037,6 @@ const schema = JSON.stringify({
   .corp-cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
   /* ── Footer ── */
-  .corp-footer { padding: 48px 0 32px; background: var(--navy-deep); color: rgba(255,255,255,.6); font-size: 13px; }
-  .corp-footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; align-items: start; margin-bottom: 32px; }
-  @media (max-width: 768px) { .corp-footer-grid { grid-template-columns: 1fr; gap: 24px; } }
-  .corp-footer-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 20px; letter-spacing: .08em; color: #fff; margin-bottom: 10px; line-height: 1; }
-  .corp-footer-desc { line-height: 1.6; margin-bottom: 16px; }
-  .corp-footer-nav { display: flex; flex-wrap: wrap; gap: 12px; }
-  .corp-footer-nav a { color: rgba(255,255,255,.45); font-size: 12px; font-family: var(--mono); letter-spacing: .08em; transition: color .15s; }
-  .corp-footer-nav a:hover { color: var(--green-bright); }
-  .corp-footer-col h4 { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 12px; }
-  .corp-footer-col p { line-height: 1.6; }
-  .corp-footer-col a:hover { color: var(--green-bright); }
-  .corp-footer-legal { padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); text-align: center; font-size: 12px; }
-
   /* ── Floating WhatsApp ── */
   .corp-fw {
     position: fixed; bottom: 24px; right: 24px; z-index: 999;

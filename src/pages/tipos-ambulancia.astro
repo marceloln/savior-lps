@@ -1,0 +1,1050 @@
+---
+// ============================================================
+// LP — /tipos-ambulancia
+// Guia educacional: Tipo B (Básica), Tipo D (UTI Móvel), Neonatal
+// Portaria 2.048/2002 — Savior Medical Service
+// ============================================================
+
+import Base from '../layouts/Base.astro';
+import StickyHeader from '../components/StickyHeader.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import Footer from '../components/Footer.astro';
+import { whatsappUrl, CONTACT_RJ, BRAND, METRICS } from '../data/savior';
+
+// ============ SEO ============
+const title = 'Tipos de Ambulância: Básica, UTI e Neonatal | Savior';
+const description =
+  'Básica (Tipo B), UTI Móvel (Tipo D) e Neonatal: equipamentos, equipe e quando usar cada tipo. Portaria 2.048. Savior Medical Service desde 1979.';
+const canonical = 'https://www.savior.com.br/tipos-ambulancia';
+
+const waCampaign = 'tipos-ambulancia';
+const waHero = whatsappUrl(CONTACT_RJ.whatsapp, waCampaign, 'Oi, preciso de uma ambulância.', 'hero');
+const waCta  = whatsappUrl(CONTACT_RJ.whatsapp, waCampaign, 'Oi, preciso de uma ambulância.', 'cta');
+const waNeo  = whatsappUrl(CONTACT_RJ.whatsapp, waCampaign, 'Oi, preciso de ambulância neonatal.', 'neonatal');
+
+// ============ FAQ ============
+const faqItems = [
+  {
+    q: 'Qual a diferença entre ambulância básica e UTI?',
+    a: 'A básica (Tipo B) conta com condutor e técnico de enfermagem — O₂, DEA, maca e imobilização. A UTI (Tipo D) tem médico, enfermeiro e condutor, com monitor Mindray, ventilador mecânico, bomba de infusão e drogas vasoativas.',
+  },
+  {
+    q: 'Ambulância particular vem com médico?',
+    a: 'A UTI (Tipo D) sempre vem com médico. A básica (Tipo B) vem com condutor e técnico de enfermagem. A central avalia o quadro e envia o tipo certo para o seu caso.',
+  },
+  {
+    q: 'Quanto custa uma ambulância UTI particular?',
+    a: 'UTI a partir de R$&nbsp;2.200, básica a partir de R$&nbsp;1.200. Pix ou cartão em 3x — Pix tem 5% de desconto. O valor final depende de origem, destino e equipamentos necessários.',
+  },
+  {
+    q: 'A Savior tem UTI Neonatal?',
+    a: 'Tem. Incubadora de transporte aquecida, ventilador neonatal, monitor específico e médico neonatologista. Atendemos RJ e SP. Valores por protocolo de caso.',
+  },
+  {
+    q: 'O que é a Portaria 2.048?',
+    a: 'Regulamentação do Ministério da Saúde (2002) que define os tipos de ambulância (A a F), os equipamentos obrigatórios e a composição das equipes para cada nível. A Savior opera em conformidade.',
+  },
+];
+
+// ============ Schema.org ============
+const schema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description: description,
+      inLanguage: 'pt-BR',
+      isPartOf: { '@id': 'https://www.savior.com.br/#website' },
+      about: { '@id': 'https://www.savior.com.br/#organization' },
+      dateModified: '2026-04-29',
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: ['h1', '.tipos-tldr'],
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${canonical}#faqpage`,
+      url: canonical,
+      mainEntity: faqItems.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.a.replace(/<[^>]+>/g, ''),
+          author: {
+            '@type': 'Organization',
+            name: 'Savior Medical Service',
+            url: 'https://www.savior.com.br',
+          },
+        },
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${canonical}#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Savior Medical Service', item: 'https://www.savior.com.br' },
+        { '@type': 'ListItem', position: 2, name: 'Ambulâncias', item: 'https://www.savior.com.br/ambulancia-rj' },
+        { '@type': 'ListItem', position: 3, name: 'Tipos de Ambulância', item: canonical },
+      ],
+    },
+    {
+      '@type': ['MedicalClinic', 'EmergencyService', 'LocalBusiness'],
+      '@id': 'https://www.savior.com.br/#organization',
+      name: 'Savior Medical Service',
+      url: 'https://www.savior.com.br',
+      telephone: CONTACT_RJ.phone,
+      foundingDate: String(BRAND.yearsFounded),
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.7', reviewCount: '346', bestRating: '5' },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Tipos de Ambulância',
+        itemListElement: [
+          { '@type': 'Offer', name: 'Ambulância Básica (Tipo B)', price: '1200', priceCurrency: 'BRL', availability: 'https://schema.org/InStock' },
+          { '@type': 'Offer', name: 'UTI Móvel (Tipo D)', price: '2200', priceCurrency: 'BRL', availability: 'https://schema.org/InStock' },
+          { '@type': 'Offer', name: 'UTI Neonatal', availability: 'https://schema.org/InStock' },
+        ],
+      },
+    },
+  ],
+});
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  ogImage="/img/tipos/interior-frota2.webp"
+  ogImageAlt="Interior de UTI Móvel Savior — monitor Mindray, bomba de infusão, ventilador mecânico"
+  lcpImageSrcset="/img/tipos/interior-frota2.webp 1600w"
+  dateModified="2026-04-29"
+>
+
+  <StickyHeader waCampaign={waCampaign} />
+  <FloatingWhatsApp waCampaign={waCampaign} />
+
+  <main id="main">
+
+    <!-- ═══ 1. HERO ═══ -->
+    <section class="ta-hero" aria-label="Tipos de ambulância — Savior Medical Service">
+      <div class="ta-hero-bg" aria-hidden="true">
+        <img
+          class="ta-hero-poster"
+          src="/img/tipos/interior-frota2.webp"
+          alt=""
+          width="1600"
+          height="900"
+          loading="eager"
+          fetchpriority="high"
+          style="object-position: center center"
+        />
+        <video
+          id="ta-hero-vid"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="/img/tipos/interior-frota2.webp"
+          width="1920"
+          height="1080"
+          aria-hidden="true"
+        >
+          <source src="/video/tipos-hero.mp4" type="video/mp4" />
+        </video>
+        <div class="ta-hero-overlay"></div>
+      </div>
+
+      <div class="wrap ta-hero-content">
+        <div class="ta-hero-brand">
+          <span class="ta-wordmark">SAVIOR</span>
+          <span class="ta-descriptor">Medical Service</span>
+        </div>
+
+        <div class="ta-hero-live" aria-label="Central disponível agora">
+          <span class="ta-live-dot" aria-hidden="true"></span>
+          Central disponível agora
+        </div>
+
+        <h1>Tipos de ambulância: qual a diferença e <em>quando usar cada uma</em></h1>
+
+        <p class="ta-hero-sub tipos-tldr">
+          Básica, UTI Móvel e Neonatal. Entenda a classificação oficial, os equipamentos de cada tipo e qual a Savior envia para o seu caso.
+        </p>
+
+        <div class="ta-hero-ctas">
+          <a
+            class="btn btn-primary on-dark"
+            href={waHero}
+            data-whatsapp
+            data-campaign={waCampaign}
+            data-location="hero"
+            data-event="cta_click"
+            data-event-category="conversion"
+            data-event-label="hero-whatsapp"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+            </svg>
+            Preciso de uma ambulância agora
+          </a>
+          <a class="btn btn-ghost on-dark" href="#tipos">
+            Entender os tipos
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. MÉTRICAS ═══ -->
+    <div class="ta-metrics" id="tipos" aria-label="Números Savior">
+      <div class="wrap ta-metrics-grid">
+        <div class="ta-metric ta-anim">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <p class="ta-metric-val">3</p>
+          <p class="ta-metric-lbl">tipos operados</p>
+        </div>
+        <div class="ta-metric ta-anim">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <p class="ta-metric-val">{BRAND.yearsOperating}</p>
+          <p class="ta-metric-lbl">anos de operação</p>
+        </div>
+        <div class="ta-metric ta-anim">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <p class="ta-metric-val">{METRICS.professionals}</p>
+          <p class="ta-metric-lbl">profissionais</p>
+        </div>
+        <div class="ta-metric ta-anim">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <p class="ta-metric-val">{METRICS.resolutivity}</p>
+          <p class="ta-metric-lbl">resolutividade</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 3. TIPO B — BAND ═══ -->
+    <section class="ta-band ta-band--right" aria-labelledby="tipob-heading">
+      <div class="ta-band-bg" aria-hidden="true">
+        <img
+          src="/img/tipos/interior-fleet.webp"
+          alt=""
+          width="1400"
+          height="788"
+          loading="lazy"
+          decoding="async"
+          style="object-position: left center"
+        />
+      </div>
+      <div class="ta-band-overlay ta-band-overlay--right" aria-hidden="true"></div>
+      <div class="ta-band-content wrap">
+        <div class="ta-band-text ta-band-text--right">
+          <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO B · SUPORTE BÁSICO</p>
+          <h2 id="tipob-heading">Ambulância <em>Básica</em></h2>
+          <p>Transporte inter-hospitalar e atendimento pré-hospitalar para pacientes com risco baixo ou desconhecido. Estabilização inicial sem intervenção médica complexa.</p>
+
+          <div class="ta-team-tags">
+            <span class="ta-tag">Condutor socorrista</span>
+            <span class="ta-tag">Técnico de enfermagem</span>
+          </div>
+
+          <div class="ta-equip-chips">
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8m-4-4v8"/></svg>
+              O₂ + Ambú
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              DEA
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+              Maca + soro
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Colares + talas
+            </span>
+          </div>
+
+          <div class="ta-price">
+            <span class="ta-price-val">R$&nbsp;1.200</span>
+            <span class="ta-price-sub">a partir · Pix ou cartão 3x</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. QUANDO USAR ═══ -->
+    <section class="ta-decide" aria-labelledby="decide-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="margin-bottom:12px">QUANDO USAR</p>
+        <h2 id="decide-heading">Básica ou UTI? Depende do quadro clínico</h2>
+        <div class="ta-decide-grid">
+          <div class="ta-decide-card ta-anim">
+            <div class="ta-decide-img-wrap">
+              <img src="/img/tipos/ambulance-pacaembu.webp" alt="Ambulância Savior no Pacaembu" width="1400" height="1867" loading="lazy" decoding="async" style="object-position: center top" />
+            </div>
+            <div class="ta-decide-body">
+              <h3>Use a Básica (Tipo B) quando:</h3>
+              <p>Paciente estável, sem uso de equipamentos. Remoção domiciliar ou para exame. Transferência eletiva entre unidades. Alta hospitalar sem complicação.</p>
+            </div>
+          </div>
+          <div class="ta-decide-card ta-anim">
+            <div class="ta-decide-img-wrap">
+              <img src="/img/tipos/fleet-paulista.webp" alt="Frota Savior na Avenida Paulista" width="1400" height="1867" loading="lazy" decoding="async" style="object-position: center top" />
+            </div>
+            <div class="ta-decide-body">
+              <h3>Use a UTI Móvel (Tipo D) quando:</h3>
+              <p>Paciente instável ou em uso de equipamentos. Monitorização contínua necessária. Bomba de infusão ou ventilador em uso. Emergência domiciliar. Quadro desconhecido ou grave.</p>
+            </div>
+          </div>
+        </div>
+        <p class="ta-decide-note">
+          Não sabe qual tipo pedir? <a href={waHero} data-whatsapp data-campaign={waCampaign} data-location="decide" target="_blank" rel="noopener">A central Savior avalia o quadro e envia a ambulância certa.</a>
+          Ligue <a href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign={waCampaign} data-location="decide">{CONTACT_RJ.phone}</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ 5. TIPO D — BAND (vídeo) ═══ -->
+    <section class="ta-band ta-band--left" aria-labelledby="tipod-heading">
+      <div class="ta-band-bg" aria-hidden="true">
+        <img
+          class="ta-band-poster"
+          src="/img/tipos/equipment-closeup.webp"
+          alt=""
+          width="1400"
+          height="788"
+          loading="lazy"
+          decoding="async"
+          style="object-position: center center"
+        />
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="/img/tipos/equipment-closeup.webp"
+          width="1920"
+          height="1080"
+          aria-hidden="true"
+        >
+          <source src="/video/video_interior_tipos.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="ta-band-overlay ta-band-overlay--left" aria-hidden="true"></div>
+      <div class="ta-band-content wrap">
+        <div class="ta-band-text ta-band-text--left">
+          <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO D · SUPORTE AVANÇADO</p>
+          <h2 id="tipod-heading">UTI <em>Móvel</em></h2>
+          <p>Para pacientes de alto risco. Intubação, ventilação mecânica, drogas vasoativas e monitorização contínua. O tipo mais solicitado na Savior.</p>
+
+          <div class="ta-team-tags">
+            <span class="ta-tag ta-tag--ld">Médico</span>
+            <span class="ta-tag">Enfermeiro</span>
+            <span class="ta-tag">Condutor socorrista</span>
+          </div>
+
+          <div class="ta-equip-chips">
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Monitor Mindray
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Desfibrilador
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8m-4-4v8"/></svg>
+              Ventilador
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              Bomba infusão
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              Drogas vasoativas
+            </span>
+          </div>
+
+          <div class="ta-price">
+            <span class="ta-price-val">R$&nbsp;2.200</span>
+            <span class="ta-price-sub">a partir · Pix ou cartão 3x</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 6. PORTARIA ═══ -->
+    <section class="ta-breathe ta-breathe--white" aria-labelledby="portaria-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="margin-bottom:12px">PORTARIA 2.048/2002</p>
+        <h2 id="portaria-heading">A classificação existe por uma razão</h2>
+        <p class="ta-breathe-body">
+          A diferença entre os tipos não é burocracia — é a diferença entre ter um DEA e precisar de um ventilador mecânico. A Portaria 2.048 do Ministério da Saúde define 6 tipos de ambulância (A a F). A Savior opera Tipo B (suporte básico) e Tipo D (UTI Móvel) como core, com UTI Neonatal como especialidade.
+        </p>
+        <p class="ta-breathe-source">
+          Fonte: <a href="https://bvsms.saude.gov.br/bvs/saudelegis/gm/2002/prt2048_05_11_2002.html" target="_blank" rel="noopener noreferrer">Portaria GM/MS nº 2.048, de 5 de novembro de 2002</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ 7. EQUIPMENT BAND ═══ -->
+    <section class="ta-band ta-band--center ta-band--short" aria-labelledby="equip-heading">
+      <div class="ta-band-bg" aria-hidden="true">
+        <img
+          src="/img/tipos/equipamentos-closeup2.webp"
+          alt=""
+          width="1600"
+          height="900"
+          loading="lazy"
+          decoding="async"
+          style="object-position: center center"
+        />
+      </div>
+      <div class="ta-band-overlay ta-band-overlay--center" aria-hidden="true"></div>
+      <div class="ta-band-content wrap" style="text-align:center">
+        <div class="ta-band-text ta-band-text--center">
+          <p class="eyebrow on-dark" style="margin-bottom:14px">EQUIPAMENTO</p>
+          <h2 id="equip-heading">Equipamento de hospital <em>dentro da ambulância</em></h2>
+          <p style="margin: 0 auto; max-width: 520px">Monitor Mindray MEC-1000, bomba de infusão dupla, desfibrilador. Cada veículo carrega o que uma UTI precisa — certificado e calibrado.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 8. ESPECIALIDADES ═══ -->
+    <section class="ta-breathe ta-breathe--cream" aria-labelledby="neo-intro-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="margin-bottom:12px">ESPECIALIDADES</p>
+        <h2 id="neo-intro-heading">Além da básica e da UTI</h2>
+        <p class="ta-breathe-body">
+          A Savior opera duas especialidades que poucos concorrentes oferecem com equipe própria: UTI Neonatal para transporte de recém-nascidos em estado crítico — uma lacuna real no Rio e em São Paulo.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ 9. NEONATAL — BAND ═══ -->
+    <section class="ta-band ta-band--right" aria-labelledby="neonatal-heading">
+      <div class="ta-band-bg" aria-hidden="true">
+        <img
+          src="/img/tipos/interior-portas.webp"
+          alt=""
+          width="1600"
+          height="900"
+          loading="lazy"
+          decoding="async"
+          style="object-position: left center"
+        />
+      </div>
+      <div class="ta-band-overlay ta-band-overlay--right ta-band-overlay--neo" aria-hidden="true"></div>
+      <div class="ta-band-content wrap">
+        <div class="ta-band-text ta-band-text--right">
+          <p class="eyebrow on-dark" style="margin-bottom:14px">ESPECIALIZADA · UTI NEONATAL</p>
+          <h2 id="neonatal-heading">UTI <em>Neonatal</em></h2>
+          <p>Para recém-nascidos em estado crítico. Incubadora aquecida, ventilador neonatal, monitor específico e equipe com médico neonatologista.</p>
+
+          <div class="ta-team-tags">
+            <span class="ta-tag ta-tag--ld">Neonatologista</span>
+            <span class="ta-tag">Enfermeiro neonatal</span>
+            <span class="ta-tag">Condutor</span>
+          </div>
+
+          <div class="ta-equip-chips">
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+              Incubadora
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8m-4-4v8"/></svg>
+              Ventilador neo
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              Monitor neo
+            </span>
+            <span class="ta-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4m-9-9h4m14 0h4"/></svg>
+              CPAP + blender O₂
+            </span>
+          </div>
+
+          <div class="ta-price">
+            <span class="ta-price-val">Sob consulta</span>
+            <span class="ta-price-sub">protocolo por caso · RJ e SP</span>
+          </div>
+
+          <a
+            class="btn btn-primary on-dark"
+            href={waNeo}
+            data-whatsapp
+            data-campaign={waCampaign}
+            data-location="neonatal"
+            data-event="cta_click"
+            data-event-category="conversion"
+            data-event-label="neonatal"
+            target="_blank"
+            rel="noopener"
+            style="margin-top:20px; display:inline-flex"
+          >
+            Solicitar UTI Neonatal
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 10. TABELA COMPARATIVA ═══ -->
+    <section class="ta-table-sec" id="tabela" aria-labelledby="tabela-heading">
+      <div class="wrap">
+        <p class="eyebrow on-dark" style="margin-bottom:12px">COMPARATIVO COMPLETO</p>
+        <h2 id="tabela-heading">Equipamentos por tipo</h2>
+        <p class="ta-table-sub">Cada tipo de ambulância carrega equipamentos específicos para o nível de complexidade que atende.</p>
+
+        <div class="ta-table-scroll" id="precos">
+          <table class="ta-table" aria-label="Comparativo de equipamentos por tipo de ambulância">
+            <thead>
+              <tr>
+                <th class="ta-th-equip" scope="col">Equipamento</th>
+                <th class="ta-th-b" scope="col">
+                  <span class="ta-badge ta-badge--b">TIPO B</span>
+                  Básica
+                </th>
+                <th class="ta-th-d" scope="col">
+                  <span class="ta-badge ta-badge--d">TIPO D</span>
+                  UTI Móvel
+                </th>
+                <th class="ta-th-n" scope="col">
+                  <span class="ta-badge ta-badge--n">NEO</span>
+                  Neonatal
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="ta-tr-cat"><td colspan="4">Equipe</td></tr>
+              <tr>
+                <td>Médico a bordo</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Neonatologista"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Neonatologista</small></span></td>
+              </tr>
+              <tr>
+                <td>Enfermeiro</td>
+                <td><span class="ta-x" aria-label="Técnico de enfermagem"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg><small>Técnico</small></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Neonatal"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Neonatal</small></span></td>
+              </tr>
+
+              <tr class="ta-tr-cat"><td colspan="4">Monitorização</td></tr>
+              <tr>
+                <td>Monitor multiparamétrico</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Mindray"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Mindray</small></span></td>
+                <td><span class="ta-ck" aria-label="Neonatal"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Neonatal</small></span></td>
+              </tr>
+              <tr>
+                <td>Oxímetro de pulso</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Sensor neonatal"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Sensor neo</small></span></td>
+              </tr>
+              <tr>
+                <td>Rastreamento GPS</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+              </tr>
+              <tr>
+                <td>Desfibrilador</td>
+                <td><span class="ta-ck" aria-label="DEA"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>DEA</small></span></td>
+                <td><span class="ta-ck" aria-label="Manual"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Manual</small></span></td>
+                <td><span class="ta-ck" aria-label="Manual"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Manual</small></span></td>
+              </tr>
+
+              <tr class="ta-tr-cat"><td colspan="4">Suporte ventilatório</td></tr>
+              <tr>
+                <td>Cilindro de oxigênio</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+              </tr>
+              <tr>
+                <td>Ressuscitador manual (Ambú)</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Neonatal"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Neonatal</small></span></td>
+              </tr>
+              <tr>
+                <td>Ventilador mecânico</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Neonatal"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Neonatal</small></span></td>
+              </tr>
+              <tr>
+                <td>Kit intubação orotraqueal</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Lâmina reta"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Lâmina reta</small></span></td>
+              </tr>
+              <tr>
+                <td>CPAP nasal + blender O₂</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+              </tr>
+
+              <tr class="ta-tr-cat"><td colspan="4">Medicação e infusão</td></tr>
+              <tr>
+                <td>Bomba de infusão</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="2 ou mais canais"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>2+ canais</small></span></td>
+                <td><span class="ta-ck" aria-label="Seringa"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Seringa</small></span></td>
+              </tr>
+              <tr>
+                <td>Drogas vasoativas</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+              </tr>
+
+              <tr class="ta-tr-cat"><td colspan="4">Transporte e imobilização</td></tr>
+              <tr>
+                <td>Maca articulada com rodas</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+              </tr>
+              <tr>
+                <td>Prancha longa + colares</td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span></td>
+                <td><span class="ta-x" aria-label="Não aplicável"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+              </tr>
+              <tr>
+                <td>Incubadora de transporte</td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-x" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span></td>
+                <td><span class="ta-ck" aria-label="Aquecida"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg><small>Aquecida</small></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ta-table-legend">
+          <span><span class="ta-ck ta-ck--inline" aria-label="Disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span> Disponível</span>
+          <span><span class="ta-x ta-x--inline" aria-label="Não disponível"><svg viewBox="0 0 16 16" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg></span> Não disponível / não aplicável</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 11. FAQ ═══ -->
+    <section class="ta-faq" id="faq" aria-labelledby="faq-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="text-align:center; margin-bottom:12px">DÚVIDAS FREQUENTES</p>
+        <h2 id="faq-heading" style="text-align:center">Perguntas sobre tipos de ambulância</h2>
+        <div class="ta-faq-list">
+          {faqItems.map((item, i) => (
+            <details class="ta-faq-item" id={`faq-${i + 1}`}>
+              <summary class="ta-faq-q" aria-label={item.q}>
+                {item.q}
+                <svg class="ta-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </summary>
+              <div class="ta-faq-a">
+                <p set:html={item.a} />
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <!-- Internal links para o ecossistema -->
+        <div class="ta-faq-links">
+          <p class="eyebrow" style="margin-bottom:12px">PRECISA DE AMBULÂNCIA?</p>
+          <div class="ta-faq-link-grid">
+            <a href="/ambulancia-rj" class="ta-faq-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ambulância Rio de Janeiro
+            </a>
+            <a href="/ambulancia-sp" class="ta-faq-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ambulância São Paulo
+            </a>
+            <a href="/corporativo" class="ta-faq-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Planos Corporativos
+            </a>
+            <a href="/eventos" class="ta-faq-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Cobertura de Eventos
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 12. CTA FINAL ═══ -->
+    <section class="ta-cta-final" aria-labelledby="cta-heading">
+      <div class="wrap" style="text-align:center">
+        <p class="eyebrow on-dark" style="margin-bottom:14px">CENTRAL 24 HORAS</p>
+        <h2 id="cta-heading">Precisa de uma ambulância? <em>A Savior está pronta</em></h2>
+        <p class="ta-cta-sub">
+          {BRAND.yearsOperating} anos de operação. Frota própria. A gente escuta o quadro e envia a ambulância adequada para o seu caso.
+        </p>
+        <div class="ta-cta-btns">
+          <a
+            class="btn btn-primary on-dark"
+            href={waCta}
+            data-whatsapp
+            data-campaign={waCampaign}
+            data-location="final-cta"
+            data-event="cta_click"
+            data-event-category="conversion"
+            data-event-label="final-cta"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+            </svg>
+            Falar com a central
+          </a>
+          <a
+            class="btn btn-ghost on-dark"
+            href={`tel:${CONTACT_RJ.phoneHref}`}
+            data-phone
+            data-campaign={waCampaign}
+            data-location="final-cta"
+            data-event="cta_click"
+            data-event-category="conversion"
+            data-event-label="final-cta-phone"
+          >
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            {CONTACT_RJ.phone}
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer coverage="Rio de Janeiro · São Paulo · Grande RJ · Grande SP · Baixada Fluminense · Região dos Lagos" />
+
+</Base>
+
+<style>
+  /* ═══ TOKENS & WRAP ═══ */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px); }
+
+  /* ═══ BUTTONS ═══ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px;
+    border-radius: 4px; font-family: var(--sans); font-weight: 600; font-size: 15px;
+    line-height: 1; text-decoration: none; transition: transform .1s, box-shadow .1s;
+    white-space: nowrap; min-height: 48px; cursor: pointer;
+  }
+  .btn-icon { width: 18px; height: 18px; flex-shrink: 0; }
+  .btn-primary { background: var(--green); color: var(--navy-deep); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,184,124,.45); }
+  .btn-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.45); }
+  .btn-ghost:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.7); }
+
+  /* ═══ EYEBROW ═══ */
+  .eyebrow {
+    display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .25em;
+    text-transform: uppercase; font-weight: 500; color: var(--green-dark);
+  }
+  .eyebrow.on-dark { color: var(--green-bright); }
+
+  /* ═══ HERO ═══ */
+  .ta-hero {
+    position: relative; min-height: 92vh; display: flex; align-items: center;
+    overflow: hidden; background: var(--navy-deep);
+    padding: clamp(48px, 8vh, 96px) 0 clamp(56px, 9vh, 112px);
+  }
+  .ta-hero-bg { position: absolute; inset: 0; }
+  .ta-hero-poster {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;
+  }
+  .ta-hero-bg video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;
+  }
+  .ta-hero-overlay {
+    position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(135deg, #07182be0, #0b2540ab, #07182bcc);
+  }
+  .ta-hero-content {
+    position: relative; z-index: 3; color: #fff; max-width: 720px;
+  }
+  .ta-hero-brand {
+    display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(48px, 8vh, 90px);
+  }
+  .ta-wordmark {
+    font-family: 'Ethnocentric', var(--sans); font-weight: 400; font-size: 18px;
+    letter-spacing: .08em; color: #fff; line-height: 1;
+  }
+  .ta-descriptor {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--green-bright); opacity: .85;
+  }
+  .ta-hero-live {
+    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--green-bright); font-weight: 500;
+  }
+  .ta-live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright);
+    box-shadow: 0 0 0 3px rgba(31,210,154,.25);
+    animation: ta-pulse 2s ease-in-out infinite;
+  }
+  @keyframes ta-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(31,210,154,.25); }
+    50% { box-shadow: 0 0 0 6px rgba(31,210,154,.1); }
+  }
+  .ta-hero h1 { font-size: clamp(32px, 4.8vw, 52px); font-weight: 800; line-height: 1.06; letter-spacing: -.035em; color: #fff; margin-bottom: 20px; }
+  .ta-hero h1 em { font-style: normal; color: var(--green-bright); }
+  .ta-hero-sub { font-size: clamp(15px, 1.4vw, 17px); color: rgba(255,255,255,.82); line-height: 1.6; margin-bottom: 32px; max-width: 580px; }
+  .ta-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  @media (max-width: 720px) {
+    .ta-hero { min-height: 100svh; }
+    .ta-hero-ctas { flex-direction: column; }
+    .ta-hero-ctas .btn { justify-content: center; }
+  }
+
+  /* ═══ MÉTRICAS ═══ */
+  .ta-metrics { padding: clamp(32px,4vw,48px) 0; background: #fff; }
+  .ta-metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  .ta-metric { text-align: center; padding: 20px 12px; }
+  .ta-metric svg { width: 28px; height: 28px; color: var(--green-dark); margin: 0 auto 10px; display: block; }
+  .ta-metric-val { font-size: clamp(28px,3.5vw,40px); font-weight: 800; letter-spacing: -.04em; color: var(--navy); line-height: 1; }
+  .ta-metric-lbl { font-size: 12px; color: #6B7785; margin-top: 4px; }
+  @media (max-width: 600px) { .ta-metrics-grid { grid-template-columns: repeat(2,1fr); } }
+
+  /* ═══ BAND (faixa foto/vídeo) ═══ */
+  .ta-band {
+    position: relative; min-height: 520px; display: flex; align-items: center;
+    overflow: hidden; background: var(--navy-deep);
+  }
+  .ta-band--short { min-height: 380px; }
+  .ta-band-bg { position: absolute; inset: 0; }
+  .ta-band-bg img,
+  .ta-band-bg video,
+  .ta-band-poster {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  }
+  .ta-band-bg video { z-index: 1; }
+  .ta-band-overlay { position: absolute; inset: 0; z-index: 2; }
+  .ta-band-overlay--right {
+    background: linear-gradient(to left, rgba(7,24,43,.92) 0%, rgba(7,24,43,.75) 35%, rgba(7,24,43,.20) 65%, transparent 100%);
+  }
+  .ta-band-overlay--left {
+    background: linear-gradient(to right, rgba(7,24,43,.92) 0%, rgba(7,24,43,.75) 35%, rgba(7,24,43,.20) 65%, transparent 100%);
+  }
+  .ta-band-overlay--center {
+    background:
+      radial-gradient(ellipse at center, rgba(7,24,43,.25) 0%, rgba(7,24,43,.87) 100%),
+      linear-gradient(to bottom, rgba(7,24,43,.4), rgba(7,24,43,.4));
+  }
+  .ta-band-overlay--neo {
+    background: linear-gradient(to left, rgba(7,24,43,.90) 0%, rgba(7,24,43,.72) 38%, rgba(7,24,43,.15) 68%, transparent 100%);
+  }
+  @media (max-width: 768px) {
+    .ta-band { min-height: 480px; }
+    .ta-band--short { min-height: 320px; }
+    .ta-band-overlay--right,
+    .ta-band-overlay--left,
+    .ta-band-overlay--neo {
+      background: linear-gradient(to top, rgba(7,24,43,.95) 0%, rgba(7,24,43,.85) 45%, rgba(7,24,43,.50) 75%, rgba(7,24,43,.20) 100%);
+    }
+  }
+  .ta-band-content { position: relative; z-index: 3; width: 100%; padding: clamp(56px,8vh,96px) 0; }
+  .ta-band-text { color: #fff; max-width: 540px; }
+  .ta-band-text--right { margin-left: auto; }
+  .ta-band-text--left { margin-right: auto; }
+  .ta-band-text--center { margin: 0 auto; text-align: center; max-width: 600px; }
+  .ta-band h2 { font-size: clamp(28px,3.6vw,42px); font-weight: 800; line-height: 1.06; letter-spacing: -.035em; color: #fff; margin-bottom: 14px; }
+  .ta-band h2 em { font-style: normal; color: var(--green-bright); }
+  .ta-band p { font-size: 15px; color: rgba(255,255,255,.82); line-height: 1.65; max-width: 480px; }
+  @media (max-width: 768px) {
+    .ta-band-text--right { margin-left: 0; }
+    .ta-band-text--center { text-align: left; }
+    .ta-band p { max-width: 100%; }
+  }
+
+  /* ═══ TEAM TAGS ═══ */
+  .ta-team-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .ta-tag {
+    font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 4px;
+    background: rgba(255,255,255,.07); color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.12);
+  }
+  .ta-tag--ld { border-color: var(--green); color: var(--green-bright); }
+
+  /* ═══ EQUIP CHIPS ═══ */
+  .ta-equip-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .ta-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 5px; font-size: 12px; color: rgba(255,255,255,.85);
+  }
+  .ta-chip svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--green-bright); }
+
+  /* ═══ PRICE ═══ */
+  .ta-price {
+    display: inline-flex; align-items: baseline; gap: 8px; margin-top: 20px;
+    padding: 10px 18px; background: rgba(0,184,124,.12); border: 1px solid rgba(0,184,124,.25); border-radius: 6px;
+  }
+  .ta-price-val { font-size: clamp(20px, 2.6vw, 26px); font-weight: 800; color: var(--green-bright); letter-spacing: -.03em; }
+  .ta-price-sub { font-size: 11px; color: rgba(255,255,255,.6); }
+
+  /* ═══ DECISION GRID ═══ */
+  .ta-decide { padding: clamp(64px,8vw,96px) 0; background: var(--cream); }
+  .ta-decide h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 32px; color: var(--navy); }
+  .ta-decide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 720px) { .ta-decide-grid { grid-template-columns: 1fr; } }
+  .ta-decide-card {
+    background: #fff; border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--cream-dark); border-top: 3px solid var(--green);
+    box-shadow: 0 2px 12px rgba(11,37,64,.06);
+  }
+  .ta-decide-img-wrap { height: 220px; overflow: hidden; }
+  .ta-decide-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+  .ta-decide-card:hover .ta-decide-img-wrap img { transform: scale(1.03); }
+  .ta-decide-body { padding: 24px; }
+  .ta-decide-body h3 { font-size: 16px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; color: var(--navy); }
+  .ta-decide-body p { font-size: 13.5px; color: #6B7785; line-height: 1.6; }
+  .ta-decide-note { margin-top: 24px; font-size: 13px; color: #6B7785; line-height: 1.55; }
+  .ta-decide-note a { color: var(--green-dark); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(0,110,73,.3); }
+
+  /* ═══ BREATHE SECTIONS ═══ */
+  .ta-breathe { padding: clamp(64px,8vw,96px) 0; }
+  .ta-breathe--white { background: #fff; }
+  .ta-breathe--cream { background: var(--cream); }
+  .ta-breathe h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 16px; color: var(--navy); }
+  .ta-breathe-body { font-size: 16px; color: #6B7785; line-height: 1.7; max-width: 720px; margin-top: 12px; }
+  .ta-breathe-source { margin-top: 16px; font-size: 12px; color: #6B7785; }
+  .ta-breathe-source a { color: var(--green-dark); }
+
+  /* ═══ TABLE ═══ */
+  .ta-table-sec { padding: clamp(64px,8vw,96px) 0; background: var(--navy-deep); color: #fff; }
+  .ta-table-sec h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 8px; color: #fff; }
+  .ta-table-sub { font-size: 14px; color: rgba(255,255,255,.6); margin-top: 8px; max-width: 560px; }
+  .ta-table-scroll { overflow-x: auto; margin-top: 32px; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); }
+  .ta-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  .ta-table th, .ta-table td { padding: 13px 16px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .ta-th-equip { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--green-bright); font-weight: 600; min-width: 200px; }
+  .ta-th-b, .ta-th-d, .ta-th-n {
+    padding: 20px 16px 16px; vertical-align: bottom; font-size: 14px; font-weight: 700;
+    color: #fff; border-bottom: 2px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03);
+  }
+  .ta-th-b { border-left: 1px solid rgba(56,138,221,.2); }
+  .ta-th-d { border-left: 1px solid rgba(0,184,124,.2); }
+  .ta-th-n { border-left: 1px solid rgba(127,119,221,.2); }
+  .ta-badge {
+    display: block; font-family: var(--mono); font-size: 9px; letter-spacing: .15em;
+    text-transform: uppercase; font-weight: 600; padding: 3px 8px; border-radius: 3px;
+    margin: 0 auto 8px; width: fit-content;
+  }
+  .ta-badge--b { background: rgba(56,138,221,.15); color: #85B7EB; }
+  .ta-badge--d { background: rgba(0,184,124,.15); color: var(--green-bright); }
+  .ta-badge--n { background: rgba(127,119,221,.15); color: #AFA9EC; }
+  .ta-table td:first-child { text-align: left; color: #fff; font-weight: 500; }
+  .ta-table td { color: rgba(255,255,255,.75); }
+  .ta-table tbody tr:hover { background: rgba(255,255,255,.04); }
+  .ta-tr-cat td {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; font-weight: 600; color: var(--green-bright);
+    padding: 18px 16px 8px; border-bottom: 1px solid rgba(0,184,124,.15);
+    background: rgba(0,184,124,.03); text-align: left;
+  }
+  .ta-ck {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 2px;
+  }
+  .ta-ck svg { width: 18px; height: 18px; fill: none; stroke: var(--green-bright); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .ta-ck small, .ta-x small { display: block; font-size: 10px; color: rgba(255,255,255,.45); margin-top: 2px; font-weight: 400; }
+  .ta-x {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 2px;
+  }
+  .ta-x svg { width: 15px; height: 15px; fill: none; stroke: rgba(217,83,79,.45); stroke-width: 2; stroke-linecap: round; }
+  .ta-ck--inline svg { width: 14px; height: 14px; }
+  .ta-x--inline svg { width: 13px; height: 13px; }
+  .ta-table-legend {
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+    margin-top: 16px; font-size: 12px; color: rgba(255,255,255,.55);
+  }
+  .ta-table-legend span { display: flex; align-items: center; gap: 6px; }
+  @media (max-width: 720px) {
+    .ta-table th, .ta-table td { padding: 10px 10px; }
+    .ta-th-equip { min-width: 130px; }
+    .ta-table { font-size: 12px; }
+  }
+
+  /* ═══ FAQ ═══ */
+  .ta-faq { padding: clamp(64px,8vw,96px) 0; background: #fff; }
+  .ta-faq h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 32px; color: var(--navy); }
+  .ta-faq-list { max-width: 780px; margin: 32px auto 0; }
+  .ta-faq-item { border-bottom: 1px solid var(--cream-dark); }
+  .ta-faq-q {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 18px 0; cursor: pointer; font-size: 16px; font-weight: 600;
+    color: var(--navy); list-style: none; width: 100%;
+  }
+  .ta-faq-q::-webkit-details-marker { display: none; }
+  .ta-faq-q:hover { color: var(--green-dark); }
+  .ta-faq-icon { width: 20px; height: 20px; flex-shrink: 0; color: #6B7785; transition: transform .25s ease; }
+  details[open] .ta-faq-icon { transform: rotate(180deg); }
+  .ta-faq-a { padding: 0 0 18px; }
+  .ta-faq-a p { font-size: 14px; color: #6B7785; line-height: 1.7; max-width: 680px; }
+  /* Internal link grid */
+  .ta-faq-links { max-width: 780px; margin: 56px auto 0; padding-top: 40px; border-top: 1px solid var(--cream-dark); }
+  .ta-faq-link-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 20px; }
+  @media (max-width: 720px) { .ta-faq-link-grid { grid-template-columns: 1fr 1fr; } }
+  .ta-faq-link {
+    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    background: var(--cream); border: 1px solid var(--cream-dark); border-radius: 6px;
+    font-size: 13px; font-weight: 600; color: var(--navy); text-decoration: none;
+    transition: border-color .15s, background .15s;
+  }
+  .ta-faq-link:hover { border-color: var(--green); background: #fff; color: var(--green-dark); }
+  .ta-faq-link svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--green-dark); }
+
+  /* ═══ CTA FINAL ═══ */
+  .ta-cta-final { padding: clamp(72px,10vh,120px) 0; background: var(--navy); }
+  .ta-cta-final h2 { font-size: clamp(28px,3.8vw,44px); font-weight: 800; letter-spacing: -.035em; color: #fff; line-height: 1.06; margin-bottom: 16px; }
+  .ta-cta-final h2 em { font-style: normal; color: var(--green-bright); }
+  .ta-cta-sub { font-size: clamp(15px,1.4vw,17px); color: rgba(255,255,255,.75); max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
+  .ta-cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+  /* ═══ ANIM ═══ */
+  .ta-anim { opacity: 0; transform: translateY(18px); transition: opacity .5s, transform .5s; }
+  .ta-anim.ta-visible { opacity: 1; transform: translateY(0); }
+</style>
+
+<script>
+  // ============ Hero video — desktop only ============
+  const vid = document.getElementById('ta-hero-vid') as HTMLVideoElement | null;
+  if (vid && window.innerWidth >= 960) {
+    vid.play().catch(() => {});
+  } else if (vid) {
+    vid.remove();
+  }
+
+  // ============ Intersection observer — anim ============
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('ta-visible'); io.unobserve(e.target); }
+    }),
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('.ta-anim').forEach((el) => io.observe(el));
+</script>

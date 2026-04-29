@@ -37,6 +37,8 @@ interface Props {
   noteText?: string;
   videoPoster?: string;
   videoPosterMobile?: string;
+  /** object-position para o poster mobile quando a imagem for landscape (ex: 'center 25%') */
+  posterMobilePosition?: string;
   videoWebm?: string;
   videoMp4?: string;
 }
@@ -55,6 +57,7 @@ const {
   noteText,
   videoPoster = '/img/hero/hero-poster.webp',
   videoPosterMobile = '/img/hero/hero-poster-mobile.webp',
+  posterMobilePosition,
   videoWebm = '/video/hero-loop.webm',
   videoMp4 = '/video/hero-loop.mp4',
 } = Astro.props;
@@ -80,6 +83,7 @@ const waHref = whatsappUrl(
       height="1080"
       loading="eager"
       fetchpriority="high"
+      style={posterMobilePosition ? `--pmpos: ${posterMobilePosition}` : undefined}
     />
 
     <video
@@ -254,6 +258,12 @@ const waHref = whatsappUrl(
 
   .hero-poster {
     display: block;
+  }
+
+  @media (max-width: 720px) {
+    .hero-poster {
+      object-position: var(--pmpos, center center);
+    }
   }
 
   .hero-video {

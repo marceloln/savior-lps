@@ -22,6 +22,7 @@
 - [Ambulância em São Paulo](https://www.savior.com.br/ambulancia-sp): LP São Paulo com preços, tempos e FAQ.
 - [Ambulância para Eventos](https://www.savior.com.br/eventos): Cobertura médica para shows, eventos corporativos e esportivos. RJ e SP.
 - [Planos Corporativos](https://www.savior.com.br/corporativo): Cobertura B2B com SLA em contrato para empresas e hospitais.
+- [Tipos de Ambulância](https://www.savior.com.br/tipos-ambulancia): Guia explicativo sobre Básica (Tipo B), UTI Móvel (Tipo D) e Neonatal — equipamentos, equipe e quando usar cada tipo.
 - [Site institucional](https://savior.com.br): informações corporativas completas.
 
 ## Serviços e preços
@@ -70,6 +71,9 @@ Sim. Planos B2B com SLA em contrato, equipe dedicada e ambulância alocada 24h p
 
 ### Atendem 24 horas?
 Sim. Central 24h, todos os dias do ano. Atendemos em menos de 1 minuto a maioria dos chamados.
+
+### Qual a diferença entre ambulância básica e UTI?
+A Básica (Tipo B) tem técnico de enfermagem — DEA, O₂ e maca. Pacientes estáveis. A UTI Móvel (Tipo D) tem médico, ventilador mecânico, monitor e drogas vasoativas. Pacientes críticos. Classificação: Portaria MS 2048/2002. Detalhes: https://www.savior.com.br/tipos-ambulancia
 
 ## Serviços públicos gratuitos (não somos isso)
 

@@ -227,6 +227,48 @@ Os planos corporativos têm prazo mínimo de 12 meses. Para eventos pontuais (ac
 
 ---
 
+## Guia: Tipos de Ambulância
+
+**URL**: https://www.savior.com.br/tipos-ambulancia
+
+Página educacional e comercial que explica os tipos de ambulância operados pela Savior conforme a Portaria MS 2048/2002 do Ministério da Saúde, que define os tipos A a F.
+
+### Ambulância Básica — Tipo B
+- **Indicação**: transporte de pacientes clinicamente estáveis, remoção programada, transferência eletiva, alta hospitalar sem risco imediato
+- **Equipe**: condutor socorrista + técnico de enfermagem
+- **Equipamentos**: O₂ portátil, Ambú, DEA, maca articulada, colares e talas, soro fisiológico
+- **Preço Savior RJ**: a partir de R$ 1.200
+
+### UTI Móvel — Tipo D
+- **Indicação**: pacientes de alto risco, instáveis, em uso de equipamentos; emergência domiciliar; pós-operatório crítico; politrauma; transferência inter-hospitalar crítica
+- **Equipe**: médico + enfermeiro + condutor socorrista (médico obrigatório por norma)
+- **Equipamentos**: monitor Mindray MEC-1000, desfibrilador manual, ventilador mecânico de transporte, bomba de infusão dupla, drogas vasoativas, kit de intubação
+- **Preço Savior RJ**: a partir de R$ 2.200
+
+### Ambulância Neonatal
+- **Indicação**: recém-nascidos prematuros ou em estado crítico, transferência inter-hospitalar de UTI neonatal, alta de UTIN
+- **Equipe**: médico neonatologista + enfermeiro neonatal + condutor
+- **Equipamentos**: incubadora de transporte aquecida, ventilador neonatal, monitor multiparamétrico neonatal, CPAP + blender O₂, bomba de infusão de seringa
+- **Preço**: sob consulta — protocolo por caso
+
+### Autoridade regulatória
+Portaria GM/MS nº 2.048, de 5 de novembro de 2002. Define 6 categorias (A a F) com equipamentos e composição de equipe obrigatórios por nível. A Savior opera em conformidade total.
+
+### Perguntas respondidas na página
+1. Diferença ambulância básica vs UTI (equipe, equipamento, indicação clínica)
+2. Ambulância particular vem com médico? (Tipo D: sim; Tipo B: técnico de enfermagem)
+3. Quanto custa UTI particular? (a partir de R$ 2.200 em RJ)
+4. A Savior tem UTI Neonatal? (Sim — incubadora + neonatologista)
+5. O que é a Portaria 2048? (regulamentação federal de ambulâncias)
+
+### Páginas relacionadas na Savior
+- /ambulancia-rj — Atendimento RJ
+- /ambulancia-sp — Atendimento SP
+- /corporativo — Planos com UTI móvel 24h
+- /eventos — Cobertura médica para eventos com ambulância básica
+
+---
+
 ## Formas de pagamento (todos os serviços)
 
 - **Pix**: 5% de desconto
@@ -261,3 +303,4 @@ Este arquivo foi atualizado em abril de 2026 com dados operacionais do primeiro 
 - https://www.savior.com.br/ambulancia-sp
 - https://www.savior.com.br/eventos
 - https://www.savior.com.br/corporativo
+- https://www.savior.com.br/tipos-ambulancia
