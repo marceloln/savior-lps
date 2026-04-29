@@ -128,8 +128,10 @@ const faqItems = [
 
       <div class="wrap ev-hero-content">
         <div class="ev-hero-brand">
-          <span class="ev-hero-wordmark">SAVIOR</span>
-          <span class="ev-hero-descriptor">Medical Service</span>
+          <div class="ev-hero-brand-text">
+            <span class="ev-hero-wordmark">SAVIOR</span>
+            <span class="ev-hero-descriptor">Medical Service</span>
+          </div>
         </div>
         <div class="ev-hero-grid">
           <div>
@@ -691,9 +693,10 @@ const faqItems = [
   }
   @media (max-width: 960px) { .ev-hero-overlay { background: linear-gradient(135deg, #07182be0, #0b2540c7); } }
   .ev-hero-content { position: relative; z-index: 3; width: 100%; color: #fff; }
-  .ev-hero-brand { display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .ev-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .ev-hero-brand-text { display: flex; flex-direction: column; line-height: 1; }
   .ev-hero-wordmark { font-family: var(--ethno); font-size: 22px; letter-spacing: .08em; color: #fff; line-height: 1; }
-  .ev-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
+  .ev-hero-descriptor { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
   .ev-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
   @media (max-width: 960px) { .ev-hero-grid { grid-template-columns: 1fr; gap: 40px; } }
   .ev-hero-live { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 16px; }
