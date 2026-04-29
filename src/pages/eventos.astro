@@ -626,8 +626,8 @@ const faqItems = [
   </script>
 
   <!-- ═══ BLIP CHAT — Eventos ═══ -->
-  <!-- Carrega após window.onload — não bloqueia LCP/FID -->
-  <script src="https://unpkg.com/blip-chat-widget" type="text/javascript" is:inline></script>
+  <!-- defer: não bloqueia parser, carrega em paralelo, executa após HTML parseado -->
+  <script src="https://unpkg.com/blip-chat-widget" type="text/javascript" defer is:inline></script>
   <script is:inline>
     window.addEventListener('load', function () {
       new BlipChat()
@@ -700,7 +700,7 @@ const faqItems = [
   @media (max-width: 960px) { .ev-hero-overlay { background: linear-gradient(135deg, #07182be0, #0b2540c7); } }
   .ev-hero-content { position: relative; z-index: 3; width: 100%; color: #fff; }
   .ev-hero-brand { display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
-  .ev-hero-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 22px; letter-spacing: .08em; color: #fff; line-height: 1; }
+  .ev-hero-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 27px; letter-spacing: .08em; color: #fff; line-height: 1; }
   .ev-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; }
   .ev-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
   @media (max-width: 960px) { .ev-hero-grid { grid-template-columns: 1fr; gap: 40px; } }
