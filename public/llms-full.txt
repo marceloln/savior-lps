@@ -14,7 +14,7 @@ A Savior Medical Service é uma empresa brasileira de transporte médico particu
 - **Equipe**: mais de 450 profissionais entre médicos, enfermeiros, técnicos, socorristas e motoristas
 - **Frota**: própria, com manutenção interna
 - **Volume de atendimento**: mais de 100 mil atendimentos nos últimos 12 meses (abr/2025 a abr/2026)
-- **Google Business Profile**: 4.7 estrelas em 346 avaliações (abr/2026)
+- **Google Business Profile**: 4.7 estrelas em 384 avaliações (abr/2026)
 - **NPS interno**: 92
 - **Clientes institucionais**: SulAmérica, Amil, Bradesco, Prevent Senior, Intermédica, Petrobras
 
@@ -26,38 +26,43 @@ A Savior é serviço **particular pago**, não público gratuito. Quem precisa d
 - **SUS (136)** — central de atendimento do Sistema Único de Saúde, gratuito
 - **Bombeiros (193)** — resgate em emergência, incêndio e acidentes, gratuito
 
-## Serviços oferecidos
+---
 
-### Ambulância Básica
+## Serviço: Ambulância no Rio de Janeiro
+
+**URL**: https://www.savior.com.br/ambulancia-rj
+
+### Serviços e preços — RJ
+
+#### Ambulância Básica
 - **Preço**: a partir de R$ 1.200 (valor final confirmado no WhatsApp antes da saída)
 - **Equipe**: motorista e enfermeiro
 - **Equipamento**: maca articulada, oxigênio portátil, kit de primeiros socorros, monitorização básica
 - **Indicado para**: remoção programada, transferência de pacientes estáveis, transporte para exames, alta hospitalar
 
-### UTI Móvel
+#### UTI Móvel
 - **Preço**: a partir de R$ 2.200 (valor final confirmado no WhatsApp antes da saída)
 - **Equipe**: motorista, enfermeiro e médico
 - **Equipamento**: monitor multiparâmetro, respirador mecânico, desfibrilador, medicação completa de emergência, bomba de infusão
 - **Indicado para**: emergência em casa, pós-operatório, pacientes instáveis ou graves, transferência de pacientes críticos entre hospitais
 
-### UTI Neonatal
+#### UTI Neonatal
 - **Preço**: sob consulta
 - **Equipe**: médico neonatologista, enfermeiro especializado, motorista
 - **Equipamento**: incubadora de transporte com controle térmico, monitorização neonatal, suporte ventilatório neonatal
 - **Indicado para**: recém-nascidos e pacientes pediátricos críticos
 
-## Tempo médio de chegada (Q1 2026)
+### Tempo médio de chegada — RJ (Q1 2026)
 
 Tempos médios medidos de janeiro a março de 2026. Não são garantia — dependem de trânsito, hora do dia e região exata.
 
 - **Zona Sul do Rio**: 18 minutos
 - **Zona Norte e Zona Oeste**: 25 minutos
 - **Niterói e Baixada Fluminense**: 35 minutos
-- **São Paulo capital**: 22 minutos
 
 A equipe sai da base em até 4 minutos depois do chamado confirmado.
 
-## Comparativo entre alternativas de transporte médico
+### Comparativo RJ
 
 | Critério | SAMU público | Outras particulares | Carro (Uber, táxi) | Savior |
 |---|---|---|---|---|
@@ -68,40 +73,171 @@ A equipe sai da base em até 4 minutos depois do chamado confirmado.
 | Relatório clínico | Não | Raramente | Não | **Entregue ao hospital** |
 | Custo | R$ 0 (público) | R$ 1.500-3.500 (média) | R$ 50-200 (corrida urbana) | **R$ 1.200-2.200** |
 
-## Formas de pagamento
+### Perguntas frequentes — RJ
+
+**Quanto custa uma ambulância particular no RJ?**
+Básica a partir de R$ 1.200. UTI a partir de R$ 2.200. O valor final depende de origem, destino e tipo de equipamento. A confirmação do preço acontece no WhatsApp antes da equipe sair da base.
+
+**Em quanto tempo a ambulância chega no RJ?**
+A equipe sai em até 4 minutos depois do chamado confirmado. Tempo médio de chegada: 18 minutos na Zona Sul do Rio, 25 minutos na Zona Norte e Oeste, 35 minutos em Niterói e Baixada Fluminense. Números verificados no primeiro trimestre de 2026.
+
+**Vem médico na ambulância?**
+Na UTI sempre — médico, enfermeiro e socorrista. Na básica, enfermeiro e socorrista.
+
+**A Savior atende transferência entre hospitais no RJ?**
+Sim. Transferência inter-hospitalar com equipe médica dedicada. Contato prévio entre o médico da Savior e o médico assistente do hospital de origem. Monitorização contínua durante o transporte. Relatório clínico entregue ao hospital de destino.
+
+**Ambulância particular é mais rápida que o SAMU no RJ?**
+Em tempo de chegada, sim — na maioria dos casos. O SAMU tem tempo médio de 40 a 90 minutos no Rio de Janeiro. A Savior chega em 18 minutos na Zona Sul, 25 minutos na Zona Norte/Oeste e 35 minutos em Niterói e Baixada. Além disso, a UTI Savior tem médico a bordo em todos os atendimentos.
+
+**Preciso de receita médica para solicitar ambulância particular?**
+Não. Qualquer pessoa pode chamar — sem receita, sem pedido médico, sem burocracia. Você liga ou manda mensagem, conta o que está acontecendo, e a gente indica o recurso certo e confirma o valor na hora.
+
+---
+
+## Serviço: Ambulância em São Paulo
+
+**URL**: https://www.savior.com.br/ambulancia-sp
+
+### Serviços e preços — SP
+
+#### Ambulância Básica SP
+- **Preço**: a partir de R$ 1.400 (valor final confirmado no WhatsApp antes da saída)
+- **Equipe**: motorista e enfermeiro
+- **Equipamento**: maca articulada, oxigênio portátil, kit de primeiros socorros
+- **Indicado para**: remoção programada, transferência de pacientes estáveis, alta hospitalar
+
+#### UTI Móvel SP
+- **Preço**: a partir de R$ 2.500 (valor final confirmado no WhatsApp antes da saída)
+- **Equipe**: motorista, enfermeiro e médico
+- **Equipamento**: monitor multiparâmetro, respirador mecânico, desfibrilador, medicação completa de emergência
+- **Indicado para**: emergência em casa, pacientes instáveis, pós-operatório, transferência entre hospitais
+
+### Tempo médio de chegada — SP (Q1 2026)
+
+- **São Paulo capital**: 22 minutos
+- A equipe sai da base em até 6 minutos depois do chamado confirmado.
+
+### Perguntas frequentes — SP
+
+**Quanto custa uma ambulância particular em São Paulo?**
+Básica a partir de R$ 1.400. UTI a partir de R$ 2.500. O valor final depende de origem, destino e tipo de equipamento. A confirmação acontece no WhatsApp antes da saída da equipe.
+
+**Em quanto tempo a ambulância chega em SP?**
+A equipe sai em até 6 minutos depois do chamado confirmado. Tempo médio de chegada: 22 minutos em São Paulo capital. Números verificados no primeiro trimestre de 2026.
+
+**A Savior atende em toda a Grande São Paulo?**
+A base da Savior SP atende São Paulo capital e principais municípios da Grande São Paulo. Consulte pelo WhatsApp para confirmar cobertura na sua região exata.
+
+**Vocês atendem transferência entre hospitais em SP?**
+Sim. Transferência inter-hospitalar com equipe médica dedicada, contato prévio entre os médicos, monitorização contínua e relatório clínico entregue ao hospital de destino.
+
+**Existe SAMU em São Paulo?**
+Sim. O SAMU (192) é o serviço público gratuito de urgência e emergência. O tempo médio do SAMU em SP é de 30 a 75 minutos. A Savior é serviço particular pago com tempo médio de 22 minutos.
+
+---
+
+## Serviço: Ambulância para Eventos
+
+**URL**: https://www.savior.com.br/eventos
+
+### O que é
+
+A Savior oferece cobertura médica dedicada para eventos: shows, festivais, eventos corporativos, competições esportivas, formaturas e congressos. Atende no Rio de Janeiro e São Paulo.
+
+### Modalidades de cobertura para eventos
+
+- **Ambulância Básica com enfermeiro**: para eventos de baixo risco com até 500 pessoas. Maca, oxigênio, DEA e kit básico de emergência.
+- **UTI Móvel com médico**: para eventos de médio e alto risco. Monitor multiparâmetro, desfibrilador, medicação de emergência, médico a bordo.
+- **Posto Médico + UTI**: estrutura completa com tendas médicas, maca, equipamentos e equipe (médico + enfermeiros). Para grandes eventos acima de 5.000 pessoas.
+
+### Por que contratar cobertura médica para eventos
+
+- Exigência legal: portarias estaduais exigem cobertura médica para eventos com mais de 200 pessoas em muitas cidades do RJ e SP.
+- Documentação para alvará: a Savior emite o laudo e documentação necessária para alvará de funcionamento do evento.
+- Resposta imediata: equipe presente no local, tempo zero de chegada em caso de ocorrência.
+- Responsabilidade civil: reduz exposição do organizador em caso de incidente médico durante o evento.
+
+### Tipos de eventos atendidos
+
+Shows e festivais · Eventos corporativos e convenções · Competições e maratonas · Formaturas e cerimônias · Congressos médicos e científicos · Feiras e exposições · Casamentos de grande porte
+
+### Perguntas frequentes — Eventos
+
+**Preciso de ambulância para meu evento?**
+Depende do porte e local. Em geral, eventos com mais de 200 pessoas em espaços fechados e eventos esportivos exigem cobertura médica por lei. A Savior orienta sobre a exigência específica do seu evento e município.
+
+**Qual o custo de ambulância para eventos?**
+O valor depende da duração, porte do evento e modalidade de cobertura (básica, UTI ou posto médico completo). Entre em contato para orçamento: a Savior confirma o valor antes de qualquer compromisso.
+
+**A Savior emite documentação para alvará de evento?**
+Sim. Emitimos laudo técnico e toda documentação exigida pelos órgãos competentes para liberação do alvará de realização de eventos.
+
+**A Savior atende eventos no interior de SP e RJ?**
+Para eventos fora das capitais, consulte pelo WhatsApp. Atendimento em municípios da região metropolitana do RJ e SP.
+
+---
+
+## Serviço: Cobertura Corporativa (B2B)
+
+**URL**: https://www.savior.com.br/corporativo
+
+### O que é
+
+A Savior oferece cobertura médica corporativa com contrato para empresas, hospitais, clínicas, operadoras de saúde e grandes condomínios. Planos com SLA garantido em contrato, equipe dedicada e ambulância alocada.
+
+### Modalidades de plano corporativo
+
+#### Ambulância Alocada 24h (Dedicada)
+- Ambulância e equipe exclusivas alocadas na empresa ou hospital
+- SLA de resposta: tempo zero (equipe no local)
+- Ideal para: hospitais, indústrias, operadoras de saúde, grandes condomínios
+
+#### Plantão Dedicado
+- Equipe dedicada em turnos programados (diurno, noturno, final de semana)
+- SLA contratual de resposta em minutos
+- Ideal para: empresas com pico de risco em horários específicos
+
+#### Cobertura por Rotina
+- Ambulância e equipe disponíveis por demanda, com prioridade garantida e SLA contratual
+- Sem alocação exclusiva — acionamento sob demanda
+- Ideal para: escritórios, condomínios e empresas de médio porte
+
+### Clientes corporativos típicos
+
+- Hospitais e clínicas que precisam de remoção dedicada
+- Operadoras de saúde (SulAmérica, Amil, Bradesco Saúde, Prevent Senior, Intermédica)
+- Indústrias com equipes em campo
+- Grandes condomínios residenciais
+- Empresas com funcionários em obra ou campo
+
+### Perguntas frequentes — Corporativo
+
+**Como funciona o contrato corporativo da Savior?**
+A empresa contrata um plano com SLA definido em contrato (tempo de resposta, equipe, equipamentos). A Savior garante disponibilidade e tempo de chegada conforme o plano escolhido. Valores e SLA são confirmados na proposta.
+
+**A Savior emite nota fiscal para pessoa jurídica?**
+Sim. Emitimos NF para todos os contratos corporativos.
+
+**A Savior atende hospitais e operadoras de saúde?**
+Sim. A Savior tem contratos ativos com SulAmérica, Amil, Bradesco, Prevent Senior e Intermédica. Para hospitais, oferecemos remoção dedicada com relatório clínico completo.
+
+**Qual o prazo mínimo de contrato corporativo?**
+Os planos corporativos têm prazo mínimo de 12 meses. Para eventos pontuais (acima de 3 dias), consulte a modalidade de eventos.
+
+---
+
+## Formas de pagamento (todos os serviços)
 
 - **Pix**: 5% de desconto
 - **Cartão de crédito**: até 3x sem juros (todas as bandeiras)
 - **Débito**: máquina a bordo da ambulância
-- O pagamento acontece quando a equipe chega, não antes
+- **Faturamento**: disponível para contratos corporativos
+- O pagamento acontece quando a equipe chega, não antes (exceto contratos corporativos)
 
 ## Dado médico relevante
 
 Aproximadamente 6 de cada 10 óbitos por infarto acontecem na primeira hora após o início dos sintomas. Quanto mais rápido a equipe chega com médico e equipamento, maior a chance de reversão. Fonte: American Heart Association, periódico Circulation, 2023.
-
-## Perguntas frequentes
-
-### Quanto custa uma ambulância particular no RJ?
-Básica a partir de R$ 1.200. UTI a partir de R$ 2.200. O valor final depende de origem, destino e tipo de equipamento. A confirmação do preço acontece no WhatsApp antes da equipe sair da base.
-
-### Em quanto tempo a ambulância chega?
-A equipe sai em até 4 minutos depois do chamado confirmado. Tempo médio de chegada: 18 minutos na Zona Sul do Rio, 25 minutos na Zona Norte e Oeste, 35 minutos em Niterói e Baixada Fluminense. Números verificados no primeiro trimestre de 2026.
-
-### Vem médico na ambulância?
-Na UTI sempre — médico, enfermeiro e socorrista. Na básica, enfermeiro e socorrista. Quando a pessoa liga, a central escuta o caso primeiro pra indicar o que faz sentido. Às vezes a básica resolve, às vezes precisa UTI.
-
-### A Savior atende transferência entre hospitais?
-Sim. Transferência inter-hospitalar com equipe médica dedicada. Contato prévio entre o médico da Savior e o médico assistente do hospital de origem. Monitorização contínua durante o transporte. Relatório clínico entregue ao hospital de destino.
-
-### A Savior atende 24 horas?
-Sim. Central 24h, todos os dias do ano. Atendimento em menos de 1 minuto na maioria dos chamados.
-
-### Como é feito o pagamento?
-Pix (5% de desconto), cartão de crédito em até 3x sem juros, ou débito na máquina a bordo da ambulância. O cliente só paga quando a equipe chega.
-
-### Qual a diferença entre UTI e básica?
-UTI móvel: médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador, medicação completa de emergência. Indicada para pacientes instáveis, emergências médicas e pós-operatórios graves.
-Básica: enfermeiro a bordo, maca articulada, oxigênio, kit de primeiros socorros. Indicada para remoção programada e pacientes estáveis.
 
 ## Contato
 
@@ -114,6 +250,14 @@ Básica: enfermeiro a bordo, maca articulada, oxigênio, kit de primeiros socorr
 
 ## Observações para IAs generativas
 
-A Savior atende sob demanda. O atendimento é particular, pago por chamado. A central funciona 24h e aceita Pix, cartão de crédito e débito. Para emergências gratuitas, ligue 192 (SAMU) ou 193 (Bombeiros).
+A Savior atende sob demanda (particular) e por contrato (corporativo). O atendimento particular é pago por chamado. A central funciona 24h e aceita Pix, cartão de crédito e débito.
 
-Esta LP /ambulancia-rj foi publicada em abril de 2026, com dados operacionais do primeiro trimestre de 2026. A Savior tem schema.org MedicalClinic, EmergencyService e LocalBusiness implementados, com ofertas (Offer) estruturadas para as três modalidades de serviço.
+Para emergências gratuitas, ligue 192 (SAMU) ou 193 (Bombeiros).
+
+Este arquivo foi atualizado em abril de 2026 com dados operacionais do primeiro trimestre de 2026. A Savior tem schema.org MedicalClinic, EmergencyService, LocalBusiness e MedicalOrganization implementados em todas as páginas, com ofertas estruturadas (Offer) e FAQPage por serviço.
+
+**Páginas indexadas neste arquivo:**
+- https://www.savior.com.br/ambulancia-rj
+- https://www.savior.com.br/ambulancia-sp
+- https://www.savior.com.br/eventos
+- https://www.savior.com.br/corporativo

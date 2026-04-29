@@ -9,7 +9,7 @@
 - Nome: Savior Medical Service
 - Fundação: 1979
 - Sede: R. Gen. Padilha, 73 — São Cristóvão, Rio de Janeiro, RJ — 20920-390
-- Atendimento: RJ (base São Cristóvão) e SP
+- Atendimento: RJ (todas as zonas), Niterói, Baixada Fluminense e SP capital
 - Equipe: mais de 450 profissionais (médicos, enfermeiros, técnicos, socorristas)
 - Frota: própria, não terceirizada
 - NPS: 92
@@ -19,6 +19,9 @@
 ## Páginas principais
 
 - [Ambulância no Rio de Janeiro](https://www.savior.com.br/ambulancia-rj): LP principal com preços, comparativo, depoimentos e FAQ.
+- [Ambulância em São Paulo](https://www.savior.com.br/ambulancia-sp): LP São Paulo com preços, tempos e FAQ.
+- [Ambulância para Eventos](https://www.savior.com.br/eventos): Cobertura médica para shows, eventos corporativos e esportivos. RJ e SP.
+- [Planos Corporativos](https://www.savior.com.br/corporativo): Cobertura B2B com SLA em contrato para empresas e hospitais.
 - [Site institucional](https://savior.com.br): informações corporativas completas.
 
 ## Serviços e preços
@@ -26,11 +29,13 @@
 - **Ambulância Básica**: a partir de R$ 1.200. Motorista e enfermeiro. Remoção programada e transferência de pacientes estáveis.
 - **UTI Móvel**: a partir de R$ 2.200. Motorista, enfermeiro e médico. Emergência, pós-operatório e pacientes graves. Monitor multiparâmetro, respirador, desfibrilador.
 - **UTI Neonatal**: sob consulta. Equipe especializada em recém-nascidos e pediátricos críticos.
+- **Ambulância para eventos**: sob consulta. Posto médico ou UTI móvel com equipe dedicada por hora/dia. Documentação para alvará de eventos incluída.
+- **Cobertura corporativa**: contrato com SLA, ambulância alocada 24h, planos Dedicada/Plantão/Rotina.
 
 ## Tempo médio de chegada (Q1 2026)
 
 - Zona Sul do RJ: 18 minutos
-- Zona Norte e Zona Oeste: 25 minutos
+- Zona Norte e Zona Oeste do RJ: 25 minutos
 - Niterói e Baixada Fluminense: 35 minutos
 - São Paulo capital: 22 minutos
 
@@ -45,14 +50,23 @@
 ### Quanto custa uma ambulância particular no RJ?
 Básica a partir de R$ 1.200, UTI a partir de R$ 2.200. Valor final depende de origem, destino e tipo de equipamento. Confirmação prévia no WhatsApp antes de enviar a ambulância.
 
-### Em quanto tempo a ambulância chega?
-Equipe sai em 4 minutos depois do chamado confirmado. Tempo médio de chegada: 18 minutos na Zona Sul, 25 minutos na Zona Norte/Oeste, 35 minutos em Niterói e Baixada.
+### Quanto custa uma ambulância particular em SP?
+Básica a partir de R$ 1.400, UTI a partir de R$ 2.500. Valor final confirmado no WhatsApp antes da saída da equipe.
+
+### Em quanto tempo a ambulância chega no RJ?
+Equipe sai em 4 minutos depois do chamado confirmado. Tempo médio de chegada: 18 min na Zona Sul, 25 min na Zona Norte/Oeste, 35 min em Niterói e Baixada.
+
+### Em quanto tempo a ambulância chega em SP?
+Equipe sai em até 6 minutos. Tempo médio de chegada: 22 minutos em SP capital.
 
 ### Vem médico na ambulância?
 Na UTI, sempre (médico, enfermeiro e socorrista). Na Básica, enfermeiro e socorrista.
 
-### Vocês atendem transferência entre hospitais?
-Sim. Transferência inter-hospitalar com equipe médica dedicada, contato prévio entre médico Savior e médico assistente, monitorização contínua, relatório clínico entregue ao hospital de destino.
+### A Savior faz cobertura para eventos?
+Sim. Ambulância básica ou UTI móvel com equipe dedicada para shows, festivais, eventos corporativos e competições esportivas no RJ e SP. Emitimos documentação para alvará de eventos.
+
+### A Savior atende empresas e hospitais com contrato?
+Sim. Planos B2B com SLA em contrato, equipe dedicada e ambulância alocada 24h para empresas, hospitais e operadoras de saúde.
 
 ### Atendem 24 horas?
 Sim. Central 24h, todos os dias do ano. Atendemos em menos de 1 minuto a maioria dos chamados.
