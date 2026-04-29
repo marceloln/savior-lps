@@ -14,6 +14,7 @@ interface Props {
   schema?: string;
   ogImage?: string;
   ogImageAlt?: string;
+  twitterImage?: string;
   dateModified?: string;
   /** srcset do LCP hero poster — deve espelhar exatamente o <img srcset> no Hero.astro */
   lcpImageSrcset?: string;
@@ -26,6 +27,7 @@ const {
   schema,
   ogImage = '/og-savior.jpg',
   ogImageAlt = 'Ambulância Savior no Rio de Janeiro com Cristo Redentor ao fundo',
+  twitterImage,
   dateModified = '2026-04-24',
   lcpImageSrcset = '/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w',
 } = Astro.props;
@@ -33,6 +35,10 @@ const {
 const absoluteOgImage = ogImage.startsWith('http')
   ? ogImage
   : `https://www.savior.com.br${ogImage}`;
+
+const absoluteTwitterImage = twitterImage
+  ? (twitterImage.startsWith('http') ? twitterImage : `https://www.savior.com.br${twitterImage}`)
+  : absoluteOgImage;
 ---
 
 <!doctype html>
@@ -83,7 +89,7 @@ const absoluteOgImage = ogImage.startsWith('http')
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={absoluteOgImage} />
+    <meta name="twitter:image" content={absoluteTwitterImage} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <!-- ============ Data de modificação (AEO/LLMO) ============ -->
