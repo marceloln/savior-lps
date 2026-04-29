@@ -574,10 +574,25 @@ const faqItems = [
             </div>
           </div>
         </div>
+        <div class="ev-ft-bairros">
+          <div class="ev-ft-bairros-col">
+            <p class="ev-ft-label">Rio de Janeiro — bairros atendidos</p>
+            <ul class="ev-ft-bairros-list" aria-label="Bairros atendidos no Rio de Janeiro">
+              {['Ipanema','Leblon','Copacabana','Botafogo','Flamengo','Barra da Tijuca','Tijuca','Recreio','São Conrado','Centro','Niterói','São Gonçalo','Ilha do Governador','Duque de Caxias','Nova Iguaçu','Belford Roxo','Angra dos Reis','Petrópolis'].map(b => <li>{b}</li>)}
+            </ul>
+          </div>
+          <div class="ev-ft-bairros-col">
+            <p class="ev-ft-label">São Paulo — bairros atendidos</p>
+            <ul class="ev-ft-bairros-list" aria-label="Bairros atendidos em São Paulo">
+              {['Moema','Itaim Bibi','Jardins','Vila Mariana','Brooklin','Pinheiros','Vila Madalena','Morumbi','Perdizes','Lapa','Santo André','São Bernardo','Guarulhos','Osasco','Alphaville','Barueri','São Caetano','Campinas'].map(b => <li>{b}</li>)}
+            </ul>
+          </div>
+        </div>
         <nav class="ev-ft-nav" aria-label="Serviços Savior">
           <a href="/ambulancia-rj">Ambulância RJ</a>
           <a href="/ambulancia-sp">Ambulância SP</a>
           <a href="/corporativo">Planos Corporativos</a>
+          <a href="/tipos-ambulancia">Tipos de Ambulância</a>
           <a href="/">Savior.com.br</a>
         </nav>
         <div class="ev-ft-bottom">© 2026 Savior Medical Service. CNPJ 28.222.118/0001-07. Todos os direitos reservados.</div>
@@ -915,6 +930,10 @@ const faqItems = [
   .ev-ft-main:hover { color: var(--green-bright); }
   .ev-ft-sec { color: #fff9; font-size: 13px; display: block; }
   .ev-ft-sec:hover { color: #fff; }
+  .ev-ft-bairros { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .ev-ft-bairros-list { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 2px 14px; }
+  .ev-ft-bairros-list li { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.8; }
+  @media (max-width: 600px) { .ev-ft-bairros { grid-template-columns: 1fr; gap: 16px; } }
   .ev-ft-nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,.06); }
   .ev-ft-nav a { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); text-decoration: none; transition: color .15s; }
   .ev-ft-nav a:hover { color: var(--green-bright); }
