@@ -7,6 +7,7 @@
 
 import Base from '../layouts/Base.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import Footer from '../components/Footer.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
 
 // ============ SEO ============
@@ -545,60 +546,7 @@ const faqItems = [
     </section>
 
     <!-- ═══ FOOTER ═══ -->
-    <footer class="ev-footer" role="contentinfo">
-      <div class="wrap">
-        <div class="ev-ft-top">
-          <div>
-            <div class="ev-ft-word">SAVIOR</div>
-            <div class="ev-ft-tag">Medical Service · Desde {BRAND.yearsFounded}</div>
-          </div>
-          <div class="ev-ft-contacts">
-            <div>
-              <div class="ev-ft-label">Rio de Janeiro</div>
-              <a class="ev-ft-main" href={`tel:${CONTACT_RJ.phoneHref}`}>{CONTACT_RJ.phone}</a>
-              <a class="ev-ft-sec" href={whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'footer-rj')} data-whatsapp data-campaign="eventos" data-location="footer-rj">WA {CONTACT_RJ.whatsappDisplay}</a>
-            </div>
-            <div>
-              <div class="ev-ft-label">São Paulo</div>
-              <a class="ev-ft-main" href={`tel:${CONTACT_SP.phoneLandlineHref}`}>{CONTACT_SP.phoneLandline}</a>
-              <a class="ev-ft-sec" href={whatsappUrl(CONTACT_SP.whatsapp, 'eventos', WA_MSG, 'footer-sp')} data-whatsapp data-campaign="eventos" data-location="footer-sp">WA {CONTACT_SP.whatsappDisplay}</a>
-            </div>
-            <div>
-              <div class="ev-ft-label">Comercial</div>
-              <a class="ev-ft-main" href={`mailto:${CONTACT_RJ.email}`}>{CONTACT_RJ.email}</a>
-              <a class="ev-ft-sec" href="https://www.savior.com.br">www.savior.com.br</a>
-            </div>
-            <div>
-              <div class="ev-ft-label">Operação</div>
-              <span class="ev-ft-sec">Central 24h · 365 dias/ano</span>
-              <span class="ev-ft-sec">RJ e SP</span>
-            </div>
-          </div>
-        </div>
-        <div class="ev-ft-bairros">
-          <div class="ev-ft-bairros-col">
-            <p class="ev-ft-label">Rio de Janeiro — bairros atendidos</p>
-            <ul class="ev-ft-bairros-list" aria-label="Bairros atendidos no Rio de Janeiro">
-              {['Ipanema','Leblon','Copacabana','Botafogo','Flamengo','Barra da Tijuca','Tijuca','Recreio','São Conrado','Centro','Niterói','São Gonçalo','Ilha do Governador','Duque de Caxias','Nova Iguaçu','Belford Roxo','Angra dos Reis','Petrópolis'].map(b => <li>{b}</li>)}
-            </ul>
-          </div>
-          <div class="ev-ft-bairros-col">
-            <p class="ev-ft-label">São Paulo — bairros atendidos</p>
-            <ul class="ev-ft-bairros-list" aria-label="Bairros atendidos em São Paulo">
-              {['Moema','Itaim Bibi','Jardins','Vila Mariana','Brooklin','Pinheiros','Vila Madalena','Morumbi','Perdizes','Lapa','Santo André','São Bernardo','Guarulhos','Osasco','Alphaville','Barueri','São Caetano','Campinas'].map(b => <li>{b}</li>)}
-            </ul>
-          </div>
-        </div>
-        <nav class="ev-ft-nav" aria-label="Serviços Savior">
-          <a href="/ambulancia-rj">Ambulância RJ</a>
-          <a href="/ambulancia-sp">Ambulância SP</a>
-          <a href="/corporativo">Planos Corporativos</a>
-          <a href="/tipos-ambulancia">Tipos de Ambulância</a>
-          <a href="/">Savior.com.br</a>
-        </nav>
-        <div class="ev-ft-bottom">© 2026 Savior Medical Service. CNPJ 28.222.118/0001-07. Todos os direitos reservados.</div>
-      </div>
-    </footer>
+    <Footer showBothCities={true} showBairros={true} />
 
   </main>
 

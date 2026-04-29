@@ -1,22 +1,28 @@
 ---
 // ============================================================
-// FOOTER — rodapé com contatos completos + cobertura
+// FOOTER — rodapé padronizado
+// Props:
+//   showBothCities → dual-city (RJ + SP): para páginas gerais
+//   contact        → single-city: para /ambulancia-rj e /ambulancia-sp
+//   showBairros    → exibe grid de bairros RJ + SP
 // ============================================================
 
-import { CONTACT_RJ, BRAND } from '../data/savior';
+import { CONTACT_RJ, CONTACT_SP, BRAND } from '../data/savior';
 
 interface Props {
   contact?: typeof CONTACT_RJ;
   coverage?: string;
   showTelGeral?: boolean;
   showBairros?: boolean;
+  showBothCities?: boolean;
 }
 
 const {
   contact = CONTACT_RJ,
-  coverage = 'Zona Sul · Zona Norte · Zona Oeste · Centro · Niterói · São Gonçalo · Duque de Caxias · Baixada Fluminense · Região dos Lagos',
+  coverage = 'Rio de Janeiro · São Paulo · Grande RJ · Grande SP · Baixada Fluminense · Região dos Lagos',
   showTelGeral = true,
   showBairros = false,
+  showBothCities = false,
 } = Astro.props;
 
 const BAIRROS_RJ = [
@@ -37,49 +43,73 @@ const BAIRROS_SP = [
 <footer class="footer">
   <div class="wrap">
 
-    <!-- Topo: marca + contatos em grid -->
+    <!-- Topo: marca + contatos -->
     <div class="ft-top">
 
       <!-- Marca -->
       <div class="ft-brand">
-        <div>
-          <span class="ft-word">SAVIOR</span>
-          <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
-        </div>
+        <span class="ft-word">SAVIOR</span>
+        <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
       </div>
 
-      <!-- Contatos -->
-      <div class="ft-contacts">
-
-        <div class="ft-contact-block">
-          <span class="ft-contact-label">Emergência 24h</span>
-          <a href={`tel:${contact.phoneHref}`} class="ft-contact-main">{contact.phone}</a>
-        </div>
-
-        {'phoneLandline' in contact && contact.phoneLandline ? (
+      <!-- Contatos dual-city (páginas gerais) -->
+      {showBothCities ? (
+        <div class="ft-contacts">
           <div class="ft-contact-block">
-            <span class="ft-contact-label">Telefone geral</span>
-            <a href={`tel:${'phoneLandlineHref' in contact ? contact.phoneLandlineHref as string : contact.phoneHref}`} class="ft-contact-secondary">{contact.phoneLandline as string}</a>
+            <span class="ft-contact-label">Emergência RJ</span>
+            <a href={`tel:${CONTACT_RJ.phoneHref}`} class="ft-contact-main">{CONTACT_RJ.phone}</a>
+            <a href={`tel:${CONTACT_RJ.phoneHref}`} class="ft-contact-secondary">{CONTACT_RJ.whatsappDisplay}</a>
           </div>
-        ) : showTelGeral && (
           <div class="ft-contact-block">
-            <span class="ft-contact-label">Telefone geral</span>
-            <a href="tel:+552131713000" class="ft-contact-secondary">(21) 3171-3000</a>
+            <span class="ft-contact-label">Emergência SP</span>
+            <a href={`tel:${CONTACT_SP.phoneLandlineHref}`} class="ft-contact-main">{CONTACT_SP.phoneLandline}</a>
+            <a href={`tel:${CONTACT_SP.phoneHref}`} class="ft-contact-secondary">{CONTACT_SP.whatsappDisplay}</a>
           </div>
-        )}
-
-        <div class="ft-contact-block">
-          <span class="ft-contact-label">E-mail</span>
-          <a href={`mailto:${contact.email}`} class="ft-contact-secondary">{contact.email}</a>
-          <a href="mailto:recrutamento@savior.com.br" class="ft-contact-secondary">recrutamento@savior.com.br</a>
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">E-mail</span>
+            <a href={`mailto:${CONTACT_RJ.email}`} class="ft-contact-secondary">{CONTACT_RJ.email}</a>
+            <a href="mailto:recrutamento@savior.com.br" class="ft-contact-secondary">recrutamento@savior.com.br</a>
+          </div>
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">Endereços</span>
+            <address class="ft-address">
+              <span>RJ: R. Gen. Padilha, 73 · São Cristóvão</span>
+              <span>SP: Av. do Rio Bonito, 287 · Socorro</span>
+            </address>
+          </div>
         </div>
+      ) : (
+        /* Contatos single-city (ambulancia-rj / ambulancia-sp) */
+        <div class="ft-contacts">
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">Emergência 24h</span>
+            <a href={`tel:${contact.phoneHref}`} class="ft-contact-main">{contact.phone}</a>
+          </div>
 
-        <div class="ft-contact-block">
-          <span class="ft-contact-label">Endereço</span>
-          <address class="ft-address">{contact.address ?? 'R. Gen. Padilha, 73 · São Cristóvão · Rio de Janeiro · RJ · 20920-390'}</address>
+          {'phoneLandline' in contact && contact.phoneLandline ? (
+            <div class="ft-contact-block">
+              <span class="ft-contact-label">Telefone geral</span>
+              <a href={`tel:${'phoneLandlineHref' in contact ? contact.phoneLandlineHref as string : contact.phoneHref}`} class="ft-contact-secondary">{contact.phoneLandline as string}</a>
+            </div>
+          ) : showTelGeral && (
+            <div class="ft-contact-block">
+              <span class="ft-contact-label">Telefone geral</span>
+              <a href="tel:+552131713000" class="ft-contact-secondary">(21) 3171-3000</a>
+            </div>
+          )}
+
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">E-mail</span>
+            <a href={`mailto:${contact.email}`} class="ft-contact-secondary">{contact.email}</a>
+            <a href="mailto:recrutamento@savior.com.br" class="ft-contact-secondary">recrutamento@savior.com.br</a>
+          </div>
+
+          <div class="ft-contact-block">
+            <span class="ft-contact-label">Endereço</span>
+            <address class="ft-address">{contact.address ?? 'R. Gen. Padilha, 73 · São Cristóvão · Rio de Janeiro · RJ · 20920-390'}</address>
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
 
     <!-- Bairros atendidos (opcional) -->
@@ -146,8 +176,8 @@ const BAIRROS_SP = [
   /* ---- Marca ---- */
   .ft-brand {
     display: flex;
-    align-items: center;
-    gap: 14px;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .ft-word {
@@ -158,7 +188,6 @@ const BAIRROS_SP = [
     letter-spacing: 0.08em;
     color: white;
     line-height: 1;
-    margin-bottom: 4px;
   }
 
   .ft-tagline {
@@ -202,9 +231,7 @@ const BAIRROS_SP = [
     transition: color 0.15s;
   }
 
-  .ft-contact-main:hover {
-    color: var(--green-bright);
-  }
+  .ft-contact-main:hover { color: var(--green-bright); }
 
   .ft-contact-secondary {
     color: rgba(255, 255, 255, 0.75);
@@ -213,29 +240,16 @@ const BAIRROS_SP = [
     font-size: 13px;
   }
 
-  .ft-contact-secondary:hover {
-    color: white;
-  }
+  .ft-contact-secondary:hover { color: white; }
 
   .ft-address {
-    color: rgba(255, 255, 255, 0.6);
-    color: rgba(255, 255, 255, 0.75);
     font-style: normal;
     font-size: 13px;
-    line-height: 1.55;
-  }
-
-  /* ============ Rodapé ============ */
-  .ft-bottom {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-  }
-
-  .ft-coverage {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.55;
+    gap: 2px;
   }
 
   /* ---- Bairros ---- */
@@ -254,7 +268,7 @@ const BAIRROS_SP = [
     text-transform: uppercase;
     color: var(--green-bright);
     opacity: 0.75;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .ft-bairros-list {
     list-style: none;
@@ -262,15 +276,12 @@ const BAIRROS_SP = [
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 16px;
+    gap: 2px 16px;
   }
   .ft-bairros-list li {
     font-size: 11.5px;
     color: rgba(255, 255, 255, 0.38);
-    line-height: 1.8;
-  }
-  @media (max-width: 600px) {
-    .ft-bairros { grid-template-columns: 1fr; gap: 20px; }
+    line-height: 1.85;
   }
 
   /* ---- Navegação ---- */
@@ -293,8 +304,19 @@ const BAIRROS_SP = [
     transition: color 0.15s;
   }
 
-  .ft-nav a:hover {
-    color: var(--green-bright);
+  .ft-nav a:hover { color: var(--green-bright); }
+
+  /* ---- Bottom ---- */
+  .ft-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ft-coverage {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.55;
   }
 
   .ft-coverage strong {
@@ -309,27 +331,16 @@ const BAIRROS_SP = [
 
   /* ============ Mobile ============ */
   @media (max-width: 960px) {
-    .ft-contacts {
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
+    .ft-contacts { grid-template-columns: 1fr 1fr; gap: 24px; }
   }
 
   @media (max-width: 720px) {
-    .ft-top {
-      grid-template-columns: 1fr;
-      gap: 36px;
-    }
-
-    .ft-contacts {
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
+    .ft-top { grid-template-columns: 1fr; gap: 32px; }
+    .ft-contacts { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .ft-bairros { grid-template-columns: 1fr; gap: 20px; }
   }
 
   @media (max-width: 440px) {
-    .ft-contacts {
-      grid-template-columns: 1fr;
-    }
+    .ft-contacts { grid-template-columns: 1fr; }
   }
 </style>
