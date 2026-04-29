@@ -45,12 +45,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
                 <span class="th-sub">Concorrentes particulares</span>
               </div>
             </th>
-            <th scope="col">
-              <div class="th-inner">
-                <span class="th-title">Carro particular</span>
-                <span class="th-sub">Familiar, táxi, Uber</span>
-              </div>
-            </th>
             <th scope="col" class="th-savior">
               <div class="th-inner th-savior-inner">
                 <span class="th-title th-savior-wordmark">SAVIOR</span>
@@ -64,7 +58,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             <th scope="row">Tempo médio de chegada</th>
             <td data-col="SAMU">40–90 min<br /><small>fila de atendimento</small></td>
             <td data-col="Outras">30–60 min<br /><small>varia por empresa</small></td>
-            <td data-col="Carro">Variável<br /><small>depende do motorista</small></td>
             <td data-col="Savior" class="td-savior">
               <strong>{responseTime}</strong><br /><small>{zoneLabel}</small>
             </td>
@@ -73,9 +66,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             <th scope="row">Médico a bordo</th>
             <td data-col="SAMU">Só no SAMU avançado</td>
             <td data-col="Outras">Raramente</td>
-            <td data-col="Carro">
-              <span class="mark no">Não</span>
-            </td>
             <td data-col="Savior" class="td-savior">
               <strong>Sempre na UTI</strong>
             </td>
@@ -84,9 +74,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             <th scope="row">Equipamento UTI completo</th>
             <td data-col="SAMU">Condicional</td>
             <td data-col="Outras">Varia por empresa</td>
-            <td data-col="Carro">
-              <span class="mark no">Nenhum</span>
-            </td>
             <td data-col="Savior" class="td-savior">
               <strong>Monitor, respirador, desfibrilador</strong>
             </td>
@@ -95,7 +82,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             <th scope="row">Disponibilidade</th>
             <td data-col="SAMU">Depende da fila</td>
             <td data-col="Outras">Varia por empresa</td>
-            <td data-col="Carro">Depende</td>
             <td data-col="Savior" class="td-savior">
               <strong>24h · 365 dias</strong>
             </td>
@@ -107,9 +93,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             </td>
             <td data-col="Outras">
               <strong>R$ 1.500–3.500</strong><br /><small>média do mercado</small>
-            </td>
-            <td data-col="Carro">
-              <strong>R$ 50–200</strong><br /><small>corrida urbana</small>
             </td>
             <td data-col="Savior" class="td-savior td-savior-price">
               <div class="savior-price-stack">
@@ -136,12 +119,6 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
         <div class="comp-card">
           <div class="comp-card-label">Outras particulares</div>
           <p>Preço médio maior, escala menor, nem sempre com médico a bordo. <strong>Pode resolver em remoção simples</strong>.</p>
-        </div>
-        <div class="comp-card">
-          <div class="comp-card-label">Carro particular</div>
-          <p>
-            Só em situação não-clínica. <strong>Nunca em trauma, suspeita de infarto ou AVC, queda com impacto</strong>. Pode matar.
-          </p>
         </div>
         <div class="comp-card featured">
           <div class="comp-card-label">Savior</div>
@@ -207,7 +184,7 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
 
   .comp-table {
     width: 100%;
-    min-width: 780px;
+    min-width: 600px;
     border-collapse: collapse;
     font-family: var(--sans);
   }
@@ -414,7 +391,7 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
 
   .comp-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 
