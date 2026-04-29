@@ -255,6 +255,7 @@ const schema = JSON.stringify({
         />
       </div>
       <div class="ta-band-overlay ta-band-overlay--right" aria-hidden="true"></div>
+      <div class="ta-band-stripe" aria-hidden="true"></div>
       <div class="ta-band-content wrap">
         <div class="ta-band-text ta-band-text--right">
           <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO B · SUPORTE BÁSICO</p>
@@ -360,6 +361,7 @@ const schema = JSON.stringify({
         />
       </div>
       <div class="ta-band-overlay ta-band-overlay--left" aria-hidden="true"></div>
+      <div class="ta-band-stripe" aria-hidden="true"></div>
       <div class="ta-band-content wrap">
         <div class="ta-band-text ta-band-text--left">
           <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO D · SUPORTE AVANÇADO</p>
@@ -474,6 +476,7 @@ const schema = JSON.stringify({
         />
       </div>
       <div class="ta-band-overlay ta-band-overlay--right ta-band-overlay--neo" aria-hidden="true"></div>
+      <div class="ta-band-stripe" aria-hidden="true"></div>
       <div class="ta-band-content wrap">
         <div class="ta-band-text ta-band-text--right">
           <p class="eyebrow on-dark" style="margin-bottom:14px">ESPECIALIZADA · UTI NEONATAL</p>
@@ -872,10 +875,10 @@ const schema = JSON.stringify({
   .ta-band-bg video { z-index: 1; }
   .ta-band-overlay { position: absolute; inset: 0; z-index: 2; }
   .ta-band-overlay--right {
-    background: linear-gradient(to left, rgba(7,24,43,.92) 0%, rgba(7,24,43,.75) 35%, rgba(7,24,43,.20) 65%, transparent 100%);
+    background: linear-gradient(to left, rgba(7,24,43,.98) 0%, rgba(7,24,43,.90) 35%, rgba(7,24,43,.55) 60%, rgba(7,24,43,.15) 100%);
   }
   .ta-band-overlay--left {
-    background: linear-gradient(to right, rgba(7,24,43,.92) 0%, rgba(7,24,43,.75) 35%, rgba(7,24,43,.20) 65%, transparent 100%);
+    background: linear-gradient(to right, rgba(7,24,43,.98) 0%, rgba(7,24,43,.90) 35%, rgba(7,24,43,.55) 60%, rgba(7,24,43,.15) 100%);
   }
   .ta-band-overlay--center {
     background:
@@ -883,7 +886,11 @@ const schema = JSON.stringify({
       linear-gradient(to bottom, rgba(7,24,43,.4), rgba(7,24,43,.4));
   }
   .ta-band-overlay--neo {
-    background: linear-gradient(to left, rgba(7,24,43,.90) 0%, rgba(7,24,43,.72) 38%, rgba(7,24,43,.15) 68%, transparent 100%);
+    background: linear-gradient(to left, rgba(7,24,43,.98) 0%, rgba(7,24,43,.90) 38%, rgba(7,24,43,.55) 62%, rgba(7,24,43,.15) 100%);
+  }
+  .ta-band-stripe {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px; z-index: 4;
+    background: linear-gradient(to right, var(--green-bright), var(--green-dark), var(--navy-deep));
   }
   @media (max-width: 768px) {
     .ta-band { min-height: 480px; }
