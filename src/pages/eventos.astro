@@ -364,18 +364,18 @@ const faqItems = [
           <thead>
             <tr>
               <th scope="col" style="min-width:200px"></th>
-              <th scope="col" class="ev-comp-savior" style="text-align:center">Savior</th>
-              <th scope="col" style="text-align:center">Concorrentes</th>
+              <th scope="col" class="ev-comp-savior ev-comp-th-brand">SAVIOR</th>
+              <th scope="col" class="ev-comp-th-conc">Concorrentes</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="ev-comp-label">Ambulância própria (não terceirizada)</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Geralmente não">✗</span> geralmente</td></tr>
-            <tr><td class="ev-comp-label">Equipe chega antes do público</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span> 30–60 min antes</td><td style="text-align:center"><span class="cross" aria-label="Sem garantia">✗</span> sem garantia</td></tr>
-            <tr><td class="ev-comp-label">Responsável técnico nomeado (ART)</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Raro">✗</span> raro</td></tr>
-            <tr><td class="ev-comp-label">Documentação para alvará inclusa</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Cobra à parte">✗</span> cobra à parte</td></tr>
-            <tr><td class="ev-comp-label">Relatório pós-evento em 48h</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Não">✗</span></td></tr>
-            <tr><td class="ev-comp-label">Cobertura montagem + evento + desmontagem</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Só o evento">✗</span> só evento</td></tr>
-            <tr><td class="ev-comp-label">Operação em eventos há +40 anos</td><td class="ev-comp-savior" style="text-align:center"><span class="check" aria-label="Sim">✓</span></td><td style="text-align:center"><span class="cross" aria-label="Não">✗</span></td></tr>
+            <tr><td class="ev-comp-label">Ambulância própria (não terceirizada)</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Geralmente não">✗</span><span class="ev-comp-note">geralmente</span></td></tr>
+            <tr><td class="ev-comp-label">Equipe chega antes do público</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span><span class="ev-comp-note">30–60 min antes</span></td><td class="ev-comp-val"><span class="cross" aria-label="Sem garantia">✗</span><span class="ev-comp-note">sem garantia</span></td></tr>
+            <tr><td class="ev-comp-label">Responsável técnico nomeado (ART)</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Raro">✗</span><span class="ev-comp-note">raro</span></td></tr>
+            <tr><td class="ev-comp-label">Documentação para alvará inclusa</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Cobra à parte">✗</span><span class="ev-comp-note">cobra à parte</span></td></tr>
+            <tr><td class="ev-comp-label">Relatório pós-evento em 48h</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Não">✗</span></td></tr>
+            <tr><td class="ev-comp-label">Cobertura montagem + evento + desmontagem</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Só o evento">✗</span><span class="ev-comp-note">só evento</span></td></tr>
+            <tr><td class="ev-comp-label">Operação em eventos há +40 anos</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Não">✗</span></td></tr>
           </tbody>
         </table>
         </div>
@@ -803,14 +803,19 @@ const faqItems = [
 
   /* ── Comparison ── */
   .ev-comp-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 32px; }
-  .ev-comp-table th { text-align: left; padding: 14px 16px; font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); background: var(--navy-deep); border-bottom: 2px solid var(--green-dark); }
-  .ev-comp-table td { padding: 14px 16px; border-bottom: 1px solid var(--navy-mid); color: #ffffffcc; }
+  .ev-comp-table th { padding: 14px 16px; background: var(--navy-deep); border-bottom: 2px solid var(--green-dark); }
+  .ev-comp-th-brand { font-family: 'Ethnocentric', var(--sans); font-size: 14px; letter-spacing: .08em; color: #fff; text-align: center; background: var(--green-dark) !important; }
+  .ev-comp-th-conc { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); text-align: center; }
+  .ev-comp-table td { padding: 16px; border-bottom: 1px solid var(--navy-mid); color: #ffffffcc; }
   .ev-comp-table tr:hover td { background: rgba(255,255,255,.03); }
+  .ev-comp-val { text-align: center; vertical-align: middle; }
+  .ev-comp-val .check,
+  .ev-comp-val .cross { display: block; }
+  .ev-comp-note { display: block; font-size: 11px; color: rgba(255,255,255,.4); margin-top: 4px; font-family: var(--mono); letter-spacing: .04em; }
   .check { color: var(--green-bright); font-weight: 700; font-size: 16px; }
   .cross { color: var(--alert); font-size: 16px; }
   .ev-comp-label { font-weight: 600; color: #fff; }
   .ev-comp-savior { background: rgba(31,210,154,.06); }
-  .ev-comp-table th.ev-comp-savior { background: var(--green-dark); color: #fff; }
   @media (max-width: 960px) { .ev-comp-table { font-size: 13px; } .ev-comp-table th, .ev-comp-table td { padding: 10px 8px; } }
 
   /* ── Form ── */
