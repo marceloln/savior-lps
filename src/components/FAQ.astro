@@ -24,7 +24,7 @@ const faqCityLabel = city === 'SP' ? 'em São Paulo' : 'no Rio de Janeiro';
     <div class="faq-list">
       {items.map((item) => (
         <details class="faq-item">
-          <summary class="faq-q">
+          <summary class="faq-q" aria-label={`Expandir: ${item.q}`}>
             <span>{item.q}</span>
             <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"></polyline>

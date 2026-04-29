@@ -145,7 +145,7 @@ const schema = JSON.stringify({
         <h1>Cobertura médica dedicada para sua empresa. <em class="corp-green-bright">SLA em contrato.</em></h1>
         <p class="corp-hero-sub">Ambulância alocada 24h, equipe médica própria, SLA em contrato. A tranquilidade de saber que, quando acontecer, alguém já está lá.</p>
         <div class="corp-hero-ctas">
-          <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-hero-proposta',campaign:'corporativo',location:'hero'})">
+          <a href="#proposta" class="btn btn-primary" onclick="typeof window.gtag==='function'&&window.gtag('event','cta_click',{event_category:'cta',event_label:'corporativo-hero-proposta',campaign:'corporativo',location:'hero'})">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             Solicitar proposta
           </a>
@@ -328,7 +328,7 @@ const schema = JSON.stringify({
           </li>
         </ul>
         <div class="corp-urgencia-cta">
-          <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-urgencia-proposta',campaign:'corporativo',location:'urgencia'})">Solicitar proposta agora</a>
+          <a href="#proposta" class="btn btn-primary" onclick="typeof window.gtag==='function'&&window.gtag('event','cta_click',{event_category:'cta',event_label:'corporativo-urgencia-proposta',campaign:'corporativo',location:'urgencia'})">Solicitar proposta agora</a>
         </div>
       </div>
       <div class="corp-urgencia-img">
@@ -546,7 +546,7 @@ const schema = JSON.stringify({
     <h2 id="cta-heading" style="color:#fff;text-align:center">Sua empresa precisa de cobertura médica?<br><em class="corp-green-bright">A gente cuida.</em></h2>
     <p class="corp-cta-sub">46 anos de operação, 96% de renovação. Fale com a equipe comercial e receba uma proposta em 24h.</p>
     <div class="corp-cta-btns">
-      <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-cta-final-proposta',campaign:'corporativo',location:'cta_final'})">
+      <a href="#proposta" class="btn btn-primary" onclick="typeof window.gtag==='function'&&window.gtag('event','cta_click',{event_category:'cta',event_label:'corporativo-cta-final-proposta',campaign:'corporativo',location:'cta_final'})">
         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
         Solicitar proposta
       </a>

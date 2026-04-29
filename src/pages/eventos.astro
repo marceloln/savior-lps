@@ -662,7 +662,7 @@ const faqItems = [
   .section { padding: var(--space-block) 0; }
   .ev-cream-light  { background: var(--cream-light); border-bottom: 1px solid var(--cream-dark); }
   .ev-navy-deep    { background: var(--navy-deep); color: #fff; }
-  .ev-form-bg      { background: #f7f3ec; border-bottom: 1px solid var(--cream-dark); }
+  .ev-form-bg      { background: var(--cream-light); border-bottom: 1px solid var(--cream-dark); }
   .on-dark         { color: #fff; }
   .accent-text     { color: var(--green-dark); font-style: normal; }
   .ev-green-bright { color: var(--green-bright); font-style: normal; }
@@ -820,7 +820,7 @@ const faqItems = [
 
   /* ── Steps ── */
   .ev-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-  @media (min-width: 600px) and (max-width: 959px) { .ev-steps { grid-template-columns: repeat(3,1fr); } }
+  @media (min-width: 600px) and (max-width: 959px) { .ev-steps { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 599px) { .ev-steps { grid-template-columns: 1fr; gap: 12px; } }
   .ev-step { background: #fff; padding: 32px 24px; border-radius: 6px; border: 1px solid var(--cream-dark); border-top: 3px solid var(--green); }
   .ev-step-n { font-family: var(--mono); font-size: 9px; letter-spacing: .25em; color: var(--green-dark); margin-bottom: 10px; }
