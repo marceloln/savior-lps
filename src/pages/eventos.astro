@@ -359,25 +359,35 @@ const faqItems = [
         <span class="eyebrow on-dark">Por que a Savior</span>
         <h2 id="comp-heading" class="on-dark" style="margin-bottom:8px">O que nos separa <em class="ev-green-bright">de todo o resto</em></h2>
         <p class="ev-section-lead ev-muted">Ambulância para evento tem muita no mercado. Mas poucas têm 46 anos de operação, responsável técnico nomeado em contrato e equipe que não atrasa.</p>
-        <div style="overflow-x:auto">
-        <table class="ev-comp-table" role="table" aria-label="Comparativo Savior vs concorrentes">
-          <thead>
-            <tr>
-              <th scope="col" style="min-width:200px"></th>
-              <th scope="col" class="ev-comp-savior ev-comp-th-brand">SAVIOR</th>
-              <th scope="col" class="ev-comp-th-conc">Concorrentes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="ev-comp-label">Ambulância própria (não terceirizada)</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Geralmente não">✗</span><span class="ev-comp-note">geralmente</span></td></tr>
-            <tr><td class="ev-comp-label">Equipe chega antes do público</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span><span class="ev-comp-note">30–60 min antes</span></td><td class="ev-comp-val"><span class="cross" aria-label="Sem garantia">✗</span><span class="ev-comp-note">sem garantia</span></td></tr>
-            <tr><td class="ev-comp-label">Responsável técnico nomeado (ART)</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Raro">✗</span><span class="ev-comp-note">raro</span></td></tr>
-            <tr><td class="ev-comp-label">Documentação para alvará inclusa</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Cobra à parte">✗</span><span class="ev-comp-note">cobra à parte</span></td></tr>
-            <tr><td class="ev-comp-label">Relatório pós-evento em 48h</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Não">✗</span></td></tr>
-            <tr><td class="ev-comp-label">Cobertura montagem + evento + desmontagem</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Só o evento">✗</span><span class="ev-comp-note">só evento</span></td></tr>
-            <tr><td class="ev-comp-label">Operação em eventos há +40 anos</td><td class="ev-comp-savior ev-comp-val"><span class="check" aria-label="Sim">✓</span></td><td class="ev-comp-val"><span class="cross" aria-label="Não">✗</span></td></tr>
-          </tbody>
-        </table>
+        <div class="ev-comp-panels" role="region" aria-label="Comparativo Savior vs concorrentes">
+          <div class="ev-comp-panel ev-comp-panel--savior">
+            <div class="ev-comp-panel-head">
+              <span class="ev-comp-panel-label">SAVIOR</span>
+            </div>
+            <ul class="ev-comp-list">
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Ambulância própria<span class="ev-ci-sub">não terceirizada</span></span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Equipe chega antes do público<span class="ev-ci-sub">30–60 min antes</span></span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Responsável técnico nomeado<span class="ev-ci-sub">ART em contrato</span></span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Documentação para alvará inclusa</span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Relatório pós-evento em 48h</span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">Cobertura montagem, evento e desmontagem</span></li>
+              <li class="ev-comp-item"><span class="ev-ci-check">✓</span><span class="ev-ci-text">46 anos de operação em eventos</span></li>
+            </ul>
+          </div>
+          <div class="ev-comp-panel ev-comp-panel--conc">
+            <div class="ev-comp-panel-head">
+              <span class="ev-comp-panel-label ev-comp-panel-label--conc">Concorrentes</span>
+            </div>
+            <ul class="ev-comp-list">
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Geralmente terceirizada</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Sem garantia de pontualidade</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Responsável técnico raro</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Documentação cobrada à parte</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Sem relatório pós-evento</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Só cobre o período do evento</span></li>
+              <li class="ev-comp-item ev-comp-item--cross"><span class="ev-ci-cross">✗</span><span class="ev-ci-text ev-ci-text--cross">Sem histórico comprovado</span></li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -790,21 +800,23 @@ const faqItems = [
   .ev-step p { font-size: 13px; color: var(--gray); line-height: 1.55; }
 
   /* ── Comparison ── */
-  .ev-comp-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 32px; }
-  .ev-comp-table th { padding: 14px 16px; background: var(--navy-deep); border-bottom: 2px solid var(--green-dark); }
-  .ev-comp-th-brand { font-family: 'Ethnocentric', var(--sans); font-size: 14px; letter-spacing: .08em; color: #fff; text-align: center; background: var(--green-dark) !important; }
-  .ev-comp-th-conc { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--green-bright); text-align: center; }
-  .ev-comp-table td { padding: 10px 16px; border-bottom: 1px solid var(--navy-mid); color: #ffffffcc; }
-  .ev-comp-table tr:hover td { background: rgba(255,255,255,.03); }
-  .ev-comp-val { text-align: center; vertical-align: middle; }
-  .ev-comp-val .check,
-  .ev-comp-val .cross { display: block; }
-  .ev-comp-note { display: block; font-size: 11px; color: rgba(255,255,255,.4); margin-top: 4px; font-family: var(--mono); letter-spacing: .04em; }
-  .check { color: var(--green-bright); font-weight: 700; font-size: 16px; }
-  .cross { color: var(--alert); font-size: 16px; }
-  .ev-comp-label { font-weight: 600; color: #fff; }
-  .ev-comp-savior { background: rgba(31,210,154,.06); }
-  @media (max-width: 960px) { .ev-comp-table { font-size: 13px; } .ev-comp-table th, .ev-comp-table td { padding: 10px 8px; } }
+  .ev-comp-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+  .ev-comp-panel { border-radius: 6px; overflow: hidden; border: 1px solid var(--navy-mid); }
+  .ev-comp-panel--savior { border-color: rgba(31,210,154,.25); }
+  .ev-comp-panel-head { padding: 16px 24px; border-bottom: 1px solid var(--navy-mid); }
+  .ev-comp-panel--savior .ev-comp-panel-head { background: var(--green-dark); border-bottom-color: rgba(31,210,154,.3); }
+  .ev-comp-panel--conc .ev-comp-panel-head { background: var(--navy-deep); }
+  .ev-comp-panel-label { font-family: 'Ethnocentric', var(--sans); font-size: 13px; letter-spacing: .1em; color: #fff; }
+  .ev-comp-panel-label--conc { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+  .ev-comp-list { list-style: none; padding: 0; margin: 0; }
+  .ev-comp-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 24px; border-bottom: 1px solid var(--navy-mid); }
+  .ev-comp-item:last-child { border-bottom: none; }
+  .ev-ci-check { color: var(--green-bright); font-size: 16px; font-weight: 700; flex-shrink: 0; line-height: 1.4; }
+  .ev-ci-cross { color: var(--alert); font-size: 16px; flex-shrink: 0; line-height: 1.4; opacity: .7; }
+  .ev-ci-text { font-size: 14px; font-weight: 700; color: var(--green-bright); line-height: 1.35; display: flex; flex-direction: column; gap: 3px; }
+  .ev-ci-text--cross { color: rgba(255,255,255,.35); font-weight: 400; }
+  .ev-ci-sub { font-size: 11px; font-weight: 400; color: rgba(255,255,255,.35); font-family: var(--mono); letter-spacing: .04em; }
+  @media (max-width: 720px) { .ev-comp-panels { grid-template-columns: 1fr; } }
 
   /* ── Form ── */
   .ev-form-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,6vw,64px); align-items: start; }
