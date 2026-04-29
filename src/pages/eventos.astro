@@ -359,7 +359,7 @@ const faqItems = [
         <h2 id="comp-heading" class="on-dark" style="margin-bottom:8px">O que nos separa <em class="ev-green-bright">de todo o resto</em></h2>
         <p class="ev-section-lead ev-muted">Ambulância para evento tem muita no mercado. Mas poucas têm 46 anos de operação, responsável técnico nomeado em contrato e equipe que não atrasa.</p>
         <div class="ev-comp-wrap" style="overflow-x:auto;margin-top:40px">
-        <table class="ev-comp-table" role="table" aria-label="Comparativo Savior vs concorrentes">
+        <table class="ev-comp-table" aria-label="Comparativo Savior vs concorrentes">
           <thead>
             <tr>
               <th scope="col" class="ev-comp-th-savior">SAVIOR</th>
@@ -708,6 +708,7 @@ const faqItems = [
   .ev-hero-live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--green-bright); animation: ev-live-pulse 2s ease-out infinite; }
   @keyframes ev-live-pulse { 0% { transform: scale(1); opacity: .6; } 70% { transform: scale(2.5); opacity: 0; } to { transform: scale(2.5); opacity: 0; } }
   .ev-hero h1 { color: #fff; font-size: clamp(36px, 5.2vw, 58px); margin-bottom: clamp(20px, 3vh, 32px); }
+  @media (max-width: 480px) { .ev-hero h1 { font-size: 30px; } }
   .ev-hero h1 em { font-style: normal; color: var(--green-bright); }
   .ev-hero-sub { font-size: clamp(15px,1.4vw,17px); color: #ffffffd1; max-width: 520px; margin-bottom: clamp(12px,2vh,20px); line-height: 1.55; }
   .ev-hero-note { font-size: 13px; color: #fff9; max-width: 520px; margin-bottom: clamp(28px,3.6vh,40px); line-height: 1.55; }
