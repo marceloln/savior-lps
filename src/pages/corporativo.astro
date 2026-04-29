@@ -171,6 +171,43 @@ const schema = JSON.stringify({
   </div>
 </section>
 
+<!-- ═══ TL;DR B2B — resposta direta antes do scroll (AEO/LLMO) ═══ -->
+<section class="corp-tldr" aria-label="Resumo rápido — cobertura médica corporativa Savior">
+  <div class="wrap">
+    <ul class="corp-tldr-list" role="list">
+      <li class="corp-tldr-item">
+        <svg class="corp-tldr-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 2a5 5 0 1 1 0 10A5 5 0 0 1 10 2Z" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M4.5 16.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="corp-tldr-text">
+          <strong>Equipe 100% própria — sem terceirização.</strong>
+          Médico, enfermeiro e condutor socorrista contratados, treinados e avaliados pela Savior. Frota certificada com menos de 3 anos de uso.
+        </div>
+      </li>
+      <li class="corp-tldr-item">
+        <svg class="corp-tldr-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M7 4V3a1 1 0 0 1 2 0v1M11 4V3a1 1 0 0 1 2 0v1M3 8h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="corp-tldr-text">
+          <strong>SLA garantido em contrato — não em promessa verbal.</strong>
+          Tempo de resposta, equipe mínima e equipamentos definidos antes da assinatura. Contrato a partir de 12 meses.
+        </div>
+      </li>
+      <li class="corp-tldr-item">
+        <svg class="corp-tldr-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 2l2.4 4.8 5.3.8-3.85 3.75.91 5.3L10 14.1l-4.76 2.55.91-5.3L2.3 7.6l5.3-.8L10 2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <div class="corp-tldr-text">
+          <strong>96% de renovação dos contratos corporativos.</strong>
+          Clientes ativos: Petrobras, Rede D'Or, Bradesco, Prevent Senior, Unimed. Nota fiscal para pessoa jurídica.
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
 <!-- ═══ 3. LOGOS CLIENTES ═══ -->
 <div class="corp-logos">
   <div class="wrap">
@@ -234,21 +271,25 @@ const schema = JSON.stringify({
         <p class="corp-model-tag">Mais popular</p>
         <h3>Ambulância Alocada 24h</h3>
         <p>Veículo UTI dedicado à sua empresa, posicionado na porta. Equipe completa em regime de plantão 24/7.</p>
+        <a href="#proposta" class="corp-model-cta">Solicitar proposta →</a>
       </div>
       <div class="corp-model-card corp-anim">
         <p class="corp-model-tag">Cobertura ampla</p>
         <h3>Área Protegida</h3>
         <p>Cobertura médica para uma região geográfica definida. Ideal para condomínios, shoppings e complexos industriais.</p>
+        <a href="#proposta" class="corp-model-cta">Solicitar proposta →</a>
       </div>
       <div class="corp-model-card corp-anim">
         <p class="corp-model-tag">Flexível</p>
         <h3>Sob Demanda</h3>
         <p>Acionamento por chamado com SLA garantido. Para empresas que não precisam de cobertura permanente.</p>
+        <a href="#proposta" class="corp-model-cta">Solicitar proposta →</a>
       </div>
       <div class="corp-model-card corp-anim">
         <p class="corp-model-tag">Especializado</p>
         <h3>Home Care / APH</h3>
         <p>Atendimento domiciliar e pré-hospitalar. Para operadoras de saúde e empresas com colaboradores em campo.</p>
+        <a href="#proposta" class="corp-model-cta">Solicitar proposta →</a>
       </div>
     </div>
   </div>
@@ -674,11 +715,36 @@ const schema = JSON.stringify({
       );
       window.open('https://wa.me/5521980358200?text=' + msg, '_blank');
 
-      var btn = corpForm.querySelector('.corp-form-submit');
-      btn.textContent = 'Enviado! Abrindo WhatsApp...';
-      btn.style.background = 'var(--green-dark)';
-      btn.style.color = '#fff';
-      btn.disabled = true;
+      while (corpForm.firstChild) { corpForm.removeChild(corpForm.firstChild); }
+      var sw = document.createElement('div');
+      sw.style.cssText = 'text-align:center;padding:48px 24px';
+      var si = document.createElement('div');
+      si.setAttribute('aria-hidden', 'true');
+      si.style.cssText = 'width:52px;height:52px;border-radius:50%;background:var(--green-dark);display:flex;align-items:center;justify-content:center;margin:0 auto 20px';
+      var svgNS = 'http://www.w3.org/2000/svg';
+      var checkSvg = document.createElementNS(svgNS, 'svg');
+      checkSvg.setAttribute('viewBox', '0 0 24 24');
+      checkSvg.setAttribute('fill', 'none');
+      checkSvg.setAttribute('stroke', '#fff');
+      checkSvg.setAttribute('stroke-width', '2.5');
+      checkSvg.setAttribute('stroke-linecap', 'round');
+      checkSvg.setAttribute('stroke-linejoin', 'round');
+      checkSvg.setAttribute('width', '26');
+      checkSvg.setAttribute('height', '26');
+      var checkPoly = document.createElementNS(svgNS, 'polyline');
+      checkPoly.setAttribute('points', '20 6 9 17 4 12');
+      checkSvg.appendChild(checkPoly);
+      si.appendChild(checkSvg);
+      var sh = document.createElement('h3');
+      sh.style.cssText = 'color:var(--navy-deep);font-size:20px;font-weight:700;margin-bottom:10px';
+      sh.textContent = 'Solicita\u00e7\u00e3o enviada!';
+      var sp = document.createElement('p');
+      sp.style.cssText = 'color:var(--gray);font-size:14px;line-height:1.6;max-width:320px;margin:0 auto';
+      sp.textContent = 'O Carlos da nossa equipe comercial vai entrar em contato em at\u00e9 24 horas \u00fateis com uma proposta personalizada para a sua empresa.';
+      sw.appendChild(si);
+      sw.appendChild(sh);
+      sw.appendChild(sp);
+      corpForm.appendChild(sw);
     });
   }
 </script>
@@ -688,6 +754,21 @@ const schema = JSON.stringify({
      CORPORATIVO — estilos com prefixo corp-
      Não polui o escopo global
   ══════════════════════════════════════════ */
+
+  /* ── TL;DR B2B ── */
+  .corp-tldr { background: var(--cream-light); border-top: 1px solid var(--cream-dark); border-bottom: 1px solid var(--cream-dark); padding: 28px 0; }
+  .corp-tldr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+  @media (min-width: 720px) { .corp-tldr-list { flex-direction: row; gap: 32px; align-items: flex-start; } }
+  .corp-tldr-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--cream-dark); flex: 1; }
+  .corp-tldr-item:last-child { border-bottom: none; }
+  @media (min-width: 720px) {
+    .corp-tldr-item { border-bottom: none; border-right: 1px solid var(--cream-dark); padding: 0 32px 0 0; }
+    .corp-tldr-item:last-child { border-right: none; padding-right: 0; }
+    .corp-tldr-item:first-child { padding-left: 0; }
+  }
+  .corp-tldr-icon { flex-shrink: 0; width: 22px; height: 22px; color: var(--green-dark); margin-top: 1px; }
+  .corp-tldr-text { font-size: 14px; line-height: 1.55; color: var(--navy); }
+  .corp-tldr-text strong { display: block; font-weight: 700; font-size: 14.5px; margin-bottom: 3px; color: var(--navy-deep); }
 
   /* Tokens utilitários */
   .corp-green-bright { color: var(--green-bright); font-style: normal; }
@@ -803,8 +884,11 @@ const schema = JSON.stringify({
   }
   .corp-model-card:hover { transform: translateY(-2px); }
   .corp-model-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; line-height: 1.2; }
-  .corp-model-card p { font-size: 14px; color: var(--gray); line-height: 1.55; }
+  .corp-model-card p { font-size: 14px; color: var(--gray); line-height: 1.55; flex: 1; }
   .corp-model-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); margin-bottom: 14px; }
+  .corp-model-cta { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none; transition: color .15s; }
+  .corp-model-cta:hover { color: var(--green-bright); }
+  .corp-model-card { display: flex; flex-direction: column; }
 
   /* ── Photo Break ── */
   .corp-photo-break { position: relative; min-height: 420px; display: flex; align-items: center; overflow: hidden; background: var(--navy-deep); }
