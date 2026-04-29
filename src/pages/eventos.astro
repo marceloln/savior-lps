@@ -6,6 +6,7 @@
 // ============================================================
 
 import Base from '../layouts/Base.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
 
 // ============ SEO ============
@@ -667,6 +668,13 @@ const faqItems = [
       });
     }
   </script>
+
+  <!-- ═══ FLOATING WHATSAPP — mobile, sobe acima do Blip ═══ -->
+  <FloatingWhatsApp waCampaign="eventos" />
+  <style>
+    /* Sobe o pill de WA para não sobrepor o launcher do Blip no mobile */
+    @media (max-width: 960px) { .fw { bottom: 76px; } }
+  </style>
 
   <!-- ═══ BLIP CHAT — Eventos ═══ -->
   <!-- defer: não bloqueia parser, carrega em paralelo, executa após HTML parseado -->
