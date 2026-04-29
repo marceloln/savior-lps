@@ -117,6 +117,68 @@ Tom de voz: acolhedor, humanizado. Palavra-chave recorrente: **"escuta"** (a gen
 - [ ] PWA manifest (nice-to-have)
 - [ ] A/B test via Cloudflare Workers quando migrar de Pages
 
+## Atribuição UTM → WhatsApp → Blip
+
+### Arquitetura
+O fluxo completo de atribuição não depende de cookies no servidor — tudo ocorre no cliente e vai embutido no texto da mensagem WhatsApp.
+
+**Componentes:**
+- `src/scripts/utm-capture.ts` — fonte TypeScript documentada. O script inline correspondente está em `src/layouts/Base.astro` (bloco "UTM Capture — ANTES do GTM"), antes do `<script is:inline define:vars>` do GTM.
+- `src/scripts/wa-enhance.ts` — fonte TypeScript documentada. O script inline correspondente está em `src/layouts/Base.astro`, antes do `</body>`.
+- Cookie `savior_utm` (JSON, 30 dias, SameSite=Lax) — first-touch model. Só sobrescreve se UTMs estiverem na URL.
+- `window._saviorUtm` — objeto exposto pelo utm-capture para wa-enhance ler sem re-parsear o cookie.
+- `window.dataLayer` — `utm_loaded` event pushed ANTES do GTM iniciar (GTM consegue ler na primeira tag).
+
+**Formato da tag de atribuição (appended no texto WA):**
+```
+[{campaign}-{location}-v01]
+[gclid:{gclid}]   ← só se gclid presente
+```
+Exemplo: `Oi, preciso de UTI agora. [rj-emergencia-price-uti-v01] [gclid:Cj0KCQ...]`
+
+**Por que na mensagem (não na URL do wa.me):** WhatsApp descarta query strings do wa.me deep link. A única forma de transportar atribuição até o atendente (e eventualmente Blip) é no texto.
+
+**Blip (quando integrado):** regex `\[([^\]]+)\]` na primeira mensagem recebida extrai campaign + gclid.
+
+**Documentação GTM completa:** `docs/GTM_SETUP.md` (7 DLVs, 6 Triggers, 10 Tags, fluxo completo GA4→Google Ads→Blip).
+
+### Conversões rastreadas
+
+| Ação | Evento dataLayer | GA4 | Google Ads | Blip |
+|---|---|---|---|---|
+| Clique botão WhatsApp | `whatsapp_click` | conversão principal | importar do GA4 | conectar |
+| Clique número telefone | `phone_click` | conversão principal | importar do GA4 | — |
+
+Google Ads usa **importação do GA4** (não tag direta) — único tipo que o Blip consegue conectar. Evita dupla contagem.
+
+### Ordem de ativação (pós-deploy)
+
+1. Publicar GTM → primeiro clique real gera eventos no GA4
+2. GA4: marcar `whatsapp_click` e `phone_click` como conversão
+3. Google Ads: importar ambos do GA4 (Ferramentas → Conversões → Importar → GA4)
+4. Blip: conectar `Savior — WhatsApp Click` na tela de conversão
+
+### Como testar a atribuição localmente
+
+```bash
+npm run dev  # http://localhost:4321
+```
+
+| URL | Cookie esperado | Tag no WA |
+|---|---|---|
+| `...?utm_source=google&utm_medium=cpc&utm_campaign=rj-emergencia` | source=google, medium=cpc | `[rj-emergencia-hero-v01]` |
+| `...?utm_source=facebook&utm_campaign=rj-uti` | source=facebook | `[rj-uti-hero-v01]` |
+| `...?gclid=TestGCLID123` | source=direct, gclid=TestGCLID123 | `[direct-hero-v01] [gclid:TestGCLID123]` |
+| (sem params, sem cookie) | source=direct | `[direct-hero-v01]` |
+
+**Checklist:**
+1. DevTools → Application → Cookies → `savior_utm` contém JSON correto
+2. Console → `window._saviorUtm` retorna o objeto
+3. Console → `window.dataLayer[0]` contém `event: 'utm_loaded'` com `attribution.*`
+4. Hover em botão WA → URL na barra de status contém `%5B` (= `[`) no param `text`
+5. GTM Preview Mode → Tag 2 "GA4 | WhatsApp Click" dispara ao clicar botão WA
+6. GTM Preview Mode → Tag 3 "GA4 | Phone Click" dispara ao clicar número de telefone
+
 ## Backup de dados
 
 Arquivos-fonte originais em `/mnt/project/` (chat projeto):

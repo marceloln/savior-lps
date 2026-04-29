@@ -63,3 +63,4 @@ Automático via **Cloudflare Pages**:
 - Output: `dist`
 
 Ver `CLAUDE.md` pra histórico e decisões.
+Ver `docs/GTM_SETUP.md` pra configurar variáveis, triggers e tags no GTM (inclui fluxo UTM → WhatsApp → Blip).
