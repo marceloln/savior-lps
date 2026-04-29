@@ -74,7 +74,7 @@ const faqItems = [
       <div class="wrap ev-sh-inner">
         <div class="ev-sh-brand">
           <span class="ev-sh-word">SAVIOR</span>
-          <span class="ev-sh-tag">Eventos</span>
+          <span class="ev-sh-tag">Medical Service</span>
         </div>
         <div class="ev-sh-actions">
           <a class="ev-sh-wa" href={waHeader} data-whatsapp data-campaign="eventos" data-location="header">
@@ -503,7 +503,7 @@ const faqItems = [
         <div class="ev-ft-top">
           <div>
             <div class="ev-ft-word">SAVIOR</div>
-            <div class="ev-ft-tag">Medical Service · Desde 1979</div>
+            <div class="ev-ft-tag">Medical Service · Desde {BRAND.yearsFounded}</div>
           </div>
           <div class="ev-ft-contacts">
             <div>
@@ -691,7 +691,7 @@ const faqItems = [
   }
   @media (max-width: 960px) { .ev-hero-overlay { background: linear-gradient(135deg, #07182be0, #0b2540c7); } }
   .ev-hero-content { position: relative; z-index: 3; width: 100%; color: #fff; }
-  .ev-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .ev-hero-brand { display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
   .ev-hero-wordmark { font-family: var(--ethno); font-size: 22px; letter-spacing: .08em; color: #fff; line-height: 1; }
   .ev-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
   .ev-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
@@ -851,7 +851,7 @@ const faqItems = [
   .ev-footer { background: #050f1c; color: #fff9; padding: 48px 0 28px; font-size: 13px; }
   .ev-ft-top { display: grid; grid-template-columns: 240px 1fr; gap: 48px; align-items: start; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,.08); }
   @media (max-width: 960px) { .ev-ft-top { grid-template-columns: 1fr; } }
-  .ev-ft-word { font-family: var(--ethno); font-size: 18px; letter-spacing: .08em; color: #fff; margin-bottom: 4px; }
+  .ev-ft-word { font-family: var(--ethno); font-size: 20px; letter-spacing: .08em; color: #fff; margin-bottom: 4px; }
   .ev-ft-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--green-bright); opacity: .8; }
   .ev-ft-contacts { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
   @media (max-width: 960px) { .ev-ft-contacts { grid-template-columns: 1fr 1fr; } }
