@@ -1,0 +1,923 @@
+---
+// ============================================================
+// /corporativo — Landing Page B2B Corporativa
+// Savior Medical Service — SLA em contrato, cobertura dedicada
+// Auditoria de consistência aplicada: tokens, ícones, tipografia
+// ============================================================
+import Base from '../layouts/Base.astro';
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["MedicalOrganization", "LocalBusiness"],
+      "@id": "https://www.savior.com.br/#organization",
+      "name": "Savior Medical Service",
+      "alternateName": "Savior",
+      "description": "Cobertura médica corporativa B2B com SLA em contrato, ambulância alocada 24h e equipe dedicada para empresas no RJ e SP. Desde 1979.",
+      "foundingDate": "1979",
+      "url": "https://www.savior.com.br",
+      "logo": "https://www.savior.com.br/favicon.svg",
+      "telephone": ["+55-21-3171-3030", "+55-11-3796-0058"],
+      "address": [
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "R. Gen. Padilha, 73",
+          "addressLocality": "Rio de Janeiro",
+          "addressRegion": "RJ",
+          "postalCode": "20920-390",
+          "addressCountry": "BR"
+        },
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. do Rio Bonito, 287",
+          "addressLocality": "São Paulo",
+          "addressRegion": "SP",
+          "addressCountry": "BR"
+        }
+      ],
+      "areaServed": ["Rio de Janeiro", "São Paulo"],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Modelos de Cobertura Corporativa",
+        "itemListElement": [
+          { "@type": "Offer", "name": "Ambulância Alocada 24h", "description": "Veículo UTI dedicado com equipe completa em regime de plantão 24/7." },
+          { "@type": "Offer", "name": "Área Protegida", "description": "Cobertura para região geográfica definida. Ideal para condomínios, shoppings e complexos industriais." },
+          { "@type": "Offer", "name": "Sob Demanda", "description": "Acionamento por chamado com SLA garantido em contrato." },
+          { "@type": "Offer", "name": "Home Care / APH", "description": "Atendimento domiciliar e pré-hospitalar para operadoras de saúde e empresas com colaboradores em campo." }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Qual o prazo mínimo de contrato?", "acceptedAnswer": { "@type": "Answer", "text": "O contrato mínimo é de 12 meses para ambulância alocada 24h. Para modelos sob demanda e área protegida, o período mínimo pode ser de 6 meses, dependendo da negociação." } },
+        { "@type": "Question", "name": "O SLA de tempo de resposta é garantido em contrato?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. O SLA é cláusula contratual. Para ambulância alocada, o veículo já está posicionado no local. Para área protegida e sob demanda, o tempo de resposta é negociado conforme a região e incluído formalmente no contrato." } },
+        { "@type": "Question", "name": "A equipe é própria ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "100% própria. Médicos, enfermeiros e condutores socorristas são contratados, treinados e avaliados pela Savior. Não terceirizamos equipe." } },
+        { "@type": "Question", "name": "Vocês cobrem RJ e SP ao mesmo tempo?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. A Savior opera com bases próprias no Rio de Janeiro (R. Gen. Padilha 73, São Cristóvão) e São Paulo (Av. do Rio Bonito 287, Socorro). Contratos multiestado são comuns entre nossos clientes corporativos." } }
+      ]
+    }
+  ]
+});
+---
+
+<Base
+  title="Cobertura Médica Corporativa B2B | Savior Medical Service"
+  description="Ambulância alocada 24h, equipe dedicada, SLA em contrato. Cobertura médica para empresas no RJ e SP. 46 anos de operação. 96% de renovação. Desde 1979."
+  canonical="https://www.savior.com.br/corporativo"
+  schema={schema}
+  ogImage="/og-savior.jpg"
+  ogImageAlt="Ambulância UTI Savior posicionada em complexo corporativo no Rio de Janeiro"
+  dateModified="2026-04-29"
+  lcpImageSrcset="/img/b2b/fleet-paulista.webp 1536w"
+>
+
+<!-- ═══ 1. STICKY HEADER ═══ -->
+<div class="corp-sh" id="corpStickyHeader" aria-hidden="true">
+  <div class="wrap corp-sh-inner">
+    <div class="corp-sh-brand">
+      <span class="corp-sh-word">SAVIOR</span>
+      <span class="corp-sh-tag">Corporativo</span>
+    </div>
+    <div class="corp-sh-actions">
+      <a href="tel:+552131713030" class="corp-sh-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        (21) 3171-3030
+      </a>
+      <a href="#proposta" class="btn btn-primary corp-sh-cta">Solicitar proposta</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2. HERO ═══ -->
+<section class="corp-hero" id="topo">
+  <div class="corp-hero-bg" aria-hidden="true">
+    <img
+      class="corp-hero-poster"
+      src="/img/b2b/fleet-paulista.webp"
+      alt=""
+      width="1920"
+      height="1080"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <video
+      id="corpHeroVid"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+    >
+      <source src="/video/b2b-hero.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="corp-hero-overlay" aria-hidden="true"></div>
+  <div class="corp-hero-content wrap">
+    <div class="corp-hero-brand">
+      <div>
+        <div class="corp-hero-wordmark">SAVIOR</div>
+        <div class="corp-hero-descriptor">Medical Service</div>
+      </div>
+    </div>
+    <div class="corp-hero-grid">
+      <div class="corp-hero-left">
+        <p class="eyebrow on-dark" style="margin-bottom:18px">Cobertura corporativa B2B</p>
+        <h1>Cobertura médica dedicada para sua empresa. <em class="corp-green-bright">SLA em contrato.</em></h1>
+        <p class="corp-hero-sub">Ambulância alocada 24h, equipe própria, documentação completa. Para empresas que não podem depender do acaso.</p>
+        <div class="corp-hero-ctas">
+          <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-hero-proposta',campaign:'corporativo',location:'hero'})">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Solicitar proposta
+          </a>
+          <a href="tel:+552131713030" class="btn btn-secondary on-dark" onclick="window.dataLayer&&window.dataLayer.push({event:'phone_click',event_category:'contato',event_label:'corporativo-hero-tel',campaign:'corporativo',location:'hero'})">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            (21) 3171-3030
+          </a>
+        </div>
+      </div>
+      <div class="corp-hero-right">
+        <div class="corp-kpi">
+          <p class="corp-kpi-label">Taxa de renovação</p>
+          <p class="corp-kpi-val">96<span class="corp-accent">%</span></p>
+          <p class="corp-kpi-desc">dos contratos corporativos são renovados. Quem contrata, não troca.</p>
+        </div>
+        <div class="corp-kpi">
+          <p class="corp-kpi-label">Desde</p>
+          <p class="corp-kpi-val corp-kpi-val--year">1979</p>
+          <p class="corp-kpi-desc">46 anos de operação contínua em RJ e SP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. LOGOS CLIENTES ═══ -->
+<div class="corp-logos">
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center;margin-bottom:24px">Empresas que confiam na Savior</p>
+    <div class="corp-logos-row">
+      <span>Petrobras</span>
+      <span>Rede D'Or</span>
+      <span>Bradesco</span>
+      <span>Prevent Senior</span>
+      <span>Unimed</span>
+      <span>Caxias D'Or</span>
+      <span>Niterói D'Or</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4. MÉTRICAS ═══ -->
+<section class="section corp-metrics-section" aria-labelledby="metrics-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:12px">Números</p>
+    <h2 id="metrics-heading">O que sustenta a operação</h2>
+    <div class="corp-metrics">
+      <div class="corp-metric corp-anim">
+        <p class="corp-metric-tag">Operação</p>
+        <p class="corp-metric-val">46</p>
+        <p class="corp-metric-label">anos de história</p>
+      </div>
+      <div class="corp-metric corp-anim">
+        <p class="corp-metric-tag">Atendimentos</p>
+        <p class="corp-metric-val">100K<span class="corp-suf">+</span></p>
+        <p class="corp-metric-label">atendimentos realizados</p>
+      </div>
+      <div class="corp-metric corp-anim">
+        <p class="corp-metric-tag">Equipe</p>
+        <p class="corp-metric-val">450<span class="corp-suf">+</span></p>
+        <p class="corp-metric-label">profissionais de saúde</p>
+      </div>
+      <div class="corp-metric corp-metric--featured corp-anim">
+        <p class="corp-metric-tag">Resolutividade</p>
+        <p class="corp-metric-val">96<span class="corp-suf">%</span></p>
+        <p class="corp-metric-label">das ocorrências resolvidas sem encaminhamento</p>
+      </div>
+      <div class="corp-metric corp-anim">
+        <p class="corp-metric-tag">Satisfação</p>
+        <p class="corp-metric-val">92</p>
+        <p class="corp-metric-label">NPS médio dos contratos B2B</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 5. MODELOS DE CONTRATAÇÃO ═══ -->
+<section class="section corp-models-section" aria-labelledby="models-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:12px">Modelos</p>
+    <h2 id="models-heading">Escolha o formato que cabe na sua operação</h2>
+    <div class="corp-models-grid">
+      <div class="corp-model-card corp-anim">
+        <p class="corp-model-tag">Mais popular</p>
+        <h3>Ambulância Alocada 24h</h3>
+        <p>Veículo UTI dedicado à sua empresa, posicionado na porta. Equipe completa em regime de plantão 24/7.</p>
+      </div>
+      <div class="corp-model-card corp-anim">
+        <p class="corp-model-tag">Cobertura ampla</p>
+        <h3>Área Protegida</h3>
+        <p>Cobertura médica para uma região geográfica definida. Ideal para condomínios, shoppings e complexos industriais.</p>
+      </div>
+      <div class="corp-model-card corp-anim">
+        <p class="corp-model-tag">Flexível</p>
+        <h3>Sob Demanda</h3>
+        <p>Acionamento por chamado com SLA garantido. Para empresas que não precisam de cobertura permanente.</p>
+      </div>
+      <div class="corp-model-card corp-anim">
+        <p class="corp-model-tag">Especializado</p>
+        <h3>Home Care / APH</h3>
+        <p>Atendimento domiciliar e pré-hospitalar. Para operadoras de saúde e empresas com colaboradores em campo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6. PHOTO BREAK: UTI INTERIOR ═══ -->
+<section class="corp-photo-break" aria-label="Equipamento UTI móvel">
+  <div class="corp-photo-break-bg" aria-hidden="true">
+    <img src="/img/b2b/interior-wide.webp" alt="" width="1920" height="1080" />
+    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="/video/b2b-interior.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="corp-photo-break-over" aria-hidden="true"></div>
+  <div class="corp-photo-break-content wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:16px">Equipamento</p>
+    <h2>Equipamento de hospital. <em class="corp-green-bright">Dentro da ambulância.</em></h2>
+    <p>Monitor multiparamétrico Mindray, desfibrilador DEA, bomba de infusão, ventilador mecânico. Tudo o que uma UTI precisa — em cada veículo da frota.</p>
+  </div>
+</section>
+
+<!-- ═══ 7. O QUE INCLUI ═══ -->
+<section class="section corp-inclui-section" aria-labelledby="inclui-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:12px">Entrega</p>
+    <h2 id="inclui-heading">O que cada contrato inclui</h2>
+    <div class="corp-inclui-grid">
+      <div class="corp-inclui-card corp-anim">
+        <svg class="corp-inclui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <h3>UTI móvel completa</h3>
+        <p>Veículo tipo D com monitor, DEA, ventilador, bomba de infusão e material de imobilização.</p>
+      </div>
+      <div class="corp-inclui-card corp-anim">
+        <svg class="corp-inclui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <h3>Equipe dedicada</h3>
+        <p>Médico, enfermeiro e condutor socorrista em escala 24h. Profissionais uniformizados e treinados pela Savior.</p>
+      </div>
+      <div class="corp-inclui-card corp-anim">
+        <svg class="corp-inclui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h3>Relatórios mensais</h3>
+        <p>Dashboard de BI com indicadores de atendimento, tempo-resposta, resolutividade e SLA. Visão gerencial completa.</p>
+      </div>
+      <div class="corp-inclui-card corp-anim">
+        <svg class="corp-inclui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <h3>Documentação regulatória</h3>
+        <p>CNES ativo, alvará sanitário, registro CRM do responsável técnico. Toda a documentação que sua auditoria exige.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 8. URGÊNCIA / LOSS AVERSION ═══ -->
+<section class="section corp-urgencia" aria-labelledby="urgencia-heading">
+  <div class="wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:12px">Risco operacional</p>
+    <h2 id="urgencia-heading">Quanto custa <em class="corp-alert">não ter</em> cobertura médica?</h2>
+    <div class="corp-urgencia-grid">
+      <div>
+        <ul class="corp-urgencia-list" role="list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span><strong>Multa por descumprimento de NR-7</strong> — empresa sem cobertura médica regulamentada está exposta a autuações do MTE.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span><strong>Ação trabalhista por omissão</strong> — cada ocorrência sem atendimento adequado é um passivo jurídico em potencial.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span><strong>SAMU não tem SLA</strong> — o serviço público não garante tempo de resposta. Sua operação não pode esperar.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span><strong>Reputação e confiança</strong> — uma emergência mal gerenciada custa mais do que qualquer contrato de cobertura.</span>
+          </li>
+        </ul>
+        <div class="corp-urgencia-cta">
+          <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-urgencia-proposta',campaign:'corporativo',location:'urgencia'})">Solicitar proposta agora</a>
+        </div>
+      </div>
+      <div class="corp-urgencia-img">
+        <img src="/img/b2b/equipment-closeup.webp" alt="Equipamento médico de UTI móvel Savior" loading="lazy" width="800" height="600" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9. PHOTO BREAK: EQUIPE ═══ -->
+<section class="corp-photo-break corp-photo-break--right" aria-label="Equipe Savior">
+  <div class="corp-photo-break-bg" aria-hidden="true">
+    <img src="/img/gallery/team.webp" alt="" loading="lazy" width="1920" height="1280" style="object-position:center 30%" />
+  </div>
+  <div class="corp-photo-break-over corp-photo-break-over--right" aria-hidden="true"></div>
+  <div class="corp-photo-break-content wrap" style="text-align:right">
+    <p class="eyebrow on-dark" style="margin-bottom:16px">Equipe</p>
+    <h2>Uniformizados. <em class="corp-green-bright">Pontuais.</em></h2>
+    <p style="max-width:520px;margin-left:auto">Profissionais treinados pela Savior, com protocolos padronizados e avaliação contínua de desempenho. A equipe que chega na sua empresa tem nome, registro e responsabilidade.</p>
+  </div>
+</section>
+
+<!-- ═══ 10. COMPARATIVO ═══ -->
+<section class="section corp-comparativo" aria-labelledby="comp-heading">
+  <div class="wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:12px">Comparativo</p>
+    <h2 id="comp-heading" style="color:#fff">Savior vs. alternativas comuns</h2>
+    <div class="corp-comp-wrap">
+      <table class="corp-comp-table">
+        <thead>
+          <tr>
+            <th class="corp-comp-th-feat">Critério</th>
+            <th class="corp-comp-th-conc">Concorrente genérico</th>
+            <th class="corp-comp-th-savior">SAVIOR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Frota própria</td><td>Terceirizada</td><td class="corp-comp-savior">✓ Própria</td></tr>
+          <tr><td>SLA contratual</td><td>Sem garantia</td><td class="corp-comp-savior">✓ Em contrato</td></tr>
+          <tr><td>Equipe dedicada</td><td>Rodízio</td><td class="corp-comp-savior">✓ Fixa por contrato</td></tr>
+          <tr><td>Relatório de BI</td><td>PDF mensal</td><td class="corp-comp-savior">✓ Dashboard em tempo real</td></tr>
+          <tr><td>Documentação regulatória</td><td>Parcial</td><td class="corp-comp-savior">✓ CNES + CRM + Alvará</td></tr>
+          <tr><td>Cobertura RJ + SP</td><td>Apenas 1 estado</td><td class="corp-comp-savior">✓ Ambos</td></tr>
+          <tr><td>Tempo de operação</td><td>5–10 anos</td><td class="corp-comp-savior">✓ 46 anos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 11. FORMULÁRIO QUALIFICADO ═══ -->
+<section class="section corp-form-section" id="proposta" aria-labelledby="form-heading">
+  <div class="wrap">
+    <div class="corp-form-grid">
+      <div class="corp-form-left">
+        <p class="eyebrow" style="margin-bottom:12px">Proposta</p>
+        <h2 id="form-heading">Receba uma proposta personalizada</h2>
+        <p class="corp-form-lead">Preencha os dados ao lado. Nossa equipe comercial retorna em até 24h úteis com uma proposta adequada ao porte e necessidade da sua empresa.</p>
+        <div class="corp-form-anchor">
+          <p class="corp-form-anchor-tag">A partir de</p>
+          <p class="corp-form-anchor-val">R$27.500 <span class="corp-form-anchor-mo">/mês</span></p>
+          <p class="corp-form-anchor-desc">Ambulância alocada 24h com equipe completa. Valores variam conforme modelo de contratação.</p>
+        </div>
+        <div class="corp-form-trust">
+          <div class="corp-form-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Resposta em até 24 horas em dias úteis</span>
+          </div>
+          <div class="corp-form-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Proposta com dimensionamento de equipe incluso</span>
+          </div>
+          <div class="corp-form-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>SLA em contrato, documentação regulatória completa</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <form class="corp-form-card" id="corpFormProposta" novalidate>
+          <div class="corp-form-field">
+            <label class="corp-form-label" for="cf-empresa">Nome da empresa *</label>
+            <input class="corp-form-input" type="text" id="cf-empresa" name="empresa" placeholder="Ex: Petrobras S.A." required autocomplete="organization" />
+          </div>
+          <div class="corp-form-field">
+            <label class="corp-form-label" for="cf-nome">Seu nome e cargo *</label>
+            <input class="corp-form-input" type="text" id="cf-nome" name="nome_cargo" placeholder="Ex: João Silva — Gerente de Segurança" required autocomplete="name" />
+          </div>
+          <div class="corp-form-field">
+            <label class="corp-form-label" for="cf-whatsapp">WhatsApp *</label>
+            <input class="corp-form-input" type="tel" id="cf-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required autocomplete="tel" />
+          </div>
+          <div class="corp-form-row">
+            <div class="corp-form-field">
+              <label class="corp-form-label" for="cf-tipo">Tipo de cobertura</label>
+              <select class="corp-form-input corp-form-select" id="cf-tipo" name="tipo_cobertura">
+                <option value="" disabled selected>Selecione...</option>
+                <option value="alocada_24h">Ambulância Alocada 24h</option>
+                <option value="area_protegida">Área Protegida</option>
+                <option value="sob_demanda">Sob Demanda</option>
+                <option value="home_care">Home Care / APH</option>
+                <option value="nao_sei">Não sei — preciso de orientação</option>
+              </select>
+            </div>
+            <div class="corp-form-field">
+              <label class="corp-form-label" for="cf-func">Nº de funcionários</label>
+              <select class="corp-form-input corp-form-select" id="cf-func" name="funcionarios">
+                <option value="" disabled selected>Selecione...</option>
+                <option value="ate_100">Até 100</option>
+                <option value="100_500">100 a 500</option>
+                <option value="500_1000">500 a 1.000</option>
+                <option value="1000_5000">1.000 a 5.000</option>
+                <option value="5000_plus">Mais de 5.000</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary corp-form-submit" type="submit">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Enviar solicitação
+          </button>
+          <p class="corp-form-note">Ou fale direto com o Carlos: <a href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D" target="_blank" rel="noopener" onclick="window.dataLayer&&window.dataLayer.push({event:'whatsapp_click',event_category:'contato',event_label:'corporativo-form-wpp',campaign:'corporativo',location:'form'})"><strong>(21) 98035-8200 via WhatsApp</strong></a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 12. FAQ ═══ -->
+<section class="section corp-faq-section" aria-labelledby="faq-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center;margin-bottom:12px">Dúvidas frequentes</p>
+    <h2 id="faq-heading" style="text-align:center">Perguntas comuns de empresas</h2>
+    <div class="corp-faq-list" role="list">
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          Qual o prazo mínimo de contrato?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">O contrato mínimo é de 12 meses para ambulância alocada 24h. Para modelos sob demanda e área protegida, o período mínimo pode ser de 6 meses, dependendo da negociação.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          Vocês atendem contratos por licitação?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">A Savior atende hospitais privados, operadoras de saúde e empresas privadas. Para contratos governamentais, participamos via editais quando publicados.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          Qual a documentação regulatória da Savior?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">Possuímos CNES registrado, alvará sanitário vigente, responsável técnico (Dr. Alder — CRM ativo) e toda a documentação exigida pela Vigilância Sanitária e ANS. Disponibilizamos cópias sob solicitação.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          O SLA de tempo de resposta é garantido em contrato?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">Sim. O SLA é cláusula contratual. Para ambulância alocada, o veículo já está posicionado no local. Para área protegida e sob demanda, o tempo de resposta é negociado conforme a região e incluído formalmente no contrato.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          Vocês cobrem RJ e SP ao mesmo tempo?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">Sim. A Savior opera com bases próprias no Rio de Janeiro (R. Gen. Padilha 73, São Cristóvão) e São Paulo (Av. do Rio Bonito 287, Socorro). Contratos multiestado são comuns entre nossos clientes corporativos.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          Como funciona o relatório de BI?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">Cada contrato recebe acesso a um dashboard com indicadores de atendimento: acionamentos, tempo médio de resposta, taxa de resolutividade, tipos de ocorrência e tendências mensais. O relatório é entregue automaticamente e pode ser apresentado à sua diretoria ou comitê de segurança.</p>
+        </div>
+      </div>
+
+      <div class="corp-faq-item" role="listitem">
+        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
+          A equipe é própria ou terceirizada?
+          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="corp-faq-a" hidden>
+          <p class="corp-faq-a-inner">100% própria. Médicos, enfermeiros e condutores socorristas são contratados, treinados e avaliados pela Savior. Não terceirizamos equipe.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 13. CTA FINAL ═══ -->
+<section class="section corp-cta-final" aria-labelledby="cta-heading">
+  <div class="wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:16px;text-align:center">Próximo passo</p>
+    <h2 id="cta-heading" style="color:#fff;text-align:center">Sua empresa precisa de cobertura médica?<br><em class="corp-green-bright">A gente cuida.</em></h2>
+    <p class="corp-cta-sub">46 anos de operação, 96% de renovação. Fale com a equipe comercial e receba uma proposta em 24h.</p>
+    <div class="corp-cta-btns">
+      <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-cta-final-proposta',campaign:'corporativo',location:'cta_final'})">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Solicitar proposta
+      </a>
+      <a href="tel:+551137960058" class="btn btn-secondary on-dark" onclick="window.dataLayer&&window.dataLayer.push({event:'phone_click',event_category:'contato',event_label:'corporativo-cta-final-tel-sp',campaign:'corporativo',location:'cta_final'})">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        SP (11) 3796-0058
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 14. FOOTER ═══ -->
+<footer class="corp-footer">
+  <div class="wrap">
+    <div class="corp-footer-grid">
+      <div>
+        <p class="corp-footer-wordmark">SAVIOR</p>
+        <p class="corp-footer-desc">Medical Service desde 1979.<br>Cobertura médica dedicada para empresas.</p>
+        <p class="corp-footer-nav">
+          <a href="/ambulancia-rj">Ambulância RJ</a>
+          <a href="/ambulancia-sp">Ambulância SP</a>
+          <a href="/eventos">Eventos</a>
+        </p>
+      </div>
+      <div class="corp-footer-col">
+        <h4>Rio de Janeiro</h4>
+        <p>R. Gen. Padilha 73, São Cristóvão</p>
+        <p><a href="tel:+552131713030">(21) 3171-3030</a></p>
+      </div>
+      <div class="corp-footer-col">
+        <h4>São Paulo</h4>
+        <p>Av. do Rio Bonito 287, Socorro</p>
+        <p><a href="tel:+551137960058">(11) 3796-0058</a></p>
+      </div>
+    </div>
+    <p class="corp-footer-legal">© 2026 Savior Medical Service. Todos os direitos reservados. CNES registrado. Resp. Técnico: Dr. Alder.</p>
+  </div>
+</footer>
+
+<!-- ═══ FLOATING WHATSAPP ═══ -->
+<a
+  href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D"
+  target="_blank"
+  rel="noopener"
+  class="corp-fw"
+  aria-label="Falar com a Savior pelo WhatsApp"
+  onclick="window.dataLayer&&window.dataLayer.push({event:'whatsapp_click',event_category:'contato',event_label:'corporativo-floating-wpp',campaign:'corporativo',location:'floating'})"
+>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script is:inline>
+  // Sticky header
+  var csh = document.getElementById('corpStickyHeader');
+  window.addEventListener('scroll', function() {
+    var v = window.scrollY > 600;
+    csh.classList.toggle('corp-sh--visible', v);
+    csh.setAttribute('aria-hidden', String(!v));
+  }, { passive: true });
+
+  // FAQ accordion
+  function corpToggleFaq(btn) {
+    var item = btn.closest('.corp-faq-item');
+    var answer = item.querySelector('.corp-faq-a');
+    var open = item.classList.contains('corp-faq--open');
+    // Close all
+    document.querySelectorAll('.corp-faq-item').forEach(function(i) {
+      i.classList.remove('corp-faq--open');
+      i.querySelector('.corp-faq-q').setAttribute('aria-expanded', 'false');
+      i.querySelector('.corp-faq-a').hidden = true;
+    });
+    if (!open) {
+      item.classList.add('corp-faq--open');
+      btn.setAttribute('aria-expanded', 'true');
+      answer.hidden = false;
+    }
+  }
+
+  // Scroll-triggered animations
+  var corpObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('corp-anim--visible'); corpObserver.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.corp-anim').forEach(function(el) { corpObserver.observe(el); });
+
+  // Form submit — WA fallback + GA4 tracking
+  var corpForm = document.getElementById('corpFormProposta');
+  if (corpForm) {
+    corpForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var empresa  = document.getElementById('cf-empresa').value.trim();
+      var nome     = document.getElementById('cf-nome').value.trim();
+      var wpp      = document.getElementById('cf-whatsapp').value.trim();
+      var tipo     = document.getElementById('cf-tipo').value;
+      var func     = document.getElementById('cf-func').value;
+
+      if (!empresa || !nome || !wpp) {
+        document.getElementById('cf-empresa').reportValidity();
+        return;
+      }
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'generate_lead',
+        event_category: 'lead',
+        event_label: 'corporativo-form',
+        campaign: 'corporativo',
+        location: 'form',
+        value: 27500,
+        currency: 'BRL',
+      });
+
+      var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
+        ? '[corporativo-form-v01][utm:' + window._saviorUtm.campaign + ']'
+        : '[corporativo-form-v01]';
+
+      var msg = encodeURIComponent(
+        '*Proposta Corporativa Savior*\n' +
+        'Empresa: ' + empresa + '\n' +
+        'Contato: ' + nome + '\n' +
+        'WhatsApp: ' + wpp + '\n' +
+        'Cobertura: ' + (tipo || 'Não informado') + '\n' +
+        'Funcionários: ' + (func || 'Não informado') + '\n' +
+        utmTag
+      );
+      window.open('https://wa.me/5521980358200?text=' + msg, '_blank');
+
+      var btn = corpForm.querySelector('.corp-form-submit');
+      btn.textContent = 'Enviado! Abrindo WhatsApp...';
+      btn.style.background = 'var(--green-dark)';
+      btn.style.color = '#fff';
+      btn.disabled = true;
+    });
+  }
+</script>
+
+<style>
+  /* ══════════════════════════════════════════
+     CORPORATIVO — estilos com prefixo corp-
+     Não polui o escopo global
+  ══════════════════════════════════════════ */
+
+  /* Tokens utilitários */
+  .corp-green-bright { color: var(--green-bright); font-style: normal; }
+  .corp-alert        { color: var(--alert); font-style: normal; }
+
+  /* ── Sticky Header ── */
+  .corp-sh {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--navy-deep); border-bottom: 1px solid rgba(255,255,255,.08);
+    transform: translateY(-100%); transition: transform .25s ease;
+    box-shadow: 0 2px 20px #00000059;
+  }
+  .corp-sh--visible { transform: translateY(0); }
+  .corp-sh-inner { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .corp-sh-brand { display: flex; align-items: center; gap: 10px; }
+  .corp-sh-word { font-family: 'Ethnocentric', var(--sans); font-size: 16px; letter-spacing: .08em; color: #fff; }
+  .corp-sh-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; color: var(--green-bright); text-transform: uppercase; margin-left: 8px; }
+  .corp-sh-actions { display: flex; align-items: center; gap: 8px; }
+  .corp-sh-phone {
+    display: none;
+    align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .05em;
+    color: rgba(255,255,255,.7); transition: color .15s;
+  }
+  .corp-sh-phone svg { width: 14px; height: 14px; }
+  .corp-sh-phone:hover { color: var(--green-bright); }
+  @media (min-width: 640px) { .corp-sh-phone { display: flex; } }
+  .corp-sh-cta { padding: 8px 16px; font-size: 13px; min-height: 36px; }
+
+  /* ── Hero ── */
+  .corp-hero {
+    position: relative; min-height: 92vh; display: flex; align-items: center;
+    overflow: hidden; background: var(--navy-deep);
+    padding: clamp(48px,8vh,96px) 0;
+  }
+  .corp-hero-bg { position: absolute; inset: 0; }
+  .corp-hero-bg img, .corp-hero-bg video { width: 100%; height: 100%; object-fit: cover; }
+  .corp-hero-poster { position: absolute; inset: 0; }
+  .corp-hero-bg video { position: absolute; inset: 0; opacity: 0; transition: opacity .6s; }
+  .corp-hero-bg video.corp-vid--ready { opacity: 1; }
+  .corp-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,#07182bd6,#0b2540a8,#07182bc0);
+  }
+  @media (max-width: 960px) {
+    .corp-hero-overlay { background: linear-gradient(135deg,#07182be6,#0b2540cc); }
+  }
+  .corp-hero-content { position: relative; z-index: 2; width: 100%; color: #fff; }
+  .corp-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .corp-hero-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 27px; letter-spacing: .08em; color: #fff; line-height: 1; }
+  .corp-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
+  .corp-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
+  @media (max-width: 960px) { .corp-hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .corp-hero h1 { color: #fff; font-size: clamp(34px,5.2vw,56px); margin-bottom: clamp(20px,3vh,32px); }
+  @media (max-width: 480px) { .corp-hero h1 { font-size: 30px; } }
+  .corp-hero-sub { font-size: clamp(15px,1.4vw,17px); color: #ffffffd1; max-width: 520px; margin-bottom: clamp(28px,3.6vh,40px); line-height: 1.55; }
+  .corp-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .corp-hero-right { border-left: 1px solid rgba(255,255,255,.12); padding-left: clamp(20px,3vw,40px); }
+  @media (max-width: 960px) {
+    .corp-hero-right { border-left: none; padding-left: 0; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.12); }
+  }
+
+  /* KPIs */
+  .corp-kpi { margin-bottom: 24px; }
+  .corp-kpi-label { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; color: var(--green-bright); text-transform: uppercase; margin-bottom: 4px; }
+  .corp-kpi-val { font-weight: 800; font-size: clamp(56px,9vw,96px); color: #fff; letter-spacing: -.05em; line-height: .9; }
+  .corp-kpi-val--year { font-size: clamp(36px,5vw,56px); }
+  .corp-accent { color: var(--green-bright); font-size: .55em; vertical-align: super; }
+  .corp-kpi-desc { font-size: 14px; color: #fff9; margin-top: 10px; line-height: 1.5; }
+
+  /* ── Logos ── */
+  .corp-logos { padding: clamp(40px,6vw,64px) 0; background: #fff; border-bottom: 1px solid var(--cream-dark); }
+  .corp-logos-row { display: flex; justify-content: center; align-items: center; gap: clamp(20px,4vw,48px); flex-wrap: wrap; }
+  .corp-logos-row span { font-size: clamp(15px,1.5vw,18px); font-weight: 700; color: var(--navy); opacity: .45; letter-spacing: -.02em; white-space: nowrap; }
+
+  /* ── Metrics ── */
+  .corp-metrics-section { background: #fff; }
+  .corp-metrics { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-top: 32px; }
+  @media (max-width: 960px) { .corp-metrics { grid-template-columns: repeat(3,1fr); } }
+  @media (max-width: 600px) { .corp-metrics { grid-template-columns: repeat(2,1fr); } }
+  .corp-metric { background: var(--cream); border-radius: 8px; padding: 28px 24px; border: 1px solid var(--cream-dark); transition: transform .15s, box-shadow .15s; }
+  .corp-metric:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #0b254014; }
+  .corp-metric--featured { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .corp-metric-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); margin-bottom: 14px; }
+  .corp-metric--featured .corp-metric-tag { color: var(--green-bright); }
+  .corp-metric-val { font-weight: 800; font-size: clamp(32px,4vw,48px); letter-spacing: -.04em; line-height: .95; margin-bottom: 10px; }
+  .corp-metric--featured .corp-metric-val { color: #fff; }
+  .corp-suf { font-size: .5em; color: var(--green-dark); font-weight: 700; vertical-align: .35em; }
+  .corp-metric--featured .corp-suf { color: var(--green-bright); }
+  .corp-metric-label { font-size: 13px; color: var(--gray); line-height: 1.4; }
+  .corp-metric--featured .corp-metric-label { color: #ffffffb3; }
+
+  /* ── Modelos ── */
+  .corp-models-section { background: var(--cream); }
+  .corp-models-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 40px; }
+  @media (max-width: 960px) { .corp-models-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 600px) { .corp-models-grid { grid-template-columns: 1fr; } }
+  /* border-top (não border-left — side-stripe é anti-padrão) */
+  .corp-model-card {
+    background: #fff; border-radius: 6px; padding: 28px 24px;
+    border: 1px solid var(--cream-dark); border-top: 3px solid var(--green);
+    transition: transform .15s;
+  }
+  .corp-model-card:hover { transform: translateY(-2px); }
+  .corp-model-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; line-height: 1.2; }
+  .corp-model-card p { font-size: 14px; color: var(--gray); line-height: 1.55; }
+  .corp-model-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); margin-bottom: 14px; }
+
+  /* ── Photo Break ── */
+  .corp-photo-break { position: relative; min-height: 420px; display: flex; align-items: center; overflow: hidden; background: var(--navy-deep); }
+  .corp-photo-break-bg { position: absolute; inset: 0; }
+  .corp-photo-break-bg img, .corp-photo-break-bg video { width: 100%; height: 100%; object-fit: cover; }
+  .corp-photo-break-over { position: absolute; inset: 0; background: linear-gradient(to right,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
+  .corp-photo-break-over--right { background: linear-gradient(to left,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
+  @media (max-width: 720px) {
+    .corp-photo-break-over, .corp-photo-break-over--right { background: linear-gradient(to bottom,#07182be6,#0b2540c7 60%,#07182bd9); }
+  }
+  .corp-photo-break-content { position: relative; z-index: 2; padding: clamp(56px,8vh,96px) 0; color: #fff; width: 100%; }
+  .corp-photo-break-content h2 { color: #fff; margin-bottom: 16px; }
+  .corp-photo-break-content p { font-size: 16px; color: #ffffffd1; max-width: 540px; line-height: 1.6; }
+
+  /* ── Inclui ── */
+  .corp-inclui-section { background: #fff; }
+  .corp-inclui-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 40px; }
+  @media (max-width: 960px) { .corp-inclui-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 600px) { .corp-inclui-grid { grid-template-columns: 1fr; } }
+  .corp-inclui-card { background: var(--cream); border-radius: 6px; padding: 28px 24px; border: 1px solid var(--cream-dark); transition: transform .15s; }
+  .corp-inclui-card:hover { transform: translateY(-2px); }
+  .corp-inclui-card h3 { font-size: 16px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 10px; line-height: 1.25; }
+  .corp-inclui-card p { font-size: 13px; color: var(--gray); line-height: 1.55; }
+  .corp-inclui-icon { width: 28px; height: 28px; color: var(--green-dark); margin-bottom: 14px; }
+
+  /* ── Urgência ── */
+  .corp-urgencia { background: var(--navy-deep); color: #fff; }
+  .corp-urgencia h2 { color: #fff; margin-bottom: 20px; }
+  .corp-urgencia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; margin-top: 32px; }
+  @media (max-width: 768px) { .corp-urgencia-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .corp-urgencia-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+  .corp-urgencia-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: #ffffffcc; line-height: 1.55; }
+  .corp-urgencia-list li svg { width: 20px; height: 20px; color: var(--alert); flex-shrink: 0; margin-top: 2px; }
+  .corp-urgencia-cta { margin-top: 32px; }
+  .corp-urgencia-img img { border-radius: 6px; max-width: 100%; border: 1px solid rgba(255,255,255,.08); }
+
+  /* ── Comparativo ── */
+  .corp-comparativo { background: var(--navy-deep); color: #fff; }
+  .corp-comp-wrap { overflow-x: auto; margin-top: 32px; }
+  .corp-comp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .corp-comp-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.08); }
+  .corp-comp-table tbody tr:last-child { border-bottom: none; }
+  .corp-comp-table td { padding: 16px 20px; color: #ffffffcc; }
+  .corp-comp-table td:first-child { color: #fff; font-weight: 600; }
+  .corp-comp-th-feat {
+    padding: 16px 20px; text-align: left;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(255,255,255,.35); border-bottom: 2px solid var(--navy-mid);
+  }
+  .corp-comp-th-conc {
+    padding: 16px 20px; text-align: left;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(255,255,255,.35); border-bottom: 2px solid var(--navy-mid);
+  }
+  .corp-comp-th-savior {
+    padding: 16px 24px; text-align: left;
+    background: var(--green-dark);
+    font-family: 'Ethnocentric', var(--sans); font-size: 13px; letter-spacing: .1em;
+    color: #fff; border-bottom: 2px solid rgba(31,210,154,.4);
+  }
+  .corp-comp-savior { color: var(--green-bright); font-weight: 600; background: rgba(31,210,154,.04); }
+  @media (max-width: 720px) { .corp-comp-table { font-size: 13px; } .corp-comp-table td, .corp-comp-th-feat, .corp-comp-th-conc, .corp-comp-th-savior { padding: 12px 14px; } }
+
+  /* ── Formulário ── */
+  .corp-form-section { background: var(--cream-light); border-top: 1px solid var(--cream-dark); }
+  .corp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,5vw,64px); align-items: start; }
+  @media (max-width: 768px) { .corp-form-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .corp-form-lead { font-size: 16px; color: var(--gray); line-height: 1.6; margin-bottom: 20px; max-width: 480px; }
+  .corp-form-anchor { margin-top: 28px; padding: 20px 24px; background: #fff; border-radius: 6px; border: 1px solid var(--cream-dark); }
+  .corp-form-anchor-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); margin-bottom: 8px; }
+  .corp-form-anchor-val { font-weight: 800; font-size: clamp(28px,3.5vw,36px); letter-spacing: -.03em; color: var(--navy); }
+  .corp-form-anchor-mo { font-size: .5em; font-weight: 600; color: var(--gray); }
+  .corp-form-anchor-desc { font-size: 13px; color: var(--gray); margin-top: 6px; }
+  .corp-form-trust { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .corp-form-trust-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--gray); }
+  .corp-form-card { background: #fff; border-radius: 6px; padding: 28px 24px; border: 1px solid var(--cream-dark); border-top: 3px solid var(--green); box-shadow: 0 4px 16px rgba(11,37,64,.06); }
+  .corp-form-field { margin-bottom: 16px; }
+  .corp-form-label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 6px; font-weight: 600; }
+  .corp-form-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--cream-dark); border-radius: 4px; font-family: var(--sans); font-size: 14px; color: var(--navy); background: #fff; transition: border-color .15s, box-shadow .15s; outline: none; -webkit-appearance: none; appearance: none; }
+  .corp-form-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,184,124,.12); }
+  .corp-form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230B2540' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+  .corp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .corp-form-row { grid-template-columns: 1fr; } }
+  .corp-form-submit { width: 100%; margin-top: 8px; }
+  .corp-form-note { font-size: 12px; color: var(--gray); margin-top: 14px; line-height: 1.5; }
+  .corp-form-note a { color: var(--green-dark); font-weight: 600; text-decoration: underline; }
+
+  /* ── FAQ ── */
+  .corp-faq-section { background: #fff; }
+  .corp-faq-list { max-width: 780px; margin: 40px auto 0; }
+  .corp-faq-item { border-bottom: 1px solid var(--cream-dark); }
+  .corp-faq-q {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 20px 0; cursor: pointer; font-size: 16px; font-weight: 600;
+    color: var(--navy); transition: color .15s; background: none; border: none;
+    width: 100%; text-align: left; font-family: var(--sans);
+  }
+  .corp-faq-q:hover { color: var(--green-dark); }
+  .corp-faq-icon { width: 20px; height: 20px; flex-shrink: 0; transition: transform .2s; color: var(--gray); }
+  .corp-faq--open .corp-faq-icon { transform: rotate(180deg); }
+  .corp-faq-a { overflow: hidden; }
+  .corp-faq-a-inner { padding: 0 0 20px; font-size: 14px; color: var(--gray); line-height: 1.65; max-width: 680px; }
+
+  /* ── CTA Final ── */
+  .corp-cta-final { background: var(--navy); }
+  .corp-cta-sub { color: #ffffffb3; font-size: 16px; max-width: 520px; margin: 0 auto 32px; line-height: 1.6; text-align: center; }
+  .corp-cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+  /* ── Footer ── */
+  .corp-footer { padding: 48px 0 32px; background: var(--navy-deep); color: rgba(255,255,255,.6); font-size: 13px; }
+  .corp-footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; align-items: start; margin-bottom: 32px; }
+  @media (max-width: 768px) { .corp-footer-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .corp-footer-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 20px; letter-spacing: .08em; color: #fff; margin-bottom: 10px; line-height: 1; }
+  .corp-footer-desc { line-height: 1.6; margin-bottom: 16px; }
+  .corp-footer-nav { display: flex; flex-wrap: wrap; gap: 12px; }
+  .corp-footer-nav a { color: rgba(255,255,255,.45); font-size: 12px; font-family: var(--mono); letter-spacing: .08em; transition: color .15s; }
+  .corp-footer-nav a:hover { color: var(--green-bright); }
+  .corp-footer-col h4 { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 12px; }
+  .corp-footer-col p { line-height: 1.6; }
+  .corp-footer-col a:hover { color: var(--green-bright); }
+  .corp-footer-legal { padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); text-align: center; font-size: 12px; }
+
+  /* ── Floating WhatsApp ── */
+  .corp-fw {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #25D366; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px #25d36650; transition: transform .15s;
+  }
+  .corp-fw:hover { transform: scale(1.08); }
+  .corp-fw svg { width: 28px; height: 28px; color: #fff; }
+
+  /* ── Scroll animations ── */
+  .corp-anim { opacity: 0; transform: translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+  .corp-anim--visible { opacity: 1; transform: translateY(0); }
+</style>
+
+<script is:inline>
+  // Fade in hero video when ready
+  var corpVid = document.getElementById('corpHeroVid');
+  if (corpVid) {
+    corpVid.addEventListener('canplay', function() {
+      corpVid.classList.add('corp-vid--ready');
+    }, { once: true });
+  }
+</script>
+
+</Base>
