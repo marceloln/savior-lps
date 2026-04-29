@@ -3,3 +3,9 @@
 
 # Raiz serve a home corporativa (index.astro)
 # Redirect removido: / não redireciona mais para /ambulancia-rj
+
+# Normalizar maiúsculas → minúsculas
+/CORPORATIVO /corporativo 301
+/EVENTOS /eventos 301
+/AMBULANCIA-RJ /ambulancia-rj 301
+/AMBULANCIA-SP /ambulancia-sp 301

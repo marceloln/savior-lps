@@ -578,17 +578,12 @@ const faqItems = [
           return;
         }
 
-        // GA4 + Google Ads via dataLayer
+        // GA4 + Google Ads + Meta Pixel — direto (sem GTM)
+        var evLeadParams = { value: 1500, currency: 'BRL', lead_source: 'eventos-form', campaign: 'eventos', method: 'form' };
         window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'generate_lead',
-          event_category: 'lead',
-          event_label: 'eventos-form',
-          campaign: 'eventos',
-          location: 'form',
-          value: 1500,
-          currency: 'BRL',
-        });
+        window.dataLayer.push(Object.assign({ event: 'generate_lead' }, evLeadParams));
+        if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', evLeadParams);
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 1500, currency: 'BRL', content_name: 'Form - eventos' });
 
         // Fallback: abre WhatsApp com dados formatados
         var utmTag = (window._saviorUtm && window._saviorUtm.campaign)

@@ -37,6 +37,13 @@ const schema = JSON.stringify({
         }
       ],
       "areaServed": ["Rio de Janeiro", "São Paulo"],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": 4.7,
+        "bestRating": 5,
+        "worstRating": 1,
+        "ratingCount": 384
+      },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Modelos de Cobertura Corporativa",
@@ -80,7 +87,7 @@ const schema = JSON.stringify({
       <span class="corp-sh-tag">Corporativo</span>
     </div>
     <div class="corp-sh-actions">
-      <a href="tel:+552131713030" class="corp-sh-phone">
+      <a href="tel:+552131713030" class="corp-sh-phone" data-phone data-campaign="corporativo" data-location="header">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         (21) 3171-3030
       </a>
@@ -125,13 +132,13 @@ const schema = JSON.stringify({
       <div class="corp-hero-left">
         <p class="eyebrow on-dark" style="margin-bottom:18px">Cobertura corporativa B2B</p>
         <h1>Cobertura médica dedicada para sua empresa. <em class="corp-green-bright">SLA em contrato.</em></h1>
-        <p class="corp-hero-sub">Ambulância alocada 24h, equipe própria, documentação completa. Para empresas que não podem depender do acaso.</p>
+        <p class="corp-hero-sub">Ambulância alocada 24h, equipe médica própria, SLA em contrato. A tranquilidade de saber que, quando acontecer, alguém já está lá.</p>
         <div class="corp-hero-ctas">
           <a href="#proposta" class="btn btn-primary" onclick="window.dataLayer&&window.dataLayer.push({event:'cta_click',event_category:'cta',event_label:'corporativo-hero-proposta',campaign:'corporativo',location:'hero'})">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             Solicitar proposta
           </a>
-          <a href="tel:+552131713030" class="btn btn-secondary on-dark" onclick="window.dataLayer&&window.dataLayer.push({event:'phone_click',event_category:'contato',event_label:'corporativo-hero-tel',campaign:'corporativo',location:'hero'})">
+          <a href="tel:+552131713030" class="btn btn-secondary on-dark" data-phone data-campaign="corporativo" data-location="hero">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
             (21) 3171-3030
           </a>
@@ -173,7 +180,8 @@ const schema = JSON.stringify({
 <section class="section corp-metrics-section" aria-labelledby="metrics-heading">
   <div class="wrap">
     <p class="eyebrow" style="margin-bottom:12px">Números</p>
-    <h2 id="metrics-heading">O que sustenta a operação</h2>
+    <h2 id="metrics-heading">O que sustenta a nossa operação</h2>
+    <p class="corp-section-intro">Cada número abaixo representa uma decisão tomada no campo, não uma promessa de apresentação.</p>
     <div class="corp-metrics">
       <div class="corp-metric corp-anim">
         <p class="corp-metric-tag">Operação</p>
@@ -209,6 +217,7 @@ const schema = JSON.stringify({
   <div class="wrap">
     <p class="eyebrow" style="margin-bottom:12px">Modelos</p>
     <h2 id="models-heading">Escolha o formato que cabe na sua operação</h2>
+    <p class="corp-section-intro">Cada empresa tem uma necessidade diferente. Os formatos abaixo foram desenhados para o seu contexto, não para o nosso catálogo.</p>
     <div class="corp-models-grid">
       <div class="corp-model-card corp-anim">
         <p class="corp-model-tag">Mais popular</p>
@@ -254,7 +263,8 @@ const schema = JSON.stringify({
 <section class="section corp-inclui-section" aria-labelledby="inclui-heading">
   <div class="wrap">
     <p class="eyebrow" style="margin-bottom:12px">Entrega</p>
-    <h2 id="inclui-heading">O que cada contrato inclui</h2>
+    <h2 id="inclui-heading">Sem letra miúda. Sem surpresas.</h2>
+    <p class="corp-section-intro">Tudo que a Savior entrega está descrito em contrato antes da assinatura. Você sabe exatamente o que está contratando.</p>
     <div class="corp-inclui-grid">
       <div class="corp-inclui-card corp-anim">
         <svg class="corp-inclui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -285,6 +295,7 @@ const schema = JSON.stringify({
   <div class="wrap">
     <p class="eyebrow on-dark" style="margin-bottom:12px">Risco operacional</p>
     <h2 id="urgencia-heading">Quanto custa <em class="corp-alert">não ter</em> cobertura médica?</h2>
+    <p class="corp-section-intro" style="color:#ffffffb3;margin-bottom:0">Uma emergência sem atendimento adequado tem três custos: o humano, o jurídico e o reputacional. Nenhum cabe no orçamento.</p>
     <div class="corp-urgencia-grid">
       <div>
         <ul class="corp-urgencia-list" role="list">
@@ -334,13 +345,14 @@ const schema = JSON.stringify({
   <div class="wrap">
     <p class="eyebrow on-dark" style="margin-bottom:12px">Comparativo</p>
     <h2 id="comp-heading" style="color:#fff">Savior vs. alternativas comuns</h2>
+    <p class="corp-section-intro" style="color:#ffffffb3;margin-bottom:0">Antes de escolher, compare o que está em contrato, não o que está no pitch.</p>
     <div class="corp-comp-wrap">
       <table class="corp-comp-table">
         <thead>
           <tr>
-            <th class="corp-comp-th-feat">Critério</th>
-            <th class="corp-comp-th-conc">Concorrente genérico</th>
-            <th class="corp-comp-th-savior">SAVIOR</th>
+            <th scope="col" class="corp-comp-th-feat">Critério</th>
+            <th scope="col" class="corp-comp-th-conc">Concorrente genérico</th>
+            <th scope="col" class="corp-comp-th-savior">SAVIOR</th>
           </tr>
         </thead>
         <tbody>
@@ -363,8 +375,8 @@ const schema = JSON.stringify({
     <div class="corp-form-grid">
       <div class="corp-form-left">
         <p class="eyebrow" style="margin-bottom:12px">Proposta</p>
-        <h2 id="form-heading">Receba uma proposta personalizada</h2>
-        <p class="corp-form-lead">Preencha os dados ao lado. Nossa equipe comercial retorna em até 24h úteis com uma proposta adequada ao porte e necessidade da sua empresa.</p>
+        <h2 id="form-heading">Fale com a gente. A gente escuta primeiro.</h2>
+        <p class="corp-form-lead">Preencha os dados ao lado e o Carlos da nossa equipe comercial retorna em até 24h úteis. Não tem automação: ele lê cada mensagem e monta uma proposta para a sua realidade.</p>
         <div class="corp-form-anchor">
           <p class="corp-form-anchor-tag">A partir de</p>
           <p class="corp-form-anchor-val">R$27.500 <span class="corp-form-anchor-mo">/mês</span></p>
@@ -389,15 +401,15 @@ const schema = JSON.stringify({
         <form class="corp-form-card" id="corpFormProposta" novalidate>
           <div class="corp-form-field">
             <label class="corp-form-label" for="cf-empresa">Nome da empresa *</label>
-            <input class="corp-form-input" type="text" id="cf-empresa" name="empresa" placeholder="Ex: Petrobras S.A." required autocomplete="organization" />
+            <input class="corp-form-input" type="text" id="cf-empresa" name="empresa" placeholder="Ex: Petrobras S.A." required aria-required="true" autocomplete="organization" />
           </div>
           <div class="corp-form-field">
             <label class="corp-form-label" for="cf-nome">Seu nome e cargo *</label>
-            <input class="corp-form-input" type="text" id="cf-nome" name="nome_cargo" placeholder="Ex: João Silva — Gerente de Segurança" required autocomplete="name" />
+            <input class="corp-form-input" type="text" id="cf-nome" name="nome_cargo" placeholder="Ex: João Silva — Gerente de Segurança" required aria-required="true" autocomplete="name" />
           </div>
           <div class="corp-form-field">
             <label class="corp-form-label" for="cf-whatsapp">WhatsApp *</label>
-            <input class="corp-form-input" type="tel" id="cf-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required autocomplete="tel" />
+            <input class="corp-form-input" type="tel" id="cf-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required aria-required="true" autocomplete="tel" />
           </div>
           <div class="corp-form-row">
             <div class="corp-form-field">
@@ -427,7 +439,7 @@ const schema = JSON.stringify({
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Enviar solicitação
           </button>
-          <p class="corp-form-note">Ou fale direto com o Carlos: <a href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D" target="_blank" rel="noopener" onclick="window.dataLayer&&window.dataLayer.push({event:'whatsapp_click',event_category:'contato',event_label:'corporativo-form-wpp',campaign:'corporativo',location:'form'})"><strong>(21) 98035-8200 via WhatsApp</strong></a></p>
+          <p class="corp-form-note">Ou fale direto com o Carlos: <a href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D" target="_blank" rel="noopener" data-whatsapp data-campaign="corporativo" data-location="form"><strong>(21) 98035-8200 via WhatsApp</strong></a></p>
         </form>
       </div>
     </div>
@@ -439,7 +451,8 @@ const schema = JSON.stringify({
   <div class="wrap">
     <p class="eyebrow" style="text-align:center;margin-bottom:12px">Dúvidas frequentes</p>
     <h2 id="faq-heading" style="text-align:center">Perguntas comuns de empresas</h2>
-    <div class="corp-faq-list" role="list">
+    <p class="corp-section-intro" style="text-align:center;max-width:620px;margin:12px auto 0">Respostas diretas para o que o RH, o jurídico e o financeiro vão perguntar antes de fechar.</p>
+    <div class="corp-faq-list" role="list" style="margin-top:40px">
 
       <div class="corp-faq-item" role="listitem">
         <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
@@ -526,7 +539,7 @@ const schema = JSON.stringify({
         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
         Solicitar proposta
       </a>
-      <a href="tel:+551137960058" class="btn btn-secondary on-dark" onclick="window.dataLayer&&window.dataLayer.push({event:'phone_click',event_category:'contato',event_label:'corporativo-cta-final-tel-sp',campaign:'corporativo',location:'cta_final'})">
+      <a href="tel:+551137960058" class="btn btn-secondary on-dark" data-phone data-campaign="corporativo" data-location="cta_final">
         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         SP (11) 3796-0058
       </a>
@@ -569,7 +582,9 @@ const schema = JSON.stringify({
   rel="noopener"
   class="corp-fw"
   aria-label="Falar com a Savior pelo WhatsApp"
-  onclick="window.dataLayer&&window.dataLayer.push({event:'whatsapp_click',event_category:'contato',event_label:'corporativo-floating-wpp',campaign:'corporativo',location:'floating'})"
+  data-whatsapp
+  data-campaign="corporativo"
+  data-location="floating"
 >
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
@@ -626,16 +641,11 @@ const schema = JSON.stringify({
         return;
       }
 
+      var leadParams = { value: 27500, currency: 'BRL', lead_source: 'corporativo-form', campaign: 'corporativo', method: 'form' };
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'generate_lead',
-        event_category: 'lead',
-        event_label: 'corporativo-form',
-        campaign: 'corporativo',
-        location: 'form',
-        value: 27500,
-        currency: 'BRL',
-      });
+      window.dataLayer.push(Object.assign({ event: 'generate_lead' }, leadParams));
+      if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', leadParams);
+      if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 27500, currency: 'BRL', content_name: 'Form - corporativo' });
 
       var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
         ? '[corporativo-form-v01][utm:' + window._saviorUtm.campaign + ']'
@@ -670,6 +680,16 @@ const schema = JSON.stringify({
   /* Tokens utilitários */
   .corp-green-bright { color: var(--green-bright); font-style: normal; }
   .corp-alert        { color: var(--alert); font-style: normal; }
+
+  /* Intro de seção — parágrafo descritivo sob H2 */
+  .corp-section-intro {
+    font-size: clamp(15px, 1.3vw, 17px);
+    color: var(--gray);
+    line-height: 1.6;
+    max-width: 600px;
+    margin-top: 12px;
+    margin-bottom: 0;
+  }
 
   /* ── Sticky Header ── */
   .corp-sh {
@@ -777,7 +797,9 @@ const schema = JSON.stringify({
   /* ── Photo Break ── */
   .corp-photo-break { position: relative; min-height: 420px; display: flex; align-items: center; overflow: hidden; background: var(--navy-deep); }
   .corp-photo-break-bg { position: absolute; inset: 0; }
-  .corp-photo-break-bg img, .corp-photo-break-bg video { width: 100%; height: 100%; object-fit: cover; }
+  .corp-photo-break-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .corp-photo-break-bg video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+  .corp-photo-break-bg video.corp-vid--ready { opacity: 1; }
   .corp-photo-break-over { position: absolute; inset: 0; background: linear-gradient(to right,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
   .corp-photo-break-over--right { background: linear-gradient(to left,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
   @media (max-width: 720px) {
@@ -918,6 +940,13 @@ const schema = JSON.stringify({
       corpVid.classList.add('corp-vid--ready');
     }, { once: true });
   }
+
+  // Fade in all photo-break background videos when ready
+  document.querySelectorAll('.corp-photo-break-bg video').forEach(function(vid) {
+    function reveal() { vid.classList.add('corp-vid--ready'); }
+    if (vid.readyState >= 3) { reveal(); }
+    else { vid.addEventListener('canplay', reveal, { once: true }); }
+  });
 </script>
 
 </Base>
