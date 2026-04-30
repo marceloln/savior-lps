@@ -6,6 +6,7 @@
 // ============================================================
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
+import FAQ from '../components/FAQ.astro';
 import { CONTACT_RJ } from '../data/savior';
 
 const schema = JSON.stringify({
@@ -79,6 +80,16 @@ const schema = JSON.stringify({
     }
   ]
 });
+
+const faqItems = [
+  { q: 'Qual o prazo mínimo de contrato?', a: 'O contrato mínimo é de 12 meses para ambulância alocada 24h. Para modelos sob demanda e área protegida, o período mínimo pode ser de 6 meses, dependendo da negociação.' },
+  { q: 'Vocês atendem contratos por licitação?', a: 'A Savior atende hospitais privados, operadoras de saúde e empresas privadas. Para contratos governamentais, participamos via editais quando publicados.' },
+  { q: 'Qual a documentação regulatória da Savior?', a: 'Possuímos CNES registrado, alvará sanitário vigente, responsável técnico (Dr. Alder — CRM ativo) e toda a documentação exigida pela Vigilância Sanitária e ANS. Disponibilizamos cópias sob solicitação.' },
+  { q: 'O SLA de tempo de resposta é garantido em contrato?', a: 'Sim. O SLA é cláusula contratual. Para ambulância alocada, o veículo já está posicionado no local. Para área protegida e sob demanda, o tempo de resposta é negociado conforme a região e incluído formalmente no contrato.' },
+  { q: 'Vocês cobrem RJ e SP ao mesmo tempo?', a: 'Sim. A Savior opera com bases próprias no Rio de Janeiro (R. Gen. Padilha 73, São Cristóvão) e São Paulo (Av. do Rio Bonito 287, Socorro). Contratos multiestado são comuns entre nossos clientes corporativos.' },
+  { q: 'Como funciona o relatório de BI?', a: 'Cada contrato recebe acesso a um dashboard com indicadores de atendimento: acionamentos, tempo médio de resposta, taxa de resolutividade, tipos de ocorrência e tendências mensais. O relatório é entregue automaticamente e pode ser apresentado à sua diretoria ou comitê de segurança.' },
+  { q: 'A equipe é própria ou terceirizada?', a: '100% própria. Médicos, enfermeiros e condutores socorristas são contratados, treinados e avaliados pela Savior. Não terceirizamos equipe.' },
+];
 ---
 
 <Base
@@ -553,86 +564,12 @@ const schema = JSON.stringify({
 </section>
 
 <!-- ═══ 15. FAQ ═══ -->
-<section class="section corp-faq-section" aria-labelledby="faq-heading">
-  <div class="wrap">
-    <p class="eyebrow" style="text-align:center;margin-bottom:12px">Dúvidas frequentes</p>
-    <h2 id="faq-heading" style="text-align:center">Perguntas comuns de empresas</h2>
-    <p class="corp-section-intro" style="text-align:center;max-width:620px;margin:12px auto 0">Respostas diretas para o que o RH, o jurídico e o financeiro vão perguntar antes de fechar.</p>
-    <div class="corp-faq-list" role="list" style="margin-top:40px">
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          Qual o prazo mínimo de contrato?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">O contrato mínimo é de 12 meses para ambulância alocada 24h. Para modelos sob demanda e área protegida, o período mínimo pode ser de 6 meses, dependendo da negociação.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          Vocês atendem contratos por licitação?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">A Savior atende hospitais privados, operadoras de saúde e empresas privadas. Para contratos governamentais, participamos via editais quando publicados.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          Qual a documentação regulatória da Savior?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">Possuímos CNES registrado, alvará sanitário vigente, responsável técnico (Dr. Alder — CRM ativo) e toda a documentação exigida pela Vigilância Sanitária e ANS. Disponibilizamos cópias sob solicitação.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          O SLA de tempo de resposta é garantido em contrato?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">Sim. O SLA é cláusula contratual. Para ambulância alocada, o veículo já está posicionado no local. Para área protegida e sob demanda, o tempo de resposta é negociado conforme a região e incluído formalmente no contrato.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          Vocês cobrem RJ e SP ao mesmo tempo?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">Sim. A Savior opera com bases próprias no Rio de Janeiro (R. Gen. Padilha 73, São Cristóvão) e São Paulo (Av. do Rio Bonito 287, Socorro). Contratos multiestado são comuns entre nossos clientes corporativos.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          Como funciona o relatório de BI?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">Cada contrato recebe acesso a um dashboard com indicadores de atendimento: acionamentos, tempo médio de resposta, taxa de resolutividade, tipos de ocorrência e tendências mensais. O relatório é entregue automaticamente e pode ser apresentado à sua diretoria ou comitê de segurança.</p>
-        </div>
-      </div>
-
-      <div class="corp-faq-item" role="listitem">
-        <button class="corp-faq-q" aria-expanded="false" onclick="corpToggleFaq(this)">
-          A equipe é própria ou terceirizada?
-          <svg class="corp-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="corp-faq-a" hidden>
-          <p class="corp-faq-a-inner">100% própria. Médicos, enfermeiros e condutores socorristas são contratados, treinados e avaliados pela Savior. Não terceirizamos equipe.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
+<FAQ
+  items={faqItems}
+  titleHtml="Perguntas comuns de empresas"
+  eyebrow="Dúvidas frequentes"
+  subtitle="Respostas diretas para o que o RH, o jurídico e o financeiro vão perguntar antes de fechar."
+/>
 
 <!-- ═══ 16. CTA FINAL ═══ -->
 <section class="section corp-cta-final" aria-labelledby="cta-heading">
@@ -682,24 +619,6 @@ const schema = JSON.stringify({
     csh.classList.toggle('corp-sh--visible', v);
     csh.setAttribute('aria-hidden', String(!v));
   }, { passive: true });
-
-  // FAQ accordion
-  function corpToggleFaq(btn) {
-    var item = btn.closest('.corp-faq-item');
-    var answer = item.querySelector('.corp-faq-a');
-    var open = item.classList.contains('corp-faq--open');
-    // Close all
-    document.querySelectorAll('.corp-faq-item').forEach(function(i) {
-      i.classList.remove('corp-faq--open');
-      i.querySelector('.corp-faq-q').setAttribute('aria-expanded', 'false');
-      i.querySelector('.corp-faq-a').hidden = true;
-    });
-    if (!open) {
-      item.classList.add('corp-faq--open');
-      btn.setAttribute('aria-expanded', 'true');
-      answer.hidden = false;
-    }
-  }
 
   // Scroll-triggered animations
   var corpObserver = new IntersectionObserver(function(entries) {
@@ -1027,22 +946,6 @@ const schema = JSON.stringify({
   .corp-form-submit { width: 100%; margin-top: 8px; }
   .corp-form-note { font-size: 12px; color: var(--gray); margin-top: 14px; line-height: 1.5; }
   .corp-form-note a { color: var(--green-dark); font-weight: 600; text-decoration: underline; }
-
-  /* ── FAQ ── */
-  .corp-faq-section { background: #fff; }
-  .corp-faq-list { max-width: 780px; margin: 40px auto 0; }
-  .corp-faq-item { border-bottom: 1px solid var(--cream-dark); }
-  .corp-faq-q {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 20px 0; cursor: pointer; font-size: 16px; font-weight: 600;
-    color: var(--navy); transition: color .15s; background: none; border: none;
-    width: 100%; text-align: left; font-family: var(--sans);
-  }
-  .corp-faq-q:hover { color: var(--green-dark); }
-  .corp-faq-icon { width: 20px; height: 20px; flex-shrink: 0; transition: transform .2s; color: var(--gray); }
-  .corp-faq--open .corp-faq-icon { transform: rotate(180deg); }
-  .corp-faq-a { overflow: hidden; }
-  .corp-faq-a-inner { padding: 0 0 20px; font-size: 14px; color: var(--gray); line-height: 1.65; max-width: 680px; }
 
   /* ── CTA Final ── */
   .corp-cta-final { background: var(--navy); }

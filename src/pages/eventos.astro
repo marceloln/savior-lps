@@ -8,6 +8,7 @@
 import Base from '../layouts/Base.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
+import FAQ from '../components/FAQ.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
 
 // ============ SEO ============
@@ -506,25 +507,7 @@ const faqItems = [
     </section>
 
     <!-- ═══ 11. FAQ ═══ -->
-    <section class="ev-faq-section" id="faq" aria-labelledby="faq-heading">
-      <div class="wrap">
-        <div class="ev-faq-head">
-          <span class="eyebrow" style="display:block;margin-bottom:14px">FAQ</span>
-          <h2 id="faq-heading" class="ev-faq-h2">Perguntas sobre <em>cobertura médica</em> para eventos</h2>
-        </div>
-        <div class="ev-faq-list">
-          {faqItems.map(({ q, a }) => (
-            <details class="ev-faq-item">
-              <summary class="ev-faq-q">
-                <span>{q}</span>
-                <svg class="ev-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </summary>
-              <div class="ev-faq-a"><p>{a}</p></div>
-            </details>
-          ))}
-        </div>
-      </div>
-    </section>
+    <FAQ items={faqItems} titleHtml="Perguntas sobre <em>cobertura médica</em> para eventos" />
 
     <!-- ═══ 12. CTA FINAL ═══ -->
     <section class="ev-fcta" aria-labelledby="fcta-heading">
@@ -850,23 +833,6 @@ const faqItems = [
   @media (max-width: 480px) { .ev-form-row { grid-template-columns: 1fr; } }
   .ev-form-submit { width: 100%; font-size: 16px; padding: 16px 24px; margin-top: 8px; }
   .ev-form-note { font-size: 11px; color: var(--gray); margin-top: 12px; text-align: center; line-height: 1.5; }
-
-  /* ── FAQ ── */
-  .ev-faq-section { padding: var(--space-block) 0; background: var(--cream-light); border-bottom: 1px solid var(--cream-dark); }
-  .ev-faq-head { max-width: 680px; margin-bottom: 48px; }
-  .ev-faq-h2 { font-family: var(--sans); font-weight: 800; font-size: var(--fs-3xl); letter-spacing: -0.035em; line-height: 1; color: var(--navy); }
-  .ev-faq-h2 em { font-style: normal; color: var(--green-dark); }
-  .ev-faq-list { max-width: 820px; background: white; border-radius: 6px; border: 1px solid var(--cream-dark); overflow: hidden; }
-  .ev-faq-item { border-top: 1px solid var(--cream-dark); }
-  .ev-faq-item:first-child { border-top: none; }
-  .ev-faq-q { padding: 24px 28px; font-family: var(--sans); font-weight: 700; font-size: 17px; letter-spacing: -0.015em; color: var(--navy); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px; transition: background 0.15s; list-style: none; }
-  .ev-faq-q::-webkit-details-marker { display: none; }
-  .ev-faq-q:hover { background: var(--cream); }
-  .ev-faq-icon { width: 20px; height: 20px; flex-shrink: 0; color: var(--green-dark); transition: transform 0.2s; }
-  details[open] .ev-faq-icon { transform: rotate(180deg); }
-  .ev-faq-a { padding: 12px 28px 28px; font-size: 15px; line-height: 1.7; color: var(--navy); }
-  .ev-faq-a p { max-width: 680px; }
-  @media (max-width: 720px) { .ev-faq-q { padding: 20px 22px; font-size: 15.5px; } .ev-faq-a { padding: 10px 22px 24px; font-size: 14.5px; } }
 
   /* ── Final CTA ── */
   .ev-fcta { padding: var(--space-block) 0; background: var(--navy-deep); text-align: center; color: #fff; }

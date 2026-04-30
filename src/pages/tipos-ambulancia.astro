@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
 import StickyHeader from '../components/StickyHeader.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
+import FAQ from '../components/FAQ.astro';
 import { whatsappUrl, CONTACT_RJ, BRAND, METRICS } from '../data/savior';
 
 // ============ SEO ============
@@ -663,50 +664,29 @@ const schema = JSON.stringify({
     </section>
 
     <!-- ═══ 11. FAQ ═══ -->
-    <section class="ta-faq" id="faq" aria-labelledby="faq-heading">
-      <div class="wrap">
-        <p class="eyebrow" style="text-align:center; margin-bottom:12px">DÚVIDAS FREQUENTES</p>
-        <h2 id="faq-heading" style="text-align:center">Perguntas sobre tipos de ambulância</h2>
-        <div class="ta-faq-list">
-          {faqItems.map((item, i) => (
-            <details class="ta-faq-item" id={`faq-${i + 1}`}>
-              <summary class="ta-faq-q" aria-label={item.q}>
-                {item.q}
-                <svg class="ta-faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </summary>
-              <div class="ta-faq-a">
-                <p set:html={item.a} />
-              </div>
-            </details>
-          ))}
-        </div>
-
-        <!-- Internal links para o ecossistema -->
-        <div class="ta-faq-links">
-          <p class="eyebrow" style="margin-bottom:12px">PRECISA DE AMBULÂNCIA?</p>
-          <div class="ta-faq-link-grid">
-            <a href="/ambulancia-rj" class="ta-faq-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Ambulância Rio de Janeiro
-            </a>
-            <a href="/ambulancia-sp" class="ta-faq-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Ambulância São Paulo
-            </a>
-            <a href="/corporativo" class="ta-faq-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              Planos Corporativos
-            </a>
-            <a href="/eventos" class="ta-faq-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Cobertura de Eventos
-            </a>
-          </div>
+    <FAQ items={faqItems} titleHtml="Perguntas sobre tipos de ambulância" eyebrow="DÚVIDAS FREQUENTES">
+      <div class="ta-faq-links">
+        <p class="eyebrow" style="margin-bottom:12px">PRECISA DE AMBULÂNCIA?</p>
+        <div class="ta-faq-link-grid">
+          <a href="/ambulancia-rj" class="ta-faq-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Ambulância Rio de Janeiro
+          </a>
+          <a href="/ambulancia-sp" class="ta-faq-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Ambulância São Paulo
+          </a>
+          <a href="/corporativo" class="ta-faq-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Planos Corporativos
+          </a>
+          <a href="/eventos" class="ta-faq-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Cobertura de Eventos
+          </a>
         </div>
       </div>
-    </section>
+    </FAQ>
 
     <!-- ═══ 12. CTA FINAL ═══ -->
     <section class="ta-cta-final" aria-labelledby="cta-heading">
@@ -1043,23 +1023,7 @@ const schema = JSON.stringify({
     .ta-table { font-size: 12px; }
   }
 
-  /* ═══ FAQ ═══ */
-  .ta-faq { padding: clamp(64px,8vw,96px) 0; background: #fff; }
-  .ta-faq h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 32px; color: var(--navy); }
-  .ta-faq-list { max-width: 780px; margin: 32px auto 0; }
-  .ta-faq-item { border-bottom: 1px solid var(--cream-dark); }
-  .ta-faq-q {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 18px 0; cursor: pointer; font-size: 16px; font-weight: 600;
-    color: var(--navy); list-style: none; width: 100%;
-  }
-  .ta-faq-q::-webkit-details-marker { display: none; }
-  .ta-faq-q:hover { color: var(--green-dark); }
-  .ta-faq-icon { width: 20px; height: 20px; flex-shrink: 0; color: #6B7785; transition: transform .25s ease; }
-  details[open] .ta-faq-icon { transform: rotate(180deg); }
-  .ta-faq-a { padding: 0 0 18px; }
-  .ta-faq-a p { font-size: 14px; color: #6B7785; line-height: 1.7; max-width: 680px; }
-  /* Internal link grid */
+  /* ═══ FAQ — Internal link grid (slot) ═══ */
   .ta-faq-links { max-width: 780px; margin: 56px auto 0; padding-top: 40px; border-top: 1px solid var(--cream-dark); }
   .ta-faq-link-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 20px; }
   @media (max-width: 720px) { .ta-faq-link-grid { grid-template-columns: 1fr 1fr; } }
