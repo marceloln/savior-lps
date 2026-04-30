@@ -435,6 +435,27 @@ const schema = JSON.stringify({
             <h3>Bomba de infusão dupla</h3>
             <p>2 canais independentes para drogas vasoativas. Seringa e volumétrica. Medicação de emergência completa a bordo.</p>
           </div>
+          <div class="ta-equip-item">
+            <div class="ta-equip-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12h1m8-9v1m8 8h1M5.6 5.6l.7.7m12.1-.7-.7.7M9 16a5 5 0 1 1 6 0 3.5 3.5 0 0 0-1 3 2 2 0 0 1-4 0 3.5 3.5 0 0 0-1-3"/></svg>
+            </div>
+            <h3>Aspirador de secreções elétrico</h3>
+            <p>Via aérea livre em qualquer posição. Capacidade 500 ml, operação em 12 V ou bateria independente. Essencial em PCR e trauma.</p>
+          </div>
+          <div class="ta-equip-item">
+            <div class="ta-equip-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <h3>Maleta de medicamentos</h3>
+            <p>Noradrenalina, dopamina, amiodarona, adenosina, AAS e morfina. Protocolo ACLS completo. Caixa lacrada e auditada a cada turno.</p>
+          </div>
+          <div class="ta-equip-item">
+            <div class="ta-equip-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <h3>Kit de imobilização completo</h3>
+            <p>Colar cervical Philadelphia, prancha longa rígida, colete extrícador e talas modulares. Padrão para trauma e transporte seguro.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -957,7 +978,8 @@ const schema = JSON.stringify({
   .ta-equip-sec { padding: clamp(64px,8vw,96px) 0; background: #fff; }
   .ta-equip-sec h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 8px; color: var(--navy); }
   .ta-equip-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-bottom: 40px; }
-  @media (max-width: 720px) { .ta-equip-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .ta-equip-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 520px) { .ta-equip-grid { grid-template-columns: 1fr; } }
   .ta-equip-item { padding: 24px; background: var(--cream); border-radius: 8px; border: 1px solid var(--cream-dark); }
   .ta-equip-ico {
     width: 44px; height: 44px; border-radius: 10px; background: rgba(0,184,124,.1);
