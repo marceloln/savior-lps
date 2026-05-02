@@ -126,17 +126,21 @@ async function createDeal(body, hdrs) {
     ? `${empresa} — ${page || 'corporativo'}`
     : `${nome || 'Lead'} — ${page || 'site'}`;
 
-  // Rotas: página → pipeline_id + stage_id (primeiro estágio de cada pipeline)
+  // Rotas: página → pipeline_id + stage_id + responsável
+  // Carlos Xavier (RJ): 22287454 | Comercial SP: 22647110
   const PIPELINE_MAP = {
-    'eventos':     { pipeline_id: 6, stage_id: 35 }, // Eventos - RJ › Qualificado
-    'eventos-sp':     { pipeline_id: 2, stage_id: 6  }, // Eventos - SP › Cliente Qualificado
-    'corporativo':    { pipeline_id: 1, stage_id: 1  }, // Area Protegida - RJ › Cliente Qualificado
-    'corporativo-sp': { pipeline_id: 5, stage_id: 23 }, // Area Protegida - SP › Cliente Qualificado
+    'eventos':        { pipeline_id: 6, stage_id: 35, owner_id: 22287454 }, // Eventos - RJ
+    'eventos-sp':     { pipeline_id: 2, stage_id: 6,  owner_id: 22647110 }, // Eventos - SP
+    'corporativo':    { pipeline_id: 1, stage_id: 1,  owner_id: 22287454 }, // Area Protegida - RJ
+    'corporativo-sp': { pipeline_id: 5, stage_id: 23, owner_id: 22647110 }, // Area Protegida - SP
   };
   const route = PIPELINE_MAP[page] || {};
+  const ownerId = route.owner_id;
 
-  const dealPayload = { title: dealTitle, ...route };
+  const { owner_id: _owner, ...pipelineRoute } = route;
+  const dealPayload = { title: dealTitle, ...pipelineRoute };
   if (personId) dealPayload.person_id = personId;
+  if (ownerId)  dealPayload.user_id   = ownerId;
 
   const dealRes  = await fetch(`${BASE}/deals`, {
     method: 'POST',
@@ -168,6 +172,23 @@ async function createDeal(body, hdrs) {
       method: 'POST',
       headers: hdrs,
       body: JSON.stringify({ content: noteLines, deal_id: dealId }),
+    });
+
+    // 4. Activity — notifica o responsável por e-mail automaticamente
+    const today = new Date().toISOString().slice(0, 10);
+    const activityPayload = {
+      subject: `🌐 Lead do site — ${dealTitle}`,
+      type: 'task',
+      deal_id: dealId,
+      due_date: today,
+      note: noteLines,
+    };
+    if (ownerId) activityPayload.assigned_to_user_id = ownerId;
+
+    await fetch(`${BASE}/activities`, {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify(activityPayload),
     });
   }
 
