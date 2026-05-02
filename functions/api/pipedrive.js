@@ -103,18 +103,28 @@ async function createDeal(body, hdrs) {
     utm_source, utm_campaign,
   } = body;
 
-  // 1. Criar Person com e-mail e telefone
+  const isEvento = page?.startsWith('eventos');
+
+  // 1. Para corporativo: criar Organization (empresa + cidade) primeiro
+  let orgId = null;
+  if (!isEvento && empresa) {
+    orgId = (await fetch(`${BASE}/organizations`, {
+      method: 'POST', headers: hdrs,
+      body: JSON.stringify({ name: empresa, address: cidade || undefined }),
+    }).then(r => r.json()))?.data?.id;
+  }
+
+  // 2. Criar Person com e-mail, telefone e org vinculada
   const personPayload = { name: nome || empresa || 'Contato Savior' };
   if (email)    personPayload.email = [{ value: email, label: 'work', primary: true }];
   if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
+  if (orgId)    personPayload.org_id = orgId;
 
   const personId = (await fetch(`${BASE}/persons`, {
     method: 'POST', headers: hdrs, body: JSON.stringify(personPayload),
   }).then(r => r.json()))?.data?.id;
 
-  // 2. Título limpo do Deal
-  const isEvento = page?.startsWith('eventos');
-
+  // 3. Título limpo do Deal
   // Converte AAAA-MM-DD → DD/MM/AAAA
   function brDate(d) {
     if (!d) return null;
