@@ -102,7 +102,8 @@ async function createLead(body, hdrs) {
 async function createDeal(body, hdrs) {
   const {
     page, nome, empresa, whatsapp,
-    tipo, data_evento, publico_estimado, funcionarios,
+    cidade, bairro, tipo, data_evento, horario_inicio, horario_fim,
+    publico_estimado, funcionarios,
     utm_source, utm_campaign,
   } = body;
 
@@ -128,7 +129,9 @@ async function createDeal(body, hdrs) {
   // Rotas: página → pipeline_id + stage_id (primeiro estágio de cada pipeline)
   const PIPELINE_MAP = {
     'eventos':     { pipeline_id: 6, stage_id: 35 }, // Eventos - RJ › Qualificado
-    'corporativo': { pipeline_id: 1, stage_id: 1  }, // Area Protegida - RJ › Cliente Qualificado
+    'eventos-sp':     { pipeline_id: 2, stage_id: 6  }, // Eventos - SP › Cliente Qualificado
+    'corporativo':    { pipeline_id: 1, stage_id: 1  }, // Area Protegida - RJ › Cliente Qualificado
+    'corporativo-sp': { pipeline_id: 5, stage_id: 23 }, // Area Protegida - SP › Cliente Qualificado
   };
   const route = PIPELINE_MAP[page] || {};
 
@@ -146,12 +149,15 @@ async function createDeal(body, hdrs) {
   // 3. Nota com todos os campos do formulário
   if (dealId) {
     const noteLines = [
-      nome              ? `Nome: ${nome}`                         : null,
-      empresa           ? `Empresa: ${empresa}`                   : null,
-      whatsapp          ? `WhatsApp: ${whatsapp}`                 : null,
-      tipo              ? `Tipo: ${tipo}`                         : null,
-      data_evento       ? `Data do evento: ${data_evento}`        : null,
-      publico_estimado  ? `Público estimado: ${publico_estimado}` : null,
+      nome              ? `Nome: ${nome}`                                       : null,
+      empresa           ? `Empresa: ${empresa}`                                 : null,
+      whatsapp          ? `WhatsApp: ${whatsapp}`                               : null,
+      cidade            ? `Cidade: ${cidade}`                                   : null,
+      bairro            ? `Bairro: ${bairro}`                                   : null,
+      tipo              ? `Tipo: ${tipo}`                                       : null,
+      data_evento       ? `Data do evento: ${data_evento}`                      : null,
+      (horario_inicio && horario_fim) ? `Horário: ${horario_inicio} às ${horario_fim}` : null,
+      publico_estimado  ? `Público estimado: ${publico_estimado}`               : null,
       funcionarios      ? `Funcionários: ${funcionarios}`         : null,
       `Página: ${page || 'desconhecida'}`,
       utm_source        ? `UTM Source: ${utm_source}`             : null,
