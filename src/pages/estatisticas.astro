@@ -679,14 +679,55 @@
     if (el) el.textContent = String(val);
   }
 
+  /**
+   * Parser robusto para números do Google Sheets (PT-BR).
+   * "10.846"     → 10846   (ponto = separador de milhar PT-BR)
+   * "10.846,50"  → 10846.5 (vírgula = decimal PT-BR)
+   * "10,846"     → 10846   (vírgula = separador en-US)
+   * "10846"      → 10846   (sem formatação)
+   * "8.56%"      → 8.56    (percentual)
+   */
+  function parsePtBrNum(s) {
+    if (s === undefined || s === null) return NaN;
+    s = String(s).trim().replace('%', '');
+    if (!s || s === '-' || s.toLowerCase().includes('nan')) return NaN;
+    var commas  = (s.match(/,/g) || []).length;
+    var periods  = (s.match(/\./g) || []).length;
+    if (commas === 1 && periods >= 1) {
+      // PT-BR: "10.846,50" → remove pontos, vírgula vira ponto decimal
+      return parseFloat(s.replace(/\./g, '').replace(',', '.'));
+    }
+    if (commas === 0 && periods >= 2) {
+      // Múltiplos pontos = separadores de milhar: "10.846.017" → 10846017
+      return parseFloat(s.replace(/\./g, ''));
+    }
+    if (commas === 0 && periods === 1) {
+      var parts = s.split('.');
+      // Se parte decimal tem exatamente 3 dígitos, é separador de milhar
+      if (parts[1] && parts[1].length === 3) return parseFloat(s.replace('.', ''));
+      return parseFloat(s);
+    }
+    if (commas >= 2) {
+      // "10,846,017" — vírgulas como separadores en-US
+      return parseFloat(s.replace(/,/g, ''));
+    }
+    if (commas === 1 && periods === 0) {
+      // Pode ser decimal en-US "10,5" ou milhar PT-BR "10,846"
+      var p = s.split(',');
+      if (p[1] && p[1].length === 3) return parseFloat(s.replace(',', ''));
+      return parseFloat(s.replace(',', '.'));
+    }
+    return parseFloat(s);
+  }
+
   function fmtNum(v) {
-    var n = typeof v === 'string' ? parseFloat(v.replace(/[^\d.]/g, '')) : Number(v);
+    var n = (typeof v === 'number') ? v : parsePtBrNum(String(v ?? ''));
     if (isNaN(n)) return '—';
-    return n.toLocaleString('pt-BR');
+    return Math.round(n).toLocaleString('pt-BR');
   }
 
   function fmtCurrency(v) {
-    var n = typeof v === 'string' ? parseFloat(v.replace(/[^\d.]/g, '')) : Number(v);
+    var n = (typeof v === 'number') ? v : parsePtBrNum(String(v ?? ''));
     if (isNaN(n)) return '—';
     return 'R$\u00a0' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
@@ -714,12 +755,12 @@
     if (!s || s === '-') return '—';
     if (s.toLowerCase().includes('nan')) return '—';
     if (type === 'num') {
-      var n = parseFloat(s.replace(/[^\d.]/g, ''));
+      var n = parsePtBrNum(s);
       return isNaN(n) ? '—' : fmtNum(n);
     }
     if (type === 'pct') return s.toLowerCase().includes('nan') ? '—' : s;
     if (type === 'currency') {
-      var nc = parseFloat(s.replace(/[^\d.]/g, ''));
+      var nc = parsePtBrNum(s);
       return isNaN(nc) ? '—' : fmtCurrency(nc);
     }
     return s;
@@ -998,12 +1039,12 @@
     // Filtrar campanhas com conversões e ordenar
     var comConv = campanhas
       .filter(function(c) {
-        var conv = parseFloat(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0').replace(/[^\d.]/g, ''));
+        var conv = parsePtBrNum(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0'));
         return conv > 0;
       })
       .sort(function(a, b) {
-        var ca = parseFloat(String(resolveKey(a, ['Conv','conv']) || '0').replace(/[^\d.]/g, '')) || 0;
-        var cb = parseFloat(String(resolveKey(b, ['Conv','conv']) || '0').replace(/[^\d.]/g, '')) || 0;
+        var ca = parsePtBrNum(String(resolveKey(a, ['Conv','conv']) || '0')) || 0;
+        var cb = parsePtBrNum(String(resolveKey(b, ['Conv','conv']) || '0')) || 0;
         return cb - ca;
       })
       .slice(0, 10);
@@ -1016,24 +1057,60 @@
     kwSection.hidden = false;
     kwList.textContent = '';
 
+    var tbl = document.createElement('table');
+    tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:.825rem;';
+    var thead = document.createElement('thead');
+    var htr = document.createElement('tr');
+    [['#','30px'],['Campanha',''],['Conv.','60px'],['CPA R$','90px'],['CTR','55px']].forEach(function(h) {
+      var th = document.createElement('th');
+      th.textContent = h[0];
+      th.style.cssText = 'text-align:left;padding:.45rem .6rem;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--cream-light);border-bottom:1px solid var(--border);white-space:nowrap;' + (h[1] ? 'width:'+h[1]+';' : '');
+      if (h[0] !== '#' && h[0] !== 'Campanha') th.style.textAlign = 'right';
+      htr.appendChild(th);
+    });
+    thead.appendChild(htr);
+    tbl.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
     comConv.forEach(function(c, idx) {
       var nome = resolveKey(c, ['Campanha','campanha']) || '—';
       var conv = sanitizeVal(resolveKey(c, ['Conv','conv','Conversoes']), 'num');
       var cpa  = sanitizeVal(resolveKey(c, ['CPA RS','CPA R$','cpa rs']), 'currency');
       var ctr  = sanitizeVal(resolveKey(c, ['CTR','ctr']), 'pct');
 
-      var row = document.createElement('div');
-      row.className = 'keyword-row';
+      var tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border-soft)';
 
-      var rank = document.createElement('div'); rank.className = 'kw-rank'; rank.textContent = String(idx + 1);
-      var nm   = document.createElement('div'); nm.className = 'kw-name'; nm.textContent = nome;
-      var cv   = document.createElement('div'); cv.className = 'kw-conv'; cv.textContent = conv;
-      var cp   = document.createElement('div'); cp.className = 'kw-cost'; cp.textContent = cpa;
-      var ct   = document.createElement('div'); ct.className = 'kw-ctr';  ct.textContent = ctr;
+      function kwtd(text, align, bold, color) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        td.style.cssText = 'padding:.55rem .6rem;white-space:nowrap;' +
+          'text-align:' + (align || 'left') + ';' +
+          (bold  ? 'font-weight:700;' : '') +
+          (color ? 'color:' + color + ';' : '');
+        return td;
+      }
 
-      row.appendChild(rank); row.appendChild(nm); row.appendChild(cv); row.appendChild(cp); row.appendChild(ct);
-      kwList.appendChild(row);
+      var rankTd = document.createElement('td');
+      rankTd.style.cssText = 'padding:.55rem .6rem;';
+      var rankBadge = document.createElement('span');
+      rankBadge.textContent = String(idx + 1);
+      rankBadge.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--cream);font-size:.7rem;font-weight:700;color:var(--muted);';
+      rankTd.appendChild(rankBadge);
+
+      var nameTd = document.createElement('td');
+      nameTd.textContent = nome;
+      nameTd.style.cssText = 'padding:.55rem .6rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+
+      tr.appendChild(rankTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(kwtd(conv, 'right', true,  'var(--green-dark)'));
+      tr.appendChild(kwtd(cpa,  'right', false, 'var(--muted)'));
+      tr.appendChild(kwtd(ctr,  'right', false, 'var(--muted)'));
+      tbody.appendChild(tr);
     });
+    tbl.appendChild(tbody);
+    kwList.appendChild(tbl);
   }
 
   /* ── Anomalias ────────────────────────────────────── */
