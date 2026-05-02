@@ -1,0 +1,435 @@
+---
+// Painel interno de leads do site — acesso via ?key=savior79
+// noindex, nofollow — não indexar
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Savior · Painel de Leads</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0B2540;
+      --green:  #00B87C;
+      --cream:  #F4EFE6;
+      --white:  #ffffff;
+      --muted:  #6b7280;
+      --border: #e5e7eb;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    #lock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 4px 24px rgba(11,37,64,.10);
+      text-align: center;
+    }
+
+    .login-card .logo { font-size: 2rem; margin-bottom: .5rem; }
+    .login-card h1   { font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem; }
+    .login-card p    { color: var(--muted); font-size: .875rem; margin-bottom: 1.5rem; }
+
+    .login-card input {
+      width: 100%;
+      padding: .65rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: .75rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .login-card input:focus { border-color: var(--green); }
+
+    .login-card button {
+      width: 100%;
+      padding: .7rem;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .login-error { color: #dc2626; font-size: .8rem; margin-top: .5rem; }
+
+    #dashboard { display: none; }
+
+    header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1  { font-size: 1.1rem; font-weight: 700; }
+    header .sub { font-size: .8rem; opacity: .6; }
+
+    .tag-site {
+      background: var(--green);
+      color: var(--white);
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .2rem .6rem;
+      border-radius: 99px;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .card .label {
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: .4rem;
+    }
+    .card .value { font-size: 2.25rem; font-weight: 800; color: var(--navy); line-height: 1; }
+    .card .icon  { font-size: 1.5rem; margin-bottom: .5rem; }
+
+    .section { margin-bottom: 2rem; }
+    .section-title {
+      font-size: .85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+
+    .box {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .box h3 { font-size: .9rem; font-weight: 700; margin-bottom: 1rem; color: var(--navy); }
+    .box h3 + h3 { margin-top: 1.25rem; }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: .75rem;
+      font-size: .875rem;
+    }
+    .bar-label { width: 130px; flex-shrink: 0; }
+    .bar-track {
+      flex: 1;
+      height: 10px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 99px;
+    }
+    .bar-count { width: 30px; text-align: right; font-weight: 700; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    th {
+      text-align: left;
+      padding: .5rem .75rem;
+      background: var(--cream);
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+    }
+    td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    td.num { font-weight: 700; text-align: right; }
+
+    .footer {
+      text-align: center;
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+    }
+
+    #loading { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- Lock screen -->
+<div id="lock">
+  <div class="login-card">
+    <div class="logo">🚑</div>
+    <h1>Painel de Leads</h1>
+    <p>Savior Medical Service — acesso restrito</p>
+    <form id="login-form">
+      <input type="password" id="key-input" placeholder="Senha de acesso" autocomplete="current-password" />
+      <button type="submit">Entrar</button>
+      <p id="login-error" class="login-error" hidden>Senha incorreta. Tente novamente.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <header>
+    <div>
+      <h1>🚑 Savior · Painel de Leads</h1>
+      <div class="sub" id="timestamp"></div>
+    </div>
+    <span class="tag-site">🌐 Leads do Site</span>
+  </header>
+
+  <main>
+    <div id="loading">Carregando dados do Pipedrive…</div>
+    <div id="content" hidden>
+
+      <div class="section">
+        <div class="section-title">Resumo geral</div>
+        <div class="cards">
+          <div class="card">
+            <div class="icon">📱</div>
+            <div class="label">Cliques WhatsApp</div>
+            <div class="value" id="val-leads">—</div>
+          </div>
+          <div class="card">
+            <div class="icon">📋</div>
+            <div class="label">Formulários</div>
+            <div class="value" id="val-forms">—</div>
+          </div>
+          <div class="card">
+            <div class="icon">👤</div>
+            <div class="label">Pessoas</div>
+            <div class="value" id="val-pessoas">—</div>
+          </div>
+          <div class="card">
+            <div class="icon">🏢</div>
+            <div class="label">Empresas</div>
+            <div class="value" id="val-empresas">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Por landing page</div>
+        <div class="grid2">
+          <div class="box">
+            <h3>Formulários por pipeline</h3>
+            <div id="chart-pipeline"></div>
+          </div>
+          <div class="box">
+            <h3>Tipo de serviço</h3>
+            <div id="chart-tipo"></div>
+            <h3>Cidade</h3>
+            <div id="chart-cidade"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Evolução mensal</div>
+        <div class="box">
+          <table>
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th style="text-align:right">WA Clicks</th>
+                <th style="text-align:right">Formulários</th>
+                <th style="text-align:right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-mes"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  <div class="footer" id="footer-ts"></div>
+</div>
+
+<script>
+  const KEY = 'savior79';
+
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  function nomeMes(yyyymm) {
+    const [y, m] = yyyymm.split('-');
+    return MESES[parseInt(m, 10) - 1] + ' ' + y;
+  }
+
+  function criarBarra(label, count, max) {
+    const pct = max > 0 ? Math.round((count / max) * 100) : 0;
+
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'bar-label';
+    lbl.textContent = label;
+
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.width = pct + '%';
+    track.appendChild(fill);
+
+    const cnt = document.createElement('div');
+    cnt.className = 'bar-count';
+    cnt.textContent = String(count);
+
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(cnt);
+    return row;
+  }
+
+  function renderBarras(containerId, dados) {
+    const el  = document.getElementById(containerId);
+    const max = Math.max(...Object.values(dados), 1);
+    el.textContent = '';
+    Object.entries(dados).forEach(([label, count]) => {
+      el.appendChild(criarBarra(label, count, max));
+    });
+  }
+
+  function renderTabela(dados) {
+    const tbody = document.getElementById('tabela-mes');
+    tbody.textContent = '';
+
+    const entries = Object.entries(dados);
+    if (!entries.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.style.cssText = 'text-align:center;padding:1rem;color:#6b7280';
+      td.textContent = 'Nenhum dado ainda';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    entries.forEach(([mes, vals]) => {
+      const wa    = vals.leads_wa    || 0;
+      const forms = vals.formularios || 0;
+      const total = wa + forms;
+
+      const tr = document.createElement('tr');
+
+      const makeTd = (text, isNum) => {
+        const td = document.createElement('td');
+        if (isNum) td.className = 'num';
+        td.textContent = text;
+        return td;
+      };
+
+      tr.appendChild(makeTd(nomeMes(mes), false));
+      tr.appendChild(makeTd(String(wa),    true));
+      tr.appendChild(makeTd(String(forms), true));
+      tr.appendChild(makeTd(String(total), true));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function setText(id, val) {
+    document.getElementById(id).textContent = String(val);
+  }
+
+  function renderDashboard(data) {
+    document.getElementById('loading').hidden = true;
+    document.getElementById('content').hidden = false;
+
+    setText('val-leads',   data.resumo.leads_wa);
+    setText('val-forms',   data.resumo.formularios);
+    setText('val-pessoas', data.resumo.pessoas);
+    setText('val-empresas',data.resumo.empresas);
+
+    renderBarras('chart-pipeline', data.por_pipeline);
+    renderBarras('chart-tipo',     data.por_tipo);
+    renderBarras('chart-cidade',   data.por_cidade);
+    renderTabela(data.por_mes);
+
+    const ts    = new Date(data.gerado_em);
+    const fmtTs = ts.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    setText('timestamp', 'Atualizado em ' + fmtTs);
+    setText('footer-ts', 'Dados via Pipedrive · ' + fmtTs);
+  }
+
+  async function showDashboard(key) {
+    document.getElementById('lock').style.display      = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+
+    try {
+      const res  = await fetch('/api/stats?key=' + encodeURIComponent(key));
+      const data = await res.json();
+      if (res.ok) {
+        renderDashboard(data);
+      } else {
+        setText('loading', '⚠️ Erro ao carregar dados.');
+      }
+    } catch {
+      setText('loading', '⚠️ Sem conexão com o servidor.');
+    }
+  }
+
+  // Verificar key na URL
+  const params = new URLSearchParams(location.search);
+  if (params.get('key') === KEY) showDashboard(KEY);
+
+  document.getElementById('login-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = document.getElementById('key-input').value.trim();
+    if (val === KEY) {
+      showDashboard(KEY);
+    } else {
+      document.getElementById('login-error').hidden = false;
+    }
+  });
+</script>
+</body>
+</html>
