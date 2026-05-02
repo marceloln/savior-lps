@@ -12,47 +12,11 @@ import FAQ from '../components/FAQ.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
 
 // ============ SEO ============
-const title = 'Ambulância para Eventos | Posto Médico e UTI Móvel | RJ e SP | Savior';
+const title = 'Ambulância para Eventos | Posto Médico | RJ e SP | Savior';
 const description = 'Locação de ambulância para eventos com equipe médica completa. Posto médico, UTI móvel e documentação para alvará. Shows, corporativos e esportivos. RJ e SP.';
 const canonical = 'https://www.savior.com.br/eventos';
 
-// ============ Schema.org ============
-const schema = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
-  "name": "Savior Medical Service - Eventos",
-  "description": "Cobertura médica para eventos com ambulância UTI, posto médico e equipe dedicada.",
-  "url": "https://www.savior.com.br/eventos",
-  "telephone": [CONTACT_RJ.phoneHref, CONTACT_SP.phoneLandlineHref],
-  "areaServed": ["Rio de Janeiro", "São Paulo"],
-  "foundingDate": "1979",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 4.7,
-    "reviewCount": String(GOOGLE_BUSINESS.reviewCount + GOOGLE_BUSINESS_SP.reviewCount)
-  },
-  "speakable": {
-    "@type": "SpeakableSpecification",
-    "cssSelector": ["h1", ".ev-hero-sub", ".ev-tldr-list", "#faq"]
-  }
-});
-
-const breadcrumbSchema = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Savior Medical Service", "item": "https://www.savior.com.br/" },
-    { "@type": "ListItem", "position": 2, "name": "Ambulância para Eventos", "item": "https://www.savior.com.br/eventos" }
-  ]
-});
-
-// ============ WhatsApp URLs ============
-const WA_MSG = 'Oi, preciso de cobertura médica para um evento.';
-const waHero   = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'hero');
-const waHeader = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'header');
-const waCTA    = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'cta');
-const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
-
+// ============ FAQ ============
 const faqItems = [
   { q: "Preciso de ambulância para liberar o alvará do evento?", a: "Depende da legislação municipal e do porte do evento. A Savior fornece toda a documentação exigida pela prefeitura e corpo de bombeiros para liberação. Muitos espaços — como o Maracanã, hotéis e centros de convenção — não permitem que o evento inicie sem equipe médica posicionada." },
   { q: "Quantas ambulâncias preciso para o meu evento?", a: "Depende do porte: até 500 pessoas, 1 ambulância básica. Acima de 500, recomendamos UTI + posto médico. Eventos com mais de 2.000 pessoas podem exigir múltiplas unidades. A Savior dimensiona a cobertura e envia a proposta com o plano médico adequado." },
@@ -63,6 +27,65 @@ const faqItems = [
   { q: "Quanto custa ambulância para evento?", a: "O valor depende do tipo e duração do evento, número de participantes, localização e tipo de cobertura. Referência: a partir de R$1.500 para eventos de até 4 horas com 1 ambulância básica. Solicite orçamento personalizado — resposta em até 2 horas em dias úteis." },
   { q: "A equipe fica durante todo o evento?", a: "Sim. A Savior cobre o evento inteiro: chega antes do público, fica posicionada durante toda a execução e só sai depois do último participante e da desmontagem. Eventos com montagem longa incluem cobertura na montagem e desmontagem também." },
 ];
+
+// ============ Schema.org ============
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MedicalBusiness",
+      "@id": "https://www.savior.com.br/#organization",
+      "name": "Savior Medical Service",
+      "description": "Cobertura médica para eventos com ambulância UTI, posto médico e equipe dedicada.",
+      "url": "https://www.savior.com.br",
+      "telephone": [CONTACT_RJ.phoneHref, CONTACT_SP.phoneLandlineHref],
+      "areaServed": ["Rio de Janeiro", "São Paulo"],
+      "foundingDate": "1979",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": 4.7,
+        "reviewCount": GOOGLE_BUSINESS.reviewCount + GOOGLE_BUSINESS_SP.reviewCount
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.savior.com.br/eventos",
+      "url": "https://www.savior.com.br/eventos",
+      "name": title,
+      "inLanguage": "pt-BR",
+      "isPartOf": { "@id": "https://www.savior.com.br/#website" },
+      "about": { "@id": "https://www.savior.com.br/#organization" },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["h1", ".ev-hero-sub", ".ev-tldr-list", "#faq"]
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Savior Medical Service", "item": "https://www.savior.com.br/" },
+          { "@type": "ListItem", "position": 2, "name": "Ambulância para Eventos", "item": "https://www.savior.com.br/eventos" }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.savior.com.br/eventos#faq",
+      "mainEntity": faqItems.map(({ q, a }) => ({
+        "@type": "Question",
+        "name": q,
+        "acceptedAnswer": { "@type": "Answer", "text": a }
+      }))
+    }
+  ]
+});
+
+// ============ WhatsApp URLs ============
+const WA_MSG = 'Oi, preciso de cobertura médica para um evento.';
+const waHero   = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'hero');
+const waHeader = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'header');
+const waCTA    = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'cta');
+const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
+
 ---
 
 <Base
@@ -75,20 +98,6 @@ const faqItems = [
   twitterImage="/og/eventos-twitter-card-1200x628.jpg"
   lcpImageSrcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
 >
-  <!-- BreadcrumbList -->
-  <script type="application/ld+json" is:inline>{breadcrumbSchema}</script>
-
-  <!-- FAQ Schema separado -->
-  <script type="application/ld+json" is:inline>{JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqItems.map(({ q, a }) => ({
-      "@type": "Question",
-      "name": q,
-      "acceptedAnswer": { "@type": "Answer", "text": a }
-    }))
-  })}</script>
-
   <main id="main">
 
     <!-- ═══ STICKY HEADER ═══ -->
@@ -389,7 +398,7 @@ const faqItems = [
     <section class="section ev-navy-deep" id="comparativo" aria-labelledby="comp-heading">
       <div class="wrap">
         <span class="eyebrow on-dark">Por que a Savior</span>
-        <h2 id="comp-heading" class="on-dark" style="margin-bottom:8px">O que nos separa <em class="ev-green-bright">de todo o resto</em></h2>
+        <h2 id="comp-heading" class="on-dark" style="margin-bottom:8px">O que faz diferença <em class="ev-green-bright">quando é urgente</em></h2>
         <p class="ev-section-lead ev-muted">Ambulância para evento tem muita no mercado. Mas poucas têm 46 anos de operação, responsável técnico nomeado em contrato e equipe que não atrasa.</p>
         <div class="ev-comp-wrap" style="overflow-x:auto;margin-top:40px">
         <table class="ev-comp-table" aria-label="Comparativo Savior vs concorrentes">
@@ -556,10 +565,31 @@ const faqItems = [
         var data  = document.getElementById('f-data').value;
         var pub   = document.getElementById('f-publico').value;
 
-        if (!nome || !wa || !tipo || !data) {
-          document.getElementById('f-nome').reportValidity();
+        var firstInvalid = !nome ? 'f-nome' : !wa ? 'f-whatsapp' : !tipo ? 'f-tipo' : !data ? 'f-data' : null;
+        if (firstInvalid) {
+          var el = document.getElementById(firstInvalid);
+          el.focus();
+          el.reportValidity();
           return;
         }
+
+        // Pipedrive Deal — fire-and-forget
+        var evUtm = window._saviorUtm || {};
+        fetch('/api/pipedrive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'deal',
+            page: 'eventos',
+            nome: nome,
+            whatsapp: wa,
+            tipo: tipo,
+            data_evento: data,
+            publico_estimado: pub || '',
+            utm_source: evUtm.source || 'direct',
+            utm_campaign: evUtm.campaign || 'none',
+          }),
+        }).catch(function(){});
 
         // GA4 + Google Ads + Meta Pixel — direto (sem GTM)
         var evLeadParams = { value: 1500, currency: 'BRL', lead_source: 'eventos-form', campaign: 'eventos', method: 'form' };
@@ -611,16 +641,29 @@ const faqItems = [
   </style>
 
   <!-- ═══ BLIP CHAT — Eventos ═══ -->
-  <!-- defer: não bloqueia parser, carrega em paralelo, executa após HTML parseado -->
-  <script src="https://unpkg.com/blip-chat-widget" type="text/javascript" defer is:inline></script>
+  <!-- Carregamento lazy: script só é injetado no primeiro evento de interação do usuário.
+       Elimina o TBT de +200-400ms causado pelo widget no carregamento inicial. -->
   <script is:inline>
-    window.addEventListener('load', function () {
-      new BlipChat()
-        .withAppKey('c2F2aW9ycHJpbmNpcGFsOjFlMmY2NTA1LWI2OGUtNGZmOC04NzllLWUzMDhiZmZiNDkyMw==')
-        .withButton({ color: '#00B87C', icon: '' })
-        .withCustomCommonUrl('https://savior.chat.blip.ai/')
-        .build();
-    });
+    (function () {
+      var loaded = false;
+      function loadBlip() {
+        if (loaded) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.src = 'https://unpkg.com/blip-chat-widget';
+        s.onload = function () {
+          new BlipChat()
+            .withAppKey('c2F2aW9ycHJpbmNpcGFsOjFlMmY2NTA1LWI2OGUtNGZmOC04NzllLWUzMDhiZmZiNDkyMw==')
+            .withButton({ color: '#00B87C', icon: '' })
+            .withCustomCommonUrl('https://savior.chat.blip.ai/')
+            .build();
+        };
+        document.head.appendChild(s);
+      }
+      ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(function (e) {
+        document.addEventListener(e, loadBlip, { once: true, passive: true });
+      });
+    })();
   </script>
 
 </Base>
@@ -694,6 +737,7 @@ const faqItems = [
   .ev-hero-live-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--green-bright); flex-shrink: 0; }
   .ev-hero-live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--green-bright); animation: ev-live-pulse 2s ease-out infinite; }
   @keyframes ev-live-pulse { 0% { transform: scale(1); opacity: .6; } 70% { transform: scale(2.5); opacity: 0; } to { transform: scale(2.5); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .ev-hero-live-dot::after { animation: none; } }
   .ev-hero h1 { color: #fff; font-size: clamp(36px, 5.2vw, 58px); margin-bottom: clamp(20px, 3vh, 32px); }
   @media (max-width: 480px) { .ev-hero h1 { font-size: 30px; } }
   .ev-hero h1 em { font-style: normal; color: var(--green-bright); }

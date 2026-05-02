@@ -7,6 +7,7 @@
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import { CONTACT_RJ } from '../data/savior';
 
 const schema = JSON.stringify({
@@ -68,8 +69,17 @@ const schema = JSON.stringify({
       ]
     },
     {
-      "@type": "SpeakableSpecification",
-      "cssSelector": ["h1", ".corp-hero-sub", ".corp-section-intro", "#proposta"]
+      "@type": "WebPage",
+      "@id": "https://www.savior.com.br/corporativo",
+      "url": "https://www.savior.com.br/corporativo",
+      "name": "Ambulância Corporativa 24h | SLA em Contrato | Savior",
+      "inLanguage": "pt-BR",
+      "isPartOf": { "@id": "https://www.savior.com.br/#website" },
+      "about": { "@id": "https://www.savior.com.br/#organization" },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["h1", ".corp-hero-sub", ".corp-section-intro", "#proposta"]
+      }
     },
     {
       "@type": "BreadcrumbList",
@@ -93,7 +103,7 @@ const faqItems = [
 ---
 
 <Base
-  title="Cobertura Médica Corporativa B2B | Savior Medical Service"
+  title="Ambulância Corporativa 24h | SLA em Contrato | Savior"
   description="Ambulância alocada 24h, equipe dedicada, SLA em contrato. Cobertura médica para empresas no RJ e SP. 46 anos de operação. 96% de renovação. Desde 1979."
   canonical="https://www.savior.com.br/corporativo"
   schema={schema}
@@ -101,7 +111,7 @@ const faqItems = [
   ogImageAlt="Ambulância UTI Savior posicionada em complexo corporativo no Rio de Janeiro"
   twitterImage="/og/corporativo-twitter-card-1200x628.jpg"
   dateModified="2026-04-29"
-  lcpImageSrcset="/img/b2b/fleet-paulista.webp 1536w"
+  lcpImageSrcset="/img/b2b/fleet-paulista-mobile.webp 540w, /img/b2b/fleet-paulista.webp 1536w"
 >
 
 <!-- ═══ 1. STICKY HEADER ═══ -->
@@ -124,15 +134,17 @@ const faqItems = [
 <!-- ═══ 2. HERO ═══ -->
 <section class="corp-hero" id="topo">
   <div class="corp-hero-bg" aria-hidden="true">
-    <img
-      class="corp-hero-poster"
-      src="/img/b2b/fleet-paulista.webp"
-      alt=""
-      width="1920"
-      height="1080"
-      loading="eager"
-      fetchpriority="high"
-    />
+    <picture class="corp-hero-poster">
+      <source media="(max-width: 767px)" srcset="/img/b2b/fleet-paulista-mobile.webp" type="image/webp" width="540" height="720" />
+      <img
+        src="/img/b2b/fleet-paulista.webp"
+        alt=""
+        width="1400"
+        height="1867"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </picture>
     <video
       id="corpHeroVid"
       autoplay
@@ -253,12 +265,12 @@ const faqItems = [
 <section class="section corp-dif-section" aria-labelledby="dif-heading">
   <div class="wrap">
     <p class="eyebrow on-dark" style="margin-bottom:12px">Especialidades Savior</p>
-    <h2 id="dif-heading" style="color:#fff">O que nos separa <em class="corp-green-bright">de todo o resto</em></h2>
+    <h2 id="dif-heading" style="color:#fff">O que faz diferença <em class="corp-green-bright">quando é urgente</em></h2>
     <p class="corp-section-intro" style="color:#ffffffb3;margin-bottom:0">Ambulância particular tem muita no mercado. Mas nem toda tem médico regulando antes de sair, frota certificada com menos de 3 anos e equipe que sabe conversar com empresa em crise.</p>
     <div class="corp-dif-grid">
       <div class="corp-dif-card corp-anim">
         <svg class="corp-dif-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <h3>Especialistas em <em class="corp-green-bright">humanização</em></h3>
+        <h3>A gente escuta <em class="corp-green-bright">antes de agir</em></h3>
         <p>Equipe treinada pra lidar com família em crise. Comunicação clara, sem jargão. O motorista espera, o enfermeiro explica.</p>
       </div>
       <div class="corp-dif-card corp-anim">
@@ -590,6 +602,15 @@ const faqItems = [
   </div>
 </section>
 
+<!-- ═══ CROSS-LINKS ═══ -->
+<nav class="crosslink-bar" aria-label="Outros serviços Savior">
+  <div class="wrap crosslink-inner">
+    <a href="/ambulancia-rj">Ambulância particular no Rio de Janeiro →</a>
+    <a href="/ambulancia-sp">Ambulância particular em São Paulo →</a>
+    <a href="/tipos-ambulancia">Básica, UTI e Neonatal: entenda cada tipo →</a>
+  </div>
+</nav>
+
 <!-- ═══ 17. FOOTER ═══ -->
 <Footer
   showBothCities={true}
@@ -597,18 +618,7 @@ const faqItems = [
 />
 
 <!-- ═══ FLOATING WHATSAPP ═══ -->
-<a
-  href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D"
-  target="_blank"
-  rel="noopener"
-  class="corp-fw"
-  aria-label="Falar com a Savior pelo WhatsApp"
-  data-whatsapp
-  data-campaign="corporativo"
-  data-location="floating"
->
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
+<FloatingWhatsApp waCampaign="corporativo" />
 
 <!-- ═══ SCRIPTS ═══ -->
 <script is:inline>
@@ -639,10 +649,31 @@ const faqItems = [
       var tipo     = document.getElementById('cf-tipo').value;
       var func     = document.getElementById('cf-func').value;
 
-      if (!empresa || !nome || !wpp) {
-        document.getElementById('cf-empresa').reportValidity();
+      var firstInvalid = !empresa ? 'cf-empresa' : !nome ? 'cf-nome' : !wpp ? 'cf-whatsapp' : null;
+      if (firstInvalid) {
+        var el = document.getElementById(firstInvalid);
+        el.focus();
+        el.reportValidity();
         return;
       }
+
+      // Pipedrive Deal — fire-and-forget
+      var corpUtm = window._saviorUtm || {};
+      fetch('/api/pipedrive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'deal',
+          page: 'corporativo',
+          nome: nome,
+          empresa: empresa,
+          whatsapp: wpp,
+          tipo: tipo || '',
+          funcionarios: func || '',
+          utm_source: corpUtm.source || 'direct',
+          utm_campaign: corpUtm.campaign || 'none',
+        }),
+      }).catch(function(){});
 
       var leadParams = { value: 27500, currency: 'BRL', lead_source: 'corporativo-form', campaign: 'corporativo', method: 'form' };
       window.dataLayer = window.dataLayer || [];

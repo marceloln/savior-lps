@@ -18,6 +18,11 @@ interface Props {
   dateModified?: string;
   /** srcset do LCP hero poster — deve espelhar exatamente o <img srcset> no Hero.astro */
   lcpImageSrcset?: string;
+  /** geo meta tags — passar por página; omitir em páginas multi-cidade */
+  geoRegion?: string;
+  geoPlacename?: string;
+  geoPosition?: string;
+  icbm?: string;
 }
 
 const {
@@ -30,6 +35,10 @@ const {
   twitterImage,
   dateModified = '2026-04-24',
   lcpImageSrcset = '/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w',
+  geoRegion,
+  geoPlacename,
+  geoPosition,
+  icbm,
 } = Astro.props;
 
 const absoluteOgImage = ogImage.startsWith('http')
@@ -55,10 +64,10 @@ const absoluteTwitterImage = twitterImage
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <!-- lang="pt-BR" está no <html> — content-language meta é obsoleto, removido -->
     <meta name="author" content="Savior Medical Service" />
-    <meta name="geo.region" content="BR-RJ" />
-    <meta name="geo.placename" content="Rio de Janeiro" />
-    <meta name="geo.position" content="-22.9;-43.2" />
-    <meta name="ICBM" content="-22.9, -43.2" />
+    {geoRegion && <meta name="geo.region" content={geoRegion} />}
+    {geoPlacename && <meta name="geo.placename" content={geoPlacename} />}
+    {geoPosition && <meta name="geo.position" content={geoPosition} />}
+    {icbm && <meta name="ICBM" content={icbm} />}
 
     <!-- ============ Theme & PWA ============ -->
     <meta name="theme-color" content="#0B2540" />
@@ -69,7 +78,11 @@ const absoluteTwitterImage = twitterImage
 
     <!-- ============ Icons ============ -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- ============ OpenGraph — completo ============ -->
     <meta property="og:type" content="website" />
@@ -278,6 +291,20 @@ const absoluteTwitterImage = twitterImage
             }
             if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: waValue, currency: 'BRL', content_name: 'WhatsApp - ' + waLabel });
           }
+
+          // Pipedrive Lead — fire-and-forget (não bloqueia o clique)
+          var utm = window._saviorUtm || {};
+          fetch('/api/pipedrive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'lead',
+              page: location.pathname.replace(/^\/|\/$/g, '') || 'home',
+              campaign: waCamp,
+              utm_source: utm.source || 'direct',
+              utm_campaign: utm.campaign || 'none',
+            }),
+          }).catch(function(){});
         }
 
         // Phone click — data-phone OU qualquer link tel:
