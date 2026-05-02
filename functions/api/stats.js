@@ -77,6 +77,9 @@ export async function onRequestGet(context) {
       .map(d => d.org_id?.value ?? d.org_id)
   );
 
+  // ── Google Ads (planilha pública) ─────────────────────────────
+  const ads = await fetchAds();
+
   return json({
     resumo: {
       leads_wa:    leads.length,
@@ -88,7 +91,53 @@ export async function onRequestGet(context) {
     por_tipo,
     por_cidade,
     por_mes: por_mes_ordenado,
+    ads,
     gerado_em: new Date().toISOString(),
+  });
+}
+
+// ── Google Ads via planilha pública ────────────────────────────
+const SHEET_ID = '1tqY0lrLRNffSkKjzMRjbxh24Ld-faSOElUifhbDaz38';
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+
+async function fetchAds() {
+  try {
+    const [resumoText, campanhasText] = await Promise.all([
+      fetch(SHEET_URL + 'Resumo').then(r => r.text()),
+      fetch(SHEET_URL + 'Campanhas').then(r => r.text()),
+    ]);
+
+    // Resumo: linhas A1:B8 → { label: value }
+    const resumo = {};
+    parseCsv(resumoText).forEach(([label, value]) => {
+      if (label) resumo[label.trim()] = (value ?? '').trim();
+    });
+
+    // Campanhas: primeira linha = headers, demais = dados
+    const campRows = parseCsv(campanhasText);
+    const headers  = campRows[0] ?? [];
+    const campanhas = campRows.slice(1).map(row =>
+      Object.fromEntries(headers.map((h, i) => [h.trim(), (row[i] ?? '').trim()]))
+    ).filter(r => r['Campanha']);
+
+    return { resumo, campanhas, ok: true };
+  } catch {
+    return { ok: false };
+  }
+}
+
+function parseCsv(text) {
+  return text.trim().split('\n').map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === ',' && !inQ) { cols.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    cols.push(cur);
+    return cols;
   });
 }
 

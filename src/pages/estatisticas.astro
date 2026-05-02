@@ -269,6 +269,29 @@
         </div>
       </div>
 
+      <!-- Google Ads -->
+      <div class="section" id="ads-section" hidden>
+        <div class="section-title">Google Ads — últimos 30 dias</div>
+        <div class="cards" id="ads-cards"></div>
+        <div class="box" style="margin-top:1rem">
+          <h3>Campanhas</h3>
+          <table id="ads-table">
+            <thead>
+              <tr>
+                <th>Campanha</th>
+                <th style="text-align:right">Impressões</th>
+                <th style="text-align:right">Cliques</th>
+                <th style="text-align:right">CTR</th>
+                <th style="text-align:right">Gasto R$</th>
+                <th style="text-align:right">Conv.</th>
+                <th style="text-align:right">CPA R$</th>
+              </tr>
+            </thead>
+            <tbody id="ads-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="section">
         <div class="section-title">Evolução mensal</div>
         <div class="box">
@@ -393,6 +416,7 @@
     renderBarras('chart-tipo',     data.por_tipo);
     renderBarras('chart-cidade',   data.por_cidade);
     renderTabela(data.por_mes);
+    if (data.ads && data.ads.ok) renderAds(data.ads);
 
     const ts    = new Date(data.gerado_em);
     const fmtTs = ts.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
@@ -414,6 +438,71 @@
       }
     } catch {
       setText('loading', '⚠️ Sem conexão com o servidor.');
+    }
+  }
+
+  function renderAds(ads) {
+    var section = document.getElementById('ads-section');
+    section.hidden = false;
+
+    var r = ads.resumo || {};
+    var cardsEl = document.getElementById('ads-cards');
+    cardsEl.textContent = '';
+
+    var adsMetrics = [
+      { icon: '👁', label: 'Impressões', val: r['Impressoes'] || '—' },
+      { icon: '🖱', label: 'Cliques',    val: r['Cliques']    || '—' },
+      { icon: '📊', label: 'CTR',        val: r['CTR']        || '—' },
+      { icon: '💰', label: 'Gasto R$',   val: r['Gasto RS']   || '—' },
+      { icon: '🎯', label: 'Conversões', val: r['Conversoes'] || '—' },
+      { icon: '📉', label: 'CPA R$',     val: r['CPA RS']     || '—' },
+    ];
+
+    adsMetrics.forEach(function(m) {
+      var card = document.createElement('div');
+      card.className = 'card';
+
+      var icon = document.createElement('div');
+      icon.className = 'icon';
+      icon.textContent = m.icon;
+
+      var lbl = document.createElement('div');
+      lbl.className = 'label';
+      lbl.textContent = m.label;
+
+      var val = document.createElement('div');
+      val.className = 'value';
+      val.style.fontSize = '1.5rem';
+      val.textContent = m.val;
+
+      card.appendChild(icon);
+      card.appendChild(lbl);
+      card.appendChild(val);
+      cardsEl.appendChild(card);
+    });
+
+    var tbody = document.getElementById('ads-tbody');
+    tbody.textContent = '';
+    (ads.campanhas || []).forEach(function(c) {
+      var tr = document.createElement('tr');
+      var fields = ['Campanha', 'Impressoes', 'Cliques', 'CTR', 'Custo RS', 'Conv', 'CPA RS'];
+      fields.forEach(function(f, i) {
+        var td = document.createElement('td');
+        if (i > 0) td.className = 'num';
+        td.textContent = c[f] || '—';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    if (!ads.campanhas || !ads.campanhas.length) {
+      var tr = document.createElement('tr');
+      var td = document.createElement('td');
+      td.colSpan = 7;
+      td.style.cssText = 'text-align:center;padding:1rem;color:#6b7280';
+      td.textContent = 'Aguardando próxima atualização do script';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
     }
   }
 
