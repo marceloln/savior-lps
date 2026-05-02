@@ -140,45 +140,38 @@ async function createDeal(body, hdrs) {
 
   if (!dealId) return json({ ok: false, error: 'deal_not_created' }, 500);
 
-  // 4. Nota formatada em HTML — renderiza corretamente no Pipedrive
-  function row(label, value) {
-    return value ? `<b>${label}:</b> ${value}` : null;
+  // 4. Nota formatada — cada campo em <p> próprio para quebrar linha no Pipedrive
+  function p(label, value) {
+    return value ? `<p><b>${label}:</b> ${value}</p>` : '';
   }
-  const br  = '<br>';
-  const sep = '<hr>';
 
   const note = isEvento
-    ? [
-        '<b>🌐 LEAD DO SITE — EVENTOS</b>',
-        sep,
-        row('👤 Nome',             nome),
-        row('📱 WhatsApp',         whatsapp),
-        row('📍 Cidade',           cidade),
-        row('🏘️ Bairro',           bairro),
-        sep,
-        row('🎪 Tipo de evento',   tipo),
-        row('📅 Data',             data_evento),
-        (horario_inicio && horario_fim)
-          ? `<b>⏰ Horário:</b> ${horario_inicio} às ${horario_fim}` : null,
-        row('👥 Público estimado', publico_estimado),
-        sep,
-        row('🔗 UTM Source',   utm_source),
-        row('🎯 UTM Campaign', utm_campaign),
-      ].filter(Boolean).join(br)
-    : [
-        '<b>🌐 LEAD DO SITE — CORPORATIVO</b>',
-        sep,
-        row('🏢 Empresa',          empresa),
-        row('👤 Contato',          nome),
-        row('📱 WhatsApp',         whatsapp),
-        row('📍 Cidade',           cidade),
-        sep,
-        row('🚑 Tipo de cobertura', tipo),
-        row('👥 Funcionários',      funcionarios),
-        sep,
-        row('🔗 UTM Source',   utm_source),
-        row('🎯 UTM Campaign', utm_campaign),
-      ].filter(Boolean).join(br);
+    ? `<p><b>🌐 LEAD DO SITE — EVENTOS</b></p>
+<hr>
+${p('👤 Nome',             nome)}
+${p('📱 WhatsApp',         whatsapp)}
+${p('📍 Cidade',           cidade)}
+${p('🏘️ Local / Bairro',   bairro)}
+<hr>
+${p('🎪 Tipo de evento',   tipo)}
+${p('📅 Data',             data_evento)}
+${horario_inicio && horario_fim ? `<p><b>⏰ Horário:</b> ${horario_inicio} às ${horario_fim}</p>` : ''}
+${p('👥 Público estimado', publico_estimado)}
+<hr>
+${p('🔗 Origem',  utm_source)}
+${p('🎯 Campanha', utm_campaign)}`
+    : `<p><b>🌐 LEAD DO SITE — CORPORATIVO</b></p>
+<hr>
+${p('🏢 Empresa',  empresa)}
+${p('👤 Contato',  nome)}
+${p('📱 WhatsApp', whatsapp)}
+${p('📍 Cidade',   cidade)}
+<hr>
+${p('🚑 Tipo de cobertura', tipo)}
+${p('👥 Funcionários',      funcionarios)}
+<hr>
+${p('🔗 Origem',  utm_source)}
+${p('🎯 Campanha', utm_campaign)}`;
 
   await fetch(`${BASE}/notes`, {
     method: 'POST', headers: hdrs,
