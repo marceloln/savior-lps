@@ -114,6 +114,14 @@ async function createDeal(body, hdrs) {
 
   // 2. Título limpo do Deal
   const isEvento = page?.startsWith('eventos');
+
+  // Converte AAAA-MM-DD → DD/MM/AAAA
+  function brDate(d) {
+    if (!d) return null;
+    const [y, m, dd] = d.split('-');
+    return `${dd}/${m}/${y}`;
+  }
+
   let dealTitle;
   if (isEvento) {
     // "João Silva | Show | Barra da Tijuca | 15/06"
@@ -156,7 +164,7 @@ ${p('📍 Cidade',           cidade)}
 ${p('🏘️ Local / Bairro',   bairro)}
 <hr>
 ${p('🎪 Tipo de evento',   tipo)}
-${p('📅 Data',             data_evento)}
+${p('📅 Data',             brDate(data_evento))}
 ${horario_inicio && horario_fim ? `<p><b>⏰ Horário:</b> ${horario_inicio} às ${horario_fim}</p>` : ''}
 ${p('👥 Público estimado', publico_estimado)}
 <hr>
