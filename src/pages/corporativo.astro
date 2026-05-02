@@ -540,6 +540,14 @@ const faqItems = [
             <label class="corp-form-label" for="cf-whatsapp">WhatsApp *</label>
             <input class="corp-form-input" type="tel" id="cf-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required aria-required="true" autocomplete="tel" />
           </div>
+          <div class="corp-form-field">
+            <label class="corp-form-label" for="cf-cidade">Cidade da operação *</label>
+            <select class="corp-form-input corp-form-select" id="cf-cidade" name="cidade" required aria-required="true">
+              <option value="" disabled selected>Selecione</option>
+              <option value="rj">Rio de Janeiro</option>
+              <option value="sp">São Paulo</option>
+            </select>
+          </div>
           <div class="corp-form-row">
             <div class="corp-form-field">
               <label class="corp-form-label" for="cf-tipo">Tipo de cobertura</label>
@@ -646,10 +654,11 @@ const faqItems = [
       var empresa  = document.getElementById('cf-empresa').value.trim();
       var nome     = document.getElementById('cf-nome').value.trim();
       var wpp      = document.getElementById('cf-whatsapp').value.trim();
+      var cidade   = document.getElementById('cf-cidade').value;
       var tipo     = document.getElementById('cf-tipo').value;
       var func     = document.getElementById('cf-func').value;
 
-      var firstInvalid = !empresa ? 'cf-empresa' : !nome ? 'cf-nome' : !wpp ? 'cf-whatsapp' : null;
+      var firstInvalid = !empresa ? 'cf-empresa' : !nome ? 'cf-nome' : !wpp ? 'cf-whatsapp' : !cidade ? 'cf-cidade' : null;
       if (firstInvalid) {
         var el = document.getElementById(firstInvalid);
         el.focus();
@@ -664,10 +673,11 @@ const faqItems = [
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'deal',
-          page: 'corporativo',
+          page: cidade === 'sp' ? 'corporativo-sp' : 'corporativo',
           nome: nome,
           empresa: empresa,
           whatsapp: wpp,
+          cidade: cidade === 'sp' ? 'São Paulo' : 'Rio de Janeiro',
           tipo: tipo || '',
           funcionarios: func || '',
           utm_source: corpUtm.source || 'direct',
@@ -690,8 +700,9 @@ const faqItems = [
         'Empresa: ' + empresa + '\n' +
         'Contato: ' + nome + '\n' +
         'WhatsApp: ' + wpp + '\n' +
-        'Cobertura: ' + (tipo || 'Não informado') + '\n' +
-        'Funcionários: ' + (func || 'Não informado') + '\n' +
+        'Cidade: ' + (cidade === 'sp' ? 'S\u00e3o Paulo' : 'Rio de Janeiro') + '\n' +
+        'Cobertura: ' + (tipo || 'N\u00e3o informado') + '\n' +
+        'Funcion\u00e1rios: ' + (func || 'N\u00e3o informado') + '\n' +
         utmTag
       );
       window.open('https://wa.me/5521980358200?text=' + msg, '_blank');
