@@ -473,6 +473,10 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
                 <input class="ev-form-input" type="text" id="f-nome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
               </div>
               <div class="ev-form-field">
+                <label class="ev-form-label" for="f-email">E-mail *</label>
+                <input class="ev-form-input" type="email" id="f-email" name="email" placeholder="seu@email.com" required autocomplete="email" />
+              </div>
+              <div class="ev-form-field">
                 <label class="ev-form-label" for="f-whatsapp">WhatsApp *</label>
                 <input class="ev-form-input" type="tel" id="f-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required autocomplete="tel" />
               </div>
@@ -584,6 +588,7 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         var nome   = document.getElementById('f-nome').value.trim();
+        var email  = document.getElementById('f-email').value.trim();
         var wa     = document.getElementById('f-whatsapp').value.trim();
         var cidade = document.getElementById('f-cidade').value;
         var bairro = document.getElementById('f-bairro').value.trim();
@@ -593,7 +598,7 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
         var inicio = document.getElementById('f-inicio').value;
         var fim    = document.getElementById('f-fim').value;
 
-        var firstInvalid = !nome ? 'f-nome' : !wa ? 'f-whatsapp' : !cidade ? 'f-cidade' : !bairro ? 'f-bairro' : !tipo ? 'f-tipo' : !data ? 'f-data' : !inicio ? 'f-inicio' : !fim ? 'f-fim' : null;
+        var firstInvalid = !nome ? 'f-nome' : !email ? 'f-email' : !wa ? 'f-whatsapp' : !cidade ? 'f-cidade' : !bairro ? 'f-bairro' : !tipo ? 'f-tipo' : !data ? 'f-data' : !inicio ? 'f-inicio' : !fim ? 'f-fim' : null;
         if (firstInvalid) {
           var el = document.getElementById(firstInvalid);
           el.focus();
@@ -610,6 +615,7 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
             type: 'deal',
             page: cidade === 'sp' ? 'eventos-sp' : 'eventos',
             nome: nome,
+            email: email,
             whatsapp: wa,
             cidade: cidade === 'sp' ? 'São Paulo' : 'Rio de Janeiro',
             bairro: bairro,

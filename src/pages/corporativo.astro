@@ -537,6 +537,10 @@ const faqItems = [
             <input class="corp-form-input" type="text" id="cf-nome" name="nome_cargo" placeholder="Ex: João Silva — Gerente de Segurança" required aria-required="true" autocomplete="name" />
           </div>
           <div class="corp-form-field">
+            <label class="corp-form-label" for="cf-email">E-mail *</label>
+            <input class="corp-form-input" type="email" id="cf-email" name="email" placeholder="seu@empresa.com.br" required aria-required="true" autocomplete="email" />
+          </div>
+          <div class="corp-form-field">
             <label class="corp-form-label" for="cf-whatsapp">WhatsApp *</label>
             <input class="corp-form-input" type="tel" id="cf-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required aria-required="true" autocomplete="tel" />
           </div>
@@ -653,12 +657,13 @@ const faqItems = [
       e.preventDefault();
       var empresa  = document.getElementById('cf-empresa').value.trim();
       var nome     = document.getElementById('cf-nome').value.trim();
+      var email    = document.getElementById('cf-email').value.trim();
       var wpp      = document.getElementById('cf-whatsapp').value.trim();
       var cidade   = document.getElementById('cf-cidade').value;
       var tipo     = document.getElementById('cf-tipo').value;
       var func     = document.getElementById('cf-func').value;
 
-      var firstInvalid = !empresa ? 'cf-empresa' : !nome ? 'cf-nome' : !wpp ? 'cf-whatsapp' : !cidade ? 'cf-cidade' : null;
+      var firstInvalid = !empresa ? 'cf-empresa' : !nome ? 'cf-nome' : !email ? 'cf-email' : !wpp ? 'cf-whatsapp' : !cidade ? 'cf-cidade' : null;
       if (firstInvalid) {
         var el = document.getElementById(firstInvalid);
         el.focus();
@@ -675,6 +680,7 @@ const faqItems = [
           type: 'deal',
           page: cidade === 'sp' ? 'corporativo-sp' : 'corporativo',
           nome: nome,
+          email: email,
           empresa: empresa,
           whatsapp: wpp,
           cidade: cidade === 'sp' ? 'São Paulo' : 'Rio de Janeiro',

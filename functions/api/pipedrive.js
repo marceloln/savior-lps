@@ -96,15 +96,16 @@ async function createLead(body, hdrs) {
 // ──────────────────────────────────────────────────────────────
 async function createDeal(body, hdrs) {
   const {
-    page, nome, empresa, whatsapp,
+    page, nome, email, empresa, whatsapp,
     cidade, bairro, tipo,
     data_evento, horario_inicio, horario_fim,
     publico_estimado, funcionarios,
     utm_source, utm_campaign,
   } = body;
 
-  // 1. Criar Person
+  // 1. Criar Person com e-mail e telefone
   const personPayload = { name: nome || empresa || 'Contato Savior' };
+  if (email)    personPayload.email = [{ value: email, label: 'work', primary: true }];
   if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
 
   const personId = (await fetch(`${BASE}/persons`, {
@@ -149,6 +150,7 @@ async function createDeal(body, hdrs) {
     ? `<p><b>🌐 LEAD DO SITE — EVENTOS</b></p>
 <hr>
 ${p('👤 Nome',             nome)}
+${p('📧 E-mail',           email)}
 ${p('📱 WhatsApp',         whatsapp)}
 ${p('📍 Cidade',           cidade)}
 ${p('🏘️ Local / Bairro',   bairro)}
@@ -164,6 +166,7 @@ ${p('🎯 Campanha', utm_campaign)}`
 <hr>
 ${p('🏢 Empresa',  empresa)}
 ${p('👤 Contato',  nome)}
+${p('📧 E-mail',   email)}
 ${p('📱 WhatsApp', whatsapp)}
 ${p('📍 Cidade',   cidade)}
 <hr>
