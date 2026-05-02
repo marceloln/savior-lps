@@ -112,6 +112,20 @@ async function createDeal(body, hdrs) {
       method: 'POST', headers: hdrs,
       body: JSON.stringify({ name: empresa, address: cidade || undefined }),
     }).then(r => r.json()))?.data?.id;
+
+    // Nota na Organization marcando origem
+    if (orgId) {
+      const orgNote = [
+        '<p><b>🌐 Organização criada via site Savior</b></p>',
+        p('📍 Cidade', cidade),
+        p('🔗 Origem', utm_source),
+        p('🎯 Campanha', utm_campaign),
+      ].filter(Boolean).join('\n');
+      await fetch(`${BASE}/notes`, {
+        method: 'POST', headers: hdrs,
+        body: JSON.stringify({ content: orgNote, org_id: orgId }),
+      });
+    }
   }
 
   // 2. Criar Person com e-mail, telefone e org vinculada
