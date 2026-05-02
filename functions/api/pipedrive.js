@@ -120,12 +120,19 @@ async function createDeal(body, hdrs) {
   const personData = await personRes.json();
   const personId   = personData?.data?.id;
 
-  // 2. Criar Deal vinculado à Person
+  // 2. Criar Deal vinculado à Person, no pipeline correto
   const dealTitle   = empresa
     ? `${empresa} — ${page || 'corporativo'}`
     : `${nome || 'Lead'} — ${page || 'site'}`;
 
-  const dealPayload = { title: dealTitle };
+  // Rotas: página → pipeline_id + stage_id (primeiro estágio de cada pipeline)
+  const PIPELINE_MAP = {
+    'eventos':     { pipeline_id: 6, stage_id: 35 }, // Eventos - RJ › Qualificado
+    'corporativo': { pipeline_id: 1, stage_id: 1  }, // Area Protegida - RJ › Cliente Qualificado
+  };
+  const route = PIPELINE_MAP[page] || {};
+
+  const dealPayload = { title: dealTitle, ...route };
   if (personId) dealPayload.person_id = personId;
 
   const dealRes  = await fetch(`${BASE}/deals`, {
