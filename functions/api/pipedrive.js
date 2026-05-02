@@ -45,7 +45,7 @@ export async function onRequestPost(context) {
 
   try {
     if (body.type === 'lead') return await createLead(body, hdrs);
-    if (body.type === 'deal') return await createDeal(body, hdrs);
+    if (body.type === 'deal') return await createDeal(body, hdrs, context);
     return json({ error: 'unknown_type' }, 400);
   } catch {
     return json({ error: 'internal_error' }, 500);
@@ -94,7 +94,7 @@ async function createLead(body, hdrs) {
 // ──────────────────────────────────────────────────────────────
 // Deal — envio de formulário (lead qualificado com dados)
 // ──────────────────────────────────────────────────────────────
-async function createDeal(body, hdrs) {
+async function createDeal(body, hdrs, context) {
   const {
     page, nome, email, empresa, whatsapp,
     cidade, bairro, tipo,
@@ -226,6 +226,20 @@ ${p('🎯 Campanha', utm_campaign)}`;
       ...(ownerId ? { assigned_to_user_id: ownerId } : {}),
     }),
   });
+
+  // 6. Notificar via WhatsApp (Blip) — fire and forget
+  if (whatsapp) {
+    const origin = new URL(context.request.url).origin;
+    fetch(`${origin}/api/blip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'deal',
+        nome, whatsapp, page, tipo,
+        data_evento, bairro, empresa,
+      }),
+    }).catch(() => {});
+  }
 
   return json({ ok: true, deal_id: dealId, person_id: personId ?? null });
 }
