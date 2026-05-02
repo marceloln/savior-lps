@@ -140,40 +140,45 @@ async function createDeal(body, hdrs) {
 
   if (!dealId) return json({ ok: false, error: 'deal_not_created' }, 500);
 
-  // 4. Nota formatada — fácil de ler no Pipedrive
-  const sep  = '─────────────────────────';
+  // 4. Nota formatada em HTML — renderiza corretamente no Pipedrive
+  function row(label, value) {
+    return value ? `<b>${label}:</b> ${value}` : null;
+  }
+  const br  = '<br>';
+  const sep = '<hr>';
+
   const note = isEvento
     ? [
-        '🌐 LEAD DO SITE — EVENTOS',
+        '<b>🌐 LEAD DO SITE — EVENTOS</b>',
         sep,
-        nome      ? `👤 Nome:             ${nome}`      : null,
-        whatsapp  ? `📱 WhatsApp:         ${whatsapp}`  : null,
-        cidade    ? `📍 Cidade:           ${cidade}`    : null,
-        bairro    ? `🏘️  Bairro:           ${bairro}`    : null,
+        row('👤 Nome',             nome),
+        row('📱 WhatsApp',         whatsapp),
+        row('📍 Cidade',           cidade),
+        row('🏘️ Bairro',           bairro),
         sep,
-        tipo      ? `🎪 Tipo de evento:   ${tipo}`      : null,
-        data_evento ? `📅 Data:             ${data_evento}` : null,
+        row('🎪 Tipo de evento',   tipo),
+        row('📅 Data',             data_evento),
         (horario_inicio && horario_fim)
-          ? `⏰ Horário:          ${horario_inicio} às ${horario_fim}` : null,
-        publico_estimado ? `👥 Público estimado: ${publico_estimado}` : null,
+          ? `<b>⏰ Horário:</b> ${horario_inicio} às ${horario_fim}` : null,
+        row('👥 Público estimado', publico_estimado),
         sep,
-        utm_source   ? `🔗 UTM Source:    ${utm_source}`    : null,
-        utm_campaign ? `🎯 UTM Campaign:  ${utm_campaign}`  : null,
-      ].filter(Boolean).join('\n')
+        row('🔗 UTM Source',   utm_source),
+        row('🎯 UTM Campaign', utm_campaign),
+      ].filter(Boolean).join(br)
     : [
-        '🌐 LEAD DO SITE — CORPORATIVO',
+        '<b>🌐 LEAD DO SITE — CORPORATIVO</b>',
         sep,
-        empresa   ? `🏢 Empresa:          ${empresa}`   : null,
-        nome      ? `👤 Contato:          ${nome}`      : null,
-        whatsapp  ? `📱 WhatsApp:         ${whatsapp}`  : null,
-        cidade    ? `📍 Cidade:           ${cidade}`    : null,
+        row('🏢 Empresa',          empresa),
+        row('👤 Contato',          nome),
+        row('📱 WhatsApp',         whatsapp),
+        row('📍 Cidade',           cidade),
         sep,
-        tipo        ? `🚑 Tipo de cobertura: ${tipo}`       : null,
-        funcionarios ? `👥 Funcionários:     ${funcionarios}` : null,
+        row('🚑 Tipo de cobertura', tipo),
+        row('👥 Funcionários',      funcionarios),
         sep,
-        utm_source   ? `🔗 UTM Source:    ${utm_source}`    : null,
-        utm_campaign ? `🎯 UTM Campaign:  ${utm_campaign}`  : null,
-      ].filter(Boolean).join('\n');
+        row('🔗 UTM Source',   utm_source),
+        row('🎯 UTM Campaign', utm_campaign),
+      ].filter(Boolean).join(br);
 
   await fetch(`${BASE}/notes`, {
     method: 'POST', headers: hdrs,
