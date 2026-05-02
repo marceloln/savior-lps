@@ -13,339 +13,807 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:   #0B2540;
-      --green:  #00B87C;
-      --cream:  #F4EFE6;
-      --white:  #ffffff;
-      --muted:  #6b7280;
-      --border: #e5e7eb;
-      --radius: 10px;
+      --navy:        #0B2540;
+      --navy-deep:   #07182B;
+      --navy-mid:    #143458;
+      --green:       #00B87C;
+      --green-dark:  #00A06C;
+      --cream:       #F4EFE6;
+      --cream-light: #FAF6EC;
+      --areia:       #C5AA81;
+      --white:       #ffffff;
+      --muted:       #6b7280;
+      --muted-light: #9ca3af;
+      --border:      #e5e7eb;
+      --border-soft: #f0f0f0;
+      --radius:      10px;
+      --radius-sm:   6px;
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--cream);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--cream-light);
       color: var(--navy);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
+    /* ── Lock screen ─────────────────────────────────── */
     #lock {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      background: var(--navy-deep);
     }
 
     .login-card {
       background: var(--white);
-      border-radius: var(--radius);
-      padding: 2.5rem 2rem;
+      border-radius: 14px;
+      padding: 2.5rem 2rem 2rem;
       width: 100%;
       max-width: 360px;
-      box-shadow: 0 4px 24px rgba(11,37,64,.10);
+      box-shadow: 0 8px 48px rgba(7,24,43,.40);
       text-align: center;
     }
 
-    .login-card .logo { font-size: 2rem; margin-bottom: .5rem; }
-    .login-card h1   { font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem; }
-    .login-card p    { color: var(--muted); font-size: .875rem; margin-bottom: 1.5rem; }
+    .login-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--navy);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .login-logo::before,
+    .login-logo::after {
+      content: '';
+      position: absolute;
+      background: var(--white);
+      border-radius: 2px;
+    }
+    .login-logo::before { width: 5px; height: 22px; }
+    .login-logo::after  { width: 22px; height: 5px; }
 
+    .login-card h1 { font-size: 1.2rem; font-weight: 700; margin-bottom: .25rem; color: var(--navy); }
+    .login-card .login-sub { color: var(--muted); font-size: .825rem; margin-bottom: 1.75rem; }
     .login-card input {
       width: 100%;
       padding: .65rem 1rem;
       border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .95rem;
       margin-bottom: .75rem;
       outline: none;
       transition: border-color .2s;
+      color: var(--navy);
     }
     .login-card input:focus { border-color: var(--green); }
-
     .login-card button {
       width: 100%;
-      padding: .7rem;
+      padding: .75rem;
       background: var(--navy);
       color: var(--white);
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: var(--radius-sm);
+      font-size: .95rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: background .15s;
     }
-
+    .login-card button:hover { background: var(--navy-mid); }
     .login-error { color: #dc2626; font-size: .8rem; margin-top: .5rem; }
 
+    /* ── Dashboard ───────────────────────────────────── */
     #dashboard { display: none; }
 
-    header {
-      background: var(--navy);
+    /* ── Header ──────────────────────────────────────── */
+    .site-header {
+      background: var(--navy-deep);
       color: var(--white);
-      padding: 1rem 2rem;
+      padding: 0 2rem;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 2px solid var(--navy-mid);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    header h1  { font-size: 1.1rem; font-weight: 700; }
-    header .sub { font-size: .8rem; opacity: .6; }
 
-    .tag-site {
+    .header-brand { display: flex; align-items: center; gap: .875rem; }
+
+    .header-cross {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: var(--green);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .header-cross::before,
+    .header-cross::after {
+      content: '';
+      position: absolute;
+      background: var(--white);
+      border-radius: 1.5px;
+    }
+    .header-cross::before { width: 4px; height: 16px; }
+    .header-cross::after  { width: 16px; height: 4px; }
+
+    .header-title { display: flex; flex-direction: column; gap: .1rem; }
+    .header-title strong {
+      font-size: 1rem; font-weight: 800;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--white);
+    }
+    .header-title span { font-size: .725rem; font-weight: 500; color: rgba(255,255,255,.55); letter-spacing: .04em; }
+
+    .header-meta { display: flex; align-items: center; gap: .75rem; }
+    .header-ts   { font-size: .75rem; color: rgba(255,255,255,.45); }
+
+    .badge-site {
       background: var(--green);
       color: var(--white);
+      font-size: .65rem; font-weight: 800;
+      padding: .25rem .65rem;
+      border-radius: 99px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Nav tabs ────────────────────────────────────── */
+    .nav-tabs {
+      background: var(--navy);
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-tab {
+      padding: .75rem 1.25rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.5);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      user-select: none;
+    }
+    .nav-tab:hover { color: rgba(255,255,255,.8); }
+    .nav-tab.active { color: var(--white); border-bottom-color: var(--green); }
+
+    /* ── Filter bar ──────────────────────────────────── */
+    .filter-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: .75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .filter-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .filter-pill {
+      padding: .35rem .875rem;
+      border-radius: 99px;
+      font-size: .775rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      background: var(--white);
+    }
+    .filter-pill:hover { border-color: var(--navy); color: var(--navy); }
+    .filter-pill.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+    .filter-sep { width: 1px; height: 24px; background: var(--border); }
+    .filter-compare {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .775rem;
+      color: var(--muted);
+    }
+    .filter-compare select {
+      padding: .3rem .6rem;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      font-size: .775rem;
+      color: var(--navy);
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    /* ── Main layout ─────────────────────────────────── */
+    main { max-width: 1020px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    #loading { text-align: center; padding: 5rem 2rem; color: var(--muted); font-size: .9rem; }
+
+    /* ── Section ─────────────────────────────────────── */
+    .section { margin-bottom: 2.25rem; }
+    .section-header { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+    .section-eyebrow { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .section-rule { flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Delta badge (comparação) ────────────────────── */
+    .delta {
+      display: inline-flex;
+      align-items: center;
+      gap: .2rem;
       font-size: .7rem;
       font-weight: 700;
-      padding: .2rem .6rem;
+      padding: .15rem .45rem;
       border-radius: 99px;
+      margin-left: .5rem;
+      vertical-align: middle;
     }
+    .delta.up   { background: rgba(0,184,124,.12); color: var(--green-dark); }
+    .delta.down { background: rgba(220,38,38,.10); color: #dc2626; }
+    .delta.flat { background: var(--border-soft); color: var(--muted); }
 
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
-
-    .cards {
+    /* ── Summary cards ───────────────────────────────── */
+    .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 2rem;
     }
+    @media (max-width: 720px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 440px) { .summary-grid { grid-template-columns: 1fr; } }
 
-    .card {
+    .summary-card {
       background: var(--white);
       border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      padding: 1.25rem 1.375rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      position: relative;
+      overflow: hidden;
     }
-    .card .label {
-      font-size: .75rem;
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      margin-bottom: .4rem;
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--navy);
+      border-radius: var(--radius) var(--radius) 0 0;
     }
-    .card .value { font-size: 2.25rem; font-weight: 800; color: var(--navy); line-height: 1; }
-    .card .icon  { font-size: 1.5rem; margin-bottom: .5rem; }
+    .summary-card.accent::before { background: var(--green); }
+    .summary-card .s-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: .5rem; }
+    .summary-card .s-value { font-size: 2.5rem; font-weight: 800; color: var(--navy); line-height: 1; letter-spacing: -.02em; }
+    .summary-card .s-sub   { font-size: .725rem; color: var(--muted-light); margin-top: .4rem; }
+    .summary-card .s-compare { font-size: .725rem; color: var(--muted); margin-top: .25rem; }
 
-    .section { margin-bottom: 2rem; }
-    .section-title {
-      font-size: .85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
+    /* ── Charts grid ─────────────────────────────────── */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .charts-grid { grid-template-columns: 1fr; } }
 
-    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
-
+    /* ── Box ─────────────────────────────────────────── */
     .box {
       background: var(--white);
       border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      padding: 1.375rem 1.5rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
     }
-    .box h3 { font-size: .9rem; font-weight: 700; margin-bottom: 1rem; color: var(--navy); }
-    .box h3 + h3 { margin-top: 1.25rem; }
+    .box-title {
+      font-size: .825rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.125rem;
+      padding-bottom: .625rem;
+      border-bottom: 1px solid var(--border);
+    }
 
+    /* ── Bar rows ────────────────────────────────────── */
     .bar-row {
       display: flex;
+      flex-direction: row;
       align-items: center;
-      gap: .75rem;
-      margin-bottom: .75rem;
-      font-size: .875rem;
+      gap: .625rem;
+      margin-bottom: .625rem;
+      min-width: 0;
     }
-    .bar-label { width: 130px; flex-shrink: 0; }
+    .bar-label {
+      flex-shrink: 0;
+      width: 140px;
+      font-size: .8rem;
+      color: var(--navy);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .bar-track {
       flex: 1;
-      height: 10px;
+      min-width: 0;
+      height: 8px;
       background: var(--border);
       border-radius: 99px;
       overflow: hidden;
     }
-    .bar-fill {
-      height: 100%;
-      background: var(--green);
-      border-radius: 99px;
-    }
-    .bar-count { width: 30px; text-align: right; font-weight: 700; }
+    .bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s ease; }
+    .bar-count { flex-shrink: 0; width: 28px; text-align: right; font-size: .8rem; font-weight: 700; color: var(--navy); }
 
-    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-    th {
+    /* ── Ads section ─────────────────────────────────── */
+    .ads-section-box { border-left: 3px solid var(--green); background: rgba(0,184,124,.03); }
+
+    .ads-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .875rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 520px) { .ads-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .ads-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.125rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .ads-card .ac-label { font-size: .675rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .35rem; }
+    .ads-card .ac-value { font-size: 1.6rem; font-weight: 800; color: var(--navy); line-height: 1; letter-spacing: -.01em; }
+    .ads-card.ac-highlight .ac-value { color: var(--green-dark); }
+
+    /* ── Keywords table ──────────────────────────────── */
+    .keyword-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: .825rem;
+    }
+    .keyword-row:last-child { border-bottom: none; }
+    .kw-rank {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .kw-name { flex: 1; min-width: 0; color: var(--navy); }
+    .kw-conv { flex-shrink: 0; font-weight: 700; color: var(--green-dark); width: 40px; text-align: right; }
+    .kw-cost { flex-shrink: 0; color: var(--muted); width: 80px; text-align: right; font-size: .775rem; }
+    .kw-ctr  { flex-shrink: 0; color: var(--muted); width: 50px; text-align: right; font-size: .775rem; }
+
+    /* ── Tables ──────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .825rem; }
+    thead th {
       text-align: left;
       padding: .5rem .75rem;
-      background: var(--cream);
-      font-size: .75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .05em;
+      background: var(--cream-light);
+      font-size: .7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .07em;
       color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
     }
-    td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); }
-    tr:last-child td { border-bottom: none; }
-    td.num { font-weight: 700; text-align: right; }
+    tbody td { padding: .6rem .75rem; border-bottom: 1px solid var(--border-soft); color: var(--navy); }
+    tbody tr:last-child td { border-bottom: none; }
+    td.num { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+    tbody tr.row-zero td { opacity: .45; }
+    .month-total td { font-weight: 700; background: var(--cream-light); }
 
-    .footer {
-      text-align: center;
-      font-size: .75rem;
-      color: var(--muted);
-      margin-top: 3rem;
-      padding-bottom: 2rem;
+    /* ── Anomaly callout ─────────────────────────────── */
+    .anomaly-list { display: flex; flex-direction: column; gap: .625rem; }
+    .anomaly-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      padding: .75rem 1rem;
+      border-radius: var(--radius-sm);
+      background: rgba(220,38,38,.05);
+      border-left: 3px solid #dc2626;
     }
+    .anomaly-item.positive { background: rgba(0,184,124,.06); border-left-color: var(--green); }
+    .anomaly-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; margin-top: .3rem; }
+    .anomaly-dot.positive { background: var(--green); }
+    .anomaly-text { font-size: .825rem; color: var(--navy); line-height: 1.4; }
+    .anomaly-text strong { font-weight: 700; }
 
-    #loading { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+    /* ── Empty state ─────────────────────────────────── */
+    .empty { text-align: center; padding: 2rem; color: var(--muted-light); font-size: .85rem; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    .site-footer { text-align: center; font-size: .725rem; color: var(--muted-light); padding-bottom: 2rem; }
   </style>
 </head>
 <body>
 
-<!-- Lock screen -->
+<!-- ── Lock screen ──────────────────────────────────── -->
 <div id="lock">
   <div class="login-card">
-    <div class="logo">🚑</div>
+    <div class="login-logo" aria-hidden="true"></div>
     <h1>Painel de Leads</h1>
-    <p>Savior Medical Service — acesso restrito</p>
+    <p class="login-sub">Savior Medical Service — acesso restrito</p>
     <form id="login-form">
       <input type="password" id="key-input" placeholder="Senha de acesso" autocomplete="current-password" />
       <button type="submit">Entrar</button>
-      <p id="login-error" class="login-error" hidden>Senha incorreta. Tente novamente.</p>
+      <p id="login-error" class="login-error" hidden>Senha incorreta.</p>
     </form>
   </div>
 </div>
 
-<!-- Dashboard -->
+<!-- ── Dashboard ────────────────────────────────────── -->
 <div id="dashboard">
-  <header>
-    <div>
-      <h1>🚑 Savior · Painel de Leads</h1>
-      <div class="sub" id="timestamp"></div>
+
+  <header class="site-header">
+    <div class="header-brand">
+      <div class="header-cross" aria-hidden="true"></div>
+      <div class="header-title">
+        <strong>Savior</strong>
+        <span>Painel de Leads</span>
+      </div>
     </div>
-    <span class="tag-site">🌐 Leads do Site</span>
+    <div class="header-meta">
+      <span class="header-ts" id="timestamp"></span>
+      <span class="badge-site">Leads do Site</span>
+    </div>
   </header>
 
+  <!-- Nav tabs -->
+  <nav class="nav-tabs" id="nav-tabs">
+    <div class="nav-tab active" data-tab="leads">Leads & Conversões</div>
+    <div class="nav-tab" data-tab="ads">Google Ads</div>
+    <div class="nav-tab" data-tab="anomalias">Anomalias</div>
+  </nav>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <span class="filter-label">Período</span>
+    <div class="filter-pills" id="filter-pills">
+      <div class="filter-pill" data-range="7">7 dias</div>
+      <div class="filter-pill" data-range="30" class="active">30 dias</div>
+      <div class="filter-pill" data-range="90">90 dias</div>
+      <div class="filter-pill" data-range="365">12 meses</div>
+      <div class="filter-pill active" data-range="all">Tudo</div>
+    </div>
+    <span class="filter-sep"></span>
+    <div class="filter-compare">
+      <span>Comparar com</span>
+      <select id="compare-select">
+        <option value="none">— sem comparação</option>
+        <option value="prev_period">Período anterior</option>
+        <option value="prev_month">Mês anterior</option>
+        <option value="prev_year">Mesmo período ano anterior</option>
+      </select>
+    </div>
+  </div>
+
   <main>
-    <div id="loading">Carregando dados do Pipedrive…</div>
+    <div id="loading">Carregando dados…</div>
     <div id="content" hidden>
 
-      <div class="section">
-        <div class="section-title">Resumo geral</div>
-        <div class="cards">
-          <div class="card">
-            <div class="icon">📱</div>
-            <div class="label">Cliques WhatsApp</div>
-            <div class="value" id="val-leads">—</div>
+      <!-- ═══ TAB: Leads & Conversões ═══ -->
+      <div class="tab-panel active" id="tab-leads">
+
+        <!-- Resumo geral -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Resumo geral</span>
+            <span class="section-rule"></span>
           </div>
-          <div class="card">
-            <div class="icon">📋</div>
-            <div class="label">Formulários</div>
-            <div class="value" id="val-forms">—</div>
-          </div>
-          <div class="card">
-            <div class="icon">👤</div>
-            <div class="label">Pessoas</div>
-            <div class="value" id="val-pessoas">—</div>
-          </div>
-          <div class="card">
-            <div class="icon">🏢</div>
-            <div class="label">Empresas</div>
-            <div class="value" id="val-empresas">—</div>
+          <div class="summary-grid">
+            <div class="summary-card accent">
+              <div class="s-label">Cliques WhatsApp</div>
+              <div class="s-value" id="val-leads">—</div>
+              <div class="s-compare" id="cmp-leads"></div>
+              <div class="s-sub">Leads via botão WA</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-label">Formulários</div>
+              <div class="s-value" id="val-forms">—</div>
+              <div class="s-compare" id="cmp-forms"></div>
+              <div class="s-sub">Enviados pelo site</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-label">Pessoas</div>
+              <div class="s-value" id="val-pessoas">—</div>
+              <div class="s-sub">No Pipedrive</div>
+            </div>
+            <div class="summary-card">
+              <div class="s-label">Empresas</div>
+              <div class="s-value" id="val-empresas">—</div>
+              <div class="s-sub">Corporativo</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="section">
-        <div class="section-title">Por landing page</div>
-        <div class="grid2">
+        <!-- Por landing page -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Por canal</span>
+            <span class="section-rule"></span>
+          </div>
+          <div class="charts-grid">
+            <div class="box">
+              <div class="box-title">Formulários por pipeline</div>
+              <div id="chart-pipeline"></div>
+            </div>
+            <div class="box">
+              <div class="box-title">Tipo de serviço</div>
+              <div id="chart-tipo"></div>
+              <div class="box-title" style="margin-top:1.5rem">Cidade</div>
+              <div id="chart-cidade"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evolução mensal -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Evolução mensal</span>
+            <span class="section-rule"></span>
+          </div>
           <div class="box">
-            <h3>Formulários por pipeline</h3>
-            <div id="chart-pipeline"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mês</th>
+                    <th style="text-align:right">WA Clicks</th>
+                    <th style="text-align:right">Formulários</th>
+                    <th style="text-align:right">Total</th>
+                    <th style="text-align:right">vs. mês ant.</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-mes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-leads -->
+
+      <!-- ═══ TAB: Google Ads ═══ -->
+      <div class="tab-panel" id="tab-ads">
+
+        <!-- Ads resumo -->
+        <div class="section" id="ads-section" hidden>
+          <div class="section-header">
+            <span class="section-eyebrow">Google Ads — últimos 30 dias</span>
+            <span class="section-rule"></span>
+          </div>
+          <div class="box ads-section-box">
+            <div class="ads-grid" id="ads-cards"></div>
+            <div class="box-title">Campanhas</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Campanha</th>
+                    <th style="text-align:right">Impressões</th>
+                    <th style="text-align:right">Cliques</th>
+                    <th style="text-align:right">CTR</th>
+                    <th style="text-align:right">Gasto R$</th>
+                    <th style="text-align:right">Conv.</th>
+                    <th style="text-align:right">CPA R$</th>
+                  </tr>
+                </thead>
+                <tbody id="ads-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top keywords -->
+        <div class="section" id="kw-section" hidden>
+          <div class="section-header">
+            <span class="section-eyebrow">Top palavras-chave</span>
+            <span class="section-rule"></span>
           </div>
           <div class="box">
-            <h3>Tipo de serviço</h3>
-            <div id="chart-tipo"></div>
-            <h3>Cidade</h3>
-            <div id="chart-cidade"></div>
+            <div class="box-title">Por conversões — últimos 30 dias</div>
+            <div id="kw-list"></div>
           </div>
         </div>
-      </div>
 
-      <!-- Google Ads -->
-      <div class="section" id="ads-section" hidden>
-        <div class="section-title">Google Ads — últimos 30 dias</div>
-        <div class="cards" id="ads-cards"></div>
-        <div class="box" style="margin-top:1rem">
-          <h3>Campanhas</h3>
-          <table id="ads-table">
-            <thead>
-              <tr>
-                <th>Campanha</th>
-                <th style="text-align:right">Impressões</th>
-                <th style="text-align:right">Cliques</th>
-                <th style="text-align:right">CTR</th>
-                <th style="text-align:right">Gasto R$</th>
-                <th style="text-align:right">Conv.</th>
-                <th style="text-align:right">CPA R$</th>
-              </tr>
-            </thead>
-            <tbody id="ads-tbody"></tbody>
-          </table>
+        <div id="ads-empty" class="empty" hidden>
+          Dados do Google Ads não disponíveis ainda.<br>
+          Aguardando próxima execução do script de coleta.
         </div>
-      </div>
 
-      <div class="section">
-        <div class="section-title">Evolução mensal</div>
-        <div class="box">
-          <table>
-            <thead>
-              <tr>
-                <th>Mês</th>
-                <th style="text-align:right">WA Clicks</th>
-                <th style="text-align:right">Formulários</th>
-                <th style="text-align:right">Total</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-mes"></tbody>
-          </table>
+      </div><!-- /tab-ads -->
+
+      <!-- ═══ TAB: Anomalias ═══ -->
+      <div class="tab-panel" id="tab-anomalias">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Anomalias detectadas</span>
+            <span class="section-rule"></span>
+          </div>
+          <div class="box">
+            <div class="anomaly-list" id="anomaly-list">
+              <div class="empty">Analisando dados…</div>
+            </div>
+          </div>
         </div>
-      </div>
+      </div><!-- /tab-anomalias -->
 
-    </div>
+    </div><!-- /content -->
   </main>
-  <div class="footer" id="footer-ts"></div>
-</div>
+
+  <footer class="site-footer" id="footer-ts"></footer>
+
+</div><!-- /dashboard -->
 
 <script>
-  const KEY = 'savior79';
+  var KEY = 'savior79';
+  var MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  // Estado global
+  var _fullData   = null;
+  var _activeTab  = 'leads';
+  var _range      = 'all';
+  var _comparePeriod = 'none';
+
+  /* ── Utilitários ──────────────────────────────────── */
 
   function nomeMes(yyyymm) {
-    const [y, m] = yyyymm.split('-');
-    return MESES[parseInt(m, 10) - 1] + ' ' + y;
+    var p = yyyymm.split('-');
+    return MESES[parseInt(p[1], 10) - 1] + ' ' + p[0];
   }
 
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = String(val);
+  }
+
+  function fmtNum(v) {
+    var n = typeof v === 'string' ? parseFloat(v.replace(/[^\d.]/g, '')) : Number(v);
+    if (isNaN(n)) return '—';
+    return n.toLocaleString('pt-BR');
+  }
+
+  function fmtCurrency(v) {
+    var n = typeof v === 'string' ? parseFloat(v.replace(/[^\d.]/g, '')) : Number(v);
+    if (isNaN(n)) return '—';
+    return 'R$\u00a0' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function normalizeKey(s) {
+    return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  function resolveKey(obj, keys) {
+    for (var i = 0; i < keys.length; i++) {
+      if (obj[keys[i]] !== undefined && obj[keys[i]] !== '') return obj[keys[i]];
+    }
+    var norm = {};
+    Object.keys(obj).forEach(function(k) { norm[normalizeKey(k)] = obj[k]; });
+    for (var j = 0; j < keys.length; j++) {
+      var v = norm[normalizeKey(keys[j])];
+      if (v !== undefined && v !== '') return v;
+    }
+    return undefined;
+  }
+
+  function sanitizeVal(v, type) {
+    if (v === undefined || v === null || v === '') return '—';
+    var s = String(v).trim();
+    if (!s || s === '-') return '—';
+    if (s.toLowerCase().includes('nan')) return '—';
+    if (type === 'num') {
+      var n = parseFloat(s.replace(/[^\d.]/g, ''));
+      return isNaN(n) ? '—' : fmtNum(n);
+    }
+    if (type === 'pct') return s.toLowerCase().includes('nan') ? '—' : s;
+    if (type === 'currency') {
+      var nc = parseFloat(s.replace(/[^\d.]/g, ''));
+      return isNaN(nc) ? '—' : fmtCurrency(nc);
+    }
+    return s;
+  }
+
+  /* ── Filtro de período ────────────────────────────── */
+
+  function cutoffDate(rangeDays) {
+    if (!rangeDays || rangeDays === 'all') return null;
+    var d = new Date();
+    d.setDate(d.getDate() - parseInt(rangeDays, 10));
+    return d.toISOString().slice(0, 10);
+  }
+
+  function filterByMes(porMes, rangeDays) {
+    if (!rangeDays || rangeDays === 'all') return porMes;
+    var cutoff = cutoffDate(rangeDays);
+    var cutoffMes = cutoff.slice(0, 7);
+    var result = {};
+    Object.entries(porMes).forEach(function(e) {
+      if (e[0] >= cutoffMes) result[e[0]] = e[1];
+    });
+    return result;
+  }
+
+  function resumoFromMes(porMes) {
+    var wa = 0, forms = 0;
+    Object.values(porMes).forEach(function(v) {
+      wa    += (v.leads_wa    || 0);
+      forms += (v.formularios || 0);
+    });
+    return { wa: wa, forms: forms };
+  }
+
+  /* ── Delta badge ─────────────────────────────────── */
+
+  function deltaBadge(current, previous) {
+    if (!previous || previous === 0) return '';
+    var pct = Math.round(((current - previous) / previous) * 100);
+    var cls = pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat';
+    var arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '—';
+    var span = document.createElement('span');
+    span.className = 'delta ' + cls;
+    span.textContent = arrow + ' ' + Math.abs(pct) + '%';
+    return span;
+  }
+
+  function deltaText(current, previous) {
+    if (!previous || previous === 0) return null;
+    var pct = Math.round(((current - previous) / previous) * 100);
+    var arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '—';
+    return arrow + ' ' + Math.abs(pct) + '% vs. período anterior';
+  }
+
+  /* ── Compare period ──────────────────────────────── */
+
+  function getPreviousMes(porMes, rangeDays) {
+    if (!rangeDays || rangeDays === 'all' || _comparePeriod === 'none') return {};
+    var currentKeys = Object.keys(filterByMes(porMes, rangeDays));
+    if (!currentKeys.length) return {};
+    var days = parseInt(rangeDays, 10);
+    var prevResult = {};
+    Object.entries(porMes).forEach(function(e) {
+      var mesDate = new Date(e[0] + '-01');
+      var nowCutoff = cutoffDate(rangeDays);
+      var prevCutoff = cutoffDate(days * 2);
+      var cutoffMes = nowCutoff ? nowCutoff.slice(0, 7) : null;
+      var prevMes   = prevCutoff ? prevCutoff.slice(0, 7) : null;
+      if (prevMes && cutoffMes && e[0] >= prevMes && e[0] < cutoffMes) {
+        prevResult[e[0]] = e[1];
+      }
+    });
+    return prevResult;
+  }
+
+  /* ── Bar charts ───────────────────────────────────── */
+
   function criarBarra(label, count, max) {
-    const pct = max > 0 ? Math.round((count / max) * 100) : 0;
-
-    const row = document.createElement('div');
+    var pct = max > 0 ? Math.round((count / max) * 100) : 0;
+    var row = document.createElement('div');
     row.className = 'bar-row';
-
-    const lbl = document.createElement('div');
+    var lbl = document.createElement('div');
     lbl.className = 'bar-label';
     lbl.textContent = label;
-
-    const track = document.createElement('div');
+    lbl.title = label;
+    var track = document.createElement('div');
     track.className = 'bar-track';
-
-    const fill = document.createElement('div');
+    var fill = document.createElement('div');
     fill.className = 'bar-fill';
     fill.style.width = pct + '%';
     track.appendChild(fill);
-
-    const cnt = document.createElement('div');
+    var cnt = document.createElement('div');
     cnt.className = 'bar-count';
     cnt.textContent = String(count);
-
     row.appendChild(lbl);
     row.appendChild(track);
     row.appendChild(cnt);
@@ -353,172 +821,409 @@
   }
 
   function renderBarras(containerId, dados) {
-    const el  = document.getElementById(containerId);
-    const max = Math.max(...Object.values(dados), 1);
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var values = Object.values(dados).map(Number);
+    var max = Math.max.apply(null, values.concat([1]));
     el.textContent = '';
-    Object.entries(dados).forEach(([label, count]) => {
-      el.appendChild(criarBarra(label, count, max));
+    Object.entries(dados).forEach(function(e) {
+      el.appendChild(criarBarra(e[0], Number(e[1]), max));
     });
   }
 
-  function renderTabela(dados) {
-    const tbody = document.getElementById('tabela-mes');
-    tbody.textContent = '';
+  /* ── Tabela mensal ────────────────────────────────── */
 
-    const entries = Object.entries(dados);
+  function renderTabela(dados) {
+    var tbody = document.getElementById('tabela-mes');
+    if (!tbody) return;
+    tbody.textContent = '';
+    var entries = Object.entries(dados);
     if (!entries.length) {
-      const tr = document.createElement('tr');
-      const td = document.createElement('td');
-      td.colSpan = 4;
-      td.style.cssText = 'text-align:center;padding:1rem;color:#6b7280';
-      td.textContent = 'Nenhum dado ainda';
-      tr.appendChild(td);
-      tbody.appendChild(tr);
+      var tr0 = document.createElement('tr');
+      var td0 = document.createElement('td');
+      td0.colSpan = 5;
+      td0.style.cssText = 'text-align:center;padding:1.25rem;color:#9ca3af';
+      td0.textContent = 'Nenhum dado ainda';
+      tr0.appendChild(td0); tbody.appendChild(tr0);
       return;
     }
 
-    entries.forEach(([mes, vals]) => {
-      const wa    = vals.leads_wa    || 0;
-      const forms = vals.formularios || 0;
-      const total = wa + forms;
+    var totalWa = 0, totalForms = 0, prevTotal = 0;
 
-      const tr = document.createElement('tr');
+    entries.forEach(function(entry, idx) {
+      var wa    = Number(entry[1].leads_wa    || 0);
+      var forms = Number(entry[1].formularios || 0);
+      var total = wa + forms;
+      totalWa += wa; totalForms += forms;
 
-      const makeTd = (text, isNum) => {
-        const td = document.createElement('td');
+      // vs mês anterior
+      var prevEntry = entries[idx + 1];
+      var prevWa    = prevEntry ? Number(prevEntry[1].leads_wa    || 0) : 0;
+      var prevForms = prevEntry ? Number(prevEntry[1].formularios || 0) : 0;
+      var prevTot   = prevWa + prevForms;
+
+      var tr = document.createElement('tr');
+
+      function mkTd(text, isNum) {
+        var td = document.createElement('td');
         if (isNum) td.className = 'num';
         td.textContent = text;
         return td;
-      };
+      }
 
-      tr.appendChild(makeTd(nomeMes(mes), false));
-      tr.appendChild(makeTd(String(wa),    true));
-      tr.appendChild(makeTd(String(forms), true));
-      tr.appendChild(makeTd(String(total), true));
+      tr.appendChild(mkTd(nomeMes(entry[0]), false));
+      tr.appendChild(mkTd(wa.toLocaleString('pt-BR'),    true));
+      tr.appendChild(mkTd(forms.toLocaleString('pt-BR'), true));
+      tr.appendChild(mkTd(total.toLocaleString('pt-BR'), true));
+
+      var cmpTd = document.createElement('td');
+      cmpTd.className = 'num';
+      if (prevEntry) {
+        var d = deltaBadge(total, prevTot);
+        if (d) cmpTd.appendChild(d);
+        else   cmpTd.textContent = '—';
+      } else {
+        cmpTd.textContent = '—';
+      }
+      tr.appendChild(cmpTd);
       tbody.appendChild(tr);
+    });
+
+    if (entries.length > 1) {
+      var trT = document.createElement('tr');
+      trT.className = 'month-total';
+      function mkTdT(t, n) { var td = document.createElement('td'); if(n) td.className='num'; td.textContent=t; return td; }
+      var grandTotal = totalWa + totalForms;
+      trT.appendChild(mkTdT('Total', false));
+      trT.appendChild(mkTdT(totalWa.toLocaleString('pt-BR'), true));
+      trT.appendChild(mkTdT(totalForms.toLocaleString('pt-BR'), true));
+      trT.appendChild(mkTdT(grandTotal.toLocaleString('pt-BR'), true));
+      trT.appendChild(mkTdT('', true));
+      tbody.appendChild(trT);
+    }
+  }
+
+  /* ── Google Ads ───────────────────────────────────── */
+
+  function renderAds(ads) {
+    var section  = document.getElementById('ads-section');
+    var adsEmpty = document.getElementById('ads-empty');
+    if (!section) return;
+
+    if (!ads || !ads.ok) {
+      if (adsEmpty) adsEmpty.hidden = false;
+      return;
+    }
+    section.hidden = false;
+
+    var r = ads.resumo || {};
+
+    var impressoes = resolveKey(r, ['Impressoes','Impressões','impressoes']);
+    var cliques    = resolveKey(r, ['Cliques','cliques']);
+    var ctr        = resolveKey(r, ['CTR','ctr']);
+    var gasto      = resolveKey(r, ['Gasto RS','Gasto R$','gasto rs','gasto r$','Gasto']);
+    var conversoes = resolveKey(r, ['Conversoes','Conversões','conversoes']);
+    var cpa        = resolveKey(r, ['CPA RS','CPA R$','cpa rs','cpa r$','CPA']);
+
+    var adsMetrics = [
+      { label: 'Impressões', fmt: sanitizeVal(impressoes, 'num'),      highlight: false },
+      { label: 'Cliques',    fmt: sanitizeVal(cliques,    'num'),      highlight: false },
+      { label: 'CTR',        fmt: sanitizeVal(ctr,        'pct'),      highlight: false },
+      { label: 'Gasto R$',   fmt: sanitizeVal(gasto,      'currency'), highlight: false },
+      { label: 'Conversões', fmt: sanitizeVal(conversoes, 'num'),      highlight: true  },
+      { label: 'CPA R$',     fmt: sanitizeVal(cpa,        'currency'), highlight: false },
+    ];
+
+    var cardsEl = document.getElementById('ads-cards');
+    cardsEl.textContent = '';
+    adsMetrics.forEach(function(m) {
+      var card = document.createElement('div');
+      card.className = 'ads-card' + (m.highlight ? ' ac-highlight' : '');
+      var lbl = document.createElement('div'); lbl.className = 'ac-label'; lbl.textContent = m.label;
+      var val = document.createElement('div'); val.className = 'ac-value'; val.textContent = m.fmt;
+      card.appendChild(lbl); card.appendChild(val);
+      cardsEl.appendChild(card);
+    });
+
+    // Tabela campanhas
+    var tbody = document.getElementById('ads-tbody');
+    tbody.textContent = '';
+    var campanhas = ads.campanhas || [];
+
+    if (!campanhas.length) {
+      var tr0 = document.createElement('tr');
+      var td0 = document.createElement('td');
+      td0.colSpan = 7; td0.style.cssText = 'text-align:center;padding:1.25rem;color:#9ca3af';
+      td0.textContent = 'Aguardando próxima atualização do script';
+      tr0.appendChild(td0); tbody.appendChild(tr0);
+    } else {
+      campanhas.forEach(function(c) {
+        var campNome = resolveKey(c, ['Campanha','campanha']) || '—';
+        var campImp  = resolveKey(c, ['Impressoes','Impressões','impressoes']);
+        var campCli  = resolveKey(c, ['Cliques','cliques','Clicks']);
+        var campCtr  = resolveKey(c, ['CTR','ctr']);
+        var campCust = resolveKey(c, ['Custo RS','Custo R$','custo rs','Gasto RS','Cost']);
+        var campConv = resolveKey(c, ['Conv','conv','Conversoes','Conversões']);
+        var campCpa  = resolveKey(c, ['CPA RS','CPA R$','cpa rs','CPA']);
+
+        var impNum   = parseFloat(String(campImp || '0').replace(/[^\d.]/g, '')) || 0;
+        var tr = document.createElement('tr');
+        if (impNum === 0) tr.className = 'row-zero';
+
+        function addTd(text, isNum) {
+          var td = document.createElement('td');
+          if (isNum) td.className = 'num';
+          td.textContent = text; return td;
+        }
+        tr.appendChild(addTd(String(campNome), false));
+        tr.appendChild(addTd(sanitizeVal(campImp,  'num'),      true));
+        tr.appendChild(addTd(sanitizeVal(campCli,  'num'),      true));
+        tr.appendChild(addTd(sanitizeVal(campCtr,  'pct'),      true));
+        tr.appendChild(addTd(sanitizeVal(campCust, 'currency'), true));
+        tr.appendChild(addTd(sanitizeVal(campConv, 'num'),      true));
+        tr.appendChild(addTd(sanitizeVal(campCpa,  'currency'), true));
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Top keywords (da tab Campanhas — keywords por nome se houver)
+    renderTopKeywords(campanhas);
+  }
+
+  function renderTopKeywords(campanhas) {
+    var kwSection = document.getElementById('kw-section');
+    var kwList    = document.getElementById('kw-list');
+    if (!kwSection || !kwList) return;
+
+    // Filtrar campanhas com conversões e ordenar
+    var comConv = campanhas
+      .filter(function(c) {
+        var conv = parseFloat(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0').replace(/[^\d.]/g, ''));
+        return conv > 0;
+      })
+      .sort(function(a, b) {
+        var ca = parseFloat(String(resolveKey(a, ['Conv','conv']) || '0').replace(/[^\d.]/g, '')) || 0;
+        var cb = parseFloat(String(resolveKey(b, ['Conv','conv']) || '0').replace(/[^\d.]/g, '')) || 0;
+        return cb - ca;
+      })
+      .slice(0, 10);
+
+    if (!comConv.length) {
+      kwSection.hidden = true;
+      return;
+    }
+
+    kwSection.hidden = false;
+    kwList.textContent = '';
+
+    comConv.forEach(function(c, idx) {
+      var nome = resolveKey(c, ['Campanha','campanha']) || '—';
+      var conv = sanitizeVal(resolveKey(c, ['Conv','conv','Conversoes']), 'num');
+      var cpa  = sanitizeVal(resolveKey(c, ['CPA RS','CPA R$','cpa rs']), 'currency');
+      var ctr  = sanitizeVal(resolveKey(c, ['CTR','ctr']), 'pct');
+
+      var row = document.createElement('div');
+      row.className = 'keyword-row';
+
+      var rank = document.createElement('div'); rank.className = 'kw-rank'; rank.textContent = String(idx + 1);
+      var nm   = document.createElement('div'); nm.className = 'kw-name'; nm.textContent = nome;
+      var cv   = document.createElement('div'); cv.className = 'kw-conv'; cv.textContent = conv;
+      var cp   = document.createElement('div'); cp.className = 'kw-cost'; cp.textContent = cpa;
+      var ct   = document.createElement('div'); ct.className = 'kw-ctr';  ct.textContent = ctr;
+
+      row.appendChild(rank); row.appendChild(nm); row.appendChild(cv); row.appendChild(cp); row.appendChild(ct);
+      kwList.appendChild(row);
     });
   }
 
-  function setText(id, val) {
-    document.getElementById(id).textContent = String(val);
+  /* ── Anomalias ────────────────────────────────────── */
+
+  function detectAnomalias(data) {
+    var list = document.getElementById('anomaly-list');
+    if (!list) return;
+    list.textContent = '';
+
+    var anomalias = [];
+    var entries = Object.entries(data.por_mes || {});
+
+    // Detectar quedas bruscas mês a mês
+    if (entries.length >= 2) {
+      for (var i = 0; i < entries.length - 1; i++) {
+        var curr  = (entries[i][1].leads_wa    || 0) + (entries[i][1].formularios    || 0);
+        var prev  = (entries[i+1][1].leads_wa  || 0) + (entries[i+1][1].formularios  || 0);
+        if (prev > 0) {
+          var chg = ((curr - prev) / prev) * 100;
+          if (chg <= -40) {
+            anomalias.push({ positive: false, msg: '<strong>Queda de ' + Math.abs(Math.round(chg)) + '%</strong> em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
+          } else if (chg >= 60) {
+            anomalias.push({ positive: true,  msg: '<strong>Pico de +' + Math.round(chg) + '%</strong> em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
+          }
+        }
+      }
+    }
+
+    // CPA muito alto nas campanhas
+    if (data.ads && data.ads.ok && data.ads.campanhas) {
+      data.ads.campanhas.forEach(function(c) {
+        var cpa  = parseFloat(String(resolveKey(c, ['CPA RS','CPA R$','cpa rs']) || '0').replace(/[^\d.]/g, ''));
+        var conv = parseFloat(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0').replace(/[^\d.]/g, ''));
+        var nome = resolveKey(c, ['Campanha','campanha']) || '—';
+        if (cpa > 150 && conv > 0) {
+          anomalias.push({ positive: false, msg: '<strong>CPA alto:</strong> ' + nome + ' com CPA de R$\u00a0' + cpa.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '. Revisar segmentação.' });
+        }
+        if (conv === 0 && parseFloat(String(resolveKey(c, ['Cliques','cliques']) || '0').replace(/[^\d.]/g, '')) > 50) {
+          anomalias.push({ positive: false, msg: '<strong>Campanha sem conversão:</strong> ' + nome + ' tem cliques mas <strong>0 conversões</strong> registradas.' });
+        }
+      });
+    }
+
+    // Pipeline sem leads
+    Object.entries(data.por_pipeline || {}).forEach(function(e) {
+      if (e[1] === 0) {
+        anomalias.push({ positive: false, msg: '<strong>Pipeline vazio:</strong> ' + e[0] + ' não tem nenhum formulário. Verificar se a rota está ativa.' });
+      }
+    });
+
+    if (!anomalias.length) {
+      var ok = document.createElement('div');
+      ok.className = 'anomaly-item positive';
+      var dot = document.createElement('div'); dot.className = 'anomaly-dot positive';
+      var txt = document.createElement('div'); txt.className = 'anomaly-text'; txt.textContent = 'Nenhuma anomalia detectada no período atual.';
+      ok.appendChild(dot); ok.appendChild(txt);
+      list.appendChild(ok);
+      return;
+    }
+
+    anomalias.forEach(function(a) {
+      var item = document.createElement('div');
+      item.className = 'anomaly-item' + (a.positive ? ' positive' : '');
+      var dot  = document.createElement('div'); dot.className  = 'anomaly-dot' + (a.positive ? ' positive' : '');
+      var txt  = document.createElement('div'); txt.className  = 'anomaly-text';
+      // sanitizado: sem innerHTML, usar template por partes
+      txt.textContent = a.msg.replace(/<[^>]+>/g, ''); // fallback texto puro
+      item.appendChild(dot); item.appendChild(txt);
+      list.appendChild(item);
+    });
   }
 
+  /* ── Render dashboard principal ───────────────────── */
+
   function renderDashboard(data) {
+    _fullData = data;
     document.getElementById('loading').hidden = true;
     document.getElementById('content').hidden = false;
 
-    setText('val-leads',   data.resumo.leads_wa);
-    setText('val-forms',   data.resumo.formularios);
-    setText('val-pessoas', data.resumo.pessoas);
-    setText('val-empresas',data.resumo.empresas);
+    applyFilters();
+
+    var ts = new Date(data.gerado_em);
+    var fmtTs = ts.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    setText('timestamp', 'Atualizado em ' + fmtTs);
+    setText('footer-ts', 'Dados via Pipedrive + Google Ads · ' + fmtTs + ' · Acesso restrito');
+  }
+
+  function applyFilters() {
+    if (!_fullData) return;
+    var data = _fullData;
+
+    // Filtrar por período
+    var filteredMes = filterByMes(data.por_mes, _range);
+    var sumCurr     = resumoFromMes(filteredMes);
+    var prevMes     = getPreviousMes(data.por_mes, _range);
+    var sumPrev     = resumoFromMes(prevMes);
+
+    // Resumo cards
+    setText('val-leads',    sumCurr.wa.toLocaleString('pt-BR'));
+    setText('val-forms',    sumCurr.forms.toLocaleString('pt-BR'));
+    setText('val-pessoas',  fmtNum(data.resumo.pessoas));
+    setText('val-empresas', fmtNum(data.resumo.empresas));
+
+    // Comparações
+    if (_comparePeriod !== 'none') {
+      var cmpLeads = document.getElementById('cmp-leads');
+      var cmpForms = document.getElementById('cmp-forms');
+      var dtLeads  = deltaText(sumCurr.wa,    sumPrev.wa);
+      var dtForms  = deltaText(sumCurr.forms, sumPrev.forms);
+      if (cmpLeads) cmpLeads.textContent = dtLeads  || '';
+      if (cmpForms) cmpForms.textContent = dtForms  || '';
+    } else {
+      var cl = document.getElementById('cmp-leads');
+      var cf = document.getElementById('cmp-forms');
+      if (cl) cl.textContent = '';
+      if (cf) cf.textContent = '';
+    }
 
     renderBarras('chart-pipeline', data.por_pipeline);
     renderBarras('chart-tipo',     data.por_tipo);
     renderBarras('chart-cidade',   data.por_cidade);
-    renderTabela(data.por_mes);
+    renderTabela(filteredMes);
     if (data.ads && data.ads.ok) renderAds(data.ads);
-
-    const ts    = new Date(data.gerado_em);
-    const fmtTs = ts.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-    setText('timestamp', 'Atualizado em ' + fmtTs);
-    setText('footer-ts', 'Dados via Pipedrive · ' + fmtTs);
+    detectAnomalias(data);
   }
+
+  /* ── Tabs ─────────────────────────────────────────── */
+
+  document.getElementById('nav-tabs').addEventListener('click', function(e) {
+    var tab = e.target.closest('[data-tab]');
+    if (!tab) return;
+    var name = tab.dataset.tab;
+    _activeTab = name;
+
+    document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('tab-' + name);
+    if (panel) panel.classList.add('active');
+  });
+
+  /* ── Filtros de período ───────────────────────────── */
+
+  document.getElementById('filter-pills').addEventListener('click', function(e) {
+    var pill = e.target.closest('[data-range]');
+    if (!pill) return;
+    _range = pill.dataset.range;
+    document.querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
+    pill.classList.add('active');
+    applyFilters();
+  });
+
+  document.getElementById('compare-select').addEventListener('change', function(e) {
+    _comparePeriod = e.target.value;
+    applyFilters();
+  });
+
+  /* ── Auth + fetch ─────────────────────────────────── */
 
   async function showDashboard(key) {
     document.getElementById('lock').style.display      = 'none';
     document.getElementById('dashboard').style.display = 'block';
-
     try {
-      const res  = await fetch('/api/stats?key=' + encodeURIComponent(key));
-      const data = await res.json();
+      var res  = await fetch('/api/stats?key=' + encodeURIComponent(key));
+      var data = await res.json();
       if (res.ok) {
         renderDashboard(data);
       } else {
-        setText('loading', '⚠️ Erro ao carregar dados.');
+        setText('loading', 'Erro ao carregar dados. Recarregue a página.');
       }
     } catch {
-      setText('loading', '⚠️ Sem conexão com o servidor.');
+      setText('loading', 'Sem conexão com o servidor.');
     }
   }
 
-  function renderAds(ads) {
-    var section = document.getElementById('ads-section');
-    section.hidden = false;
-
-    var r = ads.resumo || {};
-    var cardsEl = document.getElementById('ads-cards');
-    cardsEl.textContent = '';
-
-    var adsMetrics = [
-      { icon: '👁', label: 'Impressões', val: r['Impressoes'] || '—' },
-      { icon: '🖱', label: 'Cliques',    val: r['Cliques']    || '—' },
-      { icon: '📊', label: 'CTR',        val: r['CTR']        || '—' },
-      { icon: '💰', label: 'Gasto R$',   val: r['Gasto RS']   || '—' },
-      { icon: '🎯', label: 'Conversões', val: r['Conversoes'] || '—' },
-      { icon: '📉', label: 'CPA R$',     val: r['CPA RS']     || '—' },
-    ];
-
-    adsMetrics.forEach(function(m) {
-      var card = document.createElement('div');
-      card.className = 'card';
-
-      var icon = document.createElement('div');
-      icon.className = 'icon';
-      icon.textContent = m.icon;
-
-      var lbl = document.createElement('div');
-      lbl.className = 'label';
-      lbl.textContent = m.label;
-
-      var val = document.createElement('div');
-      val.className = 'value';
-      val.style.fontSize = '1.5rem';
-      val.textContent = m.val;
-
-      card.appendChild(icon);
-      card.appendChild(lbl);
-      card.appendChild(val);
-      cardsEl.appendChild(card);
-    });
-
-    var tbody = document.getElementById('ads-tbody');
-    tbody.textContent = '';
-    (ads.campanhas || []).forEach(function(c) {
-      var tr = document.createElement('tr');
-      var fields = ['Campanha', 'Impressoes', 'Cliques', 'CTR', 'Custo RS', 'Conv', 'CPA RS'];
-      fields.forEach(function(f, i) {
-        var td = document.createElement('td');
-        if (i > 0) td.className = 'num';
-        td.textContent = c[f] || '—';
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-
-    if (!ads.campanhas || !ads.campanhas.length) {
-      var tr = document.createElement('tr');
-      var td = document.createElement('td');
-      td.colSpan = 7;
-      td.style.cssText = 'text-align:center;padding:1rem;color:#6b7280';
-      td.textContent = 'Aguardando próxima atualização do script';
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-    }
-  }
-
-  // Verificar key na URL
-  const params = new URLSearchParams(location.search);
+  var params = new URLSearchParams(location.search);
   if (params.get('key') === KEY) showDashboard(KEY);
 
-  document.getElementById('login-form').addEventListener('submit', (e) => {
+  document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
-    const val = document.getElementById('key-input').value.trim();
+    var val = document.getElementById('key-input').value.trim();
     if (val === KEY) {
       showDashboard(KEY);
     } else {
       document.getElementById('login-error').hidden = false;
     }
   });
+
+  // Ativar pill "Tudo" por padrão
+  document.querySelector('[data-range="all"]').classList.add('active');
 </script>
 </body>
 </html>
