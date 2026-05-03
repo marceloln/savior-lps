@@ -341,11 +341,31 @@ const absoluteTwitterImage = twitterImage
       });
     </script>
 
-    <!-- GTM removido: conta 6244498214 com flag de malware herdado bloqueia todas as tags.
-         GA4, Meta Pixel e LinkedIn carregam direto (useGtmAsSource: false). -->
+    <!-- GTM — conta limpa "Savior" (GTM-P46F2WFS), sem herança Netart -->
+    {ANALYTICS.gtm && (
+      <script is:inline define:vars={{ GTM_ID: ANALYTICS.gtm }}>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',GTM_ID);
+      </script>
+    )}
   </head>
 
   <body>
+    <!-- GTM noscript fallback -->
+    {ANALYTICS.gtm && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${ANALYTICS.gtm}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+    )}
+
     <!-- Meta Pixel noscript (fallback sem JS) -->
     <noscript>
       <img

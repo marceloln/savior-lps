@@ -45,11 +45,10 @@ export const CONTACT_SP = {
 // - Meta Pixel: business.facebook.com/events_manager → ID numérico 15-16 dígitos
 // - LinkedIn: linkedin.com/campaignmanager → Insight Tag → Partner ID numérico
 export const ANALYTICS = {
-  // Google Tag Manager — DESATIVADO (conta 6244498214 com flag de malware herdado da agência
-  // anterior netart1.com.br; scanner pausa tags automaticamente em qualquer container da conta)
-  gtm: '',
+  // Google Tag Manager — conta limpa "Savior" (id=6352357800), sem herança Netart
+  gtm: 'GTM-P46F2WFS',
 
-  // GA4 — carregado direto via gtag.js (sem GTM)
+  // GA4 — orquestrado via GTM (tag GA4 Configuration dentro do container)
   ga4: 'G-43FPPY00QR',
 
   // Google Ads — inicializa o Google tag direto (sem GTM) para conversões e remarketing
@@ -61,8 +60,8 @@ export const ANALYTICS = {
   // LinkedIn Insight Tag — Partner ID do Campaign Manager
   linkedInPartnerId: 'LINKEDIN_PARTNER_PLACEHOLDER',
 
-  // Flag: false = GA4 + Meta + LinkedIn carregam direto no HTML (sem GTM)
-  useGtmAsSource: false,
+  // Flag: true = GTM orquestra GA4 + Meta + LinkedIn (evita duplicação)
+  useGtmAsSource: true,
 };
 
 export const METRICS = {

@@ -28,7 +28,7 @@ import Footer from '../components/Footer.astro';
 import { CONTACT_SP, GOOGLE_BUSINESS_SP } from '../data/savior';
 
 // ============ SEO ============
-const title = 'Ambulância Particular SP | UTI 24 Horas São Paulo | Savior Medical Service';
+const title = 'Ambulância Particular São Paulo | UTI 24h | Savior';
 const description =
   'Ambulância particular em São Paulo com UTI completa. Médico + enfermeiro. Atendimento 24h. Básica R$1.200, UTI R$2.200. Pix e cartão em 3x. Ligue: (11) 94486-1329.';
 const canonical = 'https://www.savior.com.br/ambulancia-sp';
@@ -56,12 +56,12 @@ const faqItems = [
     a: 'Sim. Central 24h, <strong>todos os dias do ano</strong>. Atendemos em menos de 1 minuto a maioria dos chamados.',
   },
   {
-    q: 'Como posso pagar?',
-    a: 'Pix (com 5% de desconto), cartão de crédito em até 3x sem juros, ou débito na máquina a bordo da ambulância. Você só paga quando a equipe chega.',
+    q: 'Como pagar ambulância particular em São Paulo?',
+    a: 'Pix (com 5% de desconto), cartão de crédito em até 3x sem juros, ou débito na máquina a bordo da ambulância. O pagamento é confirmado antes da equipe sair da base em Socorro — você não paga nada antes da chegada.',
   },
   {
-    q: 'Qual a diferença entre UTI e básica?',
-    a: 'A <strong>UTI</strong> tem médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador e toda medicação de emergência. A <strong>básica</strong> tem enfermeiro, maca articulada, oxigênio e kit de primeiros socorros. A UTI é indicada para pacientes instáveis, emergências e pós-operatórios.',
+    q: 'Qual a diferença entre UTI e básica em SP?',
+    a: 'A <strong>UTI</strong> tem médico a bordo, monitor multiparâmetro, respirador mecânico, desfibrilador e toda medicação de emergência — indicada para emergências e transferências entre hospitais como Albert Einstein, Sírio-Libanês e Santa Catarina. A <strong>básica</strong> tem enfermeiro, maca articulada e oxigênio — suficiente para altas hospitalares e remoções programadas.',
   },
   {
     q: 'Como chamar ambulância particular em São Paulo?',
@@ -77,11 +77,11 @@ const faqItems = [
   },
   {
     q: 'Preciso de receita médica para solicitar ambulância particular em SP?',
-    a: 'Não. Qualquer pessoa pode chamar — <strong>sem receita, sem pedido médico, sem burocracia</strong>. Você liga ou manda mensagem, conta o que está acontecendo, e a gente indica o recurso certo e confirma o valor na hora.',
+    a: 'Qualquer pessoa pode chamar, sem precisar de receita ou encaminhamento médico. Você liga ou manda mensagem, conta o que está acontecendo, e a gente indica o recurso certo e confirma o valor na hora.',
   },
   {
-    q: 'Como saber se preciso de UTI ou ambulância básica?',
-    a: 'A <strong>UTI</strong> é indicada em emergências (infarto, AVC, trauma, queda com impacto, dificuldade respiratória, pós-operatório instável) e transferências de pacientes graves. A <strong>básica</strong> resolve remoções programadas, pacientes estáveis, altas hospitalares sem complicação. Na dúvida, ligue — a gente escuta o caso e indica o que faz sentido, sem empurrar o mais caro.',
+    q: 'Como saber se preciso de UTI ou básica em São Paulo?',
+    a: 'A <strong>UTI</strong> é indicada em emergências (infarto, AVC, trauma, dificuldade respiratória, pós-operatório instável) e transferências entre hospitais no Grande SP. A <strong>básica</strong> resolve altas hospitalares e remoções programadas de pacientes estáveis — do Itaim ao ABCD, por exemplo. Na dúvida, ligue — a gente escuta o caso e indica o que faz sentido.',
   },
   {
     q: 'Ambulância para idoso em São Paulo — o que precisa saber?',
@@ -96,7 +96,7 @@ const schema = JSON.stringify({
     // 1. Organização — unidade SP
     {
       '@type': ['MedicalClinic', 'EmergencyService', 'LocalBusiness'],
-      '@id': `${canonical}#organization`,
+      '@id': 'https://www.savior.com.br/#organization',
       name: 'Savior Medical Service',
       alternateName: ['Savior', 'Savior Ambulâncias', 'Savior SP'],
       description:
@@ -135,8 +135,8 @@ const schema = JSON.stringify({
       },
       geo: {
         '@type': 'GeoCoordinates',
-        latitude: -23.55,
-        longitude: -46.63,
+        latitude: -23.7128,
+        longitude: -46.6971,
       },
       openingHoursSpecification: {
         '@type': 'OpeningHoursSpecification',
@@ -183,7 +183,7 @@ const schema = JSON.stringify({
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: 4.7,
-        reviewCount: String(GOOGLE_BUSINESS_SP.reviewCount),
+        reviewCount: GOOGLE_BUSINESS_SP.reviewCount,
         bestRating: '5',
         worstRating: '1',
       },
@@ -193,7 +193,6 @@ const schema = JSON.stringify({
         'https://www.instagram.com/saviormedicalservice/',
         'https://www.facebook.com/SaviorAmbulancias/',
         'https://www.linkedin.com/company/savior-medical-service/',
-        'https://savior.com.br',
       ],
       contactPoint: [
         {
@@ -269,7 +268,7 @@ const schema = JSON.stringify({
         url: 'https://www.savior.com.br',
         inLanguage: 'pt-BR',
       },
-      about: { '@id': `${canonical}#organization` },
+      about: { '@id': 'https://www.savior.com.br/#organization' },
       datePublished: '2026-04-28',
       dateModified: '2026-04-28',
       primaryImageOfPage: {
@@ -319,11 +318,15 @@ const waCampaign = 'sp-emergencia';
   ogImageAlt="Ambulância UTI Móvel Savior em São Paulo — atendimento 24h"
   twitterImage="/og/emergencia-sp-twitter-card-1200x628.jpg"
   lcpImageSrcset="/img/hero/hero-poster-sp-mobile.webp 720w, /img/hero/hero-poster-sp.webp 1536w"
+  geoRegion="BR-SP"
+  geoPlacename="São Paulo"
+  geoPosition="-23.7128;-46.6971"
+  icbm="-23.7128, -46.6971"
 >
   <main id="main">
     <!-- Bloco 1 — Hero -->
     <Hero
-      h1="Ambulância particular em"
+      h1="Ambulância particular com UTI em"
       h1Highlight="São Paulo"
 subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A central atende 24 horas, inclusive agora."
       waCampaign={waCampaign}
@@ -433,6 +436,15 @@ subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A cent
     />
   </main>
 
+  <!-- Cross-linking: distribui PageRank e orienta quem precisa de outra cidade/serviço -->
+  <nav class="crosslink-bar" aria-label="Outras cidades e serviços Savior">
+    <div class="wrap crosslink-inner">
+      <a href="/ambulancia-rj">Ambulância particular no Rio de Janeiro →</a>
+      <a href="/tipos-ambulancia">Básica, UTI e Neonatal: entenda cada tipo →</a>
+      <a href="/corporativo">Cobertura médica para empresas →</a>
+    </div>
+  </nav>
+
   <Footer
     contact={CONTACT_SP}
     coverage="Capital · ABCD Paulista · Guarulhos · Osasco · Grande São Paulo"
@@ -453,28 +465,6 @@ subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A cent
     </div>
   </section>
 
-  <style>
-    .seo-coverage {
-      background: var(--cream-light);
-      border-top: 1px solid var(--cream-dark);
-      padding: 18px 0;
-    }
-    .seo-cov-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--gray);
-      margin: 0 0 6px;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-    .seo-cov-list {
-      font-size: 12px;
-      color: var(--gray);
-      line-height: 1.7;
-      margin: 0;
-    }
-  </style>
-
   <!-- WhatsApp flutuante — mobile -->
   <FloatingWhatsApp waCampaign={waCampaign} contact={CONTACT_SP} />
 
@@ -483,4 +473,72 @@ subhead="UTI com médico e enfermeiro. Frota própria, não terceirizada. A cent
 
   <!-- Sticky header — aparece após 80px scroll -->
   <StickyHeader waCampaign={waCampaign} contact={CONTACT_SP} />
+
+  <!-- Nav sticky mobile — âncoras Preços / FAQ / Chamar (aparece após 600px scroll) -->
+  <nav class="mob-sticky-nav" id="mobStickyNav" aria-label="Navegação rápida" hidden>
+    <a href="#precos" class="msn-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Preços
+    </a>
+    <a href="#faq" class="msn-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      FAQ
+    </a>
+    <a href={`tel:${CONTACT_SP.phoneLandlineHref}`} class="msn-item msn-cta" data-phone data-campaign={waCampaign} data-location="mob-sticky-nav">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Chamar
+    </a>
+  </nav>
+
+  <script is:inline>
+    (function () {
+      var nav = document.getElementById('mobStickyNav');
+      if (!nav || window.innerWidth >= 960) return;
+      var shown = false;
+      window.addEventListener('scroll', function () {
+        var past = window.scrollY > 600;
+        if (past !== shown) { shown = past; nav.hidden = !past; }
+      }, { passive: true });
+    })();
+  </script>
+
+  <style>
+    .mob-sticky-nav {
+      display: none;
+    }
+    @media (max-width: 959px) {
+      .mob-sticky-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 120;
+        background: var(--navy-deep);
+        border-top: 1px solid rgba(255,255,255,.12);
+        padding: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .msn-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 10px 0 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255,255,255,.7);
+        text-decoration: none;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+      .msn-item:hover { color: #fff; }
+      .msn-cta {
+        background: var(--green);
+        color: #fff;
+      }
+      .msn-cta:hover { background: var(--green-dark); }
+    }
+  </style>
 </Base>
