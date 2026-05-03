@@ -190,7 +190,7 @@ const absoluteTwitterImage = twitterImage
       window.dataLayer = window.dataLayer || [];
 
       // ============ Stubs — enfileiram eventos antes dos scripts carregarem ============
-      if (!USE_GTM && GA4_ID && GA4_ID !== 'G-PLACEHOLDER') {
+      if (!USE_GTM && GA4_ID) {
         window.gtag = window.gtag || function(){dataLayer.push(arguments);};
         window.gtag('js', new Date());
         window.gtag('config', GA4_ID, { anonymize_ip: true, send_page_view: true });
@@ -217,7 +217,7 @@ const absoluteTwitterImage = twitterImage
       // Isso garante que os scripts só são injetados depois que o LCP já foi pintado.
       window.addEventListener('load', function() {
         var inject = function() {
-          if (!USE_GTM && GA4_ID && GA4_ID !== 'G-PLACEHOLDER') {
+          if (!USE_GTM && GA4_ID) {
             var s = document.createElement('script');
             s.async = true;
             s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
