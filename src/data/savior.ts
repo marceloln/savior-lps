@@ -58,7 +58,10 @@ export const ANALYTICS = {
   metaPixel: '571875002833284',
 
   // LinkedIn Insight Tag — Partner ID do Campaign Manager
-  linkedInPartnerId: 'LINKEDIN_PARTNER_PLACEHOLDER',
+  linkedInPartnerId: 'LINKEDIN_PARTNER_PLACEHOLDER', // ⚠️ obter com cliente
+
+  // Blip — chave de acesso para tagging de conversas WhatsApp com UTM
+  blipKey: 'f66c4315-bb6f-4a44-b538-7c87406af8f9',
 
   // Flag: true = GTM orquestra GA4 + Meta + LinkedIn (evita duplicação)
   useGtmAsSource: true,
