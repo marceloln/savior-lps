@@ -121,9 +121,10 @@ const waNeonatal = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, preciso de uma
     </div>
 
     <p class="price-note">
-      Valores de referência. O valor final depende de origem, destino e equipamentos específicos, e é combinado na confirmação do chamado, antes da equipe sair.
-      Se a espera na origem ou destino passar de 1 hora, a gente te avisa antes da cobrança adicional começar a contar (R$ 150 por hora).
+      Valores de referência — o preço final depende do percurso, do tipo de ambulância* e dos equipamentos do caso, e a gente confirma tudo com você no chamado, antes de sair.
+      Se a espera no local ultrapassar 1 hora, avisamos antes de qualquer cobrança extra: contamos a partir dos 61 minutos, em horas cheias, sem fração (R$ 150/hora).
       <span class="price-updated">Preços atualizados em abril de 2026.</span>
+      <br><span class="price-asterisk">* Básica, UTI móvel ou neonatal — cada tipo tem seu valor.</span>
     </p>
   </div>
 </section>
@@ -335,6 +336,13 @@ const waNeonatal = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, preciso de uma
     font-size: 10.5px;
     letter-spacing: 0.04em;
     color: var(--navy);
+  }
+
+  .price-asterisk {
+    display: block;
+    margin-top: 4px;
+    font-size: 11.5px;
+    opacity: 0.7;
   }
 
   @media (max-width: 960px) {
