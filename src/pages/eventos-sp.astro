@@ -95,7 +95,7 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
   ogImage="/og/eventos-og-1200x630.jpg"
   ogImageAlt="Ambulância e posto médico para eventos Savior — São Paulo"
   twitterImage="/og/eventos-twitter-card-1200x628.jpg"
-  lcpImageSrcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
+  lcpImageSrcset="/img/hero/hero-poster-sp-mobile.webp 720w, /img/hero/hero-poster-sp.webp 1536w"
 >
   <main id="main">
 
@@ -124,9 +124,9 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
       <div class="ev-hero-bg" aria-hidden="true">
         <img
           class="ev-hero-poster"
-          srcset="/img/hero/hero-poster-events-mobile.webp 720w, /img/hero/hero-poster-events.webp 1536w"
+          srcset="/img/hero/hero-poster-sp-mobile.webp 720w, /img/hero/hero-poster-sp.webp 1536w"
           sizes="100vw"
-          src="/img/hero/hero-poster-events.webp"
+          src="/img/hero/hero-poster-sp.webp"
           alt=""
           width="1920"
           height="1280"
@@ -140,16 +140,17 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
           loop
           playsinline
           preload="metadata"
-          poster="/img/hero/hero-poster-events-mobile.webp"
+          poster="/img/hero/hero-poster-sp-mobile.webp"
           width="1920"
           height="1280"
           aria-hidden="true"
         >
-          <source src="/video/events-hero-v2.mp4" type="video/mp4" />
+          <source src="/video/hero-loop-sp.webm" type="video/webm" />
+          <source src="/video/hero-loop-sp.mp4" type="video/mp4" />
         </video>
         <script is:inline>
           if (window.innerWidth > 720) {
-            document.getElementById('ev-hero-vid').poster = '/img/hero/hero-poster-events.webp';
+            document.getElementById('ev-hero-vid').poster = '/img/hero/hero-poster-sp.webp';
           }
         </script>
         <div class="ev-hero-overlay"></div>
