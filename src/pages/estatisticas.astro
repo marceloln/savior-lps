@@ -391,49 +391,54 @@
     }
 
     /* ── Funil comparativo table ─────────────────────── */
-    .funil-wrap { overflow-x: auto; }
+    .funil-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .funil-table {
       width: 100%; border-collapse: collapse;
-      font-size: .8rem;
+      font-size: .82rem; min-width: 560px;
     }
+    .funil-table thead { position: sticky; top: 112px; z-index: 10; }
     .funil-table thead th {
-      background: rgba(255,255,255,.03);
+      background: #141e32;
       color: var(--text-3);
-      font-size: .65rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .08em;
-      padding: .625rem 1rem;
+      font-size: .625rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .09em;
+      padding: .65rem 1rem;
       text-align: right; white-space: nowrap;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-md);
     }
-    .funil-table thead th:first-child { text-align: left; }
+    .funil-table thead th:first-child { text-align: left; min-width: 140px; }
     .funil-table thead th.col-hoje {
-      background: var(--green-dim);
+      background: rgba(0,184,124,.12);
       color: var(--green);
     }
     .funil-table tbody tr:hover td { background: var(--bg-hover); }
     .funil-table tbody td {
-      padding: .55rem 1rem;
+      padding: .625rem 1rem;
       border-bottom: 1px solid var(--border);
       text-align: right;
       color: var(--text-2);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      vertical-align: middle;
     }
     .funil-table tbody td:first-child {
       text-align: left;
-      font-size: .7rem; font-weight: 600;
+      font-size: .72rem; font-weight: 600;
       color: var(--text-3);
-      text-transform: uppercase; letter-spacing: .05em;
+      padding-left: 1.25rem;
     }
     .funil-table tbody td.col-hoje {
       color: var(--text-1); font-weight: 700;
       background: rgba(0,184,124,.04);
     }
     .funil-table .row-sep td {
-      background: rgba(255,255,255,.02);
-      padding: .3rem 1rem;
-      font-size: .6rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--text-3);
+      background: rgba(255,255,255,.025);
+      padding: .5rem 1rem .35rem;
+      font-size: .58rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .12em;
+      color: var(--text-2);
       border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border-md);
     }
 
     /* ── Delta ────────────────────────────────────────── */
@@ -507,31 +512,44 @@
     .bar-count { flex-shrink: 0; width: 28px; text-align: right; font-size: .76rem; font-weight: 700; color: var(--text-1); }
 
     /* ── Tables (leads mensal, ads) ───────────────────── */
-    .table-wrap { overflow-x: auto; }
-    .data-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-    .data-table thead th {
-      text-align: left; padding: .55rem .875rem;
-      background: rgba(255,255,255,.02);
-      font-size: .65rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .08em;
-      color: var(--text-3);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-size: .82rem; min-width: 480px;
     }
+    .data-table thead { position: sticky; top: 112px; z-index: 10; }
+    .data-table thead th {
+      padding: .65rem 1rem;
+      background: #141e32;
+      font-size: .625rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .09em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border-md);
+      white-space: nowrap;
+      text-align: left;
+    }
+    .data-table thead th.num { text-align: right; }
     .data-table tbody td {
-      padding: .55rem .875rem;
+      padding: .625rem 1rem;
       border-bottom: 1px solid var(--border);
       color: var(--text-2);
+      vertical-align: middle;
+      white-space: nowrap;
     }
     .data-table tbody tr:last-child td { border-bottom: none; }
     .data-table tbody tr:hover td { background: var(--bg-hover); }
-    .data-table .row-zero td { opacity: .35; }
-    .data-table td.num { font-weight: 700; text-align: right; }
+    .data-table .row-zero td { opacity: .3; }
+    .data-table td.num {
+      font-weight: 700; text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
     .data-table .row-total td {
       font-weight: 700; color: var(--text-1);
-      background: rgba(255,255,255,.03);
+      background: rgba(255,255,255,.04);
+      border-top: 1px solid var(--border-md);
     }
-    .data-table .row-odd td { background: rgba(255,255,255,.015); }
+    .data-table .row-total td:first-child { color: var(--text-2); }
+    .data-table .row-odd td { background: rgba(255,255,255,.022); }
 
     /* ── Ads grid ─────────────────────────────────────── */
     .ads-grid {
@@ -781,10 +799,10 @@
                 <thead>
                   <tr>
                     <th>Mês</th>
-                    <th style="text-align:right">WA Clicks</th>
-                    <th style="text-align:right">Formulários</th>
-                    <th style="text-align:right">Total</th>
-                    <th style="text-align:right">vs. mês ant.</th>
+                    <th class="num">WA Clicks</th>
+                    <th class="num">Formulários</th>
+                    <th class="num">Total</th>
+                    <th class="num">vs. mês ant.</th>
                   </tr>
                 </thead>
                 <tbody id="tabela-mes"></tbody>
@@ -805,18 +823,18 @@
             </div>
             <div class="card-body">
               <div class="ads-grid" id="ads-cards"></div>
-              <div style="font-size:.75rem;font-weight:700;color:var(--text-2);margin-bottom:.875rem;text-transform:uppercase;letter-spacing:.08em;">Campanhas</div>
+              <div class="card-title" style="margin-bottom:.875rem;">Campanhas</div>
               <div class="table-wrap">
                 <table class="data-table">
                   <thead>
                     <tr>
                       <th>Campanha</th>
-                      <th style="text-align:right">Impressões</th>
-                      <th style="text-align:right">Cliques</th>
-                      <th style="text-align:right">CTR</th>
-                      <th style="text-align:right">Gasto R$</th>
-                      <th style="text-align:right">Conv.</th>
-                      <th style="text-align:right">CPA R$</th>
+                      <th class="num">Impressões</th>
+                      <th class="num">Cliques</th>
+                      <th class="num">CTR</th>
+                      <th class="num">Gasto R$</th>
+                      <th class="num">Conv.</th>
+                      <th class="num">CPA R$</th>
                     </tr>
                   </thead>
                   <tbody id="ads-tbody"></tbody>
@@ -1250,11 +1268,11 @@
     tbl.className = 'data-table';
     var thead = document.createElement('thead');
     var htr = document.createElement('tr');
-    [['#','30px'],['Campanha',''],['Conv.','60px'],['CPA R$','90px'],['CTR','55px']].forEach(function(h) {
+    [['#','30px',false],['Campanha','',false],['Conv.','60px',true],['CPA R$','90px',true],['CTR','55px',true]].forEach(function(h) {
       var th = document.createElement('th');
       th.textContent = h[0];
       if (h[1]) th.style.width = h[1];
-      if (h[0] !== '#' && h[0] !== 'Campanha') th.style.textAlign = 'right';
+      if (h[2]) th.className = 'num';
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -1270,15 +1288,6 @@
       var tr = document.createElement('tr');
       if (idx % 2 === 1) tr.className = 'row-odd';
 
-      function kwtd(text, align, bold, colorVar) {
-        var td = document.createElement('td');
-        td.textContent = text;
-        td.style.textAlign = align || 'left';
-        if (bold) td.style.fontWeight = '700';
-        if (colorVar) td.style.color = colorVar;
-        return td;
-      }
-
       var rankTd = document.createElement('td');
       var rankBadge = document.createElement('span');
       rankBadge.textContent = String(idx + 1);
@@ -1289,11 +1298,18 @@
       nameTd.textContent = nome;
       nameTd.style.cssText = 'max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
 
+      var convTd = document.createElement('td');
+      convTd.className = 'num'; convTd.textContent = conv; convTd.style.color = 'var(--green)'; convTd.style.fontWeight = '700';
+      var cpaTd = document.createElement('td');
+      cpaTd.className = 'num'; cpaTd.textContent = cpa;
+      var ctrTd = document.createElement('td');
+      ctrTd.className = 'num'; ctrTd.textContent = ctr;
+
       tr.appendChild(rankTd);
       tr.appendChild(nameTd);
-      tr.appendChild(kwtd(conv, 'right', true,  'var(--green)'));
-      tr.appendChild(kwtd(cpa,  'right', false, 'var(--text-2)'));
-      tr.appendChild(kwtd(ctr,  'right', false, 'var(--text-2)'));
+      tr.appendChild(convTd);
+      tr.appendChild(cpaTd);
+      tr.appendChild(ctrTd);
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody);
