@@ -19,7 +19,7 @@ const img = city === 'SP'
   : { mobile: '/img/gallery/frota-copacabana-768.webp', desktop: '/img/gallery/frota-copacabana-1920.webp', alt: 'Frota própria da Savior alinhada em Copacabana — Rio de Janeiro' };
 ---
 
-<section class={`fleet-band${city === 'SP' ? ' fleet-band--sp' : ''}`} aria-label="Frota Savior">
+<section class={`fleet-band fleet-band--${city === 'SP' ? 'sp' : 'rj'}`} aria-label="Frota Savior">
   <picture class="fleet-img">
     <source media="(max-width: 720px)" srcset={img.mobile} type="image/webp" />
     <source srcset={img.desktop} type="image/webp" />
@@ -73,6 +73,10 @@ const img = city === 'SP'
 
   .fleet-band--sp .fleet-img img {
     object-position: center 60%;
+  }
+
+  .fleet-band--rj .fleet-img img {
+    object-position: center 40%;
   }
 
   .fleet-overlay {
