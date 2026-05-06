@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-05-06T17:13:35.592572+00:00",
+  "gerado_em": "2026-05-06T17:22:13.600395+00:00",
   "resumo": {
     "pessoas": 0,
     "empresas": 0,
@@ -25,10 +25,11 @@
     }
   },
   "por_pipeline": {
-    "Eventos RJ": 0,
-    "Eventos SP": 0,
-    "Corporativo RJ": 0,
-    "Corporativo SP": 0
+    "Eventos RJ": 3,
+    "Eventos SP": 3,
+    "Corporativo RJ": 3,
+    "Corporativo SP": 3,
+    "BOT WA": 0
   },
   "por_tipo": {
     "WhatsApp Click": 15,
@@ -39,21 +40,21 @@
   "por_cidade": {},
   "funil": {
     "hoje": {
-      "impressions": 3713.0,
-      "ad_clicks": 102.0,
-      "sessions": 23.0,
-      "users": 22.0,
-      "bounce": 52.2,
+      "impressions": 3786.0,
+      "ad_clicks": 104.0,
+      "sessions": 30.0,
+      "users": 29.0,
+      "bounce": 50.0,
       "form_start": 0.0,
       "wa_clicks": 0.0,
       "ph_clicks": 0.0,
       "leads": 0.0,
-      "blip": 24.0,
-      "cost": 717.6,
+      "blip": 25.0,
+      "cost": 769.59,
       "conversions": 12.0,
       "ctr": 2.75,
-      "cpc": 7.04,
-      "cpl_blip": 29.9
+      "cpc": 7.4,
+      "cpl_blip": 30.78
     },
     "ontem": {
       "impressions": 6667.0,
@@ -90,38 +91,38 @@
       "cpl_blip": 71.55
     },
     "30d": {
-      "impressions": 4721.8,
-      "ad_clicks": 266.8,
+      "impressions": 4724.3,
+      "ad_clicks": 266.9,
       "sessions": 220.2,
-      "users": 191.2,
+      "users": 191.3,
       "bounce": 55.8,
       "form_start": 3.7,
       "wa_clicks": 0.5,
       "ph_clicks": 0.3,
       "leads": 0.6,
       "blip": 21.3,
-      "cost": 1478.79,
+      "cost": 1480.53,
       "conversions": 30.7,
       "ctr": 5.65,
-      "cpc": 5.54,
-      "cpl_blip": 69.32
+      "cpc": 5.55,
+      "cpl_blip": 69.4
     },
     "90d": {
-      "impressions": 3804.1,
+      "impressions": 3804.8,
       "ad_clicks": 238.5,
       "sessions": 208.8,
-      "users": 180.3,
+      "users": 180.4,
       "bounce": 50.6,
       "form_start": 4.0,
       "wa_clicks": 0.2,
       "ph_clicks": 0.1,
       "leads": 0.2,
       "blip": 22.1,
-      "cost": 1417.02,
+      "cost": 1417.6,
       "conversions": 31.1,
       "ctr": 6.27,
       "cpc": 5.94,
-      "cpl_blip": 64.22
+      "cpl_blip": 64.24
     },
     "labels": {
       "hoje": "06/05 (hoje)",
@@ -134,44 +135,44 @@
   "ads": {
     "ok": true,
     "resumo": {
-      "Impressões": "141655",
-      "Cliques": "8005",
+      "Impressões": "141728",
+      "Cliques": "8007",
       "CTR": "5.65%",
-      "Gasto R$": "44363.8",
+      "Gasto R$": "44415.79",
       "Conversões": "920.0",
-      "CPA R$": "48.22"
+      "CPA R$": "48.28"
     },
     "campanhas": [
       {
         "Campanha": "LP | Particular | RJ#2",
-        "Impressões": "28033",
-        "Cliques": "2474",
+        "Impressões": "28039",
+        "Cliques": "2476",
         "CTR": "8.83%",
-        "Gasto R$": "26349.85",
+        "Gasto R$": "26401.84",
         "Conv": "416.5",
-        "CPA R$": "63.26"
+        "CPA R$": "63.39"
       },
       {
         "Campanha": "LP | Particular | SP",
-        "Impressões": "12475",
+        "Impressões": "12482",
         "Cliques": "1005",
-        "CTR": "8.06%",
+        "CTR": "8.05%",
         "Gasto R$": "6227.1",
         "Conv": "230.0",
         "CPA R$": "27.07"
       },
       {
         "Campanha": "LP | Eventos | SP",
-        "Impressões": "74823",
+        "Impressões": "74879",
         "Cliques": "3259",
-        "CTR": "4.36%",
+        "CTR": "4.35%",
         "Gasto R$": "5485.91",
         "Conv": "161.0",
         "CPA R$": "34.07"
       },
       {
         "Campanha": "LP | Particular | RJ | MSG",
-        "Impressões": "4575",
+        "Impressões": "4576",
         "Cliques": "545",
         "CTR": "11.91%",
         "Gasto R$": "2970.63",
@@ -180,7 +181,7 @@
       },
       {
         "Campanha": "LP | Eventos | RJ",
-        "Impressões": "20117",
+        "Impressões": "20118",
         "Cliques": "505",
         "CTR": "2.51%",
         "Gasto R$": "956.96",
