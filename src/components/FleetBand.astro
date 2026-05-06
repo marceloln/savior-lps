@@ -13,27 +13,19 @@ interface Props {
 
 const { city = 'RJ' } = Astro.props;
 const cityNarrative = city === 'SP' ? null : 'no Rio';
+
+const img = city === 'SP'
+  ? { mobile: '/img/b2b/fleet-paulista-mobile.webp', desktop: '/img/b2b/fleet-paulista.webp', alt: 'Frota própria da Savior enfileirada na Avenida Paulista — São Paulo' }
+  : { mobile: '/img/gallery/frota-copacabana-768.webp', desktop: '/img/gallery/frota-copacabana-1920.webp', alt: 'Frota própria da Savior alinhada em Copacabana — Rio de Janeiro' };
 ---
 
 <section class="fleet-band" aria-label="Frota Savior">
   <picture class="fleet-img">
-    <source
-      media="(max-width: 720px)"
-      srcset="/img/gallery/frota-copacabana-768.webp"
-      type="image/webp"
-    />
-    <source
-      media="(max-width: 1280px)"
-      srcset="/img/gallery/frota-copacabana-1280.webp"
-      type="image/webp"
-    />
-    <source
-      srcset="/img/gallery/frota-copacabana-1920.webp"
-      type="image/webp"
-    />
+    <source media="(max-width: 720px)" srcset={img.mobile} type="image/webp" />
+    <source srcset={img.desktop} type="image/webp" />
     <img
-      src="/img/gallery/frota-copacabana-1280.webp"
-      alt="Frota própria da Savior alinhada em Copacabana — Rio de Janeiro"
+      src={img.desktop}
+      alt={img.alt}
       width="1920"
       height="915"
       loading="lazy"
