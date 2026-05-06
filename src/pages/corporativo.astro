@@ -890,11 +890,17 @@ const faqItems = [
   }
   .corp-model-card:hover { transform: translateY(-2px); }
   .corp-model-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; line-height: 1.2; }
-  .corp-model-card p { font-size: 14px; color: var(--gray); line-height: 1.55; flex: 1; }
-  .corp-model-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); flex: none; height: 28px; display: flex; align-items: center; margin-bottom: 12px; }
-  .corp-model-cta { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none; transition: color .15s; }
+  .corp-model-card {
+    display: grid;
+    grid-template-rows: 28px auto 1fr auto;
+    align-items: start;
+    gap: 0;
+  }
+  .corp-model-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; color: var(--green-dark); display: flex; align-items: center; margin-bottom: 0; padding-bottom: 12px; }
+  .corp-model-card h3 { align-self: start; margin-bottom: 10px; }
+  .corp-model-card p { font-size: 14px; color: var(--gray); line-height: 1.55; align-self: start; }
+  .corp-model-cta { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none; transition: color .15s; align-self: end; }
   .corp-model-cta:hover { color: var(--green-bright); }
-  .corp-model-card { display: flex; flex-direction: column; }
 
   /* ── Photo Break ── */
   .corp-photo-break { position: relative; min-height: 420px; display: flex; align-items: center; overflow: hidden; background: var(--navy-deep); }
