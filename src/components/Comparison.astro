@@ -96,6 +96,7 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
             </td>
             <td data-col="Savior" class="td-savior td-savior-price">
               <div class="savior-price-stack">
+                <span class="savior-price-from">a partir de</span>
                 <div class="savior-price-line">
                   <span class="savior-currency">R$</span>
                   <span class="savior-value">{city === 'SP' ? '499' : '1.200'}<span class="savior-range">–</span>2.200</span>
@@ -359,6 +360,13 @@ const zoneLabel = city === 'SP' ? 'Capital · Q1 2026' : 'Zona Sul · Q1 2026';
     color: rgba(31, 210, 154, 0.6);
     font-weight: 400;
     margin: 0 1px;
+  }
+
+  .savior-price-from {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
   }
 
   .savior-price-note {
