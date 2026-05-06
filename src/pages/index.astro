@@ -29,7 +29,7 @@ const waFinalRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso d
 const waFinalSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corp-sp', 'Oi, preciso de ambulância.', 'final-cta');
 
 // ============ SEO ============
-const title = 'Savior Medical Service | Ambulância Particular 24h RJ e SP | Desde 1979';
+const title = 'Savior Medical Service | Ambulância Particular 24h';
 const description =
   'Savior Medical Service — a empresa de transporte médico mais antiga do Brasil desde 1979. Ambulância com UTI e médico a bordo, transferência hospitalar e eventos. Rio de Janeiro e São Paulo.';
 const canonical = 'https://www.savior.com.br/';
@@ -48,7 +48,7 @@ const schema = JSON.stringify({
     },
     {
       '@type': ['MedicalBusiness', 'EmergencyService', 'LocalBusiness'],
-      '@id': 'https://www.savior.com.br/#org',
+      '@id': 'https://www.savior.com.br/#organization',
       name: 'Savior Medical Service',
       description:
         'Empresa de transporte médico mais antiga do Brasil. Fundada em 1979 no Rio de Janeiro. Ambulância com UTI e médico a bordo, transferência hospitalar, cobertura de eventos, área protegida e APH. Atende Rio de Janeiro e São Paulo.',
@@ -62,7 +62,7 @@ const schema = JSON.stringify({
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: 4.7,
-        reviewCount: '730',
+        reviewCount: 730,
         bestRating: '5',
       },
       location: [
@@ -168,7 +168,7 @@ const schema = JSON.stringify({
             </div>
 
             <h1>
-              Quando alguém precisa,<br /><em>a gente chega.</em>
+              Ambulância com UTI —<br /><em>quando alguém precisar.</em>
             </h1>
 
             <p class="corp-hero-sub">
@@ -178,7 +178,13 @@ const schema = JSON.stringify({
             </p>
 
             <div class="corp-hero-ctas">
-              <a class="btn btn-primary" href="#ambulancia">
+              <a
+                class="btn btn-primary"
+                href={`tel:${CONTACT_RJ.phoneHref}`}
+                data-phone
+                data-event-label="hero-phone-home"
+                aria-label="Ligar agora para a Savior: (21) 3171-3030"
+              >
                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
@@ -288,7 +294,7 @@ const schema = JSON.stringify({
               <path d="M3 21h18M9 21V8l-4 4v9m8 0V4l-4 4v13m8 0V12l-4 4v5"/>
             </svg>
             <h3>Área Protegida</h3>
-            <p>Ambulância dedicada em shoppings, fábricas, universidades. Equipe fixa cobrindo funcionários e clientes.</p>
+            <p>Ambulância dedicada em shoppings, fábricas, universidades e condomínios. Equipe fixa cobrindo funcionários e clientes.</p>
             <a href="/corporativo" class="svc-cta" aria-label="Ver planos corporativos Savior">Planos corporativos →</a>
           </article>
 
@@ -326,7 +332,7 @@ const schema = JSON.stringify({
     <section class="corp-specialties" id="especialidades" aria-labelledby="spec-h2">
       <div class="wrap">
         <span class="eyebrow on-dark">Especialidades Savior</span>
-        <h2 id="spec-h2">O que nos separa <em>de todo o resto</em></h2>
+        <h2 id="spec-h2">O que faz diferença <em>quando é urgente</em></h2>
         <p class="corp-section-lead on-dark">
           Ambulância particular tem muita no mercado. Mas nem toda tem médico regulando antes de
           sair, frota certificada com menos de 3&nbsp;anos e equipe que sabe conversar com família
@@ -339,7 +345,7 @@ const schema = JSON.stringify({
             <svg class="spec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
-            <h3>Especialistas em <em>humanização</em></h3>
+            <h3>A gente escuta <em>antes de agir</em></h3>
             <p>Equipe treinada pra lidar com família em crise. Comunicação clara, sem jargão. O motorista espera, o enfermeiro explica.</p>
           </div>
 
@@ -591,7 +597,7 @@ const schema = JSON.stringify({
         <div class="corp-team-overlay" aria-hidden="true"></div>
       </div>
       <div class="wrap corp-team-content">
-        <p class="corp-team-tag">Especialistas em humanização</p>
+        <p class="corp-team-tag">Equipe técnica e humana</p>
         <h2>A equipe que cuida de <em>gente</em>,<br />não só de paciente.</h2>
         <p class="corp-team-desc">
           Médico, paramédico e enfermeiro, treinados pra estabilizar, transportar e conversar
@@ -829,6 +835,10 @@ const schema = JSON.stringify({
     0% { transform: scale(1); opacity: 0.6; }
     70% { transform: scale(2.5); opacity: 0; }
     100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .corp-hero-live-dot::after { animation: none; }
   }
 
   .corp-hero h1 {
