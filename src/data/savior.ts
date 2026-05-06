@@ -86,7 +86,8 @@ export const CLIENTS = [
   'Amil',
   'Bradesco',
   'Prevent Senior',
-  'Intermédica',
+  'Rede D\'Or',
+  'Unimed Brasil',
   'Petrobras',
 ];
 

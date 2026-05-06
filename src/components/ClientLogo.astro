@@ -19,7 +19,8 @@ const wordmarkConfig: Record<string, { text: string; weight: number; spacing: st
   'Amil': { text: 'Amil', weight: 800, spacing: '-0.03em' },
   'Bradesco': { text: 'Bradesco', weight: 700, spacing: '-0.025em' },
   'Prevent Senior': { text: 'Prevent Senior', weight: 500, spacing: '-0.005em' },
-  'Intermédica': { text: 'Intermédica', weight: 600, spacing: '-0.01em' },
+  'Rede D\'Or': { text: 'Rede D\'Or', weight: 700, spacing: '-0.02em' },
+  'Unimed Brasil': { text: 'Unimed Brasil', weight: 600, spacing: '-0.01em' },
   'Petrobras': { text: 'PETROBRAS', weight: 800, spacing: '0.02em' },
 };
 
@@ -54,7 +55,7 @@ const config = wordmarkConfig[name] || { text: name, weight: 700, spacing: '-0.0
 
   .client-wordmark {
     font-family: var(--sans);
-    font-size: clamp(16px, 1.6vw, 19px);
+    font-size: clamp(13px, 1.25vw, 17px);
     line-height: 1;
     color: inherit;
     white-space: nowrap;
