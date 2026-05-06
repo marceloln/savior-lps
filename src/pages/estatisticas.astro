@@ -28,6 +28,8 @@
       --border-soft: #f0f0f0;
       --radius:      10px;
       --radius-sm:   6px;
+      --red:         #dc2626;
+      --amber:       #d97706;
     }
 
     body {
@@ -61,8 +63,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 52px;
-      height: 52px;
+      width: 52px; height: 52px;
       border-radius: 50%;
       background: var(--navy);
       margin-bottom: 1rem;
@@ -105,7 +106,7 @@
       transition: background .15s;
     }
     .login-card button:hover { background: var(--navy-mid); }
-    .login-error { color: #dc2626; font-size: .8rem; margin-top: .5rem; }
+    .login-error { color: var(--red); font-size: .8rem; margin-top: .5rem; }
 
     /* ── Dashboard ───────────────────────────────────── */
     #dashboard { display: none; }
@@ -167,11 +168,260 @@
       text-transform: uppercase;
     }
 
-    /* ── Funil ───────────────────────────────────────── */
-    .funil-wrap {
-      overflow-x: auto;
-      padding-bottom: .5rem;
+    /* ── Hero KPIs ───────────────────────────────────── */
+    .hero-kpis {
+      background: var(--navy);
+      border-bottom: 1px solid var(--navy-mid);
+      padding: 1.25rem 2rem;
     }
+    .hero-kpis-inner {
+      max-width: 1020px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+    }
+    @media (max-width: 860px) { .hero-kpis-inner { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 520px) { .hero-kpis-inner { grid-template-columns: repeat(2, 1fr); } }
+
+    .hero-kpi-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-sm);
+      padding: .875rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+    .hero-kpi-card.accent {
+      background: rgba(0,184,124,.15);
+      border-color: rgba(0,184,124,.3);
+    }
+    .hk-label {
+      font-size: .625rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.5);
+    }
+    .hk-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -.02em;
+    }
+    .hero-kpi-card.accent .hk-value { color: var(--green); }
+    .hk-sub {
+      font-size: .68rem;
+      color: rgba(255,255,255,.35);
+      margin-top: .1rem;
+    }
+
+    /* ── Nav tabs ────────────────────────────────────── */
+    .nav-tabs {
+      background: var(--navy);
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-tab {
+      padding: .75rem 1.25rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.5);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      user-select: none;
+    }
+    .nav-tab:hover { color: rgba(255,255,255,.8); }
+    .nav-tab.active { color: var(--white); border-bottom-color: var(--green); }
+
+    /* ── Main layout ─────────────────────────────────── */
+    main { max-width: 1020px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* Tab panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    #loading { text-align: center; padding: 5rem 2rem; color: var(--muted); font-size: .9rem; }
+
+    /* ── Section ─────────────────────────────────────── */
+    .section { margin-bottom: 2.25rem; }
+    .section-header { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+    .section-eyebrow { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .section-rule { flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Box ─────────────────────────────────────────── */
+    .box {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.375rem 1.5rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .box-title {
+      font-size: .825rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.125rem;
+      padding-bottom: .625rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Period pills ────────────────────────────────── */
+    .period-pills {
+      display: flex;
+      gap: .4rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .pp-pill {
+      padding: .35rem .875rem;
+      border-radius: 99px;
+      font-size: .775rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      background: var(--white);
+    }
+    .pp-pill:hover { border-color: var(--navy); color: var(--navy); }
+    .pp-pill.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+
+    /* ── Funil 2-col layout ──────────────────────────── */
+    .funil-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 700px) { .funil-layout { grid-template-columns: 1fr; } }
+
+    /* ── Funil visual steps ──────────────────────────── */
+    .funnel-steps {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+    .fv-step {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+    }
+    .fv-label {
+      flex-shrink: 0;
+      width: 130px;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: right;
+    }
+    .fv-bar-wrap {
+      flex: 1;
+      height: 28px;
+      background: var(--border-soft);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .fv-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-radius: 4px;
+      transition: width .6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: .5rem;
+      min-width: 40px;
+    }
+    .fv-bar.green { background: linear-gradient(90deg, var(--green-dark) 0%, var(--green) 100%); }
+    .fv-bar-val {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--white);
+      white-space: nowrap;
+    }
+    .fv-cvr {
+      flex-shrink: 0;
+      width: 52px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: right;
+    }
+    .fv-cvr.good { color: var(--green-dark); }
+    .fv-cvr.warn { color: var(--amber); }
+    .fv-cvr.bad  { color: var(--red); }
+
+    /* ── KPI side cards ──────────────────────────────── */
+    .kpi-side-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+    @media (max-width: 380px) { .kpi-side-grid { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: .875rem 1rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .kpi-card .kc-label {
+      font-size: .65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: .3rem;
+    }
+    .kpi-card .kc-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      letter-spacing: -.01em;
+    }
+    .kpi-card.kc-accent .kc-value { color: var(--green-dark); }
+    .kpi-card .kc-sub {
+      font-size: .65rem;
+      color: var(--muted-light);
+      margin-top: .2rem;
+    }
+
+    /* ── Delta ───────────────────────────────────────── */
+    .delta {
+      display: inline-flex;
+      align-items: center;
+      gap: .2rem;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .15rem .45rem;
+      border-radius: 99px;
+      margin-left: .5rem;
+      vertical-align: middle;
+    }
+    .delta.up   { background: rgba(0,184,124,.12); color: var(--green-dark); }
+    .delta.down { background: rgba(220,38,38,.10); color: var(--red); }
+    .delta.flat { background: var(--border-soft); color: var(--muted); }
+
+    .funil-delta {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 700;
+      margin-left: .3rem;
+      vertical-align: middle;
+    }
+    .funil-delta.up   { color: var(--green-dark); }
+    .funil-delta.down { color: var(--red); }
+
+    /* ── Funil tabela comparativa ────────────────────── */
+    .funil-wrap { overflow-x: auto; padding-bottom: .5rem; }
     .funil-table {
       width: 100%;
       border-collapse: separate;
@@ -229,190 +479,7 @@
     }
     .funil-table .row-sep td:first-child { padding-left: 1.25rem; }
 
-    .funil-delta {
-      display: inline-block;
-      font-size: .65rem;
-      font-weight: 700;
-      margin-left: .3rem;
-      vertical-align: middle;
-    }
-    .funil-delta.up   { color: var(--green-dark); }
-    .funil-delta.down { color: #dc2626; }
-
-    /* Visual funnel bars */
-    .funnel-visual {
-      display: flex;
-      flex-direction: column;
-      gap: .5rem;
-      padding: 1rem 0;
-    }
-    .fv-step {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-    }
-    .fv-label {
-      flex-shrink: 0;
-      width: 140px;
-      font-size: .775rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-align: right;
-    }
-    .fv-bar-wrap {
-      flex: 1;
-      height: 28px;
-      background: var(--border-soft);
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-    }
-    .fv-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--navy) 0%, var(--navy-mid) 100%);
-      border-radius: 4px;
-      transition: width .6s ease;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: .5rem;
-    }
-    .fv-bar.green { background: linear-gradient(90deg, var(--green-dark) 0%, var(--green) 100%); }
-    .fv-bar-val {
-      font-size: .72rem;
-      font-weight: 700;
-      color: var(--white);
-      white-space: nowrap;
-    }
-    .fv-cvr {
-      flex-shrink: 0;
-      width: 58px;
-      font-size: .7rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-align: right;
-    }
-    .fv-cvr.good { color: var(--green-dark); }
-    .fv-cvr.warn { color: #d97706; }
-    .fv-cvr.bad  { color: #dc2626; }
-
-    .funil-period-tabs {
-      display: flex;
-      gap: .4rem;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
-    }
-    .fp-tab {
-      padding: .35rem .875rem;
-      border-radius: 99px;
-      font-size: .775rem;
-      font-weight: 600;
-      border: 1.5px solid var(--border);
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
-      background: var(--white);
-    }
-    .fp-tab:hover { border-color: var(--navy); color: var(--navy); }
-    .fp-tab.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
-
-    /* ── Nav tabs ────────────────────────────────────── */
-    .nav-tabs {
-      background: var(--navy);
-      display: flex;
-      gap: 0;
-      padding: 0 2rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .nav-tab {
-      padding: .75rem 1.25rem;
-      font-size: .8rem;
-      font-weight: 600;
-      color: rgba(255,255,255,.5);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color .15s, border-color .15s;
-      user-select: none;
-    }
-    .nav-tab:hover { color: rgba(255,255,255,.8); }
-    .nav-tab.active { color: var(--white); border-bottom-color: var(--green); }
-
-    /* ── Filter bar ──────────────────────────────────── */
-    .filter-bar {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: .75rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .filter-label { font-size: .75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-    .filter-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
-    .filter-pill {
-      padding: .35rem .875rem;
-      border-radius: 99px;
-      font-size: .775rem;
-      font-weight: 600;
-      border: 1.5px solid var(--border);
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
-      background: var(--white);
-    }
-    .filter-pill:hover { border-color: var(--navy); color: var(--navy); }
-    .filter-pill.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
-    .filter-sep { width: 1px; height: 24px; background: var(--border); }
-    .filter-compare {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: .775rem;
-      color: var(--muted);
-    }
-    .filter-compare select {
-      padding: .3rem .6rem;
-      border-radius: var(--radius-sm);
-      border: 1.5px solid var(--border);
-      font-size: .775rem;
-      color: var(--navy);
-      background: var(--white);
-      cursor: pointer;
-    }
-
-    /* ── Main layout ─────────────────────────────────── */
-    main { max-width: 1020px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-
-    /* Tab panels */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    #loading { text-align: center; padding: 5rem 2rem; color: var(--muted); font-size: .9rem; }
-
-    /* ── Section ─────────────────────────────────────── */
-    .section { margin-bottom: 2.25rem; }
-    .section-header { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
-    .section-eyebrow { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
-    .section-rule { flex: 1; height: 1px; background: var(--border); }
-
-    /* ── Delta badge (comparação) ────────────────────── */
-    .delta {
-      display: inline-flex;
-      align-items: center;
-      gap: .2rem;
-      font-size: .7rem;
-      font-weight: 700;
-      padding: .15rem .45rem;
-      border-radius: 99px;
-      margin-left: .5rem;
-      vertical-align: middle;
-    }
-    .delta.up   { background: rgba(0,184,124,.12); color: var(--green-dark); }
-    .delta.down { background: rgba(220,38,38,.10); color: #dc2626; }
-    .delta.flat { background: var(--border-soft); color: var(--muted); }
-
-    /* ── Summary cards ───────────────────────────────── */
+    /* ── Summary cards (leads tab) ───────────────────── */
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -448,23 +515,6 @@
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     @media (max-width: 640px) { .charts-grid { grid-template-columns: 1fr; } }
 
-    /* ── Box ─────────────────────────────────────────── */
-    .box {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 1.375rem 1.5rem;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 1px 3px rgba(0,0,0,.05);
-    }
-    .box-title {
-      font-size: .825rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 1.125rem;
-      padding-bottom: .625rem;
-      border-bottom: 1px solid var(--border);
-    }
-
     /* ── Bar rows ────────────────────────────────────── */
     .bar-row {
       display: flex;
@@ -494,7 +544,26 @@
     .bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s ease; }
     .bar-count { flex-shrink: 0; width: 28px; text-align: right; font-size: .8rem; font-weight: 700; color: var(--navy); }
 
-    /* ── Ads section ─────────────────────────────────── */
+    /* ── Tables (general) ────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .825rem; }
+    thead th {
+      text-align: left;
+      padding: .5rem .75rem;
+      background: var(--cream-light);
+      font-size: .7rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .07em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody td { padding: .6rem .75rem; border-bottom: 1px solid var(--border-soft); color: var(--navy); }
+    tbody tr:last-child td { border-bottom: none; }
+    td.num { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+    tbody tr.row-zero td { opacity: .45; }
+    .month-total td { font-weight: 700; background: var(--cream-light); }
+
+    /* ── Ads ─────────────────────────────────────────── */
     .ads-section-box { border-left: 3px solid var(--green); background: rgba(0,184,124,.03); }
 
     .ads-grid {
@@ -516,54 +585,7 @@
     .ads-card .ac-value { font-size: 1.6rem; font-weight: 800; color: var(--navy); line-height: 1; letter-spacing: -.01em; }
     .ads-card.ac-highlight .ac-value { color: var(--green-dark); }
 
-    /* ── Keywords table ──────────────────────────────── */
-    .keyword-row {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      padding: .5rem 0;
-      border-bottom: 1px solid var(--border-soft);
-      font-size: .825rem;
-    }
-    .keyword-row:last-child { border-bottom: none; }
-    .kw-rank {
-      flex-shrink: 0;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--cream);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .7rem;
-      font-weight: 700;
-      color: var(--muted);
-    }
-    .kw-name { flex: 1; min-width: 0; color: var(--navy); }
-    .kw-conv { flex-shrink: 0; font-weight: 700; color: var(--green-dark); width: 40px; text-align: right; }
-    .kw-cost { flex-shrink: 0; color: var(--muted); width: 80px; text-align: right; font-size: .775rem; }
-    .kw-ctr  { flex-shrink: 0; color: var(--muted); width: 50px; text-align: right; font-size: .775rem; }
-
-    /* ── Tables ──────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: .825rem; }
-    thead th {
-      text-align: left;
-      padding: .5rem .75rem;
-      background: var(--cream-light);
-      font-size: .7rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .07em;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    tbody td { padding: .6rem .75rem; border-bottom: 1px solid var(--border-soft); color: var(--navy); }
-    tbody tr:last-child td { border-bottom: none; }
-    td.num { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
-    tbody tr.row-zero td { opacity: .45; }
-    .month-total td { font-weight: 700; background: var(--cream-light); }
-
-    /* ── Anomaly callout ─────────────────────────────── */
+    /* ── Anomalias ───────────────────────────────────── */
     .anomaly-list { display: flex; flex-direction: column; gap: .625rem; }
     .anomaly-item {
       display: flex;
@@ -572,18 +594,16 @@
       padding: .75rem 1rem;
       border-radius: var(--radius-sm);
       background: rgba(220,38,38,.05);
-      border-left: 3px solid #dc2626;
+      border-left: 3px solid var(--red);
     }
     .anomaly-item.positive { background: rgba(0,184,124,.06); border-left-color: var(--green); }
-    .anomaly-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #dc2626; margin-top: .3rem; }
+    .anomaly-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-top: .3rem; }
     .anomaly-dot.positive { background: var(--green); }
     .anomaly-text { font-size: .825rem; color: var(--navy); line-height: 1.4; }
     .anomaly-text strong { font-weight: 700; }
 
-    /* ── Empty state ─────────────────────────────────── */
+    /* ── Empty / footer ──────────────────────────────── */
     .empty { text-align: center; padding: 2rem; color: var(--muted-light); font-size: .85rem; }
-
-    /* ── Footer ──────────────────────────────────────── */
     .site-footer { text-align: center; font-size: .725rem; color: var(--muted-light); padding-bottom: 2rem; }
   </style>
 </head>
@@ -606,6 +626,7 @@
 <!-- ── Dashboard ────────────────────────────────────── -->
 <div id="dashboard">
 
+  <!-- Sticky header -->
   <header class="site-header">
     <div class="header-brand">
       <div class="header-cross" aria-hidden="true"></div>
@@ -620,35 +641,44 @@
     </div>
   </header>
 
+  <!-- Hero KPIs — sempre visível -->
+  <div class="hero-kpis">
+    <div class="hero-kpis-inner">
+      <div class="hero-kpi-card accent">
+        <div class="hk-label">Blip hoje</div>
+        <div class="hk-value" id="hk-blip">—</div>
+        <div class="hk-sub">contatos Blip</div>
+      </div>
+      <div class="hero-kpi-card">
+        <div class="hk-label">Gasto hoje</div>
+        <div class="hk-value" id="hk-gasto">—</div>
+        <div class="hk-sub">Google Ads</div>
+      </div>
+      <div class="hero-kpi-card">
+        <div class="hk-label">CPL</div>
+        <div class="hk-value" id="hk-cpl">—</div>
+        <div class="hk-sub">custo/lead hoje</div>
+      </div>
+      <div class="hero-kpi-card">
+        <div class="hk-label">Conv. Ads</div>
+        <div class="hk-value" id="hk-conv">—</div>
+        <div class="hk-sub">conversões hoje</div>
+      </div>
+      <div class="hero-kpi-card">
+        <div class="hk-label">Sessões</div>
+        <div class="hk-value" id="hk-sess">—</div>
+        <div class="hk-sub">visitas hoje</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Nav tabs -->
   <nav class="nav-tabs" id="nav-tabs">
     <div class="nav-tab active" data-tab="funil">Funil</div>
-    <div class="nav-tab" data-tab="leads">Leads & Conversões</div>
+    <div class="nav-tab" data-tab="leads">Leads</div>
     <div class="nav-tab" data-tab="ads">Google Ads</div>
     <div class="nav-tab" data-tab="anomalias">Anomalias</div>
   </nav>
-
-  <!-- Filter bar -->
-  <div class="filter-bar">
-    <span class="filter-label">Período</span>
-    <div class="filter-pills" id="filter-pills">
-      <div class="filter-pill" data-range="7">7 dias</div>
-      <div class="filter-pill" data-range="30" class="active">30 dias</div>
-      <div class="filter-pill" data-range="90">90 dias</div>
-      <div class="filter-pill" data-range="365">12 meses</div>
-      <div class="filter-pill active" data-range="all">Tudo</div>
-    </div>
-    <span class="filter-sep"></span>
-    <div class="filter-compare">
-      <span>Comparar com</span>
-      <select id="compare-select">
-        <option value="none">— sem comparação</option>
-        <option value="prev_period">Período anterior</option>
-        <option value="prev_month">Mês anterior</option>
-        <option value="prev_year">Mesmo período ano anterior</option>
-      </select>
-    </div>
-  </div>
 
   <main>
     <div id="loading">Carregando dados…</div>
@@ -657,33 +687,38 @@
       <!-- ═══ TAB: Funil ═══ -->
       <div class="tab-panel active" id="tab-funil">
 
+        <!-- Seletor de período -->
         <div class="section">
           <div class="section-header">
             <span class="section-eyebrow">Período de referência</span>
             <span class="section-rule"></span>
-          </div>
-          <div class="funil-period-tabs" id="funil-period-tabs">
-            <div class="fp-tab active" data-period="hoje">Hoje</div>
-            <div class="fp-tab" data-period="ontem">Ontem</div>
-            <div class="fp-tab" data-period="d2">Anteontem</div>
-            <div class="fp-tab" data-period="30d">Méd/dia 30d</div>
-            <div class="fp-tab" data-period="90d">Méd/dia 90d</div>
-          </div>
-        </div>
-
-        <!-- Visual funnel -->
-        <div class="section">
-          <div class="section-header">
-            <span class="section-eyebrow">Funil visual</span>
-            <span class="section-rule"></span>
             <span id="funil-period-label" style="font-size:.75rem;color:var(--muted);margin-left:.5rem"></span>
           </div>
-          <div class="box">
-            <div class="funnel-visual" id="funil-visual"></div>
+          <div class="period-pills" id="funil-period-tabs">
+            <div class="pp-pill active" data-period="hoje">Hoje</div>
+            <div class="pp-pill" data-period="ontem">Ontem</div>
+            <div class="pp-pill" data-period="d2">Anteontem</div>
+            <div class="pp-pill" data-period="30d">Méd 30d</div>
+            <div class="pp-pill" data-period="90d">Méd 90d</div>
           </div>
         </div>
 
-        <!-- Tabela comparativa -->
+        <!-- Layout 2 colunas: funil visual + KPIs -->
+        <div class="section">
+          <div class="funil-layout">
+            <!-- Coluna esquerda: funil visual -->
+            <div class="box">
+              <div class="box-title">Funil de conversão</div>
+              <div class="funnel-steps" id="funil-visual"></div>
+            </div>
+            <!-- Coluna direita: KPIs do período -->
+            <div>
+              <div class="kpi-side-grid" id="funil-kpis"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela comparativa full-width -->
         <div class="section">
           <div class="section-header">
             <span class="section-eyebrow">Comparativo — todos os períodos</span>
@@ -710,10 +745,10 @@
 
       </div><!-- /tab-funil -->
 
-      <!-- ═══ TAB: Leads & Conversões ═══ -->
+      <!-- ═══ TAB: Leads ═══ -->
       <div class="tab-panel" id="tab-leads">
 
-        <!-- Resumo geral -->
+        <!-- 4 summary cards -->
         <div class="section">
           <div class="section-header">
             <span class="section-eyebrow">Resumo geral</span>
@@ -721,21 +756,21 @@
           </div>
           <div class="summary-grid">
             <div class="summary-card accent">
-              <div class="s-label">Cliques WhatsApp</div>
+              <div class="s-label">WA Clicks 30d</div>
               <div class="s-value" id="val-leads">—</div>
               <div class="s-compare" id="cmp-leads"></div>
               <div class="s-sub">Leads via botão WA</div>
             </div>
             <div class="summary-card">
-              <div class="s-label">Formulários</div>
+              <div class="s-label">Formulários 30d</div>
               <div class="s-value" id="val-forms">—</div>
               <div class="s-compare" id="cmp-forms"></div>
               <div class="s-sub">Enviados pelo site</div>
             </div>
             <div class="summary-card">
-              <div class="s-label">Pessoas</div>
+              <div class="s-label">Pessoas Pipedrive</div>
               <div class="s-value" id="val-pessoas">—</div>
-              <div class="s-sub">No Pipedrive</div>
+              <div class="s-sub">Total de contatos</div>
             </div>
             <div class="summary-card">
               <div class="s-label">Empresas</div>
@@ -745,7 +780,7 @@
           </div>
         </div>
 
-        <!-- Por landing page -->
+        <!-- Gráficos: pipeline + tipo -->
         <div class="section">
           <div class="section-header">
             <span class="section-eyebrow">Por canal</span>
@@ -753,19 +788,19 @@
           </div>
           <div class="charts-grid">
             <div class="box">
-              <div class="box-title">Formulários por pipeline</div>
+              <div class="box-title">Por pipeline</div>
               <div id="chart-pipeline"></div>
             </div>
             <div class="box">
-              <div class="box-title">Tipo de serviço</div>
+              <div class="box-title">Por tipo de contato</div>
               <div id="chart-tipo"></div>
-              <div class="box-title" style="margin-top:1.5rem">Cidade</div>
+              <div class="box-title" style="margin-top:1.5rem">Por cidade</div>
               <div id="chart-cidade"></div>
             </div>
           </div>
         </div>
 
-        <!-- Evolução mensal -->
+        <!-- Tabela mensal -->
         <div class="section">
           <div class="section-header">
             <span class="section-eyebrow">Evolução mensal</span>
@@ -794,7 +829,6 @@
       <!-- ═══ TAB: Google Ads ═══ -->
       <div class="tab-panel" id="tab-ads">
 
-        <!-- Ads resumo -->
         <div class="section" id="ads-section" hidden>
           <div class="section-header">
             <span class="section-eyebrow">Google Ads — últimos 30 dias</span>
@@ -822,7 +856,6 @@
           </div>
         </div>
 
-        <!-- Top keywords -->
         <div class="section" id="kw-section" hidden>
           <div class="section-header">
             <span class="section-eyebrow">Top palavras-chave</span>
@@ -864,15 +897,14 @@
 </div><!-- /dashboard -->
 
 <script>
-  var KEY = 'savior79';
+  var KEY   = 'savior79';
   var MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
   // Estado global
-  var _fullData      = null;
-  var _activeTab     = 'funil';
-  var _range         = 'all';
-  var _comparePeriod = 'none';
-  var _funilPeriod   = 'hoje';
+  var _fullData    = null;
+  var _activeTab   = 'funil';
+  var _range       = 'all';
+  var _funilPeriod = 'hoje';
 
   /* ── Utilitários ──────────────────────────────────── */
 
@@ -899,27 +931,22 @@
     s = String(s).trim().replace('%', '');
     if (!s || s === '-' || s.toLowerCase().includes('nan')) return NaN;
     var commas  = (s.match(/,/g) || []).length;
-    var periods  = (s.match(/\./g) || []).length;
+    var periods = (s.match(/\./g) || []).length;
     if (commas === 1 && periods >= 1) {
-      // PT-BR: "10.846,50" → remove pontos, vírgula vira ponto decimal
       return parseFloat(s.replace(/\./g, '').replace(',', '.'));
     }
     if (commas === 0 && periods >= 2) {
-      // Múltiplos pontos = separadores de milhar: "10.846.017" → 10846017
       return parseFloat(s.replace(/\./g, ''));
     }
     if (commas === 0 && periods === 1) {
       var parts = s.split('.');
-      // Se parte decimal tem exatamente 3 dígitos, é separador de milhar
       if (parts[1] && parts[1].length === 3) return parseFloat(s.replace('.', ''));
       return parseFloat(s);
     }
     if (commas >= 2) {
-      // "10,846,017" — vírgulas como separadores en-US
       return parseFloat(s.replace(/,/g, ''));
     }
     if (commas === 1 && periods === 0) {
-      // Pode ser decimal en-US "10,5" ou milhar PT-BR "10,846"
       var p = s.split(',');
       if (p[1] && p[1].length === 3) return parseFloat(s.replace(',', ''));
       return parseFloat(s.replace(',', '.'));
@@ -973,6 +1000,8 @@
     return s;
   }
 
+  function round1(v) { return Math.round(v * 10) / 10; }
+
   /* ── Filtro de período ────────────────────────────── */
 
   function cutoffDate(rangeDays) {
@@ -1005,7 +1034,7 @@
   /* ── Delta badge ─────────────────────────────────── */
 
   function deltaBadge(current, previous) {
-    if (!previous || previous === 0) return '';
+    if (!previous || previous === 0) return null;
     var pct = Math.round(((current - previous) / previous) * 100);
     var cls = pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat';
     var arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '—';
@@ -1022,25 +1051,13 @@
     return arrow + ' ' + Math.abs(pct) + '% vs. período anterior';
   }
 
-  /* ── Compare period ──────────────────────────────── */
-
-  function getPreviousMes(porMes, rangeDays) {
-    if (!rangeDays || rangeDays === 'all' || _comparePeriod === 'none') return {};
-    var currentKeys = Object.keys(filterByMes(porMes, rangeDays));
-    if (!currentKeys.length) return {};
-    var days = parseInt(rangeDays, 10);
-    var prevResult = {};
-    Object.entries(porMes).forEach(function(e) {
-      var mesDate = new Date(e[0] + '-01');
-      var nowCutoff = cutoffDate(rangeDays);
-      var prevCutoff = cutoffDate(days * 2);
-      var cutoffMes = nowCutoff ? nowCutoff.slice(0, 7) : null;
-      var prevMes   = prevCutoff ? prevCutoff.slice(0, 7) : null;
-      if (prevMes && cutoffMes && e[0] >= prevMes && e[0] < cutoffMes) {
-        prevResult[e[0]] = e[1];
-      }
-    });
-    return prevResult;
+  function deltaSpan(curr, ref) {
+    if (!ref || ref === 0) return '';
+    var pct = Math.round(((curr - ref) / ref) * 100);
+    if (pct === 0) return '';
+    var cls = pct > 0 ? 'up' : 'down';
+    var arrow = pct > 0 ? '▲' : '▼';
+    return '<span class="funil-delta ' + cls + '">' + arrow + Math.abs(pct) + '%</span>';
   }
 
   /* ── Bar charts ───────────────────────────────────── */
@@ -1096,7 +1113,7 @@
       return;
     }
 
-    var totalWa = 0, totalForms = 0, prevTotal = 0;
+    var totalWa = 0, totalForms = 0;
 
     entries.forEach(function(entry, idx) {
       var wa    = Number(entry[1].leads_wa    || 0);
@@ -1104,7 +1121,6 @@
       var total = wa + forms;
       totalWa += wa; totalForms += forms;
 
-      // vs mês anterior
       var prevEntry = entries[idx + 1];
       var prevWa    = prevEntry ? Number(prevEntry[1].leads_wa    || 0) : 0;
       var prevForms = prevEntry ? Number(prevEntry[1].formularios || 0) : 0;
@@ -1193,7 +1209,6 @@
       cardsEl.appendChild(card);
     });
 
-    // Tabela campanhas
     var tbody = document.getElementById('ads-tbody');
     tbody.textContent = '';
     var campanhas = ads.campanhas || [];
@@ -1214,7 +1229,7 @@
         var campConv = resolveKey(c, ['Conv','conv','Conversoes','Conversões']);
         var campCpa  = resolveKey(c, ['CPA RS','CPA R$','cpa rs','CPA']);
 
-        var impNum   = parseFloat(String(campImp || '0').replace(/[^\d.]/g, '')) || 0;
+        var impNum = parseFloat(String(campImp || '0').replace(/[^\d.]/g, '')) || 0;
         var tr = document.createElement('tr');
         if (impNum === 0) tr.className = 'row-zero';
 
@@ -1234,7 +1249,6 @@
       });
     }
 
-    // Top keywords (da tab Campanhas — keywords por nome se houver)
     renderTopKeywords(campanhas);
   }
 
@@ -1243,7 +1257,6 @@
     var kwList    = document.getElementById('kw-list');
     if (!kwSection || !kwList) return;
 
-    // Filtrar campanhas com conversões e ordenar
     var comConv = campanhas
       .filter(function(c) {
         var conv = parsePtBrNum(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0'));
@@ -1256,10 +1269,7 @@
       })
       .slice(0, 10);
 
-    if (!comConv.length) {
-      kwSection.hidden = true;
-      return;
-    }
+    if (!comConv.length) { kwSection.hidden = true; return; }
 
     kwSection.hidden = false;
     kwList.textContent = '';
@@ -1330,41 +1340,38 @@
     var anomalias = [];
     var entries = Object.entries(data.por_mes || {});
 
-    // Detectar quedas bruscas mês a mês
     if (entries.length >= 2) {
       for (var i = 0; i < entries.length - 1; i++) {
-        var curr  = (entries[i][1].leads_wa    || 0) + (entries[i][1].formularios    || 0);
-        var prev  = (entries[i+1][1].leads_wa  || 0) + (entries[i+1][1].formularios  || 0);
+        var curr = (entries[i][1].leads_wa    || 0) + (entries[i][1].formularios    || 0);
+        var prev = (entries[i+1][1].leads_wa  || 0) + (entries[i+1][1].formularios  || 0);
         if (prev > 0) {
           var chg = ((curr - prev) / prev) * 100;
           if (chg <= -40) {
-            anomalias.push({ positive: false, msg: '<strong>Queda de ' + Math.abs(Math.round(chg)) + '%</strong> em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
+            anomalias.push({ positive: false, msg: 'Queda de ' + Math.abs(Math.round(chg)) + '% em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
           } else if (chg >= 60) {
-            anomalias.push({ positive: true,  msg: '<strong>Pico de +' + Math.round(chg) + '%</strong> em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
+            anomalias.push({ positive: true,  msg: 'Pico de +' + Math.round(chg) + '% em ' + nomeMes(entries[i][0]) + ' vs. ' + nomeMes(entries[i+1][0]) + ' — de ' + prev + ' para ' + curr + ' contatos.' });
           }
         }
       }
     }
 
-    // CPA muito alto nas campanhas
     if (data.ads && data.ads.ok && data.ads.campanhas) {
       data.ads.campanhas.forEach(function(c) {
         var cpa  = parseFloat(String(resolveKey(c, ['CPA RS','CPA R$','cpa rs']) || '0').replace(/[^\d.]/g, ''));
         var conv = parseFloat(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0').replace(/[^\d.]/g, ''));
         var nome = resolveKey(c, ['Campanha','campanha']) || '—';
         if (cpa > 150 && conv > 0) {
-          anomalias.push({ positive: false, msg: '<strong>CPA alto:</strong> ' + nome + ' com CPA de R$\u00a0' + cpa.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '. Revisar segmentação.' });
+          anomalias.push({ positive: false, msg: 'CPA alto: ' + nome + ' com CPA de R$\u00a0' + cpa.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '. Revisar segmentação.' });
         }
         if (conv === 0 && parseFloat(String(resolveKey(c, ['Cliques','cliques']) || '0').replace(/[^\d.]/g, '')) > 50) {
-          anomalias.push({ positive: false, msg: '<strong>Campanha sem conversão:</strong> ' + nome + ' tem cliques mas <strong>0 conversões</strong> registradas.' });
+          anomalias.push({ positive: false, msg: 'Campanha sem conversão: ' + nome + ' tem cliques mas 0 conversões registradas.' });
         }
       });
     }
 
-    // Pipeline sem leads
     Object.entries(data.por_pipeline || {}).forEach(function(e) {
       if (e[1] === 0) {
-        anomalias.push({ positive: false, msg: '<strong>Pipeline vazio:</strong> ' + e[0] + ' não tem nenhum formulário. Verificar se a rota está ativa.' });
+        anomalias.push({ positive: false, msg: 'Pipeline vazio: ' + e[0] + ' não tem nenhum formulário. Verificar se a rota está ativa.' });
       }
     });
 
@@ -1381,10 +1388,9 @@
     anomalias.forEach(function(a) {
       var item = document.createElement('div');
       item.className = 'anomaly-item' + (a.positive ? ' positive' : '');
-      var dot  = document.createElement('div'); dot.className  = 'anomaly-dot' + (a.positive ? ' positive' : '');
-      var txt  = document.createElement('div'); txt.className  = 'anomaly-text';
-      // sanitizado: sem innerHTML, usar template por partes
-      txt.textContent = a.msg.replace(/<[^>]+>/g, ''); // fallback texto puro
+      var dot = document.createElement('div'); dot.className = 'anomaly-dot' + (a.positive ? ' positive' : '');
+      var txt = document.createElement('div'); txt.className = 'anomaly-text';
+      txt.textContent = a.msg;
       item.appendChild(dot); item.appendChild(txt);
       list.appendChild(item);
     });
@@ -1403,75 +1409,107 @@
     return String(n);
   }
 
-  function deltaSpan(curr, ref) {
-    if (!ref || ref === 0) return '';
-    var pct = Math.round(((curr - ref) / ref) * 100);
-    if (pct === 0) return '';
-    var cls = pct > 0 ? 'up' : 'down';
-    var arrow = pct > 0 ? '▲' : '▼';
-    return '<span class="funil-delta ' + cls + '">' + arrow + Math.abs(pct) + '%</span>';
-  }
-
   function renderFunilVisual(f, label) {
-    var el = document.getElementById('funil-visual');
+    var el  = document.getElementById('funil-visual');
     var lbl = document.getElementById('funil-period-label');
     if (!el || !f) return;
     if (lbl) lbl.textContent = label || '';
-    el.innerHTML = '';
+    el.textContent = '';
 
     var top = f.impressions || 1;
-    function pct(v) { return Math.max(2, Math.round((v / top) * 100)); }
-    function cvr(num, den) {
-      if (!den) return '';
+    function widthPct(v) { return Math.max(4, Math.round((v / top) * 100)); }
+    function cvrLabel(num, den) {
+      if (!den) return { text: '', cls: '' };
       var p = (num / den * 100);
       var cls = p > 5 ? 'good' : p > 2 ? 'warn' : 'bad';
-      return '<span class="fv-cvr ' + cls + '">' + p.toFixed(1) + '%</span>';
+      return { text: p.toFixed(1) + '%', cls: cls };
     }
 
     var steps = [
-      { label: 'Impressões',       val: f.impressions, type:'int',  green: false, cvr_den: null },
-      { label: 'Cliques (Ads)',    val: f.ad_clicks,   type:'int',  green: false, cvr_den: f.impressions },
-      { label: 'Sessões',          val: f.sessions,    type:'int',  green: false, cvr_den: f.ad_clicks },
-      { label: 'Form Iniciado',    val: f.form_start,  type:'dec',  green: false, cvr_den: f.sessions },
-      { label: 'Clique WhatsApp',  val: f.wa_clicks,   type:'dec',  green: true,  cvr_den: f.sessions },
-      { label: 'Clique Telefone',  val: f.ph_clicks,   type:'dec',  green: true,  cvr_den: f.sessions },
-      { label: 'Blip (contatos)',  val: f.blip,        type:'dec',  green: true,  cvr_den: f.sessions },
+      { label: 'Impressões',      val: f.impressions, type: 'int', green: false, cvr_den: null },
+      { label: 'Cliques (Ads)',   val: f.ad_clicks,   type: 'int', green: false, cvr_den: f.impressions },
+      { label: 'Sessões',         val: f.sessions,    type: 'int', green: false, cvr_den: f.ad_clicks },
+      { label: 'WA Click',        val: f.wa_clicks,   type: 'dec', green: true,  cvr_den: f.sessions },
+      { label: 'Tel Click',       val: f.ph_clicks,   type: 'dec', green: true,  cvr_den: f.sessions },
+      { label: 'Blip',            val: f.blip,        type: 'dec', green: true,  cvr_den: f.sessions },
     ];
 
     steps.forEach(function(s) {
-      var div = document.createElement('div');
-      div.className = 'fv-step';
-      var w = pct(s.val);
-      var valFmt = fmt(s.val, s.type);
-      var cvrHtml = s.cvr_den ? cvr(s.val, s.cvr_den) : '<span class="fv-cvr"></span>';
-      div.innerHTML =
-        '<div class="fv-label">' + s.label + '</div>' +
-        '<div class="fv-bar-wrap"><div class="fv-bar' + (s.green ? ' green' : '') + '" style="width:' + w + '%">' +
-        '<span class="fv-bar-val">' + valFmt + '</span></div></div>' + cvrHtml;
-      el.appendChild(div);
-    });
+      var step = document.createElement('div');
+      step.className = 'fv-step';
 
-    // KPIs abaixo
-    var kpis = document.createElement('div');
-    kpis.style.cssText = 'display:flex;gap:1.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);flex-wrap:wrap;';
-    [
-      ['Gasto', fmt(f.cost, 'brl')],
-      ['Conv. Ads', fmt(f.conversions, 'dec')],
-      ['CTR', fmt(f.ctr, 'pct')],
-      ['CPC médio', fmt(f.cpc, 'brl')],
-      ['CPL real', fmt(f.cpl_blip, 'brl')],
-    ].forEach(function(k) {
-      var kd = document.createElement('div');
-      kd.style.cssText = 'display:flex;flex-direction:column;gap:.15rem;';
-      kd.innerHTML = '<span style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">' + k[0] + '</span>' +
-                     '<span style="font-size:1.25rem;font-weight:800;color:var(--navy)">' + k[1] + '</span>';
-      kpis.appendChild(kd);
+      var lblEl = document.createElement('div');
+      lblEl.className = 'fv-label';
+      lblEl.textContent = s.label;
+
+      var barWrap = document.createElement('div');
+      barWrap.className = 'fv-bar-wrap';
+
+      var bar = document.createElement('div');
+      bar.className = 'fv-bar' + (s.green ? ' green' : '');
+      bar.style.width = widthPct(s.val || 0) + '%';
+
+      var barVal = document.createElement('span');
+      barVal.className = 'fv-bar-val';
+      barVal.textContent = fmt(s.val, s.type);
+      bar.appendChild(barVal);
+      barWrap.appendChild(bar);
+
+      var cvrEl = document.createElement('div');
+      if (s.cvr_den) {
+        var c = cvrLabel(s.val || 0, s.cvr_den);
+        cvrEl.className = 'fv-cvr' + (c.cls ? ' ' + c.cls : '');
+        cvrEl.textContent = c.text;
+      } else {
+        cvrEl.className = 'fv-cvr';
+      }
+
+      step.appendChild(lblEl);
+      step.appendChild(barWrap);
+      step.appendChild(cvrEl);
+      el.appendChild(step);
     });
-    el.appendChild(kpis);
+  }
+
+  function renderFunilKpis(f) {
+    var container = document.getElementById('funil-kpis');
+    if (!container || !f) return;
+    container.textContent = '';
+
+    var kpis = [
+      { label: 'Gasto',    value: fmt(f.cost,        'brl'), sub: 'Google Ads',   accent: false },
+      { label: 'CPC médio',value: fmt(f.cpc,         'brl'), sub: 'custo/clique', accent: false },
+      { label: 'CTR',      value: fmt(f.ctr,         'pct'), sub: 'clique/impres', accent: false },
+      { label: 'CPL Blip', value: fmt(f.cpl_blip,    'brl'), sub: 'custo/lead',   accent: true  },
+      { label: 'Bounce',   value: fmt(f.bounce,      'pct'), sub: 'taxa rejeição', accent: false },
+      { label: 'Conv. Ads',value: fmt(f.conversions, 'dec'), sub: 'conversões',   accent: false },
+    ];
+
+    kpis.forEach(function(k) {
+      var card = document.createElement('div');
+      card.className = 'kpi-card' + (k.accent ? ' kc-accent' : '');
+
+      var lbl = document.createElement('div');
+      lbl.className = 'kc-label';
+      lbl.textContent = k.label;
+
+      var val = document.createElement('div');
+      val.className = 'kc-value';
+      val.textContent = k.value;
+
+      var sub = document.createElement('div');
+      sub.className = 'kc-sub';
+      sub.textContent = k.sub;
+
+      card.appendChild(lbl);
+      card.appendChild(val);
+      card.appendChild(sub);
+      container.appendChild(card);
+    });
   }
 
   function renderFunilTabela(funil) {
-    var tbody = document.getElementById('funil-tbody');
+    var tbody   = document.getElementById('funil-tbody');
     var thHoje  = document.getElementById('th-hoje');
     var thOntem = document.getElementById('th-ontem');
     var thD2    = document.getElementById('th-d2');
@@ -1496,13 +1534,13 @@
       { label: 'Clique WA',     key: 'wa_clicks',   type: 'dec' },
       { label: 'Clique Tel.',   key: 'ph_clicks',   type: 'dec' },
       { group: 'TAXAS' },
-      { label: 'Clique→Sessão', key: '_cvr_sess',   type: 'pct', computed: function(f) {
-          return f.ad_clicks ? round1(f.sessions / f.ad_clicks * 100) : 0; } },
-      { label: 'Sessão→Contato',key: '_cvr_cont',   type: 'pct', computed: function(f) {
-          return f.sessions ? round1((f.wa_clicks + f.ph_clicks) / f.sessions * 100) : 0; } },
+      { label: 'Clique→Sessão', key: '_cvr_sess', type: 'pct',
+        computed: function(f) { return f.ad_clicks ? round1(f.sessions / f.ad_clicks * 100) : 0; } },
+      { label: 'Sessão→Contato', key: '_cvr_cont', type: 'pct',
+        computed: function(f) { return f.sessions ? round1((f.wa_clicks + f.ph_clicks) / f.sessions * 100) : 0; } },
       { group: 'BLIP' },
-      { label: 'Contatos/dia',  key: 'blip',        type: 'dec' },
-      { label: 'CPL real',      key: 'cpl_blip',    type: 'brl' },
+      { label: 'Contatos/dia',  key: 'blip',      type: 'dec' },
+      { label: 'CPL real',      key: 'cpl_blip',  type: 'brl' },
     ];
 
     tbody.innerHTML = '';
@@ -1527,95 +1565,90 @@
       periods.forEach(function(p, i) {
         var td = document.createElement('td');
         if (i === 0) td.className = 'col-hoje';
-        var f = funil[p];
-        var v = r.computed ? r.computed(f) : f[r.key];
+        var f   = funil[p];
+        var v   = r.computed ? r.computed(f)   : f[r.key];
         var refV = r.computed ? r.computed(ref) : ref[r.key];
-        var html = fmt(v, r.type);
-        if (i === 0 && p !== '90d') html += deltaSpan(v, refV);
-        td.innerHTML = html;
+        var text = fmt(v, r.type);
+        td.textContent = text;
+        // delta inline só para a coluna "hoje" — appended via innerHTML limitado a spans gerados internamente
+        if (i === 0) {
+          var ds = deltaSpan(v, refV);
+          if (ds) td.innerHTML = text + ds;
+        }
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
     });
   }
 
-  function round1(v) { return Math.round(v * 10) / 10; }
-
   function renderFunil(funil) {
     if (!funil) return;
-    var p = _funilPeriod;
-    var label = funil.labels[p] || p;
+    var p     = _funilPeriod;
+    var label = (funil.labels && funil.labels[p]) ? funil.labels[p] : p;
     renderFunilVisual(funil[p], label);
+    renderFunilKpis(funil[p]);
     renderFunilTabela(funil);
   }
 
-  /* ── Render dashboard principal ───────────────────── */
+  /* ── Hero KPIs ───────────────────────────────────── */
+
+  function renderHeroKpis(funil) {
+    if (!funil || !funil.hoje) return;
+    var h = funil.hoje;
+    setText('hk-blip',  fmt(h.blip,        'dec'));
+    setText('hk-gasto', fmt(h.cost,        'brl'));
+    setText('hk-cpl',   fmt(h.cpl_blip,    'brl'));
+    setText('hk-conv',  fmt(h.conversions, 'dec'));
+    setText('hk-sess',  fmt(h.sessions,    'int'));
+  }
+
+  /* ── Render principal ────────────────────────────── */
 
   function renderDashboard(data) {
     _fullData = data;
     document.getElementById('loading').hidden = true;
     document.getElementById('content').hidden = false;
 
-    applyFilters();
-
-    var ts = new Date(data.gerado_em);
+    // Timestamp
+    var ts    = new Date(data.gerado_em);
     var fmtTs = ts.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-    setText('timestamp', 'Atualizado em ' + fmtTs);
-    setText('footer-ts', 'Dados via Pipedrive + Google Ads · ' + fmtTs + ' · Acesso restrito');
-  }
+    setText('timestamp',  'Atualizado em ' + fmtTs);
+    setText('footer-ts',  'Dados via Pipedrive + Google Ads · ' + fmtTs + ' · Acesso restrito');
 
-  function applyFilters() {
-    if (!_fullData) return;
-    var data = _fullData;
+    // Hero KPIs
+    if (data.funil) renderHeroKpis(data.funil);
 
-    // Filtrar por período
+    // Leads tab
     var filteredMes = filterByMes(data.por_mes, _range);
     var sumCurr     = resumoFromMes(filteredMes);
-    var prevMes     = getPreviousMes(data.por_mes, _range);
-    var sumPrev     = resumoFromMes(prevMes);
-
-    // Resumo cards
-    setText('val-leads',    sumCurr.wa.toLocaleString('pt-BR'));
-    setText('val-forms',    sumCurr.forms.toLocaleString('pt-BR'));
+    setText('val-leads',    data.resumo.leads_wa_30d    !== undefined ? fmtNum(data.resumo.leads_wa_30d)    : sumCurr.wa.toLocaleString('pt-BR'));
+    setText('val-forms',    data.resumo.formularios_30d !== undefined ? fmtNum(data.resumo.formularios_30d) : sumCurr.forms.toLocaleString('pt-BR'));
     setText('val-pessoas',  fmtNum(data.resumo.pessoas));
     setText('val-empresas', fmtNum(data.resumo.empresas));
 
-    // Comparações
-    if (_comparePeriod !== 'none') {
-      var cmpLeads = document.getElementById('cmp-leads');
-      var cmpForms = document.getElementById('cmp-forms');
-      var dtLeads  = deltaText(sumCurr.wa,    sumPrev.wa);
-      var dtForms  = deltaText(sumCurr.forms, sumPrev.forms);
-      if (cmpLeads) cmpLeads.textContent = dtLeads  || '';
-      if (cmpForms) cmpForms.textContent = dtForms  || '';
-    } else {
-      var cl = document.getElementById('cmp-leads');
-      var cf = document.getElementById('cmp-forms');
-      if (cl) cl.textContent = '';
-      if (cf) cf.textContent = '';
-    }
-
     renderBarras('chart-pipeline', data.por_pipeline);
     renderBarras('chart-tipo',     data.por_tipo);
-    renderBarras('chart-cidade',   data.por_cidade);
+    renderBarras('chart-cidade',   data.por_cidade || {});
     renderTabela(filteredMes);
+
     if (data.ads && data.ads.ok) renderAds(data.ads);
+    else { var ae = document.getElementById('ads-empty'); if (ae) ae.hidden = false; }
+
     detectAnomalias(data);
+
     if (data.funil) renderFunil(data.funil);
   }
 
-  /* ── Tabs ─────────────────────────────────────────── */
+  /* ── Nav tabs ─────────────────────────────────────── */
 
   document.getElementById('nav-tabs').addEventListener('click', function(e) {
     var tab = e.target.closest('[data-tab]');
     if (!tab) return;
-    var name = tab.dataset.tab;
-    _activeTab = name;
-
+    _activeTab = tab.dataset.tab;
     document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
     document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
     tab.classList.add('active');
-    var panel = document.getElementById('tab-' + name);
+    var panel = document.getElementById('tab-' + _activeTab);
     if (panel) panel.classList.add('active');
   });
 
@@ -1625,60 +1658,38 @@
     var tab = e.target.closest('[data-period]');
     if (!tab) return;
     _funilPeriod = tab.dataset.period;
-    document.querySelectorAll('.fp-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('#funil-period-tabs .pp-pill').forEach(function(t) { t.classList.remove('active'); });
     tab.classList.add('active');
     if (_fullData && _fullData.funil) renderFunil(_fullData.funil);
   });
 
-  /* ── Filtros de período ───────────────────────────── */
-
-  document.getElementById('filter-pills').addEventListener('click', function(e) {
-    var pill = e.target.closest('[data-range]');
-    if (!pill) return;
-    _range = pill.dataset.range;
-    document.querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
-    pill.classList.add('active');
-    applyFilters();
-  });
-
-  document.getElementById('compare-select').addEventListener('change', function(e) {
-    _comparePeriod = e.target.value;
-    applyFilters();
-  });
-
   /* ── Auth + fetch ─────────────────────────────────── */
 
-  async function showDashboard(key) {
+  async function showDashboard() {
     document.getElementById('lock').style.display      = 'none';
     document.getElementById('dashboard').style.display = 'block';
     try {
       var res  = await fetch('/stats-data.json');
+      if (!res.ok) { setText('loading', 'Erro ' + res.status + ' ao carregar dados. Recarregue a página.'); return; }
       var data = await res.json();
-      if (res.ok) {
-        renderDashboard(data);
-      } else {
-        setText('loading', 'Erro ao carregar dados. Recarregue a página.');
-      }
-    } catch {
-      setText('loading', 'Sem conexão com o servidor.');
+      renderDashboard(data);
+    } catch(err) {
+      setText('loading', 'Falha ao conectar. Verifique a conexão e recarregue.');
     }
   }
 
   var params = new URLSearchParams(location.search);
-  if (params.get('key') === KEY) showDashboard(KEY);
+  if (params.get('key') === KEY) showDashboard();
 
   document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     var val = document.getElementById('key-input').value.trim();
     if (val === KEY) {
-      showDashboard(KEY);
+      showDashboard();
     } else {
       document.getElementById('login-error').hidden = false;
     }
   });
-
-  // Ativar pill "Tudo" por padrão
-  document.querySelector('[data-range="all"]').classList.add('active');
 </script>
 </body>
 </html>
