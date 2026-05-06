@@ -1,0 +1,201 @@
+{
+  "gerado_em": "2026-05-06T17:13:35.592572+00:00",
+  "resumo": {
+    "pessoas": 0,
+    "empresas": 0,
+    "leads_wa_30d": 15,
+    "formularios_30d": 128
+  },
+  "por_mes": {
+    "2026-05": {
+      "leads_wa": 5,
+      "formularios": 23
+    },
+    "2026-04": {
+      "leads_wa": 10,
+      "formularios": 133
+    },
+    "2026-03": {
+      "leads_wa": 0,
+      "formularios": 120
+    },
+    "2026-02": {
+      "leads_wa": 0,
+      "formularios": 114
+    }
+  },
+  "por_pipeline": {
+    "Eventos RJ": 0,
+    "Eventos SP": 0,
+    "Corporativo RJ": 0,
+    "Corporativo SP": 0
+  },
+  "por_tipo": {
+    "WhatsApp Click": 15,
+    "Phone Click": 8,
+    "Form Start": 111,
+    "Lead Gerado": 17
+  },
+  "por_cidade": {},
+  "funil": {
+    "hoje": {
+      "impressions": 3713.0,
+      "ad_clicks": 102.0,
+      "sessions": 23.0,
+      "users": 22.0,
+      "bounce": 52.2,
+      "form_start": 0.0,
+      "wa_clicks": 0.0,
+      "ph_clicks": 0.0,
+      "leads": 0.0,
+      "blip": 24.0,
+      "cost": 717.6,
+      "conversions": 12.0,
+      "ctr": 2.75,
+      "cpc": 7.04,
+      "cpl_blip": 29.9
+    },
+    "ontem": {
+      "impressions": 6667.0,
+      "ad_clicks": 235.0,
+      "sessions": 221.0,
+      "users": 213.0,
+      "bounce": 47.1,
+      "form_start": 3.0,
+      "wa_clicks": 0.0,
+      "ph_clicks": 0.0,
+      "leads": 0.0,
+      "blip": 24.0,
+      "cost": 1614.22,
+      "conversions": 38.0,
+      "ctr": 3.52,
+      "cpc": 6.87,
+      "cpl_blip": 67.26
+    },
+    "d2": {
+      "impressions": 4681.0,
+      "ad_clicks": 193.0,
+      "sessions": 205.0,
+      "users": 183.0,
+      "bounce": 47.3,
+      "form_start": 3.0,
+      "wa_clicks": 4.0,
+      "ph_clicks": 1.0,
+      "leads": 0.0,
+      "blip": 22.0,
+      "cost": 1574.16,
+      "conversions": 28.0,
+      "ctr": 4.12,
+      "cpc": 8.16,
+      "cpl_blip": 71.55
+    },
+    "30d": {
+      "impressions": 4721.8,
+      "ad_clicks": 266.8,
+      "sessions": 220.2,
+      "users": 191.2,
+      "bounce": 55.8,
+      "form_start": 3.7,
+      "wa_clicks": 0.5,
+      "ph_clicks": 0.3,
+      "leads": 0.6,
+      "blip": 21.3,
+      "cost": 1478.79,
+      "conversions": 30.7,
+      "ctr": 5.65,
+      "cpc": 5.54,
+      "cpl_blip": 69.32
+    },
+    "90d": {
+      "impressions": 3804.1,
+      "ad_clicks": 238.5,
+      "sessions": 208.8,
+      "users": 180.3,
+      "bounce": 50.6,
+      "form_start": 4.0,
+      "wa_clicks": 0.2,
+      "ph_clicks": 0.1,
+      "leads": 0.2,
+      "blip": 22.1,
+      "cost": 1417.02,
+      "conversions": 31.1,
+      "ctr": 6.27,
+      "cpc": 5.94,
+      "cpl_blip": 64.22
+    },
+    "labels": {
+      "hoje": "06/05 (hoje)",
+      "ontem": "05/05",
+      "d2": "04/05",
+      "30d": "Méd/dia 30d",
+      "90d": "Méd/dia 90d"
+    }
+  },
+  "ads": {
+    "ok": true,
+    "resumo": {
+      "Impressões": "141655",
+      "Cliques": "8005",
+      "CTR": "5.65%",
+      "Gasto R$": "44363.8",
+      "Conversões": "920.0",
+      "CPA R$": "48.22"
+    },
+    "campanhas": [
+      {
+        "Campanha": "LP | Particular | RJ#2",
+        "Impressões": "28033",
+        "Cliques": "2474",
+        "CTR": "8.83%",
+        "Gasto R$": "26349.85",
+        "Conv": "416.5",
+        "CPA R$": "63.26"
+      },
+      {
+        "Campanha": "LP | Particular | SP",
+        "Impressões": "12475",
+        "Cliques": "1005",
+        "CTR": "8.06%",
+        "Gasto R$": "6227.1",
+        "Conv": "230.0",
+        "CPA R$": "27.07"
+      },
+      {
+        "Campanha": "LP | Eventos | SP",
+        "Impressões": "74823",
+        "Cliques": "3259",
+        "CTR": "4.36%",
+        "Gasto R$": "5485.91",
+        "Conv": "161.0",
+        "CPA R$": "34.07"
+      },
+      {
+        "Campanha": "LP | Particular | RJ | MSG",
+        "Impressões": "4575",
+        "Cliques": "545",
+        "CTR": "11.91%",
+        "Gasto R$": "2970.63",
+        "Conv": "64.5",
+        "CPA R$": "46.06"
+      },
+      {
+        "Campanha": "LP | Eventos | RJ",
+        "Impressões": "20117",
+        "Cliques": "505",
+        "CTR": "2.51%",
+        "Gasto R$": "956.96",
+        "Conv": "25.0",
+        "CPA R$": "38.28"
+      },
+      {
+        "Campanha": "Transferência | RJ",
+        "Impressões": "1634",
+        "Cliques": "217",
+        "CTR": "13.28%",
+        "Gasto R$": "2373.35",
+        "Conv": "23.0",
+        "CPA R$": "103.19"
+      }
+    ]
+  }
+}

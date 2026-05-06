@@ -167,6 +167,155 @@
       text-transform: uppercase;
     }
 
+    /* ── Funil ───────────────────────────────────────── */
+    .funil-wrap {
+      overflow-x: auto;
+      padding-bottom: .5rem;
+    }
+    .funil-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: .82rem;
+    }
+    .funil-table thead th {
+      background: var(--navy);
+      color: rgba(255,255,255,.7);
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: .65rem 1rem;
+      text-align: right;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--green);
+    }
+    .funil-table thead th:first-child { text-align: left; border-radius: var(--radius) 0 0 0; }
+    .funil-table thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+    .funil-table thead th.col-hoje { background: var(--navy-mid); color: var(--white); }
+
+    .funil-table tbody tr { transition: background .1s; }
+    .funil-table tbody tr:hover td { background: rgba(0,184,124,.04); }
+    .funil-table tbody td {
+      padding: .6rem 1rem;
+      border-bottom: 1px solid var(--border-soft);
+      text-align: right;
+      color: var(--navy);
+      font-variant-numeric: tabular-nums;
+    }
+    .funil-table tbody td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding-left: 1.25rem;
+    }
+    .funil-table tbody td.col-hoje {
+      background: rgba(0,184,124,.05);
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .funil-table .row-sep td {
+      background: var(--cream-light);
+      padding: .25rem 1rem;
+      font-size: .65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .funil-table .row-sep td:first-child { padding-left: 1.25rem; }
+
+    .funil-delta {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 700;
+      margin-left: .3rem;
+      vertical-align: middle;
+    }
+    .funil-delta.up   { color: var(--green-dark); }
+    .funil-delta.down { color: #dc2626; }
+
+    /* Visual funnel bars */
+    .funnel-visual {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      padding: 1rem 0;
+    }
+    .fv-step {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .fv-label {
+      flex-shrink: 0;
+      width: 140px;
+      font-size: .775rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: right;
+    }
+    .fv-bar-wrap {
+      flex: 1;
+      height: 28px;
+      background: var(--border-soft);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .fv-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-radius: 4px;
+      transition: width .6s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: .5rem;
+    }
+    .fv-bar.green { background: linear-gradient(90deg, var(--green-dark) 0%, var(--green) 100%); }
+    .fv-bar-val {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--white);
+      white-space: nowrap;
+    }
+    .fv-cvr {
+      flex-shrink: 0;
+      width: 58px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: right;
+    }
+    .fv-cvr.good { color: var(--green-dark); }
+    .fv-cvr.warn { color: #d97706; }
+    .fv-cvr.bad  { color: #dc2626; }
+
+    .funil-period-tabs {
+      display: flex;
+      gap: .4rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .fp-tab {
+      padding: .35rem .875rem;
+      border-radius: 99px;
+      font-size: .775rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      background: var(--white);
+    }
+    .fp-tab:hover { border-color: var(--navy); color: var(--navy); }
+    .fp-tab.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+
     /* ── Nav tabs ────────────────────────────────────── */
     .nav-tabs {
       background: var(--navy);
@@ -473,7 +622,8 @@
 
   <!-- Nav tabs -->
   <nav class="nav-tabs" id="nav-tabs">
-    <div class="nav-tab active" data-tab="leads">Leads & Conversões</div>
+    <div class="nav-tab active" data-tab="funil">Funil</div>
+    <div class="nav-tab" data-tab="leads">Leads & Conversões</div>
     <div class="nav-tab" data-tab="ads">Google Ads</div>
     <div class="nav-tab" data-tab="anomalias">Anomalias</div>
   </nav>
@@ -504,8 +654,64 @@
     <div id="loading">Carregando dados…</div>
     <div id="content" hidden>
 
+      <!-- ═══ TAB: Funil ═══ -->
+      <div class="tab-panel active" id="tab-funil">
+
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Período de referência</span>
+            <span class="section-rule"></span>
+          </div>
+          <div class="funil-period-tabs" id="funil-period-tabs">
+            <div class="fp-tab active" data-period="hoje">Hoje</div>
+            <div class="fp-tab" data-period="ontem">Ontem</div>
+            <div class="fp-tab" data-period="d2">Anteontem</div>
+            <div class="fp-tab" data-period="30d">Méd/dia 30d</div>
+            <div class="fp-tab" data-period="90d">Méd/dia 90d</div>
+          </div>
+        </div>
+
+        <!-- Visual funnel -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Funil visual</span>
+            <span class="section-rule"></span>
+            <span id="funil-period-label" style="font-size:.75rem;color:var(--muted);margin-left:.5rem"></span>
+          </div>
+          <div class="box">
+            <div class="funnel-visual" id="funil-visual"></div>
+          </div>
+        </div>
+
+        <!-- Tabela comparativa -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Comparativo — todos os períodos</span>
+            <span class="section-rule"></span>
+          </div>
+          <div class="box">
+            <div class="funil-wrap">
+              <table class="funil-table" id="funil-table">
+                <thead>
+                  <tr>
+                    <th>Métrica</th>
+                    <th class="col-hoje" id="th-hoje">—</th>
+                    <th id="th-ontem">—</th>
+                    <th id="th-d2">—</th>
+                    <th>Méd/dia 30d</th>
+                    <th>Méd/dia 90d</th>
+                  </tr>
+                </thead>
+                <tbody id="funil-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-funil -->
+
       <!-- ═══ TAB: Leads & Conversões ═══ -->
-      <div class="tab-panel active" id="tab-leads">
+      <div class="tab-panel" id="tab-leads">
 
         <!-- Resumo geral -->
         <div class="section">
@@ -662,10 +868,11 @@
   var MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
   // Estado global
-  var _fullData   = null;
-  var _activeTab  = 'leads';
-  var _range      = 'all';
+  var _fullData      = null;
+  var _activeTab     = 'funil';
+  var _range         = 'all';
   var _comparePeriod = 'none';
+  var _funilPeriod   = 'hoje';
 
   /* ── Utilitários ──────────────────────────────────── */
 
@@ -1183,6 +1390,165 @@
     });
   }
 
+  /* ── Funil ────────────────────────────────────────── */
+
+  function fmt(v, type) {
+    if (v === undefined || v === null) return '—';
+    var n = typeof v === 'number' ? v : parseFloat(v);
+    if (isNaN(n)) return '—';
+    if (type === 'int')  return Math.round(n).toLocaleString('pt-BR');
+    if (type === 'pct')  return n.toFixed(1) + '%';
+    if (type === 'brl')  return 'R$\u00a0' + n.toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2});
+    if (type === 'dec')  return n.toFixed(1);
+    return String(n);
+  }
+
+  function deltaSpan(curr, ref) {
+    if (!ref || ref === 0) return '';
+    var pct = Math.round(((curr - ref) / ref) * 100);
+    if (pct === 0) return '';
+    var cls = pct > 0 ? 'up' : 'down';
+    var arrow = pct > 0 ? '▲' : '▼';
+    return '<span class="funil-delta ' + cls + '">' + arrow + Math.abs(pct) + '%</span>';
+  }
+
+  function renderFunilVisual(f, label) {
+    var el = document.getElementById('funil-visual');
+    var lbl = document.getElementById('funil-period-label');
+    if (!el || !f) return;
+    if (lbl) lbl.textContent = label || '';
+    el.innerHTML = '';
+
+    var top = f.impressions || 1;
+    function pct(v) { return Math.max(2, Math.round((v / top) * 100)); }
+    function cvr(num, den) {
+      if (!den) return '';
+      var p = (num / den * 100);
+      var cls = p > 5 ? 'good' : p > 2 ? 'warn' : 'bad';
+      return '<span class="fv-cvr ' + cls + '">' + p.toFixed(1) + '%</span>';
+    }
+
+    var steps = [
+      { label: 'Impressões',       val: f.impressions, type:'int',  green: false, cvr_den: null },
+      { label: 'Cliques (Ads)',    val: f.ad_clicks,   type:'int',  green: false, cvr_den: f.impressions },
+      { label: 'Sessões',          val: f.sessions,    type:'int',  green: false, cvr_den: f.ad_clicks },
+      { label: 'Form Iniciado',    val: f.form_start,  type:'dec',  green: false, cvr_den: f.sessions },
+      { label: 'Clique WhatsApp',  val: f.wa_clicks,   type:'dec',  green: true,  cvr_den: f.sessions },
+      { label: 'Clique Telefone',  val: f.ph_clicks,   type:'dec',  green: true,  cvr_den: f.sessions },
+      { label: 'Blip (contatos)',  val: f.blip,        type:'dec',  green: true,  cvr_den: f.sessions },
+    ];
+
+    steps.forEach(function(s) {
+      var div = document.createElement('div');
+      div.className = 'fv-step';
+      var w = pct(s.val);
+      var valFmt = fmt(s.val, s.type);
+      var cvrHtml = s.cvr_den ? cvr(s.val, s.cvr_den) : '<span class="fv-cvr"></span>';
+      div.innerHTML =
+        '<div class="fv-label">' + s.label + '</div>' +
+        '<div class="fv-bar-wrap"><div class="fv-bar' + (s.green ? ' green' : '') + '" style="width:' + w + '%">' +
+        '<span class="fv-bar-val">' + valFmt + '</span></div></div>' + cvrHtml;
+      el.appendChild(div);
+    });
+
+    // KPIs abaixo
+    var kpis = document.createElement('div');
+    kpis.style.cssText = 'display:flex;gap:1.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);flex-wrap:wrap;';
+    [
+      ['Gasto', fmt(f.cost, 'brl')],
+      ['Conv. Ads', fmt(f.conversions, 'dec')],
+      ['CTR', fmt(f.ctr, 'pct')],
+      ['CPC médio', fmt(f.cpc, 'brl')],
+      ['CPL real', fmt(f.cpl_blip, 'brl')],
+    ].forEach(function(k) {
+      var kd = document.createElement('div');
+      kd.style.cssText = 'display:flex;flex-direction:column;gap:.15rem;';
+      kd.innerHTML = '<span style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">' + k[0] + '</span>' +
+                     '<span style="font-size:1.25rem;font-weight:800;color:var(--navy)">' + k[1] + '</span>';
+      kpis.appendChild(kd);
+    });
+    el.appendChild(kpis);
+  }
+
+  function renderFunilTabela(funil) {
+    var tbody = document.getElementById('funil-tbody');
+    var thHoje  = document.getElementById('th-hoje');
+    var thOntem = document.getElementById('th-ontem');
+    var thD2    = document.getElementById('th-d2');
+    if (!tbody || !funil) return;
+
+    if (thHoje)  thHoje.textContent  = funil.labels.hoje;
+    if (thOntem) thOntem.textContent = funil.labels.ontem;
+    if (thD2)    thD2.textContent    = funil.labels.d2;
+
+    var rows = [
+      { group: 'GOOGLE ADS' },
+      { label: 'Impressões',    key: 'impressions', type: 'int' },
+      { label: 'Cliques (Ads)', key: 'ad_clicks',   type: 'int' },
+      { label: 'CTR',           key: 'ctr',         type: 'pct' },
+      { label: 'Gasto (R$)',    key: 'cost',        type: 'brl' },
+      { label: 'Conversões',    key: 'conversions', type: 'dec' },
+      { label: 'CPC médio',     key: 'cpc',         type: 'brl' },
+      { group: 'SITE (GA4)' },
+      { label: 'Sessões',       key: 'sessions',    type: 'int' },
+      { label: 'Bounce Rate',   key: 'bounce',      type: 'pct' },
+      { label: 'Form Iniciado', key: 'form_start',  type: 'dec' },
+      { label: 'Clique WA',     key: 'wa_clicks',   type: 'dec' },
+      { label: 'Clique Tel.',   key: 'ph_clicks',   type: 'dec' },
+      { group: 'TAXAS' },
+      { label: 'Clique→Sessão', key: '_cvr_sess',   type: 'pct', computed: function(f) {
+          return f.ad_clicks ? round1(f.sessions / f.ad_clicks * 100) : 0; } },
+      { label: 'Sessão→Contato',key: '_cvr_cont',   type: 'pct', computed: function(f) {
+          return f.sessions ? round1((f.wa_clicks + f.ph_clicks) / f.sessions * 100) : 0; } },
+      { group: 'BLIP' },
+      { label: 'Contatos/dia',  key: 'blip',        type: 'dec' },
+      { label: 'CPL real',      key: 'cpl_blip',    type: 'brl' },
+    ];
+
+    tbody.innerHTML = '';
+    var periods = ['hoje','ontem','d2','30d','90d'];
+    var ref = funil['90d'];
+
+    rows.forEach(function(r) {
+      var tr = document.createElement('tr');
+      if (r.group) {
+        tr.className = 'row-sep';
+        var td = document.createElement('td');
+        td.colSpan = 6;
+        td.textContent = r.group;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      var tdLabel = document.createElement('td');
+      tdLabel.textContent = r.label;
+      tr.appendChild(tdLabel);
+
+      periods.forEach(function(p, i) {
+        var td = document.createElement('td');
+        if (i === 0) td.className = 'col-hoje';
+        var f = funil[p];
+        var v = r.computed ? r.computed(f) : f[r.key];
+        var refV = r.computed ? r.computed(ref) : ref[r.key];
+        var html = fmt(v, r.type);
+        if (i === 0 && p !== '90d') html += deltaSpan(v, refV);
+        td.innerHTML = html;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function round1(v) { return Math.round(v * 10) / 10; }
+
+  function renderFunil(funil) {
+    if (!funil) return;
+    var p = _funilPeriod;
+    var label = funil.labels[p] || p;
+    renderFunilVisual(funil[p], label);
+    renderFunilTabela(funil);
+  }
+
   /* ── Render dashboard principal ───────────────────── */
 
   function renderDashboard(data) {
@@ -1235,6 +1601,7 @@
     renderTabela(filteredMes);
     if (data.ads && data.ads.ok) renderAds(data.ads);
     detectAnomalias(data);
+    if (data.funil) renderFunil(data.funil);
   }
 
   /* ── Tabs ─────────────────────────────────────────── */
@@ -1250,6 +1617,17 @@
     tab.classList.add('active');
     var panel = document.getElementById('tab-' + name);
     if (panel) panel.classList.add('active');
+  });
+
+  /* ── Funil period tabs ────────────────────────────── */
+
+  document.getElementById('funil-period-tabs').addEventListener('click', function(e) {
+    var tab = e.target.closest('[data-period]');
+    if (!tab) return;
+    _funilPeriod = tab.dataset.period;
+    document.querySelectorAll('.fp-tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    if (_fullData && _fullData.funil) renderFunil(_fullData.funil);
   });
 
   /* ── Filtros de período ───────────────────────────── */
@@ -1274,7 +1652,7 @@
     document.getElementById('lock').style.display      = 'none';
     document.getElementById('dashboard').style.display = 'block';
     try {
-      var res  = await fetch('/api/stats?key=' + encodeURIComponent(key));
+      var res  = await fetch('/stats-data.json');
       var data = await res.json();
       if (res.ok) {
         renderDashboard(data);
