@@ -351,6 +351,56 @@ strong { font-weight: 600; }
   .brand-dot { animation: none; }
 }
 
+/* ============ Cross-linking bar — SEO nav entre LPs ============ */
+.crosslink-bar {
+  background: var(--cream-light);
+  border-top: 1px solid var(--cream-dark);
+  padding: 14px 0;
+}
+
+.crosslink-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.crosslink-bar a {
+  font-size: 14px;
+  color: var(--navy-mid);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.crosslink-bar a:hover {
+  color: var(--green-dark);
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .crosslink-inner { flex-direction: column; gap: 8px; }
+}
+
+/* ============ SEO Coverage — lista de bairros ============ */
+.seo-coverage {
+  background: var(--navy-deep);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 18px 0;
+}
+.seo-cov-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.seo-cov-list {
+  font-size: 12px;
+  color: rgba(255,255,255,0.28);
+  line-height: 1.7;
+  margin: 0;
+}
+
 /* ============ Impressão ============ */
 @media print {
   .no-print { display: none !important; }
