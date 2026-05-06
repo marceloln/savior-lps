@@ -428,8 +428,9 @@
       padding-left: 1.25rem;
     }
     .funil-table tbody td.col-hoje {
-      color: var(--text-1); font-weight: 700;
-      background: rgba(0,184,124,.04);
+      color: var(--text-1); font-weight: 800;
+      background: rgba(0,184,124,.07);
+      font-size: .94rem;
     }
     .funil-table .row-sep td {
       background: rgba(255,255,255,.025);
@@ -452,9 +453,35 @@
     .delta.down { background: rgba(239,68,68,.12);  color: var(--red); }
     .delta.flat { background: rgba(255,255,255,.05); color: var(--text-3); }
 
-    .funil-delta { display: inline-block; font-size: .63rem; font-weight: 700; margin-left: .3rem; vertical-align: middle; }
-    .funil-delta.up   { color: var(--green); }
-    .funil-delta.down { color: var(--red); }
+    .funil-delta {
+      display: inline-flex; align-items: center;
+      font-size: .72rem; font-weight: 800;
+      margin-left: .4rem; vertical-align: middle;
+      padding: .15rem .45rem; border-radius: 5px;
+    }
+    .funil-delta.up   { color: var(--green); background: var(--green-dim); }
+    .funil-delta.down { color: var(--red);   background: rgba(239,68,68,.14); }
+
+    /* ── Hero KPI delta ──────────────────────────────── */
+    .hk-delta {
+      font-size: .68rem; font-weight: 700;
+      display: flex; align-items: center; gap: .2rem;
+      margin-top: .15rem;
+    }
+    .hk-delta.up   { color: var(--green); }
+    .hk-delta.down { color: var(--red); }
+    .hk-delta.flat { color: var(--text-3); }
+
+    /* ── Status dot (funil table row) ────────────────── */
+    .row-status {
+      width: 8px; height: 8px;
+      border-radius: 50%; display: inline-block;
+      flex-shrink: 0; margin-right: .5rem; vertical-align: middle;
+    }
+    .row-status.good { background: var(--green); box-shadow: 0 0 5px var(--green-glow); }
+    .row-status.warn { background: var(--amber); }
+    .row-status.bad  { background: var(--red);   box-shadow: 0 0 5px rgba(239,68,68,.4); }
+    .row-status.flat { background: var(--text-3); }
 
     /* ── Summary cards (leads) ────────────────────────── */
     .summary-grid {
@@ -640,30 +667,30 @@
   <!-- Hero metrics strip -->
   <div class="hero-strip">
     <div class="hero-strip-inner">
-      <div class="hero-kpi accent">
+      <div class="hero-kpi accent" id="hk-blip-wrap">
         <div class="hk-label">Blip hoje</div>
         <div class="hk-value" id="hk-blip">—</div>
         <div class="hk-sub">contatos WA</div>
       </div>
-      <div class="hero-kpi">
-        <div class="hk-label">Gasto hoje</div>
-        <div class="hk-value" id="hk-gasto">—</div>
-        <div class="hk-sub">investimento ads</div>
+      <div class="hero-kpi" id="hk-sess-wrap">
+        <div class="hk-label">Sessões</div>
+        <div class="hk-value" id="hk-sess">—</div>
+        <div class="hk-sub">visitas hoje</div>
       </div>
-      <div class="hero-kpi">
-        <div class="hk-label">CPL</div>
-        <div class="hk-value" id="hk-cpl">—</div>
-        <div class="hk-sub">custo por lead</div>
-      </div>
-      <div class="hero-kpi">
+      <div class="hero-kpi" id="hk-conv-wrap">
         <div class="hk-label">Conv. Ads</div>
         <div class="hk-value" id="hk-conv">—</div>
         <div class="hk-sub">conversões Google</div>
       </div>
-      <div class="hero-kpi">
-        <div class="hk-label">Sessões</div>
-        <div class="hk-value" id="hk-sess">—</div>
-        <div class="hk-sub">visitas hoje</div>
+      <div class="hero-kpi" id="hk-gasto-wrap">
+        <div class="hk-label">Gasto hoje</div>
+        <div class="hk-value" id="hk-gasto">—</div>
+        <div class="hk-sub">investimento ads</div>
+      </div>
+      <div class="hero-kpi" id="hk-cpl-wrap">
+        <div class="hk-label">CPL</div>
+        <div class="hk-value" id="hk-cpl">—</div>
+        <div class="hk-sub">custo por lead</div>
       </div>
     </div>
   </div>
@@ -683,7 +710,32 @@
       <!-- ═══ TAB: Funil ═══ -->
       <div class="tab-panel active" id="tab-funil">
 
-        <!-- Seletor de período -->
+        <!-- Tabela comparativa — PRINCIPAL (topo) -->
+        <div class="section">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Comparativo de Períodos</span>
+              <span class="card-label">● hoje vs 90d = benchmark de decisão</span>
+            </div>
+            <div class="funil-wrap">
+              <table class="funil-table" id="funil-table">
+                <thead>
+                  <tr>
+                    <th style="min-width:160px">Métrica</th>
+                    <th class="col-hoje" id="th-hoje">—</th>
+                    <th id="th-ontem">—</th>
+                    <th id="th-d2">—</th>
+                    <th>Méd/dia 30d</th>
+                    <th>Méd/dia 90d</th>
+                  </tr>
+                </thead>
+                <tbody id="funil-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor de período (para funil visual abaixo) -->
         <div class="section">
           <div class="period-pills" id="funil-period-tabs">
             <div class="pp-pill active" data-period="hoje">Hoje</div>
@@ -718,30 +770,6 @@
             </div>
           </div>
 
-        </div>
-
-        <!-- Tabela comparativa full width -->
-        <div class="section">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Comparativo — todos os períodos</span>
-            </div>
-            <div class="funil-wrap">
-              <table class="funil-table" id="funil-table">
-                <thead>
-                  <tr>
-                    <th>Métrica</th>
-                    <th class="col-hoje" id="th-hoje">—</th>
-                    <th id="th-ontem">—</th>
-                    <th id="th-d2">—</th>
-                    <th>Méd/dia 30d</th>
-                    <th>Méd/dia 90d</th>
-                  </tr>
-                </thead>
-                <tbody id="funil-tbody"></tbody>
-              </table>
-            </div>
-          </div>
         </div>
 
       </div><!-- /tab-funil -->
@@ -1520,29 +1548,43 @@
     if (thOntem) thOntem.textContent = funil.labels.ontem;
     if (thD2)    thD2.textContent    = funil.labels.d2;
 
+    // invertBad: true = métrica onde alto é ruim (custo, CPC, CPL, bounce)
     var rows = [
       { group: 'GOOGLE ADS' },
-      { label: 'Impressões',    key: 'impressions', type: 'int' },
-      { label: 'Cliques (Ads)', key: 'ad_clicks',   type: 'int' },
-      { label: 'CTR',           key: 'ctr',         type: 'pct' },
-      { label: 'Gasto (R$)',    key: 'cost',        type: 'brl' },
-      { label: 'Conversões',    key: 'conversions', type: 'dec' },
-      { label: 'CPC médio',     key: 'cpc',         type: 'brl' },
+      { label: 'Impressões',    key: 'impressions', type: 'int', inv: false },
+      { label: 'Cliques (Ads)', key: 'ad_clicks',   type: 'int', inv: false },
+      { label: 'CTR',           key: 'ctr',         type: 'pct', inv: false },
+      { label: 'Gasto (R$)',    key: 'cost',        type: 'brl', inv: true  },
+      { label: 'Conversões',    key: 'conversions', type: 'dec', inv: false },
+      { label: 'CPC médio',     key: 'cpc',         type: 'brl', inv: true  },
       { group: 'SITE (GA4)' },
-      { label: 'Sessões',       key: 'sessions',    type: 'int' },
-      { label: 'Bounce Rate',   key: 'bounce',      type: 'pct' },
-      { label: 'Form Iniciado', key: 'form_start',  type: 'dec' },
-      { label: 'Clique WA',     key: 'wa_clicks',   type: 'dec' },
-      { label: 'Clique Tel.',   key: 'ph_clicks',   type: 'dec' },
+      { label: 'Sessões',       key: 'sessions',    type: 'int', inv: false },
+      { label: 'Bounce Rate',   key: 'bounce',      type: 'pct', inv: true  },
+      { label: 'Form Iniciado', key: 'form_start',  type: 'dec', inv: false },
+      { label: 'Clique WA',     key: 'wa_clicks',   type: 'dec', inv: false },
+      { label: 'Clique Tel.',   key: 'ph_clicks',   type: 'dec', inv: false },
       { group: 'TAXAS' },
-      { label: 'Clique→Sessão',  key: '_cvr_sess', type: 'pct',
+      { label: 'Clique→Sessão',  key: '_cvr_sess', type: 'pct', inv: false,
         computed: function(f) { return f.ad_clicks ? round1(f.sessions / f.ad_clicks * 100) : 0; } },
-      { label: 'Sessão→Contato', key: '_cvr_cont', type: 'pct',
+      { label: 'Sessão→Contato', key: '_cvr_cont', type: 'pct', inv: false,
         computed: function(f) { return f.sessions ? round1((f.wa_clicks + f.ph_clicks) / f.sessions * 100) : 0; } },
       { group: 'BLIP' },
-      { label: 'Contatos/dia', key: 'blip',     type: 'dec' },
-      { label: 'CPL real',     key: 'cpl_blip', type: 'brl' },
+      { label: 'Contatos/dia', key: 'blip',     type: 'dec', inv: false },
+      { label: 'CPL real',     key: 'cpl_blip', type: 'brl', inv: true  },
     ];
+
+    // Status dot: compara hoje vs 90d
+    function statusCls(hoje, ref90, inv) {
+      if (!ref90 || ref90 === 0) return 'flat';
+      var ratio = hoje / ref90;
+      // Para métricas de volume que hoje é parcial (impressões, cliques, gasto, sessões, conversões)
+      // não gerar status false negativo — usar threshold relaxado de 50%
+      var good = inv ? ratio <= 1.15 : ratio >= 0.85;
+      var warn = inv ? ratio <= 1.35 : ratio >= 0.65;
+      if (good) return 'good';
+      if (warn) return 'warn';
+      return 'bad';
+    }
 
     tbody.innerHTML = '';
     var periods = ['hoje','ontem','d2','30d','90d'];
@@ -1559,19 +1601,25 @@
         tbody.appendChild(tr);
         return;
       }
+
+      var hV   = r.computed ? r.computed(funil.hoje) : funil.hoje[r.key];
+      var refV = r.computed ? r.computed(ref)        : ref[r.key];
+      var sCls = statusCls(hV || 0, refV || 0, r.inv);
+
       var tdLabel = document.createElement('td');
-      tdLabel.textContent = r.label;
+      var dot = document.createElement('span');
+      dot.className = 'row-status ' + sCls;
+      tdLabel.appendChild(dot);
+      tdLabel.appendChild(document.createTextNode(r.label));
       tr.appendChild(tdLabel);
 
       periods.forEach(function(p, i) {
         var td = document.createElement('td');
         if (i === 0) td.className = 'col-hoje';
-        var f    = funil[p];
-        var v    = r.computed ? r.computed(f)   : f[r.key];
-        var refV = r.computed ? r.computed(ref) : ref[r.key];
+        var f = funil[p];
+        var v = r.computed ? r.computed(f) : f[r.key];
         var text = fmt(v, r.type);
         td.textContent = text;
-        // delta inline só para a coluna "hoje"
         if (i === 0) {
           var ds = deltaSpan(v, refV);
           if (ds) td.innerHTML = text + ds;
@@ -1595,12 +1643,34 @@
 
   function renderHeroKpis(funil) {
     if (!funil || !funil.hoje) return;
-    var h = funil.hoje;
+    var h   = funil.hoje;
+    var avg = funil['30d'] || {};
+
     setText('hk-blip',  fmt(h.blip,        'dec'));
     setText('hk-gasto', fmt(h.cost,        'brl'));
     setText('hk-cpl',   fmt(h.cpl_blip,    'brl'));
     setText('hk-conv',  fmt(h.conversions, 'dec'));
     setText('hk-sess',  fmt(h.sessions,    'int'));
+
+    // Delta vs 30d avg para cada KPI hero
+    function setHkDelta(containerId, curr, ref, invertBad) {
+      var el = document.getElementById(containerId);
+      if (!el || !ref || ref === 0) return;
+      var pct = Math.round(((curr - ref) / ref) * 100);
+      if (pct === 0) return;
+      var good = invertBad ? pct < 0 : pct > 0;
+      var cls  = good ? 'up' : 'down';
+      var arrow = pct > 0 ? '▲' : '▼';
+      var d = document.createElement('div');
+      d.className = 'hk-delta ' + cls;
+      d.textContent = arrow + ' ' + Math.abs(pct) + '% vs 30d';
+      el.appendChild(d);
+    }
+    setHkDelta('hk-blip-wrap',  h.blip,        avg.blip,        false);
+    setHkDelta('hk-gasto-wrap', h.cost,        avg.cost,        true);
+    setHkDelta('hk-cpl-wrap',   h.cpl_blip,    avg.cpl_blip,    true);
+    setHkDelta('hk-conv-wrap',  h.conversions, avg.conversions, false);
+    setHkDelta('hk-sess-wrap',  h.sessions,    avg.sessions,    false);
   }
 
   /* ── Render principal ─────────────────────────────── */
