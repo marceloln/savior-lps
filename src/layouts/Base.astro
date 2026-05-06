@@ -292,14 +292,17 @@ const absoluteTwitterImage = twitterImage
             if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: waValue, currency: 'BRL', content_name: 'WhatsApp - ' + waLabel });
           }
 
-          // Pipedrive Lead — fire-and-forget (não bloqueia o clique)
+          // Lead WA → n8n → Pipedrive (fire-and-forget)
           var utm = window._saviorUtm || {};
-          fetch('/api/pipedrive', {
+          fetch('https://n8n-savior.onrender.com/webhook/savior-lead', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              type: 'lead',
+              type: 'whatsapp_click',
               page: location.pathname.replace(/^\/|\/$/g, '') || 'home',
+              nome: '',
+              email: '',
+              whatsapp: '',
               campaign: waCamp,
               utm_source: utm.source || 'direct',
               utm_campaign: utm.campaign || 'none',

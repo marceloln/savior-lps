@@ -667,9 +667,9 @@ const faqItems = [
         return;
       }
 
-      // Pipedrive Deal — fire-and-forget
+      // Lead → n8n → Pipedrive (fire-and-forget)
       var corpUtm = window._saviorUtm || {};
-      fetch('/api/pipedrive', {
+      fetch('https://n8n-savior.onrender.com/webhook/savior-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

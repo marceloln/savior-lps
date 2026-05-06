@@ -606,9 +606,9 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
           return;
         }
 
-        // Pipedrive Deal — fire-and-forget (roteia por cidade)
+        // Lead → n8n → Pipedrive (fire-and-forget)
         var evUtm = window._saviorUtm || {};
-        fetch('/api/pipedrive', {
+        fetch('https://n8n-savior.onrender.com/webhook/savior-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
