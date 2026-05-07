@@ -911,9 +911,17 @@ const faqItems = [
   .corp-photo-break-bg video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
   .corp-photo-break-bg video.corp-vid--ready { opacity: 1; }
   .corp-photo-break-over { position: absolute; inset: 0; background: linear-gradient(to right,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
-  .corp-photo-break-over--right { background: linear-gradient(to left,#07182beb,#0b2540c7 40%,#07182b8c,#07182b66); }
+  .corp-photo-break-over--right { background: linear-gradient(to left,rgba(7,24,43,0.96),rgba(11,37,64,0.88) 40%,rgba(7,24,43,0.72),rgba(7,24,43,0.52)); }
   @media (max-width: 720px) {
     .corp-photo-break-over, .corp-photo-break-over--right { background: linear-gradient(to bottom,#07182be6,#0b2540c7 60%,#07182bd9); }
+  }
+  .corp-photo-break--right::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--green-bright), var(--green-dark), transparent);
+    z-index: 3;
   }
   .corp-photo-break-content { position: relative; z-index: 2; padding: clamp(56px,8vh,96px) 0; color: #fff; width: 100%; }
   .corp-photo-break-content h2 { color: #fff; margin-bottom: 16px; }
