@@ -183,10 +183,10 @@ const schema = JSON.stringify({
 
       <div class="wrap corp-hero-content">
         <!-- Marca no topo -->
-        <div class="corp-hero-brand">
+        <a href="/" class="corp-hero-brand" aria-label="Savior Medical Service — página inicial">
           <span class="corp-hero-wordmark">SAVIOR</span>
           <span class="corp-hero-descriptor">Medical Service</span>
-        </div>
+        </a>
 
         <!-- Grid 2 colunas: copy + KPIs -->
         <div class="corp-hero-grid">
@@ -799,6 +799,9 @@ const schema = JSON.stringify({
     align-items: baseline;
     gap: 12px;
     margin-bottom: clamp(56px, 9vh, 108px);
+    text-decoration: none;
+    position: relative;
+    z-index: 3;
   }
 
   .corp-hero-wordmark {

@@ -62,6 +62,9 @@
 /corporativo
   Cache-Control: public, max-age=0, must-revalidate
 
+/tipos-ambulancia
+  Cache-Control: public, max-age=0, must-revalidate
+
 # llms.txt — cache de 1 dia (LLMs visitam periodicamente)
 /llms.txt
   Cache-Control: public, max-age=86400

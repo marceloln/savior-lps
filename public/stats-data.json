@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-05-06T17:22:13.600395+00:00",
+  "gerado_em": "2026-05-06T17:52:17.256749+00:00",
   "resumo": {
     "pessoas": 0,
     "empresas": 0,
@@ -25,11 +25,11 @@
     }
   },
   "por_pipeline": {
-    "Eventos RJ": 3,
-    "Eventos SP": 3,
-    "Corporativo RJ": 3,
-    "Corporativo SP": 3,
-    "BOT WA": 0
+    "Eventos RJ": 5,
+    "Eventos SP": 4,
+    "Corporativo RJ": 4,
+    "Corporativo SP": 4,
+    "BOT WA": 1
   },
   "por_tipo": {
     "WhatsApp Click": 15,
@@ -40,21 +40,21 @@
   "por_cidade": {},
   "funil": {
     "hoje": {
-      "impressions": 3786.0,
-      "ad_clicks": 104.0,
-      "sessions": 30.0,
-      "users": 29.0,
-      "bounce": 50.0,
+      "impressions": 3968.0,
+      "ad_clicks": 111.0,
+      "sessions": 32.0,
+      "users": 31.0,
+      "bounce": 53.1,
       "form_start": 0.0,
       "wa_clicks": 0.0,
       "ph_clicks": 0.0,
       "leads": 0.0,
-      "blip": 25.0,
-      "cost": 769.59,
+      "blip": 27.0,
+      "cost": 819.28,
       "conversions": 12.0,
-      "ctr": 2.75,
-      "cpc": 7.4,
-      "cpl_blip": 30.78
+      "ctr": 2.8,
+      "cpc": 7.38,
+      "cpl_blip": 30.34
     },
     "ontem": {
       "impressions": 6667.0,
@@ -91,38 +91,38 @@
       "cpl_blip": 71.55
     },
     "30d": {
-      "impressions": 4724.3,
-      "ad_clicks": 266.9,
+      "impressions": 4730.3,
+      "ad_clicks": 267.1,
       "sessions": 220.2,
-      "users": 191.3,
+      "users": 191.4,
       "bounce": 55.8,
       "form_start": 3.7,
       "wa_clicks": 0.5,
       "ph_clicks": 0.3,
       "leads": 0.6,
       "blip": 21.3,
-      "cost": 1480.53,
+      "cost": 1482.18,
       "conversions": 30.7,
       "ctr": 5.65,
       "cpc": 5.55,
-      "cpl_blip": 69.4
+      "cpl_blip": 69.48
     },
     "90d": {
-      "impressions": 3804.8,
-      "ad_clicks": 238.5,
+      "impressions": 3806.9,
+      "ad_clicks": 238.6,
       "sessions": 208.8,
       "users": 180.4,
-      "bounce": 50.6,
+      "bounce": 50.5,
       "form_start": 4.0,
       "wa_clicks": 0.2,
       "ph_clicks": 0.1,
       "leads": 0.2,
       "blip": 22.1,
-      "cost": 1417.6,
+      "cost": 1418.15,
       "conversions": 31.1,
       "ctr": 6.27,
       "cpc": 5.94,
-      "cpl_blip": 64.24
+      "cpl_blip": 64.27
     },
     "labels": {
       "hoje": "06/05 (hoje)",
@@ -135,49 +135,49 @@
   "ads": {
     "ok": true,
     "resumo": {
-      "Impressões": "141728",
-      "Cliques": "8007",
+      "Impressões": "141910",
+      "Cliques": "8014",
       "CTR": "5.65%",
-      "Gasto R$": "44415.79",
+      "Gasto R$": "44465.48",
       "Conversões": "920.0",
-      "CPA R$": "48.28"
+      "CPA R$": "48.33"
     },
     "campanhas": [
       {
         "Campanha": "LP | Particular | RJ#2",
-        "Impressões": "28039",
-        "Cliques": "2476",
+        "Impressões": "28076",
+        "Cliques": "2479",
         "CTR": "8.83%",
-        "Gasto R$": "26401.84",
+        "Gasto R$": "26436.13",
         "Conv": "416.5",
-        "CPA R$": "63.39"
+        "CPA R$": "63.47"
       },
       {
         "Campanha": "LP | Particular | SP",
-        "Impressões": "12482",
+        "Impressões": "12500",
         "Cliques": "1005",
-        "CTR": "8.05%",
+        "CTR": "8.04%",
         "Gasto R$": "6227.1",
         "Conv": "230.0",
         "CPA R$": "27.07"
       },
       {
         "Campanha": "LP | Eventos | SP",
-        "Impressões": "74879",
-        "Cliques": "3259",
+        "Impressões": "75003",
+        "Cliques": "3262",
         "CTR": "4.35%",
-        "Gasto R$": "5485.91",
+        "Gasto R$": "5492.61",
         "Conv": "161.0",
-        "CPA R$": "34.07"
+        "CPA R$": "34.12"
       },
       {
         "Campanha": "LP | Particular | RJ | MSG",
-        "Impressões": "4576",
-        "Cliques": "545",
-        "CTR": "11.91%",
-        "Gasto R$": "2970.63",
+        "Impressões": "4579",
+        "Cliques": "546",
+        "CTR": "11.92%",
+        "Gasto R$": "2979.32",
         "Conv": "64.5",
-        "CPA R$": "46.06"
+        "CPA R$": "46.19"
       },
       {
         "Campanha": "LP | Eventos | RJ",

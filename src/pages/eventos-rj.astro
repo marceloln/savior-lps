@@ -157,10 +157,10 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
       </div>
 
       <div class="wrap ev-hero-content">
-        <div class="ev-hero-brand">
+        <a href="/" class="ev-hero-brand" aria-label="Savior Medical Service — página inicial">
           <span class="ev-hero-wordmark">SAVIOR</span>
           <span class="ev-hero-descriptor">Medical Service</span>
-        </div>
+        </a>
         <div class="ev-hero-grid">
           <div>
             <div class="ev-hero-live" aria-label="Cobertura médica para eventos">
@@ -769,7 +769,7 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
   }
   @media (max-width: 960px) { .ev-hero-overlay { background: linear-gradient(135deg, #07182be0, #0b2540c7); } }
   .ev-hero-content { position: relative; z-index: 3; width: 100%; color: #fff; }
-  .ev-hero-brand { display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .ev-hero-brand { display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(60px,9vh,110px); text-decoration: none; position: relative; z-index: 3; }
   .ev-hero-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 27px; letter-spacing: .08em; color: #fff; line-height: 1; }
   .ev-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; }
   .ev-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }

@@ -1,0 +1,27 @@
+{
+  "name": "Savior Medical Service",
+  "short_name": "Savior",
+  "description": "Ambulância particular com UTI em Rio de Janeiro e São Paulo. Atendimento 24h.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B2540",
+  "theme_color": "#0B2540",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

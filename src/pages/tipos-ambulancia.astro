@@ -166,10 +166,10 @@ const schema = JSON.stringify({
       </div>
 
       <div class="wrap ta-hero-content">
-        <div class="ta-hero-brand">
+        <a href="/" class="ta-hero-brand" aria-label="Savior Medical Service — página inicial">
           <span class="ta-wordmark">SAVIOR</span>
           <span class="ta-descriptor">Medical Service</span>
-        </div>
+        </a>
 
         <div class="ta-hero-live" aria-label="Central disponível agora">
           <span class="ta-live-dot" aria-hidden="true"></span>
@@ -867,6 +867,7 @@ const schema = JSON.stringify({
   }
   .ta-hero-brand {
     display: inline-flex; align-items: baseline; gap: 14px; margin-bottom: clamp(48px, 8vh, 90px);
+    text-decoration: none; position: relative; z-index: 3;
   }
   .ta-wordmark {
     font-family: 'Ethnocentric', var(--sans); font-weight: 400; font-size: 18px;

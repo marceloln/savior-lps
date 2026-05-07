@@ -159,12 +159,12 @@ const faqItems = [
   </div>
   <div class="corp-hero-overlay" aria-hidden="true"></div>
   <div class="corp-hero-content wrap">
-    <div class="corp-hero-brand">
+    <a href="/" class="corp-hero-brand" aria-label="Savior Medical Service — página inicial">
       <div>
         <div class="corp-hero-wordmark">SAVIOR</div>
         <div class="corp-hero-descriptor">Medical Service</div>
       </div>
-    </div>
+    </a>
     <div class="corp-hero-grid">
       <div class="corp-hero-left">
         <p class="eyebrow on-dark" style="margin-bottom:18px">Cobertura corporativa B2B</p>
@@ -816,7 +816,7 @@ const faqItems = [
     .corp-hero-overlay { background: linear-gradient(135deg,#07182be6,#0b2540cc); }
   }
   .corp-hero-content { position: relative; z-index: 2; width: 100%; color: #fff; }
-  .corp-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); }
+  .corp-hero-brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: clamp(60px,9vh,110px); text-decoration: none; position: relative; z-index: 3; }
   .corp-hero-wordmark { font-family: 'Ethnocentric', var(--sans); font-size: 27px; letter-spacing: .08em; color: #fff; line-height: 1; }
   .corp-hero-descriptor { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; color: var(--green-bright); text-transform: uppercase; margin-top: 5px; }
   .corp-hero-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: clamp(32px,6vw,80px); align-items: start; }
