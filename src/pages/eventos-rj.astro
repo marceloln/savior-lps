@@ -628,7 +628,10 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
         var evLeadParams = { value: 1500, currency: 'BRL', lead_source: 'eventos-form', campaign: 'eventos', method: 'form' };
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push(Object.assign({ event: 'generate_lead' }, evLeadParams));
-        if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', evLeadParams);
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'generate_lead', evLeadParams);
+          window.gtag('event', 'conversion', Object.assign({ send_to: 'AW-711046879/QHJtCNONj9AZEN_thtMC' }, evLeadParams));
+        }
         if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 1500, currency: 'BRL', content_name: 'Form - eventos' });
 
         // Fallback: abre WhatsApp com dados formatados
