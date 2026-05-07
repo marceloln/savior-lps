@@ -224,17 +224,26 @@ const absoluteTwitterImage = twitterImage
         if (!window.lintrk) { window.lintrk = function(a,b){window.lintrk.q.push([a,b])}; window.lintrk.q = []; }
       }
 
-      // ============ Injeção dos scripts — idle após 'load' para não bloquear LCP/TBT ============
-      // requestIdleCallback aguarda ociosidade da main thread; setTimeout(,3000) é fallback.
-      // Isso garante que os scripts só são injetados depois que o LCP já foi pintado.
+      // ============ GA4 — carrega no DOMContentLoaded para capturar bounces rápidos ============
+      // DOMContentLoaded dispara antes do 'load' (antes de imagens/vídeos carregarem).
+      // Isso garante que GA4 registre a sessão mesmo se o usuário sair em <1s da página.
+      // O atributo async no script evita bloqueio de renderização.
+      if (!USE_GTM && GA4_ID) {
+        var _injectGA4 = function() {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+          document.head.appendChild(s);
+        };
+        document.readyState === 'loading'
+          ? document.addEventListener('DOMContentLoaded', _injectGA4)
+          : _injectGA4();
+      }
+
+      // ============ Meta Pixel + LinkedIn — diferidos (idle após load) ============
+      // Menos críticos para conversão; mantidos diferidos para preservar LCP/TBT.
       window.addEventListener('load', function() {
         var inject = function() {
-          if (!USE_GTM && GA4_ID) {
-            var s = document.createElement('script');
-            s.async = true;
-            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
-            document.head.appendChild(s);
-          }
           if (!USE_GTM && META_ID && META_ID !== 'META_PIXEL_PLACEHOLDER') {
             var s = document.createElement('script');
             s.async = true;
@@ -278,7 +287,7 @@ const absoluteTwitterImage = twitterImage
 
       // Detecta cidade pela URL — define sufixo dos eventos legados do GA4
       var path = location.pathname;
-      var city = path.indexOf('/ambulancia-sp') !== -1 ? 'sp' : 'rj';
+      var city = path.indexOf('/sp') !== -1 ? 'sp' : 'rj';
 
       // Labels específicas do Google Ads por página (uma por conversão configurada na conta)
       var GADS_LABELS = {
