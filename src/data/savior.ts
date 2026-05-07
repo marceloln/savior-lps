@@ -12,6 +12,12 @@ export const BRAND = {
   yearsOperating: 46,
 };
 
+export const SOCIAL = {
+  instagram: 'https://www.instagram.com/savior.ambulancia/',
+  facebook: 'https://facebook.com/SaviorMedicalService',
+  linkedin: 'https://www.linkedin.com/company/savior-medical-service/',
+};
+
 export const CONTACT_RJ = {
   phone: '(21) 3171-3030',
   phoneHref: '+552131713030',

@@ -106,12 +106,12 @@ const waHref = whatsappUrl(
 
   <div class="wrap hero-content">
     <!-- Marca: wordmark Ethnocentric + Medical Service (SEM símbolo, SEM box) -->
-    <div class="hero-brand">
+    <a href="/" class="hero-brand" aria-label="Savior Medical Service — página inicial">
       <div class="hero-brand-text">
         <span class="hero-wordmark">SAVIOR</span>
         <span class="hero-descriptor">Medical Service</span>
       </div>
-    </div>
+    </a>
 
     <!-- Grid 2 colunas em desktop, 1 em mobile -->
     <div class={`hero-grid hero-grid--${heroVariant}`}>
@@ -314,6 +314,7 @@ const waHref = whatsappUrl(
     align-items: center;
     gap: 14px;
     margin-bottom: clamp(60px, 9vh, 110px);
+    text-decoration: none;
   }
 
   .hero-symbol {

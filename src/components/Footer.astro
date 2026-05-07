@@ -7,7 +7,7 @@
 //   showBairros    → exibe grid de bairros RJ + SP
 // ============================================================
 
-import { CONTACT_RJ, CONTACT_SP, BRAND } from '../data/savior';
+import { CONTACT_RJ, CONTACT_SP, BRAND, SOCIAL } from '../data/savior';
 
 interface Props {
   contact?: typeof CONTACT_RJ;
@@ -48,8 +48,21 @@ const BAIRROS_SP = [
 
       <!-- Marca -->
       <div class="ft-brand">
-        <span class="ft-word">SAVIOR</span>
-        <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
+        <a href="/" class="ft-brand-link" aria-label="Savior Medical Service — página inicial">
+          <span class="ft-word">SAVIOR</span>
+          <span class="ft-tagline">Medical Service · Desde {BRAND.yearsFounded}</span>
+        </a>
+        <div class="ft-social">
+          <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram Savior" class="ft-social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook Savior" class="ft-social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" width="18" height="18"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Savior" class="ft-social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" width="18" height="18"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+        </div>
       </div>
 
       <!-- Contatos dual-city (páginas gerais) -->
@@ -178,7 +191,14 @@ const BAIRROS_SP = [
   .ft-brand {
     display: flex;
     flex-direction: column;
+    gap: 14px;
+  }
+
+  .ft-brand-link {
+    display: flex;
+    flex-direction: column;
     gap: 6px;
+    text-decoration: none;
   }
 
   .ft-word {
@@ -189,7 +209,10 @@ const BAIRROS_SP = [
     letter-spacing: 0.08em;
     color: white;
     line-height: 1;
+    transition: color 0.15s;
   }
+
+  .ft-brand-link:hover .ft-word { color: var(--green-bright); }
 
   .ft-tagline {
     display: block;
@@ -200,6 +223,23 @@ const BAIRROS_SP = [
     color: var(--green-bright);
     opacity: 0.8;
   }
+
+  /* ---- Redes Sociais ---- */
+  .ft-social {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .ft-social-link {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.15s;
+    display: flex;
+    align-items: center;
+  }
+
+  .ft-social-link:hover { color: var(--green-bright); }
 
   /* ---- Contatos ---- */
   .ft-contacts {
