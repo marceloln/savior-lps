@@ -11,9 +11,15 @@ export default defineConfig({
 
   output: 'static',
 
+  trailingSlash: 'never',
+
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/preview'),
+      filter: (page) =>
+        !page.includes('/preview') &&
+        !page.includes('/estatisticas') &&
+        !page.endsWith('/eventos/') &&
+        !page.endsWith('/eventos'),
       changefreq: 'weekly',
       priority: 0.9,
     }),
