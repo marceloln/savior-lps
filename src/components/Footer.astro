@@ -9,6 +9,12 @@
 
 import { CONTACT_RJ, CONTACT_SP, BRAND, SOCIAL } from '../data/savior';
 
+// Encode emails to prevent Cloudflare Email Obfuscation from injecting
+// the render-blocking email-decode.min.js script (affects LCP).
+// %40 in href + &#64; in text → browsers decode both correctly; Cloudflare doesn't detect.
+const eHref = (e: string) => `mailto:${e.replace('@', '%40')}`;
+const eHtml = (e: string) => e.replace('@', '&#64;');
+
 interface Props {
   contact?: typeof CONTACT_RJ;
   coverage?: string;
@@ -80,8 +86,8 @@ const BAIRROS_SP = [
           </div>
           <div class="ft-contact-block">
             <span class="ft-contact-label">Central de atendimento</span>
-            <a href="mailto:central@savior.com.br" class="ft-contact-secondary">central@savior.com.br</a>
-            <a href={`mailto:${CONTACT_RJ.email}`} class="ft-contact-secondary">{CONTACT_RJ.email}</a>
+            <a href="mailto:central%40savior.com.br" class="ft-contact-secondary" set:html={eHtml('central@savior.com.br')} />
+            <a href={eHref(CONTACT_RJ.email)} class="ft-contact-secondary" set:html={eHtml(CONTACT_RJ.email)} />
           </div>
           <div class="ft-contact-block">
             <span class="ft-contact-label">Endereços</span>
@@ -113,8 +119,8 @@ const BAIRROS_SP = [
 
           <div class="ft-contact-block">
             <span class="ft-contact-label">Central de atendimento</span>
-            <a href="mailto:central@savior.com.br" class="ft-contact-secondary">central@savior.com.br</a>
-            <a href={`mailto:${contact.email}`} class="ft-contact-secondary">{contact.email}</a>
+            <a href="mailto:central%40savior.com.br" class="ft-contact-secondary" set:html={eHtml('central@savior.com.br')} />
+            <a href={eHref(contact.email as string)} class="ft-contact-secondary" set:html={eHtml(contact.email as string)} />
           </div>
 
           <div class="ft-contact-block">
