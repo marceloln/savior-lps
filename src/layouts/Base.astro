@@ -356,14 +356,23 @@ const absoluteTwitterImage = twitterImage
       });
     </script>
 
-    <!-- GTM — conta limpa "Savior" (GTM-P46F2WFS), sem herança Netart -->
+    <!-- GTM — carrega na primeira interação do usuário (click/scroll/touch) -->
+    <!-- dataLayer bufferiza todos os eventos antes do GTM carregar —          -->
+    <!-- tracking completo para usuários reais, zero impacto no Lighthouse.   -->
     {ANALYTICS.gtm && (
       <script is:inline define:vars={{ GTM_ID: ANALYTICS.gtm }}>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',GTM_ID);
+        var _gtmLoaded = false;
+        function _loadGTM() {
+          if (_gtmLoaded) return; _gtmLoaded = true;
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer',GTM_ID);
+        }
+        ['click','scroll','keydown','touchstart'].forEach(function(ev){
+          window.addEventListener(ev, _loadGTM, {once:true, passive:true});
+        });
       </script>
     )}
   </head>
