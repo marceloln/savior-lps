@@ -584,12 +584,14 @@ const faqItems = [
 </section>
 
 <!-- ═══ 15. FAQ ═══ -->
-<FAQ
-  items={faqItems}
-  titleHtml="Perguntas comuns de empresas"
-  eyebrow="Dúvidas frequentes"
-  subtitle="Respostas diretas para o que o RH, o jurídico e o financeiro vão perguntar antes de fechar."
-/>
+<div class="corp-faq-wrapper">
+  <FAQ
+    items={faqItems}
+    titleHtml="Perguntas comuns de empresas"
+    eyebrow="Dúvidas frequentes"
+    subtitle="Respostas diretas para o que o RH, o jurídico e o financeiro vão perguntar antes de fechar."
+  />
+</div>
 
 <!-- ═══ 16. CTA FINAL ═══ -->
 <section class="section corp-cta-final" aria-labelledby="cta-heading">
@@ -968,6 +970,7 @@ const faqItems = [
 
   /* ── Formulário ── */
   .corp-form-section { background: var(--cream-light); border-top: 1px solid var(--cream-dark); }
+  .corp-faq-wrapper :global(.faq) { background: var(--cream); border-top: 1px solid var(--cream-dark); }
   .corp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px,5vw,64px); align-items: start; }
   @media (max-width: 768px) { .corp-form-grid { grid-template-columns: 1fr; gap: 32px; } }
   .corp-form-lead { font-size: 16px; color: var(--gray); line-height: 1.6; margin-top: 24px; margin-bottom: 20px; max-width: 480px; }
