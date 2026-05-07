@@ -685,7 +685,10 @@ const faqItems = [
       var leadParams = { value: 27500, currency: 'BRL', lead_source: 'corporativo-form', campaign: 'corporativo', method: 'form' };
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push(Object.assign({ event: 'generate_lead' }, leadParams));
-      if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', leadParams);
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', leadParams);
+        window.gtag('event', 'conversion', Object.assign({ send_to: 'AW-711046879/5yYgCPbJg6kcEN_thtMC' }, leadParams));
+      }
       if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 27500, currency: 'BRL', content_name: 'Form - corporativo' });
 
       var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
