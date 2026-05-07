@@ -923,6 +923,14 @@ const faqItems = [
     background: linear-gradient(to right, var(--green-bright), var(--green-dark), transparent);
     z-index: 3;
   }
+  .corp-photo-break--right::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--green-bright), var(--green-dark), transparent);
+    z-index: 3;
+  }
   .corp-photo-break-content { position: relative; z-index: 2; padding: clamp(56px,8vh,96px) 0; color: #fff; width: 100%; }
   .corp-photo-break-content h2 { color: #fff; margin-bottom: 16px; }
   .corp-photo-break-content p { font-size: 16px; color: #ffffffd1; max-width: 540px; line-height: 1.6; }
