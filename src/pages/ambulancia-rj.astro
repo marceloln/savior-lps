@@ -281,6 +281,11 @@ const schema = JSON.stringify({
         acceptedAnswer: {
           '@type': 'Answer',
           text: item.a.replace(/<[^>]*>/g, ''),
+          author: {
+            '@type': 'Organization',
+            name: 'Savior Medical Service',
+            url: 'https://www.savior.com.br',
+          },
         },
       })),
     },

@@ -108,6 +108,36 @@ const schema = JSON.stringify({
         'https://www.linkedin.com/company/savior-medical-service/',
       ],
     },
+
+    // WebPage com speakable (AEO/voice search)
+    {
+      '@type': 'WebPage',
+      '@id': 'https://www.savior.com.br/',
+      url: 'https://www.savior.com.br/',
+      name: title,
+      description,
+      inLanguage: 'pt-BR',
+      isPartOf: {
+        '@type': 'WebSite',
+        '@id': 'https://www.savior.com.br/#website',
+        name: 'Savior Medical Service',
+        url: 'https://www.savior.com.br',
+        inLanguage: 'pt-BR',
+      },
+      about: { '@id': 'https://www.savior.com.br/#organization' },
+      datePublished: '2026-04-01',
+      dateModified: '2026-05-06',
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: '.hero-h1, .hero-subhead, .prices-h2, .faq-q',
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Savior', item: 'https://www.savior.com.br' },
+        ],
+      },
+    },
   ],
 });
 ---
