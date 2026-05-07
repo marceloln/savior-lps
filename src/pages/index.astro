@@ -150,6 +150,8 @@ const schema = JSON.stringify({
   ogImage="/og/home-og-1200x630.jpg"
   ogImageAlt="Savior Medical Service — frota de ambulâncias própria no Rio de Janeiro e São Paulo"
   twitterImage="/og/home-twitter-card-1200x628.jpg"
+  lcpImageSrcset="/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w"
+  lcpImageHref="/img/hero/hero-poster-mobile.webp"
 >
   <StickyHeader waCampaign="corp-rj" />
 
@@ -160,24 +162,30 @@ const schema = JSON.stringify({
     <!-- ============================================================ -->
     <section class="corp-hero" aria-label="Savior Medical Service — ambulância particular 24h">
       <div class="corp-hero-bg">
+        <!-- LCP element: img com fetchpriority garante carregamento priorizado -->
+        <img
+          class="corp-hero-poster"
+          srcset="/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w"
+          sizes="100vw"
+          src="/img/hero/hero-poster.webp"
+          alt=""
+          width="1920"
+          height="1080"
+          loading="eager"
+          fetchpriority="high"
+          aria-hidden="true"
+        />
         <video
           autoplay
           muted
           loop
           playsinline
           preload="none"
-          poster="/img/hero/hero-poster-mobile.webp"
           aria-hidden="true"
-          id="hero-vid"
         >
-          <source src="/video/hero-loop.webm" type="video/webm" />
-          <source src="/video/hero-loop.mp4" type="video/mp4" />
+          <source media="(min-width: 960px)" src="/video/hero-loop.webm" type="video/webm" />
+          <source media="(min-width: 960px)" src="/video/hero-loop.mp4" type="video/mp4" />
         </video>
-        <script is:inline>
-          if (window.innerWidth > 720) {
-            document.getElementById('hero-vid').poster = '/img/hero/hero-poster.webp';
-          }
-        </script>
         <div class="corp-hero-overlay" aria-hidden="true"></div>
       </div>
 
@@ -769,7 +777,18 @@ const schema = JSON.stringify({
     inset: 0;
   }
 
+  .corp-hero-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
   .corp-hero-bg video {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;

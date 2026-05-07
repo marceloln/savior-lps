@@ -18,6 +18,8 @@ interface Props {
   dateModified?: string;
   /** srcset do LCP hero poster — deve espelhar exatamente o <img srcset> no Hero.astro */
   lcpImageSrcset?: string;
+  /** href único do LCP hero poster (para páginas com <img src> sem srcset) */
+  lcpImageHref?: string;
   /** geo meta tags — passar por página; omitir em páginas multi-cidade */
   geoRegion?: string;
   geoPlacename?: string;
@@ -35,6 +37,7 @@ const {
   twitterImage,
   dateModified = '2026-04-24',
   lcpImageSrcset = '/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w',
+  lcpImageHref,
   geoRegion,
   geoPlacename,
   geoPosition,
@@ -140,7 +143,7 @@ const absoluteTwitterImage = twitterImage
     <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
     <!-- ============ Hero poster — preload LCP ============ -->
-    <!-- imagesrcset espelha o srcset do <img> no Hero.astro — mesmo valor passado via lcpImageSrcset -->
+    <!-- imagesrcset: para páginas com <img srcset> (Hero.astro component) -->
     <link
       rel="preload"
       as="image"
@@ -148,6 +151,15 @@ const absoluteTwitterImage = twitterImage
       imagesizes="100vw"
       fetchpriority="high"
     />
+    <!-- href: para páginas com <img src> único ou <video poster> (home, eventos, etc.) -->
+    {lcpImageHref && (
+      <link
+        rel="preload"
+        as="image"
+        href={lcpImageHref}
+        fetchpriority="high"
+      />
+    )}
 
     <!-- ============ Schema.org JSON-LD ============ -->
     {schema && <script type="application/ld+json" set:html={schema} />}
