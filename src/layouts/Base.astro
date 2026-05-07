@@ -75,6 +75,7 @@ const absoluteTwitterImage = twitterImage
     <!-- ============ Theme & PWA ============ -->
     <meta name="theme-color" content="#0B2540" />
     <meta name="apple-mobile-web-app-title" content="Savior" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=yes" />
@@ -148,7 +149,7 @@ const absoluteTwitterImage = twitterImage
       rel="preload"
       as="image"
       imagesrcset={lcpImageSrcset}
-      imagesizes="100vw"
+      imagesizes="(max-width: 720px) 100vw, 100vw"
       fetchpriority="high"
     />
     <!-- href: para páginas com <img src> único ou <video poster> (home, eventos, etc.) -->
