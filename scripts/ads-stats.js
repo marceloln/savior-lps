@@ -64,10 +64,10 @@ function writeResumo(ss) {
 
   while (res.hasNext()) {
     var r = res.next();
-    imp  += r.metrics.impressions;
-    clk  += r.metrics.clicks;
-    cost += r.metrics.costMicros / 1e6;
-    conv += r.metrics.conversions;
+    imp  += Number(r.metrics.impressions);
+    clk  += Number(r.metrics.clicks);
+    cost += Number(r.metrics.costMicros) / 1e6;
+    conv += Number(r.metrics.conversions);
   }
 
   // Gravar números brutos (sem formatação) para evitar problema de locale no CSV
@@ -111,15 +111,15 @@ function writeCampaigns(ss) {
 
   while (res.hasNext()) {
     var r = res.next();
-    var cost = r.metrics.costMicros / 1e6;
-    var conv = r.metrics.conversions;
+    var cost = Number(r.metrics.costMicros) / 1e6;
+    var conv = Number(r.metrics.conversions);
     var status = r.campaign.status === "ENABLED" ? "Ativa" : "Pausada";
     rows.push([
       r.campaign.name,
       status,
-      r.metrics.impressions,
-      r.metrics.clicks,
-      pct(r.metrics.clicks, r.metrics.impressions),
+      Number(r.metrics.impressions),
+      Number(r.metrics.clicks),
+      pct(Number(r.metrics.clicks), Number(r.metrics.impressions)),
       cost.toFixed(2),
       Math.round(conv),
       cpa(cost, conv),
@@ -159,10 +159,10 @@ function writeDaily(ss) {
     var r = res.next();
     var d = r.segments.date;
     if (!byDay[d]) byDay[d] = { imp: 0, clk: 0, cost: 0, conv: 0 };
-    byDay[d].imp  += r.metrics.impressions;
-    byDay[d].clk  += r.metrics.clicks;
-    byDay[d].cost += r.metrics.costMicros / 1e6;
-    byDay[d].conv += r.metrics.conversions;
+    byDay[d].imp  += Number(r.metrics.impressions);
+    byDay[d].clk  += Number(r.metrics.clicks);
+    byDay[d].cost += Number(r.metrics.costMicros) / 1e6;
+    byDay[d].conv += Number(r.metrics.conversions);
   }
 
   var rows = [];
@@ -214,10 +214,10 @@ function appendHistorico(ss) {
 
   while (res.hasNext()) {
     var r = res.next();
-    imp  += r.metrics.impressions;
-    clk  += r.metrics.clicks;
-    cost += r.metrics.costMicros / 1e6;
-    conv += r.metrics.conversions;
+    imp  += Number(r.metrics.impressions);
+    clk  += Number(r.metrics.clicks);
+    cost += Number(r.metrics.costMicros) / 1e6;
+    conv += Number(r.metrics.conversions);
   }
 
   // Remover linha existente de hoje (para atualizar)
@@ -281,14 +281,14 @@ function appendHistoricoCampanhas(ss) {
 
   while (res.hasNext()) {
     var r = res.next();
-    var cost = r.metrics.costMicros / 1e6;
-    var conv = r.metrics.conversions;
+    var cost = Number(r.metrics.costMicros) / 1e6;
+    var conv = Number(r.metrics.conversions);
     campanhas.push([
       dataHoje,
       r.campaign.name,
-      r.metrics.impressions,
-      r.metrics.clicks,
-      pct(r.metrics.clicks, r.metrics.impressions),
+      Number(r.metrics.impressions),
+      Number(r.metrics.clicks),
+      pct(Number(r.metrics.clicks), Number(r.metrics.impressions)),
       cost.toFixed(2),
       Math.round(conv),
       cpa(cost, conv)

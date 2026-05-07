@@ -277,7 +277,20 @@ const absoluteTwitterImage = twitterImage
       };
 
       // Detecta cidade pela URL — define sufixo dos eventos legados do GA4
-      var city = location.pathname.indexOf('/ambulancia-sp') !== -1 ? 'sp' : 'rj';
+      var path = location.pathname;
+      var city = path.indexOf('/ambulancia-sp') !== -1 ? 'sp' : 'rj';
+
+      // Labels específicas do Google Ads por página (uma por conversão configurada na conta)
+      var GADS_LABELS = {
+        '/ambulancia-rj': 'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-sp': 'ov1WCOXUlMkZEN_thtMC',
+        '/eventos-sp':    '71CYCODXhtAZEN_thtMC',
+        '/eventos-rj':    'M0NPCK6Aj9AZEN_thtMC',
+      };
+      var gadsLabel = null;
+      for (var p in GADS_LABELS) {
+        if (path.indexOf(p) !== -1) { gadsLabel = GADS_LABELS[p]; break; }
+      }
 
       document.addEventListener('click', function (e) {
         var t = e.target;
@@ -299,7 +312,7 @@ const absoluteTwitterImage = twitterImage
             if (typeof window.gtag === 'function') {
               window.gtag('event', 'generate_lead',                    Object.assign({ method: 'whatsapp' }, waParams));
               window.gtag('event', 'lp___contato__whatsapp__' + city,  waParams);
-              if (GADS_ID) window.gtag('event', 'conversion', Object.assign({ send_to: GADS_ID + '/generate_lead' }, waParams));
+              if (GADS_ID && gadsLabel) window.gtag('event', 'conversion', Object.assign({ send_to: GADS_ID + '/' + gadsLabel }, waParams));
             }
             if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: waValue, currency: 'BRL', content_name: 'WhatsApp - ' + waLabel });
           }
@@ -341,7 +354,7 @@ const absoluteTwitterImage = twitterImage
             if (typeof window.gtag === 'function') {
               window.gtag('event', 'generate_lead',                   Object.assign({ method: 'phone' }, phParams));
               window.gtag('event', 'lp___contato__ligação__' + city,  phParams);
-              if (GADS_ID) window.gtag('event', 'conversion', Object.assign({ send_to: GADS_ID + '/generate_lead' }, phParams));
+              if (GADS_ID && gadsLabel) window.gtag('event', 'conversion', Object.assign({ send_to: GADS_ID + '/' + gadsLabel }, phParams));
             }
             if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: phValue, currency: 'BRL', content_name: 'Phone - ' + phLabel });
           }
