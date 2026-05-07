@@ -70,6 +70,7 @@ const schema = JSON.stringify({
       '@type': 'FAQPage',
       '@id': `${canonical}#faqpage`,
       url: canonical,
+      isPartOf: { '@id': `${canonical}#webpage` },
       mainEntity: faqItems.map((f) => ({
         '@type': 'Question',
         name: f.q,
@@ -123,7 +124,7 @@ const schema = JSON.stringify({
   ogImage="/og/tipos-ambulancia-og-1200x630.jpg"
   ogImageAlt="Interior de UTI Móvel Savior — monitor Mindray, bomba de infusão, ventilador mecânico"
   twitterImage="/og/tipos-ambulancia-twitter-card-1200x628.jpg"
-  lcpImageSrcset="/img/tipos/interior-frota2.webp 1600w"
+  lcpImageSrcset="/img/tipos/tipos-hero-mobile.webp 540w, /img/tipos/interior-frota2.webp 1600w"
   dateModified="2026-04-29"
 >
 
@@ -135,16 +136,18 @@ const schema = JSON.stringify({
     <!-- ═══ 1. HERO ═══ -->
     <section class="ta-hero" aria-label="Tipos de ambulância — Savior Medical Service">
       <div class="ta-hero-bg" aria-hidden="true">
-        <img
-          class="ta-hero-poster"
-          src="/img/tipos/interior-frota2.webp"
-          alt=""
-          width="1600"
-          height="900"
-          loading="eager"
-          fetchpriority="high"
-          style="object-position: center center"
-        />
+        <picture class="ta-hero-poster">
+          <source media="(max-width: 767px)" srcset="/img/tipos/tipos-hero-mobile.webp" type="image/webp" width="540" height="720" />
+          <img
+            src="/img/tipos/interior-frota2.webp"
+            alt=""
+            width="1600"
+            height="900"
+            loading="eager"
+            fetchpriority="high"
+            style="object-position: center center"
+          />
+        </picture>
         <video
           id="ta-hero-vid"
           autoplay
@@ -262,7 +265,7 @@ const schema = JSON.stringify({
         <div class="ta-band-text ta-band-text--right">
           <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO B · SUPORTE BÁSICO</p>
           <h2 id="tipob-heading">Ambulância <em>Básica</em></h2>
-          <p>Transporte inter-hospitalar e atendimento pré-hospitalar para pacientes com risco baixo ou desconhecido. Estabilização inicial sem intervenção médica complexa.</p>
+          <p>Para pacientes estáveis: alta hospitalar, remoção domiciliar e transferência eletiva. A central avalia o caso e a equipe sai em até 4 minutos com o equipamento adequado.</p>
 
           <div class="ta-team-tags">
             <span class="ta-tag">Condutor socorrista</span>
@@ -368,7 +371,7 @@ const schema = JSON.stringify({
         <div class="ta-band-text ta-band-text--left">
           <p class="eyebrow on-dark" style="margin-bottom:14px">TIPO D · SUPORTE AVANÇADO</p>
           <h2 id="tipod-heading">UTI <em>Móvel</em></h2>
-          <p>Para pacientes de alto risco. Intubação, ventilação mecânica, drogas vasoativas e monitorização contínua. O tipo mais solicitado na Savior.</p>
+          <p>Médico a bordo, monitor Mindray, ventilador e medicação de emergência. Para infarto, AVC, trauma grave ou qualquer quadro que não pode esperar. O tipo mais acionado na Savior.</p>
 
           <div class="ta-team-tags">
             <span class="ta-tag ta-tag--ld">Médico</span>
@@ -451,10 +454,17 @@ const schema = JSON.stringify({
           </div>
           <div class="ta-equip-item">
             <div class="ta-equip-ico">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             </div>
-            <h3>Kit de imobilização completo</h3>
-            <p>Colar cervical Philadelphia, prancha longa rígida, colete extrícador e talas modulares. Padrão para trauma e transporte seguro.</p>
+            <h3>Desfibrilador / Cardioversor</h3>
+            <p>Equipamento para reversão de arritmias instáveis graves e parada cardiorrespiratória.</p>
+            <ul class="ta-equip-sublist">
+              <li>Desfibrilação (choque elétrico)</li>
+              <li>Cardioversão sincronizada</li>
+              <li>Marcapasso transcutâneo</li>
+              <li>Modo manual e DEA</li>
+              <li>Monitor cardíaco integrado</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -792,7 +802,10 @@ const schema = JSON.stringify({
   }
   .ta-hero-bg { position: absolute; inset: 0; }
   .ta-hero-poster {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0;
+  }
+  .ta-hero-poster img {
+    width: 100%; height: 100%; object-fit: cover;
   }
   .ta-hero-bg video {
     position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;
@@ -828,6 +841,9 @@ const schema = JSON.stringify({
   @keyframes ta-pulse {
     0%, 100% { box-shadow: 0 0 0 3px rgba(31,210,154,.25); }
     50% { box-shadow: 0 0 0 6px rgba(31,210,154,.1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ta-live-dot { animation: none; }
   }
   .ta-hero h1 { font-size: clamp(32px, 4.8vw, 52px); font-weight: 800; line-height: 1.06; letter-spacing: -.035em; color: #fff; margin-bottom: 20px; }
   .ta-hero h1 em { font-style: normal; color: var(--green-bright); }
@@ -988,6 +1004,9 @@ const schema = JSON.stringify({
   .ta-equip-ico svg { width: 22px; height: 22px; color: var(--green-dark); }
   .ta-equip-item h3 { font-size: 15px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; color: var(--navy); }
   .ta-equip-item p { font-size: 13.5px; color: #6B7785; line-height: 1.6; }
+  .ta-equip-sublist { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 4px; }
+  .ta-equip-sublist li { font-size: 12.5px; color: #6B7785; padding-left: 14px; position: relative; line-height: 1.45; }
+  .ta-equip-sublist li::before { content: '·'; position: absolute; left: 0; color: var(--green-dark); font-weight: 700; }
 
   /* ═══ TABLE ═══ */
   .ta-table-sec { padding: clamp(64px,8vw,96px) 0; background: var(--navy-deep); color: #fff; }
