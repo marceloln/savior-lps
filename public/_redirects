@@ -14,3 +14,23 @@
 
 # URL antiga /eventos → /eventos-rj (301 permanente, preserva SEO)
 /eventos /eventos-rj 301
+
+# URLs WordPress antigas → home (evita 404s indexados)
+/wp-admin/* / 301
+/wp-login.php / 301
+/wp-content/* / 301
+/page/* / 301
+/category/* / 301
+/author/* / 301
+/feed / 301
+/feed/ / 301
+/servicos / 301
+/servicos/ / 301
+/sobre / 301
+/sobre/ / 301
+/contato / 301
+/contato/ / 301
+/blog / 301
+/blog/* / 301
+/noticias / 301
+/noticias/* / 301
