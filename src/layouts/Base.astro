@@ -315,9 +315,12 @@ const absoluteTwitterImage = twitterImage
               nome: '',
               email: '',
               whatsapp: '',
+              lead_source: waLabel,
               campaign: waCamp,
               utm_source: utm.source || 'direct',
+              utm_medium: utm.medium || 'none',
               utm_campaign: utm.campaign || 'none',
+              gclid: utm.gclid || '',
             }),
           }).catch(function(){});
         }

@@ -1,0 +1,10 @@
+name = "savior-pipedrive-notify"
+main = "index.js"
+compatibility_date = "2026-04-25"
+
+# Rota do Worker (após deploy, configurar no dashboard Cloudflare se quiser domínio próprio)
+# workers_dev = true  → URL padrão: savior-pipedrive-notify.<account>.workers.dev
+
+# Secrets (configurar via CLI após deploy):
+#   wrangler secret put RESEND_API_KEY
+#   → cole a chave re_... quando solicitado
