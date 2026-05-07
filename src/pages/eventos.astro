@@ -146,13 +146,8 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
           height="1280"
           aria-hidden="true"
         >
-          <source src="/video/events-hero-v2.mp4" type="video/mp4" />
+          <source media="(min-width: 960px)" src="/video/events-hero-v2.mp4" type="video/mp4" />
         </video>
-        <script is:inline>
-          if (window.innerWidth > 720) {
-            document.getElementById('ev-hero-vid').poster = '/img/hero/hero-poster-events.webp';
-          }
-        </script>
         <div class="ev-hero-overlay"></div>
       </div>
 

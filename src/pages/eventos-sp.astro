@@ -145,14 +145,9 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
           height="1280"
           aria-hidden="true"
         >
-          <source src="/video/hero-loop-sp.webm" type="video/webm" />
-          <source src="/video/hero-loop-sp.mp4" type="video/mp4" />
+          <source media="(min-width: 960px)" src="/video/hero-loop-sp.webm" type="video/webm" />
+          <source media="(min-width: 960px)" src="/video/hero-loop-sp.mp4" type="video/mp4" />
         </video>
-        <script is:inline>
-          if (window.innerWidth > 720) {
-            document.getElementById('ev-hero-vid').poster = '/img/hero/hero-poster-sp.webp';
-          }
-        </script>
         <div class="ev-hero-overlay"></div>
       </div>
 
