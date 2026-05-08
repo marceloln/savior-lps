@@ -1,6 +1,4 @@
 {
-  // Configuração Cloudflare Pages.
-  // pages_build_output_dir indica onde estão os arquivos estáticos gerados pelo Astro.
   "name": "savior-lps",
   "compatibility_date": "2026-04-25",
   "pages_build_output_dir": "dist"
