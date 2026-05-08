@@ -1,7 +1,9 @@
 {
-  // Configuração Cloudflare Pages (não Workers).
-  // pages_build_output_dir indica onde estão os arquivos estáticos gerados pelo Astro.
+  // Configuração Cloudflare Workers com Static Assets (substitui Pages).
+  // assets.directory aponta para o output do Astro (dist/).
   "name": "savior-lps",
   "compatibility_date": "2026-04-25",
-  "pages_build_output_dir": "dist"
+  "assets": {
+    "directory": "./dist"
+  }
 }
