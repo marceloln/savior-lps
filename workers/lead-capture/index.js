@@ -97,35 +97,43 @@ export default {
 
     const token = env.PIPEDRIVE_TOKEN;
 
-    // 1. Criar Pessoa
-    const personPayload = { name: personName };
-    if (email) personPayload.email = [{ value: email, primary: true }];
-    if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
+    // 1. Criar Pessoa — apenas se houver dados reais (nome, email ou whatsapp)
+    //    Cliques WA anônimos não geram Person para não poluir contatos
+    let personId = null;
+    const hasContactData = nome?.trim() || email || whatsapp;
 
-    const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(personPayload),
-    });
-    const personData = await personRes.json();
-    const personId = personData?.data?.id;
+    if (hasContactData) {
+      const personPayload = { name: personName };
+      if (email) personPayload.email = [{ value: email, primary: true }];
+      if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
 
-    if (!personId) {
-      console.error('Pipedrive person create failed:', JSON.stringify(personData));
-      return new Response('Person create error', { status: 500 });
+      const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(personPayload),
+      });
+      const personData = await personRes.json();
+      personId = personData?.data?.id;
+
+      if (!personId) {
+        console.error('Pipedrive person create failed:', JSON.stringify(personData));
+        return new Response('Person create error', { status: 500 });
+      }
     }
 
     // 2. Criar Deal
+    const dealPayload = {
+      title: dealTitle,
+      pipeline_id: pipelineId,
+      stage_id: stageId,
+      status: 'open',
+    };
+    if (personId) dealPayload.person_id = personId;
+
     const dealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: dealTitle,
-        person_id: personId,
-        pipeline_id: pipelineId,
-        stage_id: stageId,
-        status: 'open',
-      }),
+      body: JSON.stringify(dealPayload),
     });
     const dealData = await dealRes.json();
     const dealId = dealData?.data?.id;
