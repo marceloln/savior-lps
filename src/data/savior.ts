@@ -70,8 +70,8 @@ export const ANALYTICS = {
   blipKey: 'f66c4315-bb6f-4a44-b538-7c87406af8f9',
 
   // Flag: true = GTM orquestra GA4 + Meta + LinkedIn (evita duplicação)
-  // GTM DESATIVADO — conta com flag de malware (agência anterior). Carregar direto.
-  useGtmAsSource: false,
+  // GTM-P46F2WFS é conta limpa (criada 2025). GA4 só via GTM → elimina double-fire e TBT.
+  useGtmAsSource: true,
 };
 
 export const METRICS = {
