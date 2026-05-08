@@ -4,6 +4,16 @@
 # Raiz serve a home corporativa (index.astro)
 # Redirect removido: / não redireciona mais para /ambulancia-rj
 
+# Trailing slash → sem trailing slash (build.format:file gera .html plano)
+# Evita 404 para URLs com barra final indexadas ou compartilhadas
+/ambulancia-rj/ /ambulancia-rj 301
+/ambulancia-sp/ /ambulancia-sp 301
+/eventos-rj/ /eventos-rj 301
+/eventos-sp/ /eventos-sp 301
+/corporativo/ /corporativo 301
+/tipos-ambulancia/ /tipos-ambulancia 301
+/estatisticas/ /estatisticas 301
+
 # Normalizar maiúsculas → minúsculas
 /CORPORATIVO /corporativo 301
 /EVENTOS /eventos-rj 301

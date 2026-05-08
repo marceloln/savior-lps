@@ -28,6 +28,9 @@ export default defineConfig({
   build: {
     // CSS inline elimina request render-blocking extra.
     inlineStylesheets: 'always',
+    // Gera ambulancia-rj.html em vez de ambulancia-rj/index.html.
+    // Elimina o 308 redirect do Cloudflare Pages (~800ms no LCP).
+    format: 'file',
   },
 
   compressHTML: true,

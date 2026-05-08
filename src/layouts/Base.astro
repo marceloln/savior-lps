@@ -144,15 +144,17 @@ const absoluteTwitterImage = twitterImage
     <!-- @fontsource-variable usa font-display:swap por padrão — sem FOIT         -->
 
     <!-- ============ Hero poster — preload LCP ============ -->
-    <!-- imagesrcset: para páginas com <img srcset> (Hero.astro component) -->
-    <link
-      rel="preload"
-      as="image"
-      imagesrcset={lcpImageSrcset}
-      imagesizes="(max-width: 720px) 100vw, 100vw"
-      fetchpriority="high"
-    />
-    <!-- href: para páginas com <img src> único ou <video poster> (home, eventos, etc.) -->
+    <!-- imagesrcset: para páginas com <img srcset> — só renderiza se lcpImageHref não estiver definido -->
+    {!lcpImageHref && (
+      <link
+        rel="preload"
+        as="image"
+        imagesrcset={lcpImageSrcset}
+        imagesizes="(max-width: 720px) 100vw, 100vw"
+        fetchpriority="high"
+      />
+    )}
+    <!-- href: para páginas com <img src> único (sem srcset) — preload direto por URL exata -->
     {lcpImageHref && (
       <link
         rel="preload"
@@ -225,26 +227,19 @@ const absoluteTwitterImage = twitterImage
         if (!window.lintrk) { window.lintrk = function(a,b){window.lintrk.q.push([a,b])}; window.lintrk.q = []; }
       }
 
-      // ============ GA4 — carrega no DOMContentLoaded para capturar bounces rápidos ============
-      // DOMContentLoaded dispara antes do 'load' (antes de imagens/vídeos carregarem).
-      // Isso garante que GA4 registre a sessão mesmo se o usuário sair em <1s da página.
-      // O atributo async no script evita bloqueio de renderização.
-      if (!USE_GTM && GA4_ID) {
-        var _injectGA4 = function() {
-          var s = document.createElement('script');
-          s.async = true;
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
-          document.head.appendChild(s);
-        };
-        document.readyState === 'loading'
-          ? document.addEventListener('DOMContentLoaded', _injectGA4)
-          : _injectGA4();
-      }
-
-      // ============ Meta Pixel + LinkedIn — diferidos (idle após load) ============
-      // Menos críticos para conversão; mantidos diferidos para preservar LCP/TBT.
+      // ============ GA4 + Meta Pixel + LinkedIn — diferidos (idle após load) ============
+      // Todos os scripts de terceiros injetados após 'load' via requestIdleCallback.
+      // GA4 movido de DOMContentLoaded → load para eliminar long task (~119ms) durante LCP.
+      // Eventos pré-load são enfileirados no dataLayer pelo stub acima e
+      // processados quando o script GA4 carrega — nenhum evento é perdido.
       window.addEventListener('load', function() {
         var inject = function() {
+          if (!USE_GTM && GA4_ID) {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+            document.head.appendChild(s);
+          }
           if (!USE_GTM && META_ID && META_ID !== 'META_PIXEL_PLACEHOLDER') {
             var s = document.createElement('script');
             s.async = true;
@@ -259,8 +254,8 @@ const absoluteTwitterImage = twitterImage
           }
         };
         'requestIdleCallback' in window
-          ? requestIdleCallback(inject, { timeout: 4000 })
-          : setTimeout(inject, 3000);
+          ? requestIdleCallback(inject, { timeout: 3000 })
+          : setTimeout(inject, 2000);
       });
 
       // ============ Tracking de conversões ============
