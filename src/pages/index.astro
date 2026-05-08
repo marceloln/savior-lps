@@ -23,6 +23,8 @@ import {
 
 // ============ WA links ============
 const waB2BHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-b2b', 'Oi, quero falar sobre minha empresa.', 'hero-b2b');
+const waHeroRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso de ambulância agora.', 'hero');
+const waHeroSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corp-sp', 'Oi, preciso de ambulância agora.', 'hero');
 const waCovRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso de ambulância.', 'coverage-rj');
 const waCovSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corp-sp', 'Oi, preciso de ambulância.', 'coverage-sp');
 const waFinalRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corp-rj', 'Oi, preciso de ambulância.', 'final-cta');
@@ -152,7 +154,7 @@ const schema = JSON.stringify({
   twitterImage="/og/home-twitter-card-1200x628.jpg"
   lcpImageSrcset="/img/hero/hero-poster-mobile.webp 720w, /img/hero/hero-poster.webp 1536w"
 >
-  <StickyHeader waCampaign="corp-rj" />
+  <StickyHeader waCampaign="corp-rj" contactSP={CONTACT_SP} />
 
   <main id="main">
 
@@ -217,15 +219,33 @@ const schema = JSON.stringify({
             <div class="corp-hero-ctas">
               <a
                 class="btn btn-primary"
-                href={`tel:${CONTACT_RJ.phoneHref}`}
-                data-phone
-                data-event-label="hero-phone-home"
-                aria-label="Ligar agora para a Savior: (21) 3171-3030"
+                href={waHeroRJHref}
+                target="_blank"
+                rel="noopener"
+                data-whatsapp
+                data-event="cta_click"
+                data-event-category="conversion"
+                data-campaign="corp-rj"
+                data-location="hero"
+                data-event-label="hero-whatsapp-rj"
+                aria-label="WhatsApp Savior Rio de Janeiro"
               >
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                Preciso de ambulância agora
+                Ambulância RJ
+              </a>
+              <a
+                class="btn btn-primary btn-hero-sp"
+                href={waHeroSPHref}
+                target="_blank"
+                rel="noopener"
+                data-whatsapp
+                data-event="cta_click"
+                data-event-category="conversion"
+                data-campaign="corp-sp"
+                data-location="hero"
+                data-event-label="hero-whatsapp-sp"
+                aria-label="WhatsApp Savior São Paulo"
+              >
+                Ambulância SP
               </a>
               <a
                 class="btn btn-secondary on-dark"
@@ -753,7 +773,7 @@ const schema = JSON.stringify({
   <!-- ═══ FOOTER ═══ -->
   <Footer showBothCities={true} showBairros={true} />
 
-  <FloatingWhatsApp waCampaign="corp-rj" />
+  <FloatingWhatsApp waCampaign="corp-rj" contactSP={CONTACT_SP} />
 
 </Base>
 

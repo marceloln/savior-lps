@@ -1,44 +1,75 @@
 ---
 // ============================================================
 // FLOATING WHATSAPP — aparece fixo no canto inferior direito em mobile
+// Modo dual: quando contactSP é passado, exibe dois pills (RJ + SP)
 // ============================================================
 
-import { whatsappUrl, CONTACT_RJ } from '../data/savior';
+import { whatsappUrl, CONTACT_RJ, CONTACT_SP } from '../data/savior';
 
 interface Props {
   waCampaign: string;
   contact?: typeof CONTACT_RJ;
+  contactSP?: typeof CONTACT_SP;
 }
 
-const { waCampaign, contact = CONTACT_RJ } = Astro.props;
+const { waCampaign, contact = CONTACT_RJ, contactSP } = Astro.props;
+const dual = !!contactSP;
 
-const waHref = whatsappUrl(
-  contact.whatsapp,
-  waCampaign,
-  'Oi, preciso de ambulância agora.',
-  'floating'
-);
+const waHref = whatsappUrl(contact.whatsapp, waCampaign, 'Oi, preciso de ambulância agora.', 'floating');
+const waHrefSP = dual
+  ? whatsappUrl(contactSP!.whatsapp, waCampaign.replace('rj', 'sp'), 'Oi, preciso de ambulância agora.', 'floating')
+  : null;
+
+const WA_ICON = `<path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/>`;
 ---
 
-<a
-  class="fw"
-  href={waHref}
-  data-whatsapp
-  data-campaign={waCampaign}
-  data-location="floating"
-  target="_blank"
-  rel="noopener"
-  aria-label="Chamar ambulância Savior pelo WhatsApp"
->
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path
-      d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"
-    />
-  </svg>
-  <span>Chamar</span>
-</a>
+{dual ? (
+  <div class="fw-dual">
+    <a
+      class="fw fw--sm"
+      href={waHref}
+      data-whatsapp
+      data-campaign={waCampaign}
+      data-location="floating"
+      target="_blank"
+      rel="noopener"
+      aria-label="Chamar ambulância Savior Rio de Janeiro pelo WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={WA_ICON} />
+      <span>WA RJ</span>
+    </a>
+    <a
+      class="fw fw--sm fw--sp"
+      href={waHrefSP}
+      data-whatsapp
+      data-campaign={waCampaign.replace('rj', 'sp')}
+      data-location="floating"
+      target="_blank"
+      rel="noopener"
+      aria-label="Chamar ambulância Savior São Paulo pelo WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={WA_ICON} />
+      <span>WA SP</span>
+    </a>
+  </div>
+) : (
+  <a
+    class="fw"
+    href={waHref}
+    data-whatsapp
+    data-campaign={waCampaign}
+    data-location="floating"
+    target="_blank"
+    rel="noopener"
+    aria-label="Chamar ambulância Savior pelo WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" set:html={WA_ICON} />
+    <span>Chamar</span>
+  </a>
+)}
 
 <style>
+  /* Modo simples */
   .fw {
     position: fixed;
     bottom: 16px;
@@ -49,7 +80,7 @@ const waHref = whatsappUrl(
     gap: 10px;
     padding: 12px 18px;
     background: #25D366;
-    color: var(--navy-deep); /* branco em #25D366 = 1.9:1; navy-deep = 9.5:1 ✓ */
+    color: var(--navy-deep);
     border-radius: 50px;
     font-family: var(--sans);
     font-weight: 600;
@@ -70,20 +101,43 @@ const waHref = whatsappUrl(
     flex-shrink: 0;
   }
 
-  /* FloatingWhatsApp visível em todos os tamanhos */
+  /* Modo dual */
+  .fw-dual {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .fw--sm {
+    position: static;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .fw--sp {
+    background: var(--navy-mid, #143458);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
+
+  .fw--sp:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
 
   @media (max-width: 380px) {
-    .fw span {
-      display: none;
-    }
-
-    .fw {
-      padding: 14px;
-    }
+    .fw span { display: none; }
+    .fw { padding: 14px; }
+    .fw--sm { padding: 11px; }
   }
 
   @media (min-width: 961px) {
-    .fw {
+    .fw,
+    .fw-dual {
       display: none;
     }
   }
