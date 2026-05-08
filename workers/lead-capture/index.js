@@ -60,29 +60,39 @@ export default {
 
     // Determinar pipeline
     let pipelineId = PAGE_PIPELINE[page] ?? 12;
-    // Corporativo SP: utm_campaign ou lead_source contém "sp"
+    // Corporativo SP: utm_campaign ou lead_source contém indicador SP
     if (pipelineId === 10) {
       const lower = (utm_campaign + lead_source).toLowerCase();
-      if (lower.includes('sp-corp') || lower.includes('corporativo-sp')) {
+      if (lower.includes('corp-sp') || lower.includes('sp-corp') || lower.includes('corporativo-sp')) {
         pipelineId = 11;
       }
     }
     const stageId = PIPELINE_STAGE_NOVO_LEAD[pipelineId] ?? 41;
 
+    // Data/hora em BRT para labels legíveis
+    const nowDt = new Date();
+    const now = nowDt.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const dateTag = nowDt.toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      day: '2-digit', month: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+      hour12: false,
+    }).replace(',', '');
+
     // Nome da pessoa — WA click não tem nome real; usa timestamp como fallback
-    const now = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     const personName = nome?.trim() || `WA — ${page} — ${now}`;
 
-    // Título do deal com UTM
-    const dealTitle = lead_source || `WA Click | ${page} | ${utm_campaign}`;
+    // Título do deal: legível e rastreável (não usa lead_source que é posição do botão)
+    const dealTitle = `WA | ${page} | ${utm_campaign} | ${dateTag}`;
 
-    // Nota UTM
+    // Nota UTM — inclui posição do botão (lead_source) para análise
     const utmNote = [
       `utm_source: ${utm_source}`,
       `utm_medium: ${utm_medium}`,
       `utm_campaign: ${utm_campaign}`,
       gclid ? `gclid: ${gclid}` : null,
       `page: ${page}`,
+      lead_source ? `button: ${lead_source}` : null,
     ].filter(Boolean).join(' | ');
 
     const token = env.PIPEDRIVE_TOKEN;
