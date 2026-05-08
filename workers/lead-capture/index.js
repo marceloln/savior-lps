@@ -48,14 +48,21 @@ export default {
     }
 
     const {
+      type = 'wa_click',
       page = 'home',
       nome = '',
       email = '',
       whatsapp = '',
       empresa = '',
       cidade = '',
+      bairro = '',
       tipo = '',
+      tipo_evento = '',
       funcionarios = '',
+      data_evento = '',
+      horario_inicio = '',
+      horario_fim = '',
+      publico_estimado = '',
       lead_source = '',
       utm_source = 'direct',
       utm_medium = 'none',
@@ -87,10 +94,14 @@ export default {
     // Nome da pessoa — WA click não tem nome real; usa timestamp como fallback
     const personName = nome?.trim() || `WA — ${page} — ${now}`;
 
-    // Título do deal: legível e rastreável (não usa lead_source que é posição do botão)
-    const dealTitle = `WA | ${page} | ${utm_campaign} | ${dateTag}`;
+    // Título do deal: form usa nome do lead; WA click usa utm_campaign
+    const isForm = type === 'deal';
+    const dealTitle = isForm
+      ? `Form | ${page} | ${nome?.trim() || 'sem nome'} | ${dateTag}`
+      : `WA | ${page} | ${utm_campaign} | ${dateTag}`;
 
-    // Nota UTM — inclui posição do botão e campos corporativo quando presentes
+    // Nota UTM — inclui todos os campos disponíveis
+    const tipoFinal = tipo_evento || tipo;
     const utmNote = [
       `utm_source: ${utm_source}`,
       `utm_medium: ${utm_medium}`,
@@ -100,7 +111,11 @@ export default {
       lead_source ? `button: ${lead_source}` : null,
       empresa ? `empresa: ${empresa}` : null,
       cidade ? `cidade: ${cidade}` : null,
-      tipo ? `tipo: ${tipo}` : null,
+      bairro ? `bairro/local: ${bairro}` : null,
+      tipoFinal ? `tipo: ${tipoFinal}` : null,
+      data_evento ? `data_evento: ${data_evento}` : null,
+      (horario_inicio && horario_fim) ? `horario: ${horario_inicio} às ${horario_fim}` : null,
+      publico_estimado ? `publico: ${publico_estimado}` : null,
       funcionarios ? `funcionarios: ${funcionarios}` : null,
     ].filter(Boolean).join(' | ');
 
@@ -184,6 +199,42 @@ export default {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ deal_id: dealId, content: utmNote }),
     });
+
+    // 4. Email de notificação para comercial (apenas para leads de formulário)
+    if (isForm) {
+      const tipoFinal2 = tipo_evento || tipo;
+      const emailBody = [
+        `<p><strong>Novo lead via formulário — ${page}</strong></p>`,
+        `<table style="border-collapse:collapse;font-size:14px">`,
+        `<tr><td style="padding:4px 12px 4px 0;color:#666">Nome</td><td>${nome}</td></tr>`,
+        email ? `<tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${email}</td></tr>` : '',
+        whatsapp ? `<tr><td style="padding:4px 12px 4px 0;color:#666">WhatsApp</td><td>${whatsapp}</td></tr>` : '',
+        bairro ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Local/Bairro</td><td>${bairro}</td></tr>` : '',
+        cidade ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Cidade</td><td>${cidade}</td></tr>` : '',
+        tipoFinal2 ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Tipo de evento</td><td>${tipoFinal2}</td></tr>` : '',
+        data_evento ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Data</td><td>${data_evento}</td></tr>` : '',
+        (horario_inicio && horario_fim) ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Horário</td><td>${horario_inicio} às ${horario_fim}</td></tr>` : '',
+        publico_estimado ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Público estimado</td><td>${publico_estimado}</td></tr>` : '',
+        `</table>`,
+        `<p style="margin-top:12px;font-size:12px;color:#999">utm_source: ${utm_source} | utm_campaign: ${utm_campaign} | deal #${dealId}</p>`,
+      ].filter(Boolean).join('');
+
+      if (env.RESEND_API_KEY) {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Site Savior <noreply@savior.com.br>',
+            to: ['comercial@savior.com.br'],
+            subject: `[Lead ${page}] ${nome} — ${dateTag}`,
+            html: emailBody,
+          }),
+        }).catch((err) => console.error('Email send failed:', err));
+      }
+    }
 
     console.log(`Deal criado: person=${personId} deal=${dealId} pipeline=${pipelineId} page=${page}`);
     return new Response(JSON.stringify({ ok: true, person_id: personId, deal_id: dealId }), {
