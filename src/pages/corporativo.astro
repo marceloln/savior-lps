@@ -691,22 +691,6 @@ const faqItems = [
       }
       if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 27500, currency: 'BRL', content_name: 'Form - corporativo' });
 
-      var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
-        ? '[corporativo-form-v01][utm:' + window._saviorUtm.campaign + ']'
-        : '[corporativo-form-v01]';
-
-      var msg = encodeURIComponent(
-        '*Proposta Corporativa Savior*\n' +
-        'Empresa: ' + empresa + '\n' +
-        'Contato: ' + nome + '\n' +
-        'WhatsApp: ' + wpp + '\n' +
-        'Cidade: ' + (cidade === 'sp' ? 'S\u00e3o Paulo' : 'Rio de Janeiro') + '\n' +
-        'Cobertura: ' + (tipo || 'N\u00e3o informado') + '\n' +
-        'Funcion\u00e1rios: ' + (func || 'N\u00e3o informado') + '\n' +
-        utmTag
-      );
-      window.open('https://wa.me/5521980358200?text=' + msg, '_blank');
-
       while (corpForm.firstChild) { corpForm.removeChild(corpForm.firstChild); }
       var sw = document.createElement('div');
       sw.style.cssText = 'text-align:center;padding:48px 24px';

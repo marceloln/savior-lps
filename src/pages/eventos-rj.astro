@@ -638,26 +638,6 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
         }
         if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: 1500, currency: 'BRL', content_name: 'Form - eventos' });
 
-        // Fallback: abre WhatsApp com dados formatados
-        var utmTag = (window._saviorUtm && window._saviorUtm.campaign)
-          ? '[eventos-form-v01][utm:' + window._saviorUtm.campaign + ']'
-          : '[eventos-form-v01]';
-        var lines = [
-          'Oi, preciso de cobertura m\u00e9dica para um evento.',
-          '',
-          '*Dados:*',
-          'Nome: ' + nome,
-          'Cidade: ' + (cidade === 'sp' ? 'S\u00e3o Paulo' : 'Rio de Janeiro'),
-          'Bairro: ' + bairro,
-          'Tipo: ' + tipo,
-          'Data: ' + data,
-          'Hor\u00e1rio: ' + inicio + ' \u00e0s ' + fim,
-          'P\u00FAblico: ' + (pub || 'N\u00E3o informado'),
-          '',
-          utmTag,
-        ];
-        window.open('https://wa.me/5521980358200?text=' + encodeURIComponent(lines.join('\n')), '_blank');
-
         // Sucesso — construído via DOM sem innerHTML
         var card = document.getElementById('leadForm');
         while (card.firstChild) { card.removeChild(card.firstChild); }
