@@ -77,14 +77,12 @@ const BAIRROS_SP = [
           <div class="ft-contact-block">
             <span class="ft-contact-label">Emergência RJ</span>
             <a href={`tel:${CONTACT_RJ.phoneHref}`} class="ft-contact-main">{CONTACT_RJ.phone}</a>
-            <span class="ft-contact-sublabel">Central de atendimento RJ</span>
             <a href={eHref('central@savior.com.br')} class="ft-contact-secondary" set:html={eHtml('central@savior.com.br')} />
           </div>
           <div class="ft-contact-block">
             <span class="ft-contact-label">Emergência SP</span>
             <a href={`tel:${CONTACT_SP.phoneLandlineHref}`} class="ft-contact-main">{CONTACT_SP.phoneLandline}</a>
             <a href={`tel:${CONTACT_SP.phoneHref}`} class="ft-contact-secondary">{CONTACT_SP.whatsappDisplay}</a>
-            <span class="ft-contact-sublabel">Central de atendimento SP</span>
             <a href={eHref('central.sp@savior.com.br')} class="ft-contact-secondary" set:html={eHtml('central.sp@savior.com.br')} />
           </div>
           <div class="ft-contact-block">
