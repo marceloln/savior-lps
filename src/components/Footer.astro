@@ -21,6 +21,7 @@ interface Props {
   showTelGeral?: boolean;
   showBairros?: boolean;
   showBothCities?: boolean;
+  centralEmail?: string;
 }
 
 const {
@@ -29,6 +30,7 @@ const {
   showTelGeral = true,
   showBairros = false,
   showBothCities = false,
+  centralEmail = 'central@savior.com.br',
 } = Astro.props;
 
 const BAIRROS_RJ = [
@@ -119,8 +121,8 @@ const BAIRROS_SP = [
 
           <div class="ft-contact-block">
             <span class="ft-contact-label">Central de atendimento</span>
-            <span class="ft-contact-secondary" set:html={eHtml('central@savior.com.br')} />
-            <span class="ft-contact-secondary" set:html={eHtml(contact.email as string)} />
+            <a href={eHref(centralEmail)} class="ft-contact-secondary" set:html={eHtml(centralEmail)} />
+            <a href={eHref(contact.email as string)} class="ft-contact-secondary" set:html={eHtml(contact.email as string)} />
           </div>
 
           <div class="ft-contact-block">
