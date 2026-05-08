@@ -198,6 +198,14 @@ export default {
       if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
       if (orgId) personPayload.org_id = orgId;
 
+      // Campos customizados da Pessoa
+      if (cidade)      personPayload['8a3a101cd9f82710af86e56532c3646814279269'] = cidade;
+      if (tipoFinal)   personPayload['f2844b6efad9390dc0f20fae467113a4fded5abf'] = tipoLabel;
+      if (funcionarios) personPayload['bd246ad7b6bfe73215ad6b199fb944fde1850d12'] = funcionariosLabel;
+      if (utm_source && utm_source !== 'direct') personPayload['2112c85f86194384ba9f77f166cfda28b0ba1511'] = utm_source;
+      if (utm_campaign && utm_campaign !== 'none') personPayload['37f70f23df7f40e64055167dc9cf720a18c0605f'] = utm_campaign;
+      personPayload['d42a03b828e552feb7208161fe78987c4c0705bb'] = page;
+
       const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -312,24 +320,36 @@ export default {
       body: JSON.stringify({ deal_id: dealId, content: utmNote }),
     });
 
-    // 4. Email de notificação para comercial (apenas para leads de formulário)
+    // 4. Email de notificação — formulários (3 destinatários)
     if (isForm) {
-      const tipoFinal2 = tipo_evento || tipo;
-      const emailBody = [
-        `<p><strong>Novo lead via formulário — ${page}</strong></p>`,
-        `<table style="border-collapse:collapse;font-size:14px">`,
-        `<tr><td style="padding:4px 12px 4px 0;color:#666">Nome</td><td>${nome}</td></tr>`,
-        email ? `<tr><td style="padding:4px 12px 4px 0;color:#666">E-mail</td><td>${email}</td></tr>` : '',
-        whatsapp ? `<tr><td style="padding:4px 12px 4px 0;color:#666">WhatsApp</td><td>${whatsapp}</td></tr>` : '',
-        bairro ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Local/Bairro</td><td>${bairro}</td></tr>` : '',
-        cidade ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Cidade</td><td>${cidade}</td></tr>` : '',
-        tipoFinal2 ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Tipo de evento</td><td>${tipoFinal2}</td></tr>` : '',
-        data_evento ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Data</td><td>${data_evento}</td></tr>` : '',
-        (horario_inicio && horario_fim) ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Horário</td><td>${horario_inicio} às ${horario_fim}</td></tr>` : '',
-        publico_estimado ? `<tr><td style="padding:4px 12px 4px 0;color:#666">Público estimado</td><td>${publico_estimado}</td></tr>` : '',
-        `</table>`,
-        `<p style="margin-top:12px;font-size:12px;color:#999">utm_source: ${utm_source} | utm_campaign: ${utm_campaign} | deal #${dealId}</p>`,
-      ].filter(Boolean).join('');
+      const row = (label, val) => val ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:5px 0;font-weight:500">${val}</td></tr>` : '';
+      const emailBody = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+        <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
+          <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
+          <span style="color:rgba(255,255,255,.5);font-size:12px;margin-left:12px">Novo lead — ${pageLabel}</span>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px">
+          <table style="border-collapse:collapse;font-size:14px;width:100%">
+            ${row('Empresa', empresa)}
+            ${row('Nome', nome)}
+            ${row('WhatsApp', whatsapp)}
+            ${row('E-mail', email)}
+            ${row('Cidade', cidade)}
+            ${row('Tipo', tipoLabel || tipoFinal)}
+            ${row('Funcionários', funcionariosLabel)}
+            ${row('Local / Bairro', bairro)}
+            ${row('Data do evento', data_evento)}
+            ${row('Horário', (horario_inicio && horario_fim) ? `${horario_inicio} às ${horario_fim}` : null)}
+            ${row('Público estimado', publico_estimado)}
+          </table>
+          <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb">
+          <p style="font-size:12px;color:#9ca3af;margin:0">
+            🔗 ${utm_source} · 🎯 ${utm_campaign}
+            &nbsp;·&nbsp;
+            <a href="https://savior.pipedrive.com/deal/${dealId}" style="color:#00B87C">Ver deal #${dealId} no Pipedrive</a>
+          </p>
+        </div>
+      </div>`;
 
       if (env.RESEND_API_KEY) {
         await fetch('https://api.resend.com/emails', {
@@ -342,7 +362,7 @@ export default {
             from: 'Site Savior <noreply@savior.com.br>',
             to: ['comercial@savior.com.br'],
             cc: ['bzorman@savior.com.br', 'rmello@savior.com.br'],
-            subject: `[Lead ${page}] ${nome} — ${dateTag}`,
+            subject: `[Lead ${pageLabel}] ${empresa || nome} — ${dateTag}`,
             html: emailBody,
           }),
         }).catch((err) => console.error('Email send failed:', err));
