@@ -94,30 +94,83 @@ export default {
     // Nome da pessoa — WA click não tem nome real; usa timestamp como fallback
     const personName = nome?.trim() || `WA — ${page} — ${now}`;
 
-    // Título do deal: form usa nome do lead; WA click usa utm_campaign
+    // Labels legíveis para valores de enum
+    const tipoFinal = tipo_evento || tipo;
+    const tipoLabel = {
+      'area_protegida':   'Área Protegida',
+      'uti_movel':        'UTI Móvel',
+      'suporte_basico':   'Suporte Básico',
+      'suporte_avancado': 'Suporte Avançado',
+      'basica':           'Suporte Básico',
+      'avancada':         'UTI Móvel',
+    }[tipoFinal] || tipoFinal;
+
+    const funcionariosLabel = {
+      'ate_50':       'até 50',
+      '50_200':       '50 a 200',
+      '200_500':      '200 a 500',
+      '500_1000':     '500 a 1.000',
+      '1000_5000':    '1.000 a 5.000',
+      'acima_5000':   'acima de 5.000',
+    }[funcionarios] || funcionarios;
+
+    const pageLabel = {
+      'corporativo':    'CORPORATIVO',
+      'eventos-rj':     'EVENTOS RJ',
+      'eventos-sp':     'EVENTOS SP',
+      'ambulancia-rj':  'AMBULÂNCIA RJ',
+      'ambulancia-sp':  'AMBULÂNCIA SP',
+    }[page] || page.toUpperCase();
+
+    // Título do deal
     const isForm = type === 'deal';
     const dealTitle = isForm
-      ? `Form | ${page} | ${nome?.trim() || 'sem nome'} | ${dateTag}`
+      ? [empresa, nome?.trim() || 'sem nome', cidade].filter(Boolean).join(' | ')
       : `WA | ${page} | ${utm_campaign} | ${dateTag}`;
 
-    // Nota UTM — inclui todos os campos disponíveis
-    const tipoFinal = tipo_evento || tipo;
-    const utmNote = [
-      `utm_source: ${utm_source}`,
-      `utm_medium: ${utm_medium}`,
-      `utm_campaign: ${utm_campaign}`,
-      gclid ? `gclid: ${gclid}` : null,
-      `page: ${page}`,
-      lead_source ? `button: ${lead_source}` : null,
-      empresa ? `empresa: ${empresa}` : null,
-      cidade ? `cidade: ${cidade}` : null,
-      bairro ? `bairro/local: ${bairro}` : null,
-      tipoFinal ? `tipo: ${tipoFinal}` : null,
-      data_evento ? `data_evento: ${data_evento}` : null,
-      (horario_inicio && horario_fim) ? `horario: ${horario_inicio} às ${horario_fim}` : null,
-      publico_estimado ? `publico: ${publico_estimado}` : null,
-      funcionarios ? `funcionarios: ${funcionarios}` : null,
-    ].filter(Boolean).join(' | ');
+    // Nota estruturada no deal
+    const noteParts = [`🌐 LEAD DO SITE — ${pageLabel}\n`];
+
+    // Bloco contato
+    const contatoLine = [
+      empresa   ? `🏢 Empresa: ${empresa}` : null,
+      nome      ? `👤 Contato: ${nome.trim()}` : null,
+      whatsapp  ? `📱 WhatsApp: ${whatsapp}` : null,
+      email     ? `✉️ E-mail: ${email}` : null,
+    ].filter(Boolean).join('   ');
+    if (contatoLine) noteParts.push(contatoLine);
+
+    // Bloco evento (eventos)
+    const eventoLine = [
+      bairro          ? `📍 Local: ${bairro}` : null,
+      cidade          ? `🏙️ Cidade: ${cidade}` : null,
+      tipoFinal       ? `🎭 Tipo: ${tipoLabel}` : null,
+      data_evento     ? `📅 Data: ${data_evento}` : null,
+      (horario_inicio && horario_fim) ? `⏰ Horário: ${horario_inicio} às ${horario_fim}` : null,
+      publico_estimado ? `👥 Público: ${publico_estimado}` : null,
+    ].filter(Boolean).join('   ');
+    if (eventoLine) noteParts.push(eventoLine);
+
+    // Bloco corporativo
+    const corpLine = [
+      tipoFinal       ? `🚑 Cobertura: ${tipoLabel}` : null,
+      funcionarios    ? `👥 Funcionários: ${funcionariosLabel}` : null,
+    ].filter(Boolean).join('   ');
+    // evita duplicar se já foi para eventos
+    if (corpLine && !eventoLine.includes('Tipo')) noteParts.push(corpLine);
+
+    // Bloco UTM
+    const utmLine = [
+      `🔗 UTM Source: ${utm_source}`,
+      utm_medium !== 'none' ? `📡 Medium: ${utm_medium}` : null,
+      `🎯 Campaign: ${utm_campaign}`,
+      gclid ? `📌 GCLID: ${gclid}` : null,
+    ].filter(Boolean).join('   ');
+    noteParts.push(utmLine);
+
+    if (lead_source) noteParts.push(`🖱️ Botão: ${lead_source}`);
+
+    const utmNote = noteParts.join('\n');
 
     const token = env.PIPEDRIVE_TOKEN;
 
