@@ -229,6 +229,7 @@ export default {
           body: JSON.stringify({
             from: 'Site Savior <noreply@savior.com.br>',
             to: ['comercial@savior.com.br'],
+            cc: ['bzorman@savior.com.br', 'rmello@savior.com.br'],
             subject: `[Lead ${page}] ${nome} — ${dateTag}`,
             html: emailBody,
           }),
