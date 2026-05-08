@@ -223,6 +223,36 @@ export default {
       });
     }
 
+    // Mapeamento de campos customizados Pipedrive
+    // Tipo de cliente: 22247c... (enum)
+    const TIPO_CLIENTE_IDS = {
+      'area_protegida':   32,
+      'uti_movel':        36, // Hospital (mais próximo)
+      'suporte_basico':   35, // Particular
+      'suporte_avancado': 36,
+      'basica':           35,
+      'avancada':         36,
+    };
+    const TIPO_EVENTO_ID = 31; // Eventos
+
+    // BASE: 8cc112... (enum)
+    const BASE_IDS = {
+      'Rio de Janeiro': 37,
+      'São Paulo':      38,
+      'Sao Paulo':      38,
+    };
+    const baseId = BASE_IDS[cidade] ?? (cidade?.toLowerCase().includes('paulo') ? 38 : 37) ?? null;
+
+    // Funcionários: 8aab2b... (enum)
+    const FUNC_IDS = {
+      'ate_50':     44,
+      '50_200':     45,
+      '200_500':    46,
+      '500_1000':   47,
+      '1000_5000':  48,
+      'acima_5000': 49,
+    };
+
     // 2b. Lead com dados → Deal na pipeline
     const dealPayload = {
       title: dealTitle,
@@ -232,6 +262,35 @@ export default {
       person_id: personId,
     };
     if (orgId) dealPayload.org_id = orgId;
+
+    // Campos customizados: Tipo de cliente
+    const isEvento = ['eventos-rj','eventos-sp','eventos'].includes(page);
+    const tipoClienteId = isEvento
+      ? TIPO_EVENTO_ID
+      : (TIPO_CLIENTE_IDS[tipoFinal] ?? null);
+    if (tipoClienteId) dealPayload['22247c3025a677f2dd4d7ab63548fecb08f05e2f'] = tipoClienteId;
+
+    // BASE (cidade)
+    if (baseId) dealPayload['8cc112e07d103997aa14b34442fa7a51cb0d2d91'] = baseId;
+
+    // Número de Funcionários (corporativo)
+    if (funcionarios && FUNC_IDS[funcionarios]) dealPayload['8aab2b8f637ca74139c12f21689a6537e3d25679'] = FUNC_IDS[funcionarios];
+
+    // Data do Evento (eventos)
+    if (data_evento) dealPayload['79d2372ceaddba4b964ec8430db391885066e5f9'] = data_evento;
+
+    // Horário do Evento (eventos)
+    if (horario_inicio && horario_fim) dealPayload['f3f5ba8126a7db3b7dfb4c7cb6e6d29bfbce3ee9'] = `${horario_inicio} às ${horario_fim}`;
+
+    // Público Estimado (eventos)
+    if (publico_estimado) dealPayload['f175f9f18f186ec492358d38ff0b8dccc49c1f40'] = Number(publico_estimado) || publico_estimado;
+
+    // Local / Bairro (eventos)
+    if (bairro) dealPayload['b6079a8778fa397928f1a0be04ccdf8435dad258'] = bairro;
+
+    // UTM Source e Campaign
+    if (utm_source && utm_source !== 'direct') dealPayload['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = utm_source;
+    if (utm_campaign && utm_campaign !== 'none') dealPayload['2400cc71ad7a60be9480f1ce3a05b08f70caefc4'] = utm_campaign;
 
     const dealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
       method: 'POST',
