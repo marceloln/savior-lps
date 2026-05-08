@@ -603,7 +603,7 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
 
         // Lead → n8n → Pipedrive (fire-and-forget)
         var evUtm = window._saviorUtm || {};
-        fetch('https://n8n-savior.onrender.com/webhook/savior-lead', {
+        fetch('https://savior-lead-capture.marcelo-nascimento.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

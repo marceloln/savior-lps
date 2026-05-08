@@ -592,7 +592,7 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
         }
 
         var evUtm = window._saviorUtm || {};
-        fetch('https://n8n-savior.onrender.com/webhook/savior-lead', {
+        fetch('https://savior-lead-capture.marcelo-nascimento.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
