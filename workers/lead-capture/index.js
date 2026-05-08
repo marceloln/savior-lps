@@ -121,14 +121,43 @@ export default {
       }
     }
 
-    // 2. Criar Deal
+    // 2a. WA anônimo → Leads inbox (sem pipeline, sem person)
+    if (!hasContactData) {
+      const leadRes = await fetch(`${PIPEDRIVE_API}/leads?api_token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: dealTitle }),
+      });
+      const leadData = await leadRes.json();
+      const leadId = leadData?.data?.id;
+
+      if (!leadId) {
+        console.error('Pipedrive lead create failed:', JSON.stringify(leadData));
+        return new Response('Lead create error', { status: 500 });
+      }
+
+      // Nota UTM no lead
+      await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead_id: leadId, content: utmNote }),
+      });
+
+      console.log(`Lead (inbox) criado: lead=${leadId} page=${page}`);
+      return new Response(JSON.stringify({ ok: true, lead_id: leadId }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      });
+    }
+
+    // 2b. Lead com dados → Deal na pipeline
     const dealPayload = {
       title: dealTitle,
       pipeline_id: pipelineId,
       stage_id: stageId,
       status: 'open',
+      person_id: personId,
     };
-    if (personId) dealPayload.person_id = personId;
 
     const dealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
       method: 'POST',
@@ -150,8 +179,7 @@ export default {
       body: JSON.stringify({ deal_id: dealId, content: utmNote }),
     });
 
-    console.log(`Lead criado: person=${personId} deal=${dealId} pipeline=${pipelineId} page=${page}`);
-
+    console.log(`Deal criado: person=${personId} deal=${dealId} pipeline=${pipelineId} page=${page}`);
     return new Response(JSON.stringify({ ok: true, person_id: personId, deal_id: dealId }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', ...corsHeaders() },
