@@ -8,7 +8,14 @@ import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
-import { CONTACT_RJ } from '../data/savior';
+import { CONTACT_RJ, CONTACT_SP, whatsappUrl } from '../data/savior';
+
+const waHeroRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corporativo-rj', 'Oi, gostaria de uma proposta corporativa da Savior.', 'hero');
+const waHeroSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corporativo-sp', 'Oi, gostaria de uma proposta corporativa da Savior.', 'hero');
+const waFormRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corporativo-rj', 'Oi, gostaria de uma proposta corporativa da Savior.', 'form');
+const waFormSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corporativo-sp', 'Oi, gostaria de uma proposta corporativa da Savior.', 'form');
+const waFinalRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corporativo-rj', 'Oi, gostaria de uma proposta corporativa da Savior.', 'cta-final');
+const waFinalSPHref = whatsappUrl(CONTACT_SP.whatsapp, 'corporativo-sp', 'Oi, gostaria de uma proposta corporativa da Savior.', 'cta-final');
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -122,9 +129,13 @@ const faqItems = [
       <span class="corp-sh-tag">Corporativo</span>
     </div>
     <div class="corp-sh-actions">
-      <a href="tel:+552131713030" class="corp-sh-phone" data-phone data-campaign="corporativo" data-location="header">
+      <a href={waHeroRJHref} class="corp-sh-phone" data-whatsapp data-campaign="corporativo-rj" data-location="header" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        (21) 3171-3030
+        RJ (21) 98035-8200
+      </a>
+      <a href={waHeroSPHref} class="corp-sh-phone corp-sh-phone--sp" data-whatsapp data-campaign="corporativo-sp" data-location="header" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        SP (11) 94486-1329
       </a>
       <a href="#proposta" class="btn btn-primary corp-sh-cta">Solicitar proposta</a>
     </div>
@@ -175,9 +186,13 @@ const faqItems = [
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             Solicitar proposta
           </a>
-          <a href="tel:+552131713030" class="btn btn-secondary on-dark" data-phone data-campaign="corporativo" data-location="hero">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            (21) 3171-3030
+          <a href={waHeroRJHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-rj" data-location="hero" target="_blank" rel="noopener">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+            WA Rio de Janeiro
+          </a>
+          <a href={waHeroSPHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-sp" data-location="hero" target="_blank" rel="noopener">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+            WA São Paulo
           </a>
         </div>
         <div class="corp-hero-rating" role="img" aria-label="4,7 estrelas — 730 avaliações no Google">
@@ -576,7 +591,7 @@ const faqItems = [
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Enviar solicitação
           </button>
-          <p class="corp-form-note">Ou fale direto com o Carlos: <a href="https://wa.me/5521980358200?text=Ol%C3%A1%2C%20gostaria%20de%20uma%20proposta%20corporativa%20da%20Savior.%20%5Bsavior-corporativo-wpp-v01%5D" target="_blank" rel="noopener" data-whatsapp data-campaign="corporativo" data-location="form"><strong>(21) 98035-8200 via WhatsApp</strong></a></p>
+          <p class="corp-form-note">Ou fale direto: <a href={waFormRJHref} target="_blank" rel="noopener" data-whatsapp data-campaign="corporativo-rj" data-location="form"><strong>RJ (21) 98035-8200</strong></a> · <a href={waFormSPHref} target="_blank" rel="noopener" data-whatsapp data-campaign="corporativo-sp" data-location="form"><strong>SP (11) 94486-1329</strong></a></p>
         </form>
       </div>
     </div>
@@ -604,9 +619,13 @@ const faqItems = [
         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
         Solicitar proposta
       </a>
-      <a href="tel:+551137960058" class="btn btn-secondary on-dark" data-phone data-campaign="corporativo" data-location="cta_final">
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        SP (11) 3796-0058
+      <a href={waFinalRJHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-rj" data-location="cta-final" target="_blank" rel="noopener">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+        WA Rio de Janeiro
+      </a>
+      <a href={waFinalSPHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-sp" data-location="cta-final" target="_blank" rel="noopener">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+        WA São Paulo
       </a>
     </div>
   </div>
@@ -621,7 +640,7 @@ const faqItems = [
 />
 
 <!-- ═══ FLOATING WHATSAPP ═══ -->
-<FloatingWhatsApp waCampaign="corporativo" />
+<FloatingWhatsApp waCampaign="corporativo-rj" contactSP={CONTACT_SP} />
 
 <!-- ═══ SCRIPTS ═══ -->
 <script is:inline>
@@ -782,6 +801,8 @@ const faqItems = [
   .corp-sh-phone svg { width: 14px; height: 14px; }
   .corp-sh-phone:hover { color: var(--green-bright); }
   @media (min-width: 640px) { .corp-sh-phone { display: flex; } }
+  .corp-sh-phone--sp { color: rgba(255,255,255,.5); }
+  @media (max-width: 767px) { .corp-sh-phone--sp { display: none; } }
   .corp-sh-cta { padding: 8px 16px; font-size: 13px; min-height: 36px; }
 
   /* ── Hero ── */
