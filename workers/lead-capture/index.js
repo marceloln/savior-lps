@@ -323,6 +323,8 @@ export default {
     // 4. Email de notificação — formulários (3 destinatários)
     if (isForm) {
       const row = (label, val) => val ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:5px 0;font-weight:500">${val}</td></tr>` : '';
+      const btn = (href, color, text) => `<a href="${href}" style="display:inline-block;padding:10px 20px;background:${color};color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">${text}</a>`;
+      const waLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g,'')}` : null;
       const emailBody = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
         <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
           <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
@@ -342,12 +344,13 @@ export default {
             ${row('Horário', (horario_inicio && horario_fim) ? `${horario_inicio} às ${horario_fim}` : null)}
             ${row('Público estimado', publico_estimado)}
           </table>
-          <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb">
-          <p style="font-size:12px;color:#9ca3af;margin:0">
-            🔗 ${utm_source} · 🎯 ${utm_campaign}
-            &nbsp;·&nbsp;
-            <a href="https://savior.pipedrive.com/deal/${dealId}" style="color:#00B87C">Ver deal #${dealId} no Pipedrive</a>
-          </p>
+          <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+            ${waLink ? btn(waLink, '#25D366', '💬 Responder no WhatsApp') : ''}
+            ${email ? btn(`mailto:${email}`, '#0B2540', '✉️ Enviar e-mail') : ''}
+            ${btn(`https://savior.pipedrive.com/deal/${dealId}`, '#00B87C', '📋 Ver no Pipedrive')}
+          </div>
+          <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
+          <p style="font-size:12px;color:#9ca3af;margin:0">🔗 ${utm_source} · 🎯 ${utm_campaign}</p>
         </div>
       </div>`;
 
