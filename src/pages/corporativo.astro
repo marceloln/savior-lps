@@ -195,11 +195,11 @@ const faqItems = [
           </a>
           <a href={waHeroRJHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-rj" data-location="hero" target="_blank" rel="noopener">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
-            WA Rio de Janeiro
+            WA RJ
           </a>
           <a href={waHeroSPHref} class="btn btn-secondary on-dark" data-whatsapp data-campaign="corporativo-sp" data-location="hero" target="_blank" rel="noopener">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
-            WA São Paulo
+            WA SP
           </a>
         </div>
         <div class="corp-hero-rating" role="img" aria-label="4,7 estrelas — 730 avaliações no Google">
@@ -836,7 +836,8 @@ const faqItems = [
   .corp-hero h1 { color: #fff; font-size: clamp(34px,5.2vw,56px); margin-bottom: clamp(20px,3vh,32px); }
   @media (max-width: 480px) { .corp-hero h1 { font-size: 30px; } }
   .corp-hero-sub { font-size: clamp(15px,1.4vw,17px); color: #ffffffd1; max-width: 520px; margin-bottom: clamp(28px,3.6vh,40px); line-height: 1.55; }
-  .corp-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .corp-hero-ctas { display: flex; gap: 10px; flex-wrap: nowrap; margin-bottom: 16px; align-items: center; }
+  .corp-hero-ctas .btn { padding: 12px 16px; font-size: 14px; white-space: nowrap; }
   .corp-hero-rating { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
   .corp-hero-right { border-left: 1px solid rgba(255,255,255,.12); padding-left: clamp(20px,3vw,40px); }
   @media (max-width: 960px) {
