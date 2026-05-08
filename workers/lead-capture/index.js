@@ -144,30 +144,12 @@ export default {
       }
     }
 
-    // 2a. WA anônimo → Leads inbox (sem pipeline, sem person)
+    // 2a. WA anônimo — sem dados de contato, não há como dar follow-up.
+    //     Pipedrive exige person_id ou org_id para criar Lead.
+    //     Esses cliques já são rastreados via GA4/GTM. Retorna OK silenciosamente.
     if (!hasContactData) {
-      const leadRes = await fetch(`${PIPEDRIVE_API}/leads?api_token=${token}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: dealTitle }),
-      });
-      const leadData = await leadRes.json();
-      const leadId = leadData?.data?.id;
-
-      if (!leadId) {
-        console.error('Pipedrive lead create failed:', JSON.stringify(leadData));
-        return new Response('Lead create error', { status: 500 });
-      }
-
-      // Nota UTM no lead
-      await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lead_id: leadId, content: utmNote }),
-      });
-
-      console.log(`Lead (inbox) criado: lead=${leadId} page=${page}`);
-      return new Response(JSON.stringify({ ok: true, lead_id: leadId }), {
+      console.log(`WA click anônimo ignorado (sem dados): page=${page} campaign=${utm_campaign}`);
+      return new Response(JSON.stringify({ ok: true, skipped: true }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...corsHeaders() },
       });
