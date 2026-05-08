@@ -10,7 +10,7 @@ import StickyHeader from '../components/StickyHeader.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
-import { whatsappUrl, CONTACT_RJ, BRAND, METRICS } from '../data/savior';
+import { whatsappUrl, CONTACT_RJ, CONTACT_SP, BRAND, METRICS } from '../data/savior';
 
 // ============ SEO ============
 const title = 'Tipos de Ambulância: Básica, UTI e Neonatal | Savior';
@@ -128,8 +128,8 @@ const schema = JSON.stringify({
   dateModified="2026-04-29"
 >
 
-  <StickyHeader waCampaign={waCampaign} />
-  <FloatingWhatsApp waCampaign={waCampaign} />
+  <StickyHeader waCampaign={waCampaign} contactSP={CONTACT_SP} />
+  <FloatingWhatsApp waCampaign={waCampaign} contactSP={CONTACT_SP} />
 
   <main id="main">
 

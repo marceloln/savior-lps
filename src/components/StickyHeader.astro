@@ -37,11 +37,15 @@ const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             RJ {contact.phone}
           </a>
+          <a class="sh-phone" href={`tel:${contactSP!.phoneLandlineHref}`} data-phone data-campaign={waCampaign.replace('rj','sp')} data-event-label="sticky-phone-sp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.19 13.9a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.1 3.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            SP {contactSP!.phoneLandline}
+          </a>
           <a class="sh-wa" href={waHref} target="_blank" rel="noopener" data-whatsapp data-event="cta_click" data-event-category="conversion" data-location="sticky" data-event-label="sticky-whatsapp-rj">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={WA_PATH}/></svg>
             WA RJ
           </a>
-          <a class="sh-wa sh-wa--sp" href={waHrefSP} target="_blank" rel="noopener" data-whatsapp data-event="cta_click" data-event-category="conversion" data-location="sticky" data-event-label="sticky-whatsapp-sp">
+          <a class="sh-wa" href={waHrefSP} target="_blank" rel="noopener" data-whatsapp data-event="cta_click" data-event-category="conversion" data-location="sticky" data-event-label="sticky-whatsapp-sp">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={WA_PATH}/></svg>
             WA SP
           </a>
@@ -173,20 +177,22 @@ const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.
       align-items: center;
       gap: 7px;
       padding: 9px 18px;
-      background: var(--green);
-      color: var(--navy-deep);
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
       border-radius: 4px;
       font-family: var(--sans);
-      font-weight: 700;
+      font-weight: 600;
       font-size: 14px;
       letter-spacing: -0.01em;
       text-decoration: none;
-      transition: filter 0.15s;
+      transition: all 0.15s;
       white-space: nowrap;
     }
 
     .sh-phone:hover {
-      filter: brightness(1.1);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.6);
     }
 
     .sh-phone svg {
@@ -224,14 +230,7 @@ const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.
     }
 
     .sh-wa--sp {
-      background: var(--green);
-      color: var(--navy-deep);
-      border-color: var(--green);
-    }
-
-    .sh-wa--sp:hover {
-      background: var(--green-dark);
-      border-color: var(--green-dark);
+      /* same ghost style — no override needed */
     }
 
     .sh-nav {

@@ -129,13 +129,21 @@ const faqItems = [
       <span class="corp-sh-tag">Corporativo</span>
     </div>
     <div class="corp-sh-actions">
-      <a href={waHeroRJHref} class="corp-sh-phone" data-whatsapp data-campaign="corporativo-rj" data-location="header" target="_blank" rel="noopener">
+      <a href="tel:+552131713030" class="corp-sh-phone" data-phone data-campaign="corporativo-rj" data-location="header">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        RJ (21) 98035-8200
+        RJ (21) 3171-3030
       </a>
-      <a href={waHeroSPHref} class="corp-sh-phone corp-sh-phone--sp" data-whatsapp data-campaign="corporativo-sp" data-location="header" target="_blank" rel="noopener">
+      <a href="tel:+551137960058" class="corp-sh-phone" data-phone data-campaign="corporativo-sp" data-location="header">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        SP (11) 94486-1329
+        SP (11) 3796-0058
+      </a>
+      <a href={waHeroRJHref} class="corp-sh-phone" data-whatsapp data-campaign="corporativo-rj" data-location="header" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+        WA RJ
+      </a>
+      <a href={waHeroSPHref} class="corp-sh-phone" data-whatsapp data-campaign="corporativo-sp" data-location="header" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm4.52 14.17c-.19.54-.95 1-1.54 1.13-.4.08-.92.15-2.68-.56-2.25-.94-3.68-3.21-3.79-3.36-.11-.15-.91-1.21-.91-2.31s.58-1.65.78-1.87c.21-.22.45-.28.6-.28l.43.01c.14.01.32-.05.5.38.19.45.64 1.55.7 1.66.06.11.1.24.02.39-.08.15-.12.24-.23.37l-.35.41c-.11.11-.23.24-.1.47.13.23.58.95 1.24 1.54.85.76 1.57.99 1.79 1.1.23.11.36.09.49-.06.13-.15.56-.66.71-.88.15-.22.3-.19.51-.11.21.08 1.32.62 1.55.74.23.11.38.17.43.27.06.1.06.58-.13 1.13z"/></svg>
+        WA SP
       </a>
       <a href="#proposta" class="btn btn-primary corp-sh-cta">Solicitar proposta</a>
     </div>
@@ -801,8 +809,6 @@ const faqItems = [
   .corp-sh-phone svg { width: 14px; height: 14px; }
   .corp-sh-phone:hover { color: var(--green-bright); }
   @media (min-width: 640px) { .corp-sh-phone { display: flex; } }
-  .corp-sh-phone--sp { color: rgba(255,255,255,.5); }
-  @media (max-width: 767px) { .corp-sh-phone--sp { display: none; } }
   .corp-sh-cta { padding: 8px 16px; font-size: 13px; min-height: 36px; }
 
   /* ── Hero ── */
