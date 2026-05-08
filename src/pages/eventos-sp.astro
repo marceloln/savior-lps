@@ -6,7 +6,6 @@
 // ============================================================
 
 import Base from '../layouts/Base.astro';
-import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
 import { CONTACT_SP, BRAND, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
@@ -643,7 +642,6 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
     }
   </script>
 
-  <FloatingWhatsApp contact={CONTACT_SP} waCampaign="eventos-sp" />
   <style>
     @media (max-width: 960px) { .fw { bottom: 76px; } }
   </style>

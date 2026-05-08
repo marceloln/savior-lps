@@ -6,7 +6,6 @@
 // ============================================================
 
 import Base from '../layouts/Base.astro';
-import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
@@ -650,7 +649,6 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos', WA_MSG, 'float');
   </script>
 
   <!-- ═══ FLOATING WHATSAPP — mobile, sobe acima do Blip ═══ -->
-  <FloatingWhatsApp waCampaign="eventos" />
   <style>
     /* Sobe o pill de WA para não sobrepor o launcher do Blip no mobile */
     @media (max-width: 960px) { .fw { bottom: 76px; } }

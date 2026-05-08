@@ -7,7 +7,6 @@
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
-import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import { CONTACT_RJ, CONTACT_SP, whatsappUrl } from '../data/savior';
 
 const waHeroRJHref = whatsappUrl(CONTACT_RJ.whatsapp, 'corporativo-rj', 'Oi, gostaria de uma proposta corporativa da Savior.', 'hero');
@@ -648,7 +647,6 @@ const faqItems = [
 />
 
 <!-- ═══ FLOATING WHATSAPP ═══ -->
-<FloatingWhatsApp waCampaign="corporativo-rj" contactSP={CONTACT_SP} />
 
 <!-- ═══ SCRIPTS ═══ -->
 <script is:inline>
