@@ -101,7 +101,7 @@ const BAIRROS_SP = [
         </div>
       ) : (
         /* Contatos single-city (ambulancia-rj / ambulancia-sp) */
-        <div class="ft-contacts">
+        <div class="ft-contacts ft-contacts--single">
           <div class="ft-contact-block">
             <span class="ft-contact-label">Emergência 24h</span>
             <a href={`tel:${contact.phoneHref}`} class="ft-contact-main">{contact.phone}</a>
@@ -257,6 +257,11 @@ const BAIRROS_SP = [
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 32px;
+  }
+
+  /* Single-city: telefones tomam só o espaço necessário; e-mail e endereço dividem o resto */
+  .ft-contacts--single {
+    grid-template-columns: max-content max-content 1fr 1.3fr;
   }
 
   .ft-contact-block {
