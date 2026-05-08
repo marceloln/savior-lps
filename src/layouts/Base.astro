@@ -322,7 +322,10 @@ const absoluteTwitterImage = twitterImage
             if (typeof window.fbq === 'function') window.fbq('track', 'Lead', { value: waValue, currency: 'BRL', content_name: 'WhatsApp - ' + waLabel });
           }
 
-          // Lead WA → n8n → Pipedrive (fire-and-forget)
+          // Lead WA → Pipedrive (fire-and-forget, debounce 5s por página)
+          var _now = Date.now();
+          if (window._leadSentAt && (_now - window._leadSentAt) < 5000) break;
+          window._leadSentAt = _now;
           var utm = window._saviorUtm || {};
           fetch('https://savior-lead-capture.marcelo-nascimento.workers.dev', {
             method: 'POST',

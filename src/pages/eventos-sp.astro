@@ -573,6 +573,10 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
     if (form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
+        if (form.dataset.submitting) return;
+        form.dataset.submitting = '1';
+        var btn = form.querySelector('.ev-form-submit');
+        if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
         var nome   = document.getElementById('f-nome').value.trim();
         var email  = document.getElementById('f-email').value.trim();
         var wa     = document.getElementById('f-whatsapp').value.trim();
