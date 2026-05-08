@@ -19,9 +19,10 @@
  */
 
 const PAGE_PIPELINE = {
-  'eventos-rj':  8,
-  'eventos-sp':  9,
-  'corporativo': 10,  // default RJ; muda pra 11 se utm_campaign/lead_source contiver "sp"
+  'eventos-rj':    8,
+  'eventos-sp':    9,
+  'corporativo':   10,
+  'corporativo-sp': 11,
 };
 
 const PIPELINE_STAGE_NOVO_LEAD = {
@@ -51,6 +52,10 @@ export default {
       nome = '',
       email = '',
       whatsapp = '',
+      empresa = '',
+      cidade = '',
+      tipo = '',
+      funcionarios = '',
       lead_source = '',
       utm_source = 'direct',
       utm_medium = 'none',
@@ -85,7 +90,7 @@ export default {
     // Título do deal: legível e rastreável (não usa lead_source que é posição do botão)
     const dealTitle = `WA | ${page} | ${utm_campaign} | ${dateTag}`;
 
-    // Nota UTM — inclui posição do botão (lead_source) para análise
+    // Nota UTM — inclui posição do botão e campos corporativo quando presentes
     const utmNote = [
       `utm_source: ${utm_source}`,
       `utm_medium: ${utm_medium}`,
@@ -93,6 +98,10 @@ export default {
       gclid ? `gclid: ${gclid}` : null,
       `page: ${page}`,
       lead_source ? `button: ${lead_source}` : null,
+      empresa ? `empresa: ${empresa}` : null,
+      cidade ? `cidade: ${cidade}` : null,
+      tipo ? `tipo: ${tipo}` : null,
+      funcionarios ? `funcionarios: ${funcionarios}` : null,
     ].filter(Boolean).join(' | ');
 
     const token = env.PIPEDRIVE_TOKEN;
@@ -100,12 +109,26 @@ export default {
     // 1. Criar Pessoa — apenas se houver dados reais (nome, email ou whatsapp)
     //    Cliques WA anônimos não geram Person para não poluir contatos
     let personId = null;
+    let orgId = null;
     const hasContactData = nome?.trim() || email || whatsapp;
 
     if (hasContactData) {
+      // 1a. Criar Organization para leads corporativos com empresa
+      if (empresa) {
+        const orgRes = await fetch(`${PIPEDRIVE_API}/organizations?api_token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: empresa }),
+        });
+        const orgData = await orgRes.json();
+        orgId = orgData?.data?.id ?? null;
+      }
+
+      // 1b. Criar Person
       const personPayload = { name: personName };
       if (email) personPayload.email = [{ value: email, primary: true }];
       if (whatsapp) personPayload.phone = [{ value: whatsapp, label: 'whatsapp', primary: true }];
+      if (orgId) personPayload.org_id = orgId;
 
       const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
         method: 'POST',
@@ -158,6 +181,7 @@ export default {
       status: 'open',
       person_id: personId,
     };
+    if (orgId) dealPayload.org_id = orgId;
 
     const dealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
       method: 'POST',
