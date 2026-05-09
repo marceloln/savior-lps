@@ -27,21 +27,25 @@ const waHref = whatsappUrl(
   'final-cta'
 );
 
-const photoSrc = `/img/atendentes/SAVIOR_ATEND_${photo}.png`;
+const photoWebp = `/img/atendentes/SAVIOR_ATEND_${photo}.webp`;
+const photoPng  = `/img/atendentes/SAVIOR_ATEND_${photo}.png`;
 ---
 
 <section class="final-cta">
   <div class="wrap">
     <div class="fc-layout">
       <div class="fc-photo" aria-hidden="true">
-        <img
-          src={photoSrc}
-          alt=""
-          width="420"
-          height="560"
-          loading="lazy"
-          decoding="async"
-        />
+        <picture>
+          <source srcset={photoWebp} type="image/webp" />
+          <img
+            src={photoPng}
+            alt=""
+            width="450"
+            height="450"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
       </div>
 
       <div class="fc-content">
@@ -113,8 +117,16 @@ const photoSrc = `/img/atendentes/SAVIOR_ATEND_${photo}.png`;
 
   /* ── Photo column ── */
   .fc-photo {
-    flex: 0 0 360px;
-    align-self: flex-end;
+    flex: 0 0 400px;
+    align-self: stretch;
+    line-height: 0;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .fc-photo picture {
+    display: block;
+    width: 100%;
     line-height: 0;
   }
 
@@ -122,7 +134,7 @@ const photoSrc = `/img/atendentes/SAVIOR_ATEND_${photo}.png`;
     display: block;
     width: 100%;
     height: auto;
-    max-height: 520px;
+    max-height: 560px;
     object-fit: contain;
     object-position: bottom center;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%);

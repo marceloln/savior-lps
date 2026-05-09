@@ -40,6 +40,12 @@ export default {
       return new Response('Method Not Allowed', { status: 405 });
     }
 
+    // Roteamento por pathname
+    const url = new URL(request.url);
+    if (url.pathname === '/blip-webhook') {
+      return handleBlipWebhook(request, env);
+    }
+
     let body;
     try {
       body = await request.json();
@@ -379,6 +385,55 @@ export default {
     });
   },
 };
+
+// ============================================================
+// Blip Webhook — recebe evento de nova conversa do Blip Builder
+// e envia evento blip_contact ao GA4 via Measurement Protocol.
+// Retorna 200 OK sempre — Blip não reprocessa em caso de erro.
+// ============================================================
+async function handleBlipWebhook(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return new Response('OK', { status: 200, headers: corsHeaders() }); }
+
+  const msg      = body.first_message || '';
+  const extras   = body.extras || {};
+
+  // Extrair da mensagem (fallback: extras já pré-processados pelo Blip)
+  const tagMatch    = msg.match(/\[([a-z0-9_-]{3,60})\]/i);
+  const gclidMatch  = msg.match(/\[gclid:([^\]]+)\]/);
+  const gaMatch     = msg.match(/\[ga:([0-9.]+)\]/);
+
+  const campaign  = extras.utm_tag    || (tagMatch   ? tagMatch[1]   : 'blip-direct');
+  const gclid     = extras.gclid      || (gclidMatch  ? gclidMatch[1] : '');
+  const clientId  = extras.ga_client_id || (gaMatch  ? gaMatch[1]    : '');
+
+  console.log(`Blip webhook: contact=${body.contact_id} campaign=${campaign} ga=${clientId}`);
+
+  // Enviar para GA4 Measurement Protocol
+  if (env.GA4_MEASUREMENT_ID && env.GA4_MP_SECRET) {
+    const mpPayload = {
+      client_id: clientId || ('blip-' + Date.now()),
+      events: [{
+        name: 'blip_contact',
+        params: {
+          campaign,
+          gclid,
+          contact_id: body.contact_id || '',
+          engagement_time_msec: 1,
+        },
+      }],
+    };
+    const mpRes = await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${env.GA4_MEASUREMENT_ID}&api_secret=${env.GA4_MP_SECRET}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mpPayload) }
+    ).catch(err => { console.error('GA4 MP error:', err); return null; });
+    if (mpRes) console.log('GA4 MP status:', mpRes.status);
+  } else {
+    console.warn('GA4_MEASUREMENT_ID ou GA4_MP_SECRET não configurado — evento não enviado');
+  }
+
+  return new Response('OK', { status: 200, headers: corsHeaders() });
+}
 
 function corsHeaders() {
   return {
