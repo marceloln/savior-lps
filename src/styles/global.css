@@ -447,6 +447,8 @@ strong { font-weight: 600; }
   max-height: 560px;
   object-fit: contain;
   object-position: bottom center;
+  transform: scale(1.10) translateX(-14px);
+  transform-origin: bottom center;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%);
   mask-image: linear-gradient(to right, transparent 0%, black 14%);
 }
