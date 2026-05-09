@@ -1,0 +1,38 @@
+name: Update Stats JSON
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # a cada 2 horas
+  workflow_dispatch:          # permite rodar manualmente
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-ads google-analytics-data requests
+
+      - name: Write credentials file
+        run: |
+          mkdir -p ~/.config/prill
+          echo '${{ secrets.GOOGLE_ADS_CREDS_JSON }}' > ~/.config/prill/google-ads.json
+
+      - name: Generate stats JSON
+        run: python3 scripts/funil_json.py public/stats-data.json
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/stats-data.json
+          git diff --cached --quiet || git commit -m "chore: update stats-data.json [skip ci]"
+          git push
