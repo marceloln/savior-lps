@@ -423,20 +423,22 @@ strong { font-weight: 600; }
 /* Foto à esquerda + conteúdo à direita em todos os CTAs finais */
 .atend-layout {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
+  min-height: 420px;
 }
 
 .atend-photo {
   flex: 0 0 340px;
-  align-self: flex-end;
   line-height: 0;
+  display: flex;
+  align-items: flex-end;
 }
 
 .atend-photo img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 500px;
+  max-height: 520px;
   object-fit: contain;
   object-position: bottom center;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%);
@@ -445,17 +447,28 @@ strong { font-weight: 600; }
 
 .atend-content {
   flex: 1;
-  padding: 64px 48px 64px 28px;
+  padding: 56px 48px 56px 28px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.atend-content h2 {
+  font-size: clamp(36px, 5.2vw, 58px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 860px) {
   .atend-photo { flex: 0 0 240px; }
-  .atend-content { padding: 48px 28px 48px 16px; }
+  .atend-content { padding: 44px 24px 44px 16px; }
 }
 
 @media (max-width: 640px) {
-  .atend-layout { flex-direction: column; align-items: center; }
+  .atend-layout { flex-direction: column; align-items: center; min-height: unset; }
   .atend-photo {
     flex: none;
     width: 52%;
@@ -466,4 +479,5 @@ strong { font-weight: 600; }
   }
   .atend-photo img { max-height: 240px; -webkit-mask-image: none; mask-image: none; }
   .atend-content { padding: 20px 16px 44px; text-align: center; }
+  .atend-content h2 { font-size: clamp(28px, 7vw, 40px); }
 }
