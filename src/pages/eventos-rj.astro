@@ -543,17 +543,24 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
     <!-- ═══ 12. CTA FINAL ═══ -->
     <section class="ev-fcta" aria-labelledby="fcta-heading">
       <div class="wrap">
-        <h2 id="fcta-heading">Tem um evento?<br><em>A gente cuida da saúde de quem vai.</em></h2>
-        <p>Conte o tipo, a data e o tamanho. A Savior monta o plano médico e envia a proposta.</p>
-        <div class="ev-fcta-btns">
-          <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos-rj" data-location="cta">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            RJ {CONTACT_RJ.phone}
-          </a>
-          <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_SP.phoneLandlineHref}`} data-phone data-campaign="eventos-rj" data-location="cta-sp">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            SP {CONTACT_SP.phoneLandline}
-          </a>
+        <div class="atend-layout">
+          <div class="atend-photo" aria-hidden="true">
+            <img src="/img/atendentes/SAVIOR_ATEND_3.png" alt="" width="340" height="480" loading="lazy" decoding="async" />
+          </div>
+          <div class="atend-content">
+            <h2 id="fcta-heading">Tem um evento?<br><em>A gente cuida da saúde de quem vai.</em></h2>
+            <p>Conte o tipo, a data e o tamanho. A Savior monta o plano médico e envia a proposta.</p>
+            <div class="ev-fcta-btns">
+              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos-rj" data-location="cta">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                RJ {CONTACT_RJ.phone}
+              </a>
+              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_SP.phoneLandlineHref}`} data-phone data-campaign="eventos-rj" data-location="cta-sp">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                SP {CONTACT_SP.phoneLandline}
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -896,11 +903,12 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
   .ev-form-note { font-size: 11px; color: var(--gray); margin-top: 12px; text-align: center; line-height: 1.5; }
 
   /* ── Final CTA ── */
-  .ev-fcta { padding: var(--space-block) 0; background: var(--navy-deep); text-align: center; color: #fff; }
+  .ev-fcta { background: var(--navy-deep); color: #fff; overflow: hidden; }
+  .ev-fcta .wrap { padding-top: 0; padding-bottom: 0; }
   .ev-fcta h2 { color: #fff; margin-bottom: 16px; }
   .ev-fcta h2 em { color: var(--green-bright); font-style: normal; }
   .ev-fcta p { color: #ffffffc7; margin-bottom: 28px; font-size: 16px; }
-  .ev-fcta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .ev-fcta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 
   /* ── Footer ── */
   .ev-footer { background: #050f1c; color: #fff9; padding: 48px 0 28px; font-size: 13px; }

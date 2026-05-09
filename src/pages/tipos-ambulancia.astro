@@ -770,13 +770,18 @@ const schema = JSON.stringify({
 
     <!-- ═══ 12. CTA FINAL ═══ -->
     <section class="ta-cta-final" aria-labelledby="cta-heading">
-      <div class="wrap" style="text-align:center">
-        <p class="eyebrow on-dark" style="margin-bottom:14px">CENTRAL 24 HORAS</p>
-        <h2 id="cta-heading">Precisa de uma ambulância? <em>A Savior está pronta</em></h2>
-        <p class="ta-cta-sub">
-          {BRAND.yearsOperating} anos de operação. Frota própria. A gente escuta o quadro e envia a ambulância adequada para o seu caso.
-        </p>
-        <div class="ta-cta-btns">
+      <div class="wrap">
+        <div class="atend-layout">
+          <div class="atend-photo" aria-hidden="true">
+            <img src="/img/atendentes/SAVIOR_ATEND_2.png" alt="" width="340" height="480" loading="lazy" decoding="async" />
+          </div>
+          <div class="atend-content">
+            <p class="eyebrow on-dark" style="margin-bottom:14px">CENTRAL 24 HORAS</p>
+            <h2 id="cta-heading">Precisa de uma ambulância? <em>A Savior está pronta</em></h2>
+            <p class="ta-cta-sub">
+              {BRAND.yearsOperating} anos de operação. Frota própria. A gente escuta o quadro e envia a ambulância adequada para o seu caso.
+            </p>
+            <div class="ta-cta-btns">
           <a
             class="btn btn-primary on-dark"
             href={waCta}
@@ -811,6 +816,8 @@ const schema = JSON.stringify({
             </svg>
             WA São Paulo
           </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1130,11 +1137,12 @@ const schema = JSON.stringify({
   .ta-faq-link svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--green-dark); }
 
   /* ═══ CTA FINAL ═══ */
-  .ta-cta-final { padding: clamp(72px,10vh,120px) 0; background: var(--navy); }
+  .ta-cta-final { background: var(--navy); overflow: hidden; }
+  .ta-cta-final .wrap { padding-top: 0; padding-bottom: 0; }
   .ta-cta-final h2 { font-size: clamp(28px,3.8vw,44px); font-weight: 800; letter-spacing: -.035em; color: #fff; line-height: 1.06; margin-bottom: 16px; }
   .ta-cta-final h2 em { font-style: normal; color: var(--green-bright); }
-  .ta-cta-sub { font-size: clamp(15px,1.4vw,17px); color: rgba(255,255,255,.75); max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
-  .ta-cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .ta-cta-sub { font-size: clamp(15px,1.4vw,17px); color: rgba(255,255,255,.75); max-width: 480px; margin: 0 0 40px; line-height: 1.6; }
+  .ta-cta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 
   /* ═══ ANIM ═══ */
   .ta-anim { opacity: 0; transform: translateY(18px); transition: opacity .5s, transform .5s; }

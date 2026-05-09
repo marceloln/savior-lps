@@ -706,10 +706,15 @@ const schema = JSON.stringify({
     <!-- ============================================================ -->
     <section class="corp-fcta" aria-labelledby="fcta-h2">
       <div class="wrap">
-        <p class="corp-fcta-eyebrow">Medicina que chega</p>
-        <h2 id="fcta-h2">Manda mensagem.<br />A gente já está <em>a caminho</em></h2>
-        <p class="corp-fcta-sub">Central 24&nbsp;horas, todos os dias do ano. Rio de Janeiro e São Paulo.</p>
-        <div class="corp-fcta-btns">
+        <div class="atend-layout">
+          <div class="atend-photo" aria-hidden="true">
+            <img src="/img/atendentes/SAVIOR_ATEND_6.png" alt="" width="340" height="480" loading="lazy" decoding="async" />
+          </div>
+          <div class="atend-content">
+            <p class="corp-fcta-eyebrow">Medicina que chega</p>
+            <h2 id="fcta-h2">Manda mensagem.<br />A gente já está <em>a caminho</em></h2>
+            <p class="corp-fcta-sub">Central 24&nbsp;horas, todos os dias do ano. Rio de Janeiro e São Paulo.</p>
+            <div class="corp-fcta-btns">
           <a
             class="btn btn-primary"
             href={waFinalRJHref}
@@ -738,6 +743,8 @@ const schema = JSON.stringify({
             </svg>
             WhatsApp SP
           </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1687,10 +1694,14 @@ const schema = JSON.stringify({
   /* FINAL CTA                                                    */
   /* ============================================================ */
   .corp-fcta {
-    padding: var(--space-block) 0;
     background: var(--navy-deep);
     color: white;
-    text-align: center;
+    overflow: hidden;
+  }
+
+  .corp-fcta .wrap {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .corp-fcta-eyebrow {
@@ -1728,7 +1739,6 @@ const schema = JSON.stringify({
   .corp-fcta-btns {
     display: flex;
     gap: 12px;
-    justify-content: center;
     flex-wrap: wrap;
   }
 
