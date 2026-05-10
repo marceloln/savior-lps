@@ -876,13 +876,58 @@
           </div>
         </div>
 
+        <!-- Atribuição Campanha × Blip -->
+        <div class="section" id="atrib-section" hidden>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Atribuição Campanha → Blip</span>
+              <span class="card-label">últimos 30 dias · utm_campaign cruzado com contatos Blip</span>
+            </div>
+            <div class="card-body">
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Campanha</th>
+                      <th class="num">Gasto R$</th>
+                      <th class="num">Conv. Ads</th>
+                      <th class="num">Blip Leads</th>
+                      <th class="num">CPL Real R$</th>
+                      <th class="num">CPA Ads R$</th>
+                    </tr>
+                  </thead>
+                  <tbody id="atrib-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Keywords -->
         <div class="section" id="kw-section" hidden>
           <div class="card">
             <div class="card-header">
-              <span class="card-title">Top campanhas — por conversões</span>
+              <span class="card-title">Top keywords — por conversões</span>
               <span class="card-label">últimos 30 dias</span>
             </div>
-            <div class="card-body" id="kw-list"></div>
+            <div class="table-wrap">
+              <table class="data-table" id="kw-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Keyword</th>
+                    <th>Campanha</th>
+                    <th class="num">Imp.</th>
+                    <th class="num">Cliques</th>
+                    <th class="num">CTR</th>
+                    <th class="num">Gasto R$</th>
+                    <th class="num">Conv.</th>
+                    <th class="num">CPA R$</th>
+                  </tr>
+                </thead>
+                <tbody id="kw-tbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -1230,6 +1275,7 @@
       cardsEl.appendChild(card);
     });
 
+    // ── Tabela de campanhas ──────────────────────────────
     var tbody = document.getElementById('ads-tbody');
     tbody.textContent = '';
     var campanhas = ads.campanhas || [];
@@ -1271,81 +1317,138 @@
       });
     }
 
-    renderTopKeywords(campanhas);
+    // ── Atribuição Campanha × Blip ───────────────────────
+    renderAtribuicao(campanhas);
+
+    // ── Keywords ─────────────────────────────────────────
+    renderKeywords(ads.keywords || []);
   }
 
-  function renderTopKeywords(campanhas) {
-    var kwSection = document.getElementById('kw-section');
-    var kwList    = document.getElementById('kw-list');
-    if (!kwSection || !kwList) return;
+  function renderAtribuicao(campanhas) {
+    var section = document.getElementById('atrib-section');
+    var tbody   = document.getElementById('atrib-tbody');
+    if (!section || !tbody) return;
 
-    var comConv = campanhas
-      .filter(function(c) {
-        var conv = parsePtBrNum(String(resolveKey(c, ['Conv','conv','Conversoes']) || '0'));
-        return conv > 0;
-      })
-      .sort(function(a, b) {
-        var ca = parsePtBrNum(String(resolveKey(a, ['Conv','conv']) || '0')) || 0;
-        var cb = parsePtBrNum(String(resolveKey(b, ['Conv','conv']) || '0')) || 0;
-        return cb - ca;
-      })
-      .slice(0, 10);
-
-    if (!comConv.length) { kwSection.hidden = true; return; }
-
-    kwSection.hidden = false;
-    kwList.textContent = '';
-
-    var tbl = document.createElement('table');
-    tbl.className = 'data-table';
-    var thead = document.createElement('thead');
-    var htr = document.createElement('tr');
-    [['#','30px',false],['Campanha','',false],['Conv.','60px',true],['CPA R$','90px',true],['CTR','55px',true]].forEach(function(h) {
-      var th = document.createElement('th');
-      th.textContent = h[0];
-      if (h[1]) th.style.width = h[1];
-      if (h[2]) th.className = 'num';
-      htr.appendChild(th);
+    var temBlip = campanhas.some(function(c) {
+      return (c['Blip Leads'] || 0) > 0;
     });
-    thead.appendChild(htr);
-    tbl.appendChild(thead);
+    if (!temBlip) { section.hidden = true; return; }
+    section.hidden = false;
+    tbody.textContent = '';
 
-    var tbody = document.createElement('tbody');
-    comConv.forEach(function(c, idx) {
-      var nome = resolveKey(c, ['Campanha','campanha']) || '—';
-      var conv = sanitizeVal(resolveKey(c, ['Conv','conv','Conversoes']), 'num');
-      var cpa  = sanitizeVal(resolveKey(c, ['CPA RS','CPA R$','cpa rs']), 'currency');
-      var ctr  = sanitizeVal(resolveKey(c, ['CTR','ctr']), 'pct');
+    // Ordenar por Blip Leads desc
+    var sorted = campanhas.slice().sort(function(a, b) {
+      return (b['Blip Leads'] || 0) - (a['Blip Leads'] || 0);
+    });
+
+    var totalGasto = 0, totalConv = 0, totalBlip = 0;
+
+    sorted.forEach(function(c, idx) {
+      var nome  = c['Campanha']    || '—';
+      var gasto = c['Custo RS']    || 0;
+      var conv  = c['Conv']        || 0;
+      var leads = c['Blip Leads']  || 0;
+      var cpl   = c['CPL Real RS'] || 0;
+      var cpa   = c['CPA RS']      || 0;
+
+      totalGasto += gasto;
+      totalConv  += conv;
+      totalBlip  += leads;
 
       var tr = document.createElement('tr');
       if (idx % 2 === 1) tr.className = 'row-odd';
+      if (leads === 0)   tr.className = (tr.className + ' row-zero').trim();
 
-      var rankTd = document.createElement('td');
-      var rankBadge = document.createElement('span');
-      rankBadge.textContent = String(idx + 1);
-      rankBadge.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.06);font-size:.68rem;font-weight:700;color:var(--text-3);';
-      rankTd.appendChild(rankBadge);
+      function mkTd(text, isNum, color) {
+        var td = document.createElement('td');
+        if (isNum) { td.className = 'num'; td.style.fontVariantNumeric = 'tabular-nums'; }
+        if (color) td.style.color = color;
+        td.textContent = text;
+        return td;
+      }
 
-      var nameTd = document.createElement('td');
-      nameTd.textContent = nome;
-      nameTd.style.cssText = 'max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-
-      var convTd = document.createElement('td');
-      convTd.className = 'num'; convTd.textContent = conv; convTd.style.color = 'var(--green)'; convTd.style.fontWeight = '700';
-      var cpaTd = document.createElement('td');
-      cpaTd.className = 'num'; cpaTd.textContent = cpa;
-      var ctrTd = document.createElement('td');
-      ctrTd.className = 'num'; ctrTd.textContent = ctr;
-
-      tr.appendChild(rankTd);
-      tr.appendChild(nameTd);
-      tr.appendChild(convTd);
-      tr.appendChild(cpaTd);
-      tr.appendChild(ctrTd);
+      tr.appendChild(mkTd(nome, false));
+      tr.appendChild(mkTd(fmtCurrency(gasto), true));
+      tr.appendChild(mkTd(conv > 0 ? String(conv) : '—', true));
+      tr.appendChild(mkTd(leads > 0 ? String(leads) : '—', true,
+        leads > 0 ? 'var(--green)' : null));
+      tr.appendChild(mkTd(cpl > 0 ? fmtCurrency(cpl) : '—', true,
+        cpl > 0 && cpl <= 45 ? 'var(--green)' : cpl > 90 ? 'var(--red)' : null));
+      tr.appendChild(mkTd(cpa > 0 ? fmtCurrency(cpa) : '—', true));
       tbody.appendChild(tr);
     });
-    tbl.appendChild(tbody);
-    kwList.appendChild(tbl);
+
+    // Total row
+    var trT = document.createElement('tr');
+    trT.className = 'row-total';
+    function mkTdT(t, n, c) {
+      var td = document.createElement('td');
+      if (n) td.className = 'num';
+      if (c) td.style.color = c;
+      td.textContent = t; return td;
+    }
+    var cplTotal = totalBlip > 0 ? totalGasto / totalBlip : 0;
+    trT.appendChild(mkTdT('Total', false));
+    trT.appendChild(mkTdT(fmtCurrency(totalGasto), true));
+    trT.appendChild(mkTdT(totalConv > 0 ? String(Math.round(totalConv * 10) / 10) : '—', true));
+    trT.appendChild(mkTdT(String(totalBlip), true, 'var(--green)'));
+    trT.appendChild(mkTdT(cplTotal > 0 ? fmtCurrency(Math.round(cplTotal * 100) / 100) : '—', true));
+    trT.appendChild(mkTdT('', true));
+    tbody.appendChild(trT);
+  }
+
+  function renderKeywords(keywords) {
+    var section = document.getElementById('kw-section');
+    var tbody   = document.getElementById('kw-tbody');
+    if (!section || !tbody) return;
+
+    if (!keywords || !keywords.length) { section.hidden = true; return; }
+    section.hidden = false;
+    tbody.textContent = '';
+
+    keywords.forEach(function(k, idx) {
+      var conv = parseFloat(k['Conv'] || 0);
+      var tr = document.createElement('tr');
+      if (idx % 2 === 1) tr.className = 'row-odd';
+      if (conv === 0)    tr.className = (tr.className + ' row-zero').trim();
+
+      function mkTd(text, isNum, color) {
+        var td = document.createElement('td');
+        if (isNum) td.className = 'num';
+        if (color) td.style.color = color;
+        td.textContent = text; return td;
+      }
+
+      // Rank badge
+      var rankTd = document.createElement('td');
+      var badge  = document.createElement('span');
+      badge.textContent = String(idx + 1);
+      badge.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;' +
+        'width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.06);' +
+        'font-size:.68rem;font-weight:700;color:var(--text-3);';
+      rankTd.appendChild(badge);
+      tr.appendChild(rankTd);
+
+      var kwTd = document.createElement('td');
+      kwTd.textContent = k['Keyword'] || '—';
+      kwTd.style.cssText = 'font-weight:600;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      tr.appendChild(kwTd);
+
+      var campTd = document.createElement('td');
+      campTd.textContent = k['Campanha'] || '—';
+      campTd.style.cssText = 'font-size:.78rem;color:var(--text-2);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      tr.appendChild(campTd);
+
+      tr.appendChild(mkTd(sanitizeVal(k['Impressoes'], 'num'), true));
+      tr.appendChild(mkTd(sanitizeVal(k['Cliques'],    'num'), true));
+      tr.appendChild(mkTd(k['CTR'] || '—',                    true));
+      tr.appendChild(mkTd(sanitizeVal(k['Custo RS'], 'currency'), true));
+      tr.appendChild(mkTd(conv > 0 ? String(conv) : '—', true,
+        conv > 0 ? 'var(--green)' : null));
+      tr.appendChild(mkTd(sanitizeVal(k['CPA RS'], 'currency'), true));
+
+      tbody.appendChild(tr);
+    });
   }
 
   /* ── Anomalias ────────────────────────────────────── */

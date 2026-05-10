@@ -82,16 +82,72 @@ def ga_campaigns(start, end):
         cost = row.metrics.cost_micros / 1_000_000
         conv = row.metrics.conversions
         camps.append({
-            'Campanha':   row.campaign.name,
+            'Campanha':    row.campaign.name,
+            'Impressoes':  imp,
+            'Cliques':     clk,
+            'CTR':         f"{clk/imp*100:.1f}%" if imp else '0%',
+            'Custo RS':    round(cost, 2),
+            'Conv':        round(conv, 1),
+            'CPA RS':      round(cost / conv, 2) if conv else 0,
+            'Blip Leads':  0,    # preenchido depois do Blip
+            'CPL Real RS': 0,    # preenchido depois do Blip
+        })
+    camps.sort(key=lambda c: c['Conv'], reverse=True)
+    return camps
+
+def ga_keywords(start, end):
+    """Top 25 keywords por conversões (últimos 30d)."""
+    q = f"""
+      SELECT campaign.name,
+             ad_group_criterion.keyword.text,
+             metrics.impressions, metrics.clicks,
+             metrics.cost_micros, metrics.conversions
+      FROM keyword_view
+      WHERE segments.date BETWEEN '{fmt(start)}' AND '{fmt(end)}'
+        AND campaign.status = 'ENABLED'
+        AND ad_group.status = 'ENABLED'
+        AND ad_group_criterion.status = 'ENABLED'
+        AND metrics.impressions > 0
+    """
+    # Agregar por keyword text (pode aparecer em vários ad groups)
+    kws = {}
+    try:
+        for row in svc.search(customer_id=cid, query=q):
+            kw   = row.ad_group_criterion.keyword.text
+            camp = row.campaign.name
+            imp  = row.metrics.impressions
+            clk  = row.metrics.clicks
+            cost = row.metrics.cost_micros / 1_000_000
+            conv = row.metrics.conversions
+            if kw not in kws:
+                kws[kw] = {'Keyword': kw, 'Campanha': camp,
+                           'Impressoes': 0, 'Cliques': 0, 'Custo RS': 0.0, 'Conv': 0.0}
+            kws[kw]['Impressoes'] += imp
+            kws[kw]['Cliques']    += clk
+            kws[kw]['Custo RS']   += cost
+            kws[kw]['Conv']       += conv
+    except Exception as e:
+        print(f"  [keywords warning] {e}")
+        return []
+
+    result = []
+    for d in kws.values():
+        imp  = d['Impressoes']
+        clk  = d['Cliques']
+        cost = d['Custo RS']
+        conv = d['Conv']
+        result.append({
+            'Keyword':    d['Keyword'],
+            'Campanha':   d['Campanha'],
             'Impressoes': imp,
             'Cliques':    clk,
             'CTR':        f"{clk/imp*100:.1f}%" if imp else '0%',
             'Custo RS':   round(cost, 2),
-            'Conv':       conv,
+            'Conv':       round(conv, 1),
             'CPA RS':     round(cost / conv, 2) if conv else 0,
         })
-    camps.sort(key=lambda c: c['Conv'], reverse=True)
-    return camps
+    result.sort(key=lambda k: (k['Conv'], k['Cliques']), reverse=True)
+    return result[:25]
 
 print("[1/3] Google Ads...", end='', flush=True)
 G = {
@@ -101,8 +157,9 @@ G = {
     '1m': ga_total(mes_s, avg_e),
     '3m': ga_total(trim_s, avg_e),
 }
-camps_30d = ga_campaigns(mes_s, avg_e)
-print(" ok")
+camps_30d    = ga_campaigns(mes_s, avg_e)
+keywords_30d = ga_keywords(mes_s, avg_e)
+print(f" ok  ({len(keywords_30d)} keywords)")
 
 # ── GA4 ────────────────────────────────────────────────────────────
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
@@ -158,7 +215,9 @@ import requests as rlib
 
 print("[3/3] Blip...", end='', flush=True)
 hdr = {"Authorization": creds['blip_http_key'], "Content-Type": "application/json"}
-blip_by_day = {}
+blip_by_day      = {}   # date → count (90d, para funil)
+blip_by_campaign = {}   # campaign_name → count (30d, para atribuição)
+
 skip, stop = 0, False
 while not stop:
     p = {"id": f"b{skip}", "to": "postmaster@crm.msging.net", "method": "get",
@@ -173,7 +232,19 @@ while not stop:
             dt = datetime.fromisoformat(lmd.replace('Z', '+00:00')).astimezone(BRT).date()
         except: continue
         if dt < trim_s: stop = True; break
+
+        # Contagem diária (90d)
         blip_by_day[dt] = blip_by_day.get(dt, 0) + 1
+
+        # Atribuição por campanha (30d)
+        if dt >= mes_s:
+            extras = c.get('extras', {}) or {}
+            camp   = (extras.get('utm_campaign') or '').strip()
+            source = (extras.get('utm_source')   or '').strip()
+            if not camp or camp == 'sem-tag':
+                camp = f'(direto/{source})' if source and source != 'direto' else '(direto)'
+            blip_by_campaign[camp] = blip_by_campaign.get(camp, 0) + 1
+
     skip += 100
     if len(items) < 100: break
 
@@ -182,7 +253,20 @@ B = {
     'd0': blip(d0, d0), 'd1': blip(d1, d1), 'd2': blip(d2, d2),
     '1m': blip(mes_s, avg_e), '3m': blip(trim_s, avg_e),
 }
-print(" ok\n")
+print(f" ok  ({len(blip_by_campaign)} campanhas no Blip)\n")
+
+# ── Cruzar campanha Google Ads × Blip ──────────────────────────────
+for camp in camps_30d:
+    nome  = camp['Campanha']
+    leads = blip_by_campaign.get(nome, 0)
+    # Fallback: matching case-insensitive
+    if leads == 0:
+        for k, v in blip_by_campaign.items():
+            if k.lower().strip() == nome.lower().strip():
+                leads = v
+                break
+    camp['Blip Leads']  = leads
+    camp['CPL Real RS'] = round(camp['Custo RS'] / leads, 2) if leads else 0
 
 # ── Monta objeto de período ─────────────────────────────────────────
 def period(key, divisor=1):
@@ -249,9 +333,11 @@ data = {
     'por_tipo':     {},
     'por_cidade':   {},
     'ads': {
-        'ok':       True,
-        'resumo':   ads_resumo,
-        'campanhas': camps_30d,
+        'ok':                True,
+        'resumo':            ads_resumo,
+        'campanhas':         camps_30d,         # inclui Blip Leads + CPL Real RS
+        'keywords':          keywords_30d,      # top 25 keywords por conversão
+        'blip_por_campanha': blip_by_campaign,  # distribuição bruta Blip
     },
 }
 
@@ -261,7 +347,14 @@ os.makedirs(os.path.dirname(os.path.abspath(output)), exist_ok=True)
 with open(output, 'w', encoding='utf-8') as f:
     json.dump(data, f, ensure_ascii=False, default=str)
 
+# ── Summary ────────────────────────────────────────────────────────
+total_blip_atrib = sum(c['Blip Leads'] for c in camps_30d)
 print(f"Salvo    : {output}")
 print(f"Gerado   : {now.strftime('%d/%m/%Y %H:%M')} BRT")
-print(f"Blip RJ  : hoje={B['d0']}  ontem={B['d1']}  30d={B['1m']}")
+print(f"Blip RJ  : hoje={B['d0']}  ontem={B['d1']}  30d={B['1m']}  atribuídos={total_blip_atrib}")
 print(f"GAds 30d : imp={g1m[0]:,.0f}  conv={g1m[3]:.0f}  CPA=R${ads_resumo['CPA RS']}")
+if keywords_30d:
+    print(f"Top KW   : '{keywords_30d[0]['Keyword']}' ({keywords_30d[0]['Conv']} conv, CPA R${keywords_30d[0]['CPA RS']})")
+print(f"\nAtribuição Blip × campanha (30d):")
+for camp, n in sorted(blip_by_campaign.items(), key=lambda x: -x[1])[:10]:
+    print(f"  {n:>3}  {camp}")
