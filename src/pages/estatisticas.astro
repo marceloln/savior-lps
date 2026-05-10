@@ -22,11 +22,11 @@
       --green-dim:  rgba(0,184,124,.15);
       --green-glow: rgba(0,184,124,.25);
       --text-1:     #f9fafb;
-      --text-2:     #9ca3af;
-      --text-3:     #4b5563;
-      --red:        #ef4444;
-      --amber:      #f59e0b;
-      --blue:       #3b82f6;
+      --text-2:     #b0bac8;
+      --text-3:     #64748b;
+      --red:        #f87171;
+      --amber:      #fbbf24;
+      --blue:       #60a5fa;
       --r-sm:       8px;
       --r-md:       12px;
       --r-lg:       16px;
@@ -39,6 +39,8 @@
       background: var(--bg);
       color: var(--text-1);
       min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       font-variant-numeric: tabular-nums;
     }
@@ -93,7 +95,7 @@
       letter-spacing: -.01em;
     }
     .login-sub {
-      font-size: .8rem; color: var(--text-3);
+      font-size: .8rem; color: var(--text-2);
       margin-bottom: 1.75rem; line-height: 1.4;
     }
 
@@ -169,10 +171,10 @@
       font-size: .85rem; font-weight: 800;
       letter-spacing: .1em; text-transform: uppercase; color: var(--text-1);
     }
-    .header-text span { font-size: .68rem; color: var(--text-3); letter-spacing: .03em; }
+    .header-text span { font-size: .72rem; color: var(--text-2); letter-spacing: .03em; }
 
     .header-meta { display: flex; align-items: center; gap: .625rem; }
-    .header-ts   { font-size: .72rem; color: var(--text-3); }
+    .header-ts   { font-size: .75rem; color: var(--text-2); }
 
     .live-dot {
       display: inline-flex; align-items: center; gap: .4rem;
@@ -214,8 +216,8 @@
     .hero-kpi.accent { background: var(--green-dim); }
 
     .hk-label {
-      font-size: .6rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .1em;
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
       color: var(--text-3);
     }
     .hk-value {
@@ -223,7 +225,7 @@
       color: var(--text-1); line-height: 1; letter-spacing: -.03em;
     }
     .hero-kpi.accent .hk-value { color: var(--green); }
-    .hk-sub { font-size: .65rem; color: var(--text-3); }
+    .hk-sub { font-size: .72rem; color: var(--text-2); }
 
     @media (max-width: 860px) {
       .hero-strip-inner { flex-wrap: wrap; }
@@ -245,14 +247,14 @@
     }
     .nav-tab {
       padding: .75rem 1.125rem;
-      font-size: .8rem; font-weight: 600;
-      color: var(--text-3);
+      font-size: .82rem; font-weight: 600;
+      color: var(--text-2);
       cursor: pointer;
       border-bottom: 2px solid transparent;
       transition: color .15s, border-color .15s;
       user-select: none; white-space: nowrap;
     }
-    .nav-tab:hover { color: var(--text-2); }
+    .nav-tab:hover { color: var(--text-1); }
     .nav-tab.active { color: var(--text-1); border-bottom-color: var(--green); }
 
     /* ── Main ─────────────────────────────────────────── */
@@ -276,27 +278,27 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .card-title {
-      font-size: .8rem; font-weight: 700;
+      font-size: .875rem; font-weight: 700;
       color: var(--text-1); letter-spacing: .01em;
     }
     .card-label {
-      font-size: .68rem; color: var(--text-3); font-weight: 500;
+      font-size: .72rem; color: var(--text-2); font-weight: 500;
     }
     .card-body { padding: 1.125rem 1.25rem; }
 
     /* ── Period pills ─────────────────────────────────── */
     .period-pills { display: flex; gap: .375rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
     .pp-pill {
-      padding: .3rem .75rem;
+      padding: .35rem .875rem;
       border-radius: 99px;
-      font-size: .74rem; font-weight: 600;
+      font-size: .78rem; font-weight: 600;
       border: 1px solid var(--border-md);
-      color: var(--text-3);
+      color: var(--text-2);
       cursor: pointer;
       transition: all .15s;
       background: transparent;
     }
-    .pp-pill:hover { border-color: var(--green-glow); color: var(--text-2); }
+    .pp-pill:hover { border-color: var(--green-glow); color: var(--text-1); }
     .pp-pill.active {
       background: var(--green); border-color: var(--green);
       color: #fff;
@@ -320,8 +322,8 @@
     .fv-sep {
       display: flex; align-items: center;
       padding: .25rem 0; gap: .5rem;
-      font-size: .6rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--text-3);
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-2);
     }
     .fv-sep::before, .fv-sep::after {
       content: ''; flex: 1; height: 1px; background: var(--border);
@@ -330,13 +332,13 @@
     .fv-step { display: flex; align-items: center; gap: .625rem; }
 
     .fv-label {
-      flex-shrink: 0; width: 115px;
-      font-size: .72rem; font-weight: 600;
+      flex-shrink: 0; width: 120px;
+      font-size: .78rem; font-weight: 600;
       color: var(--text-2); text-align: right;
     }
 
     .fv-bar-wrap {
-      flex: 1; height: 32px;
+      flex: 1; height: 28px;
       background: rgba(255,255,255,.04);
       border-radius: 6px; overflow: hidden;
     }
@@ -345,19 +347,18 @@
       background: linear-gradient(90deg, #1e3a5f 0%, var(--blue) 100%);
       border-radius: 6px;
       transition: width .6s cubic-bezier(.4,0,.2,1);
-      display: flex; align-items: center; justify-content: flex-end;
-      padding-right: .5rem; min-width: 40px;
     }
     .fv-bar.green {
-      background: linear-gradient(90deg, rgba(0,184,124,.5) 0%, var(--green) 100%);
+      background: linear-gradient(90deg, rgba(0,184,124,.35) 0%, var(--green) 100%);
     }
     .fv-bar-val {
-      font-size: .68rem; font-weight: 700;
-      color: rgba(255,255,255,.9); white-space: nowrap;
+      flex-shrink: 0; width: 52px;
+      font-size: .8rem; font-weight: 700;
+      color: var(--text-1); white-space: nowrap; text-align: right;
     }
     .fv-cvr {
-      flex-shrink: 0; width: 48px;
-      font-size: .68rem; font-weight: 700;
+      flex-shrink: 0; width: 52px;
+      font-size: .75rem; font-weight: 700;
       color: var(--text-3); text-align: right;
     }
     .fv-cvr.good { color: var(--green); }
@@ -377,9 +378,9 @@
       padding: .875rem 1rem;
     }
     .kpi-mini .km-label {
-      font-size: .6rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--text-3); margin-bottom: .3rem;
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text-3); margin-bottom: .35rem;
     }
     .kpi-mini .km-value {
       font-size: 1.35rem; font-weight: 800;
@@ -387,56 +388,59 @@
     }
     .kpi-mini.accent .km-value { color: var(--green); }
     .kpi-mini .km-sub {
-      font-size: .62rem; color: var(--text-3); margin-top: .2rem;
+      font-size: .72rem; color: var(--text-2); margin-top: .25rem;
     }
 
     /* ── Funil comparativo table ─────────────────────── */
     .funil-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .funil-table {
       width: 100%; border-collapse: collapse;
-      font-size: .82rem; min-width: 560px;
+      font-size: .875rem; min-width: 580px;
     }
     .funil-table thead { position: sticky; top: 112px; z-index: 10; }
     .funil-table thead th {
       background: #141e32;
-      color: var(--text-3);
-      font-size: .625rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .09em;
-      padding: .65rem 1rem;
+      color: var(--text-2);
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em;
+      padding: .75rem 1rem;
       text-align: right; white-space: nowrap;
       border-bottom: 1px solid var(--border-md);
     }
-    .funil-table thead th:first-child { text-align: left; min-width: 140px; }
+    .funil-table thead th:first-child { text-align: left; min-width: 150px; }
     .funil-table thead th.col-hoje {
       background: rgba(0,184,124,.12);
       color: var(--green);
     }
     .funil-table tbody tr:hover td { background: var(--bg-hover); }
     .funil-table tbody td {
-      padding: .625rem 1rem;
+      padding: .7rem 1rem;
       border-bottom: 1px solid var(--border);
       text-align: right;
       color: var(--text-2);
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
-      vertical-align: middle;
+      vertical-align: top;
     }
     .funil-table tbody td:first-child {
       text-align: left;
-      font-size: .72rem; font-weight: 600;
-      color: var(--text-3);
+      font-size: .8rem; font-weight: 600;
+      color: var(--text-2);
       padding-left: 1.25rem;
+      vertical-align: middle;
     }
     .funil-table tbody td.col-hoje {
-      color: var(--text-1); font-weight: 800;
+      color: var(--text-1); font-weight: 700;
       background: rgba(0,184,124,.07);
-      font-size: .94rem;
+      font-size: .95rem;
+      vertical-align: top;
+      padding-top: .6rem; padding-bottom: .5rem;
     }
     .funil-table .row-sep td {
       background: rgba(255,255,255,.025);
-      padding: .5rem 1rem .35rem;
-      font-size: .58rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .12em;
+      padding: .55rem 1rem .4rem;
+      font-size: .67rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
       color: var(--text-2);
       border-bottom: 1px solid var(--border);
       border-top: 1px solid var(--border-md);
@@ -455,12 +459,12 @@
 
     .funil-delta {
       display: inline-flex; align-items: center;
-      font-size: .72rem; font-weight: 800;
-      margin-left: .4rem; vertical-align: middle;
-      padding: .15rem .45rem; border-radius: 5px;
+      font-size: .7rem; font-weight: 700;
+      margin-top: .25rem; margin-left: 0;
+      padding: .12rem .4rem; border-radius: 4px;
     }
     .funil-delta.up   { color: var(--green); background: var(--green-dim); }
-    .funil-delta.down { color: var(--red);   background: rgba(239,68,68,.14); }
+    .funil-delta.down { color: var(--red);   background: rgba(248,113,113,.14); }
 
     /* ── Hero KPI delta ──────────────────────────────── */
     .hk-delta {
@@ -505,17 +509,17 @@
     .summary-card.accent::after { background: var(--green); }
 
     .summary-card .s-label {
-      font-size: .65rem; font-weight: 800;
+      font-size: .68rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: .08em;
-      color: var(--text-3); margin-bottom: .4rem;
+      color: var(--text-3); margin-bottom: .45rem;
     }
     .summary-card .s-value {
       font-size: 2.25rem; font-weight: 800;
       color: var(--text-1); line-height: 1; letter-spacing: -.03em;
     }
     .summary-card.accent .s-value { color: var(--green); }
-    .summary-card .s-sub   { font-size: .68rem; color: var(--text-3); margin-top: .35rem; }
-    .summary-card .s-compare { font-size: .68rem; color: var(--text-3); margin-top: .2rem; }
+    .summary-card .s-sub   { font-size: .75rem; color: var(--text-2); margin-top: .4rem; }
+    .summary-card .s-compare { font-size: .75rem; color: var(--text-2); margin-top: .25rem; }
 
     /* ── Charts grid ──────────────────────────────────── */
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -527,8 +531,8 @@
       margin-bottom: .625rem; min-width: 0;
     }
     .bar-label {
-      flex-shrink: 0; width: 135px;
-      font-size: .76rem; color: var(--text-2);
+      flex-shrink: 0; width: 140px;
+      font-size: .8rem; color: var(--text-2);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .bar-track {
@@ -536,28 +540,28 @@
       background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden;
     }
     .bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .45s ease; }
-    .bar-count { flex-shrink: 0; width: 28px; text-align: right; font-size: .76rem; font-weight: 700; color: var(--text-1); }
+    .bar-count { flex-shrink: 0; width: 32px; text-align: right; font-size: .8rem; font-weight: 700; color: var(--text-1); }
 
     /* ── Tables (leads mensal, ads) ───────────────────── */
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .data-table {
       width: 100%; border-collapse: collapse;
-      font-size: .82rem; min-width: 480px;
+      font-size: .875rem; min-width: 480px;
     }
     .data-table thead { position: sticky; top: 112px; z-index: 10; }
     .data-table thead th {
-      padding: .65rem 1rem;
+      padding: .7rem 1rem;
       background: #141e32;
-      font-size: .625rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: .09em;
-      color: var(--text-3);
+      font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em;
+      color: var(--text-2);
       border-bottom: 1px solid var(--border-md);
       white-space: nowrap;
       text-align: left;
     }
     .data-table thead th.num { text-align: right; }
     .data-table tbody td {
-      padding: .625rem 1rem;
+      padding: .7rem 1rem;
       border-bottom: 1px solid var(--border);
       color: var(--text-2);
       vertical-align: middle;
@@ -591,11 +595,11 @@
       border-radius: var(--r-sm); padding: .875rem 1rem;
     }
     .ads-card .ac-label {
-      font-size: .6rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--text-3); margin-bottom: .3rem;
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-3); margin-bottom: .35rem;
     }
     .ads-card .ac-value {
-      font-size: 1.55rem; font-weight: 800;
+      font-size: 1.4rem; font-weight: 800;
       color: var(--text-1); line-height: 1; letter-spacing: -.02em;
     }
     .ads-card.ac-highlight .ac-value { color: var(--green); }
@@ -618,7 +622,7 @@
       border-radius: 50%; background: var(--red); margin-top: .35rem;
     }
     .anomaly-dot.positive { background: var(--green); }
-    .anomaly-text { font-size: .8rem; color: var(--text-2); line-height: 1.5; }
+    .anomaly-text { font-size: .875rem; color: var(--text-2); line-height: 1.6; }
     .anomaly-text strong { color: var(--text-1); font-weight: 700; }
 
     /* ── Footer ───────────────────────────────────────── */
@@ -1478,11 +1482,11 @@
       bar.style.width = '0%';
       setTimeout(function() { bar.style.width = widthPct(s.val || 0) + '%'; }, 50);
 
-      var barVal = document.createElement('span');
+      barWrap.appendChild(bar);
+
+      var barVal = document.createElement('div');
       barVal.className = 'fv-bar-val';
       barVal.textContent = fmt(s.val, s.type);
-      bar.appendChild(barVal);
-      barWrap.appendChild(bar);
 
       var cvrEl = document.createElement('div');
       if (s.cvr_den) {
@@ -1495,6 +1499,7 @@
 
       step.appendChild(lblEl);
       step.appendChild(barWrap);
+      step.appendChild(barVal);
       step.appendChild(cvrEl);
       return step;
     }
@@ -1619,10 +1624,21 @@
         var f = funil[p];
         var v = r.computed ? r.computed(f) : f[r.key];
         var text = fmt(v, r.type);
-        td.textContent = text;
-        if (i === 0) {
-          var ds = deltaSpan(v, refV);
-          if (ds) td.innerHTML = text + ds;
+        if (i === 0 && refV && refV !== 0) {
+          var pct0 = Math.round(((v - refV) / refV) * 100);
+          if (pct0 !== 0) {
+            var numDiv = document.createElement('div');
+            numDiv.textContent = text;
+            td.appendChild(numDiv);
+            var dspan = document.createElement('span');
+            dspan.className = 'funil-delta ' + (pct0 > 0 ? 'up' : 'down');
+            dspan.textContent = (pct0 > 0 ? '▲' : '▼') + Math.abs(pct0) + '%';
+            td.appendChild(dspan);
+          } else {
+            td.textContent = text;
+          }
+        } else {
+          td.textContent = text;
         }
         tr.appendChild(td);
       });
