@@ -182,7 +182,7 @@ const absoluteTwitterImage = twitterImage
         var s=parse(C),a
         if(has){a=Object.assign(s||{},u);if(!a.first_landing)a.first_landing=location.pathname;if(!a.first_seen_at)a.first_seen_at=Date.now();set(C,a,TTL)}
         else if(s){a=s}
-        else{a={source:'direct',medium:'none',campaign:'direct'}}
+        else{var ref=document.referrer,src='direct',med='none',cmp='direct';if(ref){var isG=/google\./i.test(ref),isB=/bing\.com/i.test(ref);if(isG){src='google';med='organic';cmp='organic-google'}else if(isB){src='bing';med='organic';cmp='organic-bing'}}a={source:src,medium:med,campaign:cmp}}
         window._saviorUtm=a
         window.dataLayer=window.dataLayer||[]
         window.dataLayer.push({event:'utm_loaded',attribution:{source:a.source||'direct',medium:a.medium||'none',campaign:a.campaign||'direct',content:a.content||'',term:a.term||'',gclid:a.gclid||'',first_landing:a.first_landing||location.pathname,first_seen_at:a.first_seen_at||Date.now()}})
@@ -453,15 +453,15 @@ const absoluteTwitterImage = twitterImage
         function read(){if(window._saviorUtm)return window._saviorUtm;var m=document.cookie.match('(^|;)\\s*'+C+'\\s*=\\s*([^;]+)');try{return m?JSON.parse(decodeURIComponent(m[2])):null}catch(e){return null}}
         // Extrai client_id GA4 do cookie _ga (formato GA1.1.XXXXXXXXXX.XXXXXXXXXX)
         function gaId(){var m=document.cookie.match('(^|;)\\s*_ga\\s*=\\s*([^;]+)');if(!m)return '';var p=m[2].split('.');return p.length>=4?p[2]+'.'+p[3]:''}
-        function tag(c,l,g,ga){var b='['+c+'-'+l+'-'+V+']';if(g)b+=' [gclid:'+g+']';if(ga)b+=' [ga:'+ga+']';return b}
+        function tag(c,l,g,ga,kw,src){var b='['+c+'-'+l+'-'+V+']';if(kw)b+=' [kw:'+kw+']';if(src&&src!=='direct'&&src!=='google'&&/organic|bing/.test(src))b+=' [src:'+src+']';if(g)b+=' [gclid:'+g+']';if(ga)b+=' [ga:'+ga+']';return b}
         function run(){
           var utm=read();if(!utm)return
-          var c=utm.campaign||'direct',g=utm.gclid,ga=gaId()
+          var c=utm.campaign||'direct',g=utm.gclid,ga=gaId(),kw=utm.term||'',src=utm.source||'direct'
           document.querySelectorAll('a[data-whatsapp]').forEach(function(a){
             var loc=a.dataset.location||'unknown',h=a.getAttribute('href');if(!h)return
             var m=h.match(/[?&]text=([^&]*)/);if(!m)return
             var raw=decodeURIComponent(m[1]),base=raw.replace(/(\s*\[[^\]]+\])+$/,'').trimEnd()
-            var nh=h.replace(/([?&]text=)[^&]*/,function(_,pre){return pre+encodeURIComponent(base+' '+tag(c,loc,g,ga))})
+            var nh=h.replace(/([?&]text=)[^&]*/,function(_,pre){return pre+encodeURIComponent(base+' '+tag(c,loc,g,ga,kw,src))})
             a.setAttribute('href',nh)
           })
         }

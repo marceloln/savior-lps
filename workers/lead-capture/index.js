@@ -402,12 +402,16 @@ async function handleBlipWebhook(request, env) {
   const tagMatch    = msg.match(/\[([a-z0-9_-]{3,60})\]/i);
   const gclidMatch  = msg.match(/\[gclid:([^\]]+)\]/);
   const gaMatch     = msg.match(/\[ga:([0-9.]+)\]/);
+  const kwMatch     = msg.match(/\[kw:([^\]]+)\]/);
+  const srcMatch    = msg.match(/\[src:([^\]]+)\]/);
 
-  const campaign  = extras.utm_tag    || (tagMatch   ? tagMatch[1]   : 'blip-direct');
-  const gclid     = extras.gclid      || (gclidMatch  ? gclidMatch[1] : '');
-  const clientId  = extras.ga_client_id || (gaMatch  ? gaMatch[1]    : '');
+  const campaign  = extras.utm_tag      || (tagMatch  ? tagMatch[1]  : 'blip-direct');
+  const gclid     = extras.gclid        || (gclidMatch ? gclidMatch[1] : '');
+  const clientId  = extras.ga_client_id || (gaMatch   ? gaMatch[1]   : '');
+  const keyword   = extras.utm_keyword  || (kwMatch   ? kwMatch[1]   : '');
+  const source    = extras.utm_source   || (srcMatch  ? srcMatch[1]  : '');
 
-  console.log(`Blip webhook: contact=${body.contact_id} campaign=${campaign} ga=${clientId}`);
+  console.log(`Blip webhook: contact=${body.contact_id} campaign=${campaign} kw=${keyword} src=${source} ga=${clientId}`);
 
   // Enviar para GA4 Measurement Protocol
   if (env.GA4_MEASUREMENT_ID && env.GA4_MP_SECRET) {
@@ -418,6 +422,8 @@ async function handleBlipWebhook(request, env) {
         params: {
           campaign,
           gclid,
+          keyword,
+          source,
           contact_id: body.contact_id || '',
           engagement_time_msec: 1,
         },
