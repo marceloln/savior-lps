@@ -516,9 +516,13 @@ async function buildPeriod(env, startDate, endDate, days) {
     };
   }
 
+  // Proportional split of GA4 metrics by click ratio (GA4 has no regional dimension)
+  const rjRatio = clicks > 0 ? rjClicks / clicks : 0;
+  const spRatio = clicks > 0 ? spClicks / clicks : 0;
+
   const cons = mkPeriod(impr, clicks, cost, conv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
-  const rj = mkPeriod(rjImpr, rjClicks, rjCost, rjConv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
-  const sp = mkPeriod(spImpr, spClicks, spCost, spConv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
+  const rj = mkPeriod(rjImpr, rjClicks, rjCost, rjConv, Math.round(ga4.sessions * rjRatio), Math.round(ga4.waClicks * rjRatio), Math.round(ga4.phClicks * rjRatio), ga4.bounceRate);
+  const sp = mkPeriod(spImpr, spClicks, spCost, spConv, Math.round(ga4.sessions * spRatio), Math.round(ga4.waClicks * spRatio), Math.round(ga4.phClicks * spRatio), ga4.bounceRate);
 
   return { cons, rj, sp };
 }
@@ -566,15 +570,23 @@ async function collectAllData(env) {
     try { blipD2 = await fetchBlipContacts(env, d2Date, d2Date); } catch(e) { console.error('Blip d2:', e.message); }
   }
 
-  // Fill blip into periods
+  // Fill blip into periods (proportional split by clicks ratio)
   function fillBlip(period, blipCount, days) {
     const daily = days > 0 ? blipCount / days : blipCount;
     period.cons.blip = round2(daily);
     period.cons.cpl_blip = daily > 0 ? round2(period.cons.cost / daily) : 0;
-    period.rj.blip = round2(daily);
-    period.rj.cpl_blip = daily > 0 ? round2(period.rj.cost / daily) : 0;
-    period.sp.blip = round2(daily);
-    period.sp.cpl_blip = daily > 0 ? round2(period.sp.cost / daily) : 0;
+
+    // Split blip proportionally by ad_clicks ratio
+    const totalClicks = period.cons.ad_clicks || 1;
+    const rjRatio = totalClicks > 0 ? (period.rj.ad_clicks / totalClicks) : 0;
+    const spRatio = totalClicks > 0 ? (period.sp.ad_clicks / totalClicks) : 0;
+
+    const rjBlip = round2(daily * rjRatio);
+    const spBlip = round2(daily * spRatio);
+    period.rj.blip = rjBlip;
+    period.rj.cpl_blip = rjBlip > 0 ? round2(period.rj.cost / rjBlip) : 0;
+    period.sp.blip = spBlip;
+    period.sp.cpl_blip = spBlip > 0 ? round2(period.sp.cost / spBlip) : 0;
   }
 
   fillBlip(hojeP, blipToday, 1);
