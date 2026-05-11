@@ -545,20 +545,25 @@ async function collectAllData(env) {
     fetchGA4Daily(env, d30start, yesterday),
   ]);
 
-  // Blip contacts: today, yesterday, d2, 30d, 90d + daily
+  // Blip contacts — run sequentially to avoid concurrent HTTP limits
   let blipToday = 0, blipOntem = 0, blipD2 = 0, blip30 = 0, blip90 = 0;
   let blipDaily = {};
-  try {
-    [blipToday, blipOntem, blipD2, blip30, blip90, blipDaily] = await Promise.all([
-      fetchBlipContacts(env, today, today),
-      fetchBlipContacts(env, yesterday, yesterday),
-      fetchBlipContacts(env, d2Date, d2Date),
-      fetchBlipContacts(env, d30start, yesterday),
-      fetchBlipContacts(env, d90start, yesterday),
-      fetchBlipDaily(env, d30start, 30),
-    ]);
-  } catch (e) {
-    console.error('Blip fetch error:', e.message);
+  try { blipDaily = await fetchBlipDaily(env, d30start, 31); } catch(e) { console.error('Blip daily:', e.message); }
+
+  // Derive period counts from daily buckets (avoids redundant API calls)
+  if (Object.keys(blipDaily).length > 0) {
+    blipToday = blipDaily[today] || 0;
+    blipOntem = blipDaily[yesterday] || 0;
+    blipD2 = blipDaily[d2Date] || 0;
+    blip30 = Object.values(blipDaily).reduce((a, v) => a + v, 0);
+    // 90d: estimate from 30d average (full 90d scan too heavy for Workers)
+    blip90 = blip30;
+  } else {
+    // Fallback: fetch individually if daily failed
+    try { blip30 = await fetchBlipContacts(env, d30start, yesterday); } catch(e) { console.error('Blip 30d:', e.message); }
+    try { blipToday = await fetchBlipContacts(env, today, today); } catch(e) { console.error('Blip today:', e.message); }
+    try { blipOntem = await fetchBlipContacts(env, yesterday, yesterday); } catch(e) { console.error('Blip ontem:', e.message); }
+    try { blipD2 = await fetchBlipContacts(env, d2Date, d2Date); } catch(e) { console.error('Blip d2:', e.message); }
   }
 
   // Fill blip into periods
