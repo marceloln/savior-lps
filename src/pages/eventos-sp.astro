@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
 import { CONTACT_SP, BRAND, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 
 // ============ SEO ============
 const title = 'Ambulância para Eventos em São Paulo | Posto Médico | Savior';
@@ -652,6 +653,8 @@ const waCTA    = whatsappUrl(CONTACT_SP.whatsapp, 'eventos-sp', WA_MSG, 'cta');
       });
     }
   </script>
+
+  <FloatingWhatsApp waCampaign="eventos-sp" contact={CONTACT_SP} />
 
   <style>
     @media (max-width: 960px) { .fw { bottom: 76px; } }
