@@ -64,7 +64,7 @@ const schema = JSON.stringify({
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: 4.7,
-        reviewCount: 730,
+        reviewCount: GOOGLE_BUSINESS.reviewCount + GOOGLE_BUSINESS_SP.reviewCount,
         bestRating: '5',
       },
       location: [

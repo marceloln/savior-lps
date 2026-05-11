@@ -59,6 +59,8 @@ export default {
       nome = '',
       email = '',
       whatsapp = '',
+      wa_number = '',
+      city = '',
       empresa = '',
       cidade = '',
       bairro = '',
@@ -226,12 +228,47 @@ export default {
       }
     }
 
-    // 2a. WA anônimo — sem dados de contato, não há como dar follow-up.
-    //     Pipedrive exige person_id ou org_id para criar Lead.
-    //     Esses cliques já são rastreados via GA4/GTM. Retorna OK silenciosamente.
+    // 2a. WA anônimo — criar Deal sem Person para não perder o lead.
+    //     O Blip webhook enriquece depois com telefone real quando o lead responde.
     if (!hasContactData) {
-      console.log(`WA click anônimo ignorado (sem dados): page=${page} campaign=${utm_campaign}`);
-      return new Response(JSON.stringify({ ok: true, skipped: true }), {
+      const anonDealTitle = `WA | ${page} | ${utm_campaign} | ${dateTag}`;
+      const anonDealPayload = {
+        title: anonDealTitle,
+        pipeline_id: pipelineId,
+        stage_id: stageId,
+        status: 'open',
+      };
+
+      // Campos customizados: UTM
+      if (utm_source && utm_source !== 'direct') anonDealPayload['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = utm_source;
+      if (utm_campaign && utm_campaign !== 'none') anonDealPayload['2400cc71ad7a60be9480f1ce3a05b08f70caefc4'] = utm_campaign;
+
+      // BASE (cidade) — inferir de city do site ou da página
+      const anonCity = city || (page.includes('sp') ? 'sp' : 'rj');
+      const anonBaseId = anonCity === 'sp' ? 38 : 37;
+      anonDealPayload['8cc112e07d103997aa14b34442fa7a51cb0d2d91'] = anonBaseId;
+
+      const anonDealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(anonDealPayload),
+      });
+      const anonDealData = await anonDealRes.json();
+      const anonDealId = anonDealData?.data?.id;
+
+      if (anonDealId) {
+        // Nota com UTM completo para rastreabilidade
+        await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deal_id: anonDealId, content: utmNote + '\n\n⏳ Aguardando enriquecimento via Blip (telefone real do lead)' }),
+        });
+        console.log(`Deal anônimo criado: deal=${anonDealId} pipeline=${pipelineId} page=${page} campaign=${utm_campaign}`);
+      } else {
+        console.error('Pipedrive anon deal create failed:', JSON.stringify(anonDealData));
+      }
+
+      return new Response(JSON.stringify({ ok: true, deal_id: anonDealId || null, anonymous: true }), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...corsHeaders() },
       });
@@ -388,7 +425,8 @@ export default {
 
 // ============================================================
 // Blip Webhook — recebe evento de nova conversa do Blip Builder
-// e envia evento blip_contact ao GA4 via Measurement Protocol.
+// 1. Envia evento blip_contact ao GA4 via Measurement Protocol
+// 2. Enriquece Deal anônimo no Pipedrive com telefone real do lead
 // Retorna 200 OK sempre — Blip não reprocessa em caso de erro.
 // ============================================================
 async function handleBlipWebhook(request, env) {
@@ -397,6 +435,8 @@ async function handleBlipWebhook(request, env) {
 
   const msg      = body.first_message || '';
   const extras   = body.extras || {};
+  const contactPhone = body.contact_phone || extras.phone || '';
+  const contactName  = body.contact_name || extras.name || '';
 
   // Extrair da mensagem (fallback: extras já pré-processados pelo Blip)
   const tagMatch    = msg.match(/\[([a-z0-9_-]{3,60})\]/i);
@@ -411,9 +451,9 @@ async function handleBlipWebhook(request, env) {
   const keyword   = extras.utm_keyword  || (kwMatch   ? kwMatch[1]   : '');
   const source    = extras.utm_source   || (srcMatch  ? srcMatch[1]  : '');
 
-  console.log(`Blip webhook: contact=${body.contact_id} campaign=${campaign} kw=${keyword} src=${source} ga=${clientId}`);
+  console.log(`Blip webhook: contact=${body.contact_id} phone=${contactPhone} name=${contactName} campaign=${campaign}`);
 
-  // Enviar para GA4 Measurement Protocol
+  // --- 1. GA4 Measurement Protocol ---
   if (env.GA4_MEASUREMENT_ID && env.GA4_MP_SECRET) {
     const mpPayload = {
       client_id: clientId || ('blip-' + Date.now()),
@@ -436,6 +476,120 @@ async function handleBlipWebhook(request, env) {
     if (mpRes) console.log('GA4 MP status:', mpRes.status);
   } else {
     console.warn('GA4_MEASUREMENT_ID ou GA4_MP_SECRET não configurado — evento não enviado');
+  }
+
+  // --- 2. Enriquecer Deal anônimo no Pipedrive ---
+  const token = env.PIPEDRIVE_TOKEN;
+  if (token && contactPhone && campaign !== 'blip-direct') {
+    try {
+      // Buscar Deal recente com title contendo a campaign tag (criado pelo WA click)
+      // Pipedrive search: deals com term = campaign tag, criados hoje
+      const searchRes = await fetch(
+        `${PIPEDRIVE_API}/deals/search?term=${encodeURIComponent('WA | ')}&fields=title&limit=20&api_token=${token}`
+      );
+      const searchData = await searchRes.json();
+      const deals = searchData?.data?.items || [];
+
+      // Encontrar deal anônimo (sem person_id) que contenha a campaign no título
+      // e foi criado nas últimas 2 horas (evitar matches antigos)
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      const matchDeal = deals.find(d => {
+        const item = d.item || d;
+        return item.title?.includes(campaign)
+          && !item.person_id
+          && item.add_time > twoHoursAgo;
+      });
+
+      if (matchDeal) {
+        const dealItem = matchDeal.item || matchDeal;
+        const dealId = dealItem.id;
+
+        // Criar Person com telefone real
+        const personPayload = {
+          name: contactName || `Lead Blip ${contactPhone}`,
+          phone: [{ value: contactPhone, label: 'whatsapp', primary: true }],
+        };
+        const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(personPayload),
+        });
+        const personData = await personRes.json();
+        const personId = personData?.data?.id;
+
+        if (personId) {
+          // Linkar Person ao Deal
+          await fetch(`${PIPEDRIVE_API}/deals/${dealId}?api_token=${token}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ person_id: personId }),
+          });
+
+          // Nota de enriquecimento
+          await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              deal_id: dealId,
+              content: `✅ Enriquecido via Blip\n📱 Telefone: ${contactPhone}\n👤 Nome: ${contactName || 'não informado'}\n💬 Primeira msg: ${msg.substring(0, 200)}`,
+            }),
+          });
+
+          console.log(`Deal ${dealId} enriquecido: person=${personId} phone=${contactPhone}`);
+        }
+      } else {
+        // Nenhum deal anônimo encontrado — criar novo deal com Person
+        const personPayload = {
+          name: contactName || `Lead Blip ${contactPhone}`,
+          phone: [{ value: contactPhone, label: 'whatsapp', primary: true }],
+        };
+        const personRes = await fetch(`${PIPEDRIVE_API}/persons?api_token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(personPayload),
+        });
+        const personData = await personRes.json();
+        const newPersonId = personData?.data?.id;
+
+        if (newPersonId) {
+          const nowBrt = new Date().toLocaleString('pt-BR', {
+            timeZone: 'America/Sao_Paulo',
+            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
+          }).replace(',', '');
+          const newDealPayload = {
+            title: `Blip | ${campaign} | ${nowBrt}`,
+            pipeline_id: 12,
+            stage_id: 41,
+            status: 'open',
+            person_id: newPersonId,
+          };
+          if (source === 'google') newDealPayload['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = source;
+          if (campaign !== 'blip-direct') newDealPayload['2400cc71ad7a60be9480f1ce3a05b08f70caefc4'] = campaign;
+
+          const newDealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newDealPayload),
+          });
+          const newDealData = await newDealRes.json();
+          const newDealId = newDealData?.data?.id;
+
+          if (newDealId) {
+            await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                deal_id: newDealId,
+                content: `🌐 LEAD VIA BLIP (sem WA click prévio)\n📱 Telefone: ${contactPhone}\n👤 Nome: ${contactName || 'não informado'}\n🎯 Campaign: ${campaign}\n💬 Primeira msg: ${msg.substring(0, 200)}`,
+              }),
+            });
+            console.log(`Novo deal Blip criado: deal=${newDealId} person=${newPersonId}`);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Blip→Pipedrive enrichment error:', err);
+    }
   }
 
   return new Response('OK', { status: 200, headers: corsHeaders() });

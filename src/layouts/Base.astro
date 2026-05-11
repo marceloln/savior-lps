@@ -330,6 +330,10 @@ const absoluteTwitterImage = twitterImage
           if (window._leadSentAt && (_now - window._leadSentAt) < 5000) return;
           window._leadSentAt = _now;
           var utm = window._saviorUtm || {};
+          // Extrair número destino do href: wa.me/5521980358200?text=...
+          var waHref = wa.getAttribute('href') || '';
+          var waNumMatch = waHref.match(/wa\.me\/(\d+)/);
+          var waDestNumber = waNumMatch ? waNumMatch[1] : '';
           fetch('https://savior-lead-capture.marcelo-nascimento.workers.dev', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -339,6 +343,8 @@ const absoluteTwitterImage = twitterImage
               nome: '',
               email: '',
               whatsapp: '',
+              wa_number: waDestNumber,
+              city: city,
               lead_source: waLabel,
               campaign: waCamp,
               utm_source: utm.source || 'direct',
