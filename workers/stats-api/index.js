@@ -576,17 +576,11 @@ async function collectAllData(env) {
     period.cons.blip = round2(daily);
     period.cons.cpl_blip = daily > 0 ? round2(period.cons.cost / daily) : 0;
 
-    // Split blip proportionally by ad_clicks ratio
-    const totalClicks = period.cons.ad_clicks || 1;
-    const rjRatio = totalClicks > 0 ? (period.rj.ad_clicks / totalClicks) : 0;
-    const spRatio = totalClicks > 0 ? (period.sp.ad_clicks / totalClicks) : 0;
-
-    const rjBlip = round2(daily * rjRatio);
-    const spBlip = round2(daily * spRatio);
-    period.rj.blip = rjBlip;
-    period.rj.cpl_blip = rjBlip > 0 ? round2(period.rj.cost / rjBlip) : 0;
-    period.sp.blip = spBlip;
-    period.sp.cpl_blip = spBlip > 0 ? round2(period.sp.cost / spBlip) : 0;
+    // Blip only exists in RJ — SP has no Blip yet
+    period.rj.blip = round2(daily);
+    period.rj.cpl_blip = daily > 0 ? round2(period.rj.cost / daily) : 0;
+    period.sp.blip = 0;
+    period.sp.cpl_blip = 0;
   }
 
   fillBlip(hojeP, blipToday, 1);
