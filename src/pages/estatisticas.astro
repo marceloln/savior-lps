@@ -505,7 +505,7 @@
       <div class="section-head">
         <span class="section-eyebrow">03 · Funil completo de conversão</span>
         <h2 class="section-title">Da impressão Ads até o lead</h2>
-        <span class="section-sub">média diária · últimos 30 dias</span>
+        <span class="section-sub">hoje vs média diária · últimos 30 dias</span>
       </div>
       <div class="funnel-wrap">
         <div class="funnel-grid">
@@ -709,7 +709,7 @@
 
     renderKpiDia(hoje, ontem, m30);
     renderKpiSemana(m30, m90);
-    renderFunil(m30);
+    renderFunil(hoje, m30);
     renderTrend(m30, m90);
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
@@ -780,13 +780,13 @@
   }
 
   /* ── 03 Funil ──────────────────────────────────────── */
-  function renderFunil(m30){
+  function renderFunil(hoje, m30){
     var stages = [
-      {label:'Impressões',   sub:'Google Ads',          val:m30.impressions||0, fill:'imp'},
-      {label:'Cliques',      sub:'Tráfego pago',        val:m30.ad_clicks||0,   fill:'click'},
-      {label:'Sessões Site', sub:'GA4 (todos canais)',   val:m30.sessions||0,    fill:'session'},
-      {label:'Conv. Ads',    sub:'Conversão tracked',    val:m30.conversions||0, fill:'lead'},
-      {label:'Leads Blip',   sub:'Atendimento iniciado', val:m30.blip||0,        fill:'ticket'}
+      {label:'Impressões',   sub:'Google Ads',          val:m30.impressions||0, hj:hoje.impressions||0, fill:'imp'},
+      {label:'Cliques',      sub:'Tráfego pago',        val:m30.ad_clicks||0,   hj:hoje.ad_clicks||0,   fill:'click'},
+      {label:'Sessões Site', sub:'GA4 (todos canais)',   val:m30.sessions||0,    hj:hoje.sessions||0,    fill:'session'},
+      {label:'Conv. Ads',    sub:'Conversão tracked',    val:m30.conversions||0, hj:hoje.conversions||0, fill:'lead'},
+      {label:'Leads Blip',   sub:'Atendimento iniciado', val:m30.blip||0,        hj:hoje.blip||0,        fill:'ticket'}
     ];
     var top = stages[0].val || 1;
     var html = '';
@@ -796,7 +796,9 @@
       var prev = i > 0 ? stages[i-1].val : st.val;
       var drop = prev > 0 ? (st.val/prev) : 0;
       var dropCls = drop < 0.05 ? 'bad' : (drop < 0.2 ? 'warn' : '');
-      var valStr = st.val >= 100 ? num(Math.round(st.val)) : num(st.val,1);
+      var avgStr = st.val >= 100 ? num(Math.round(st.val)) : num(st.val,1);
+      var hjStr = st.hj >= 100 ? num(Math.round(st.hj)) : num(st.hj,1);
+      var valStr = '<span style="opacity:.5;font-size:12px">hj </span>'+hjStr+'<span style="opacity:.35;margin:0 6px">|</span><span style="opacity:.5;font-size:12px">μ </span>'+avgStr;
       var showInside = widthPct >= 95;
       html += '<div class="fstage">'+
         '<div class="fstage-name">'+st.label+'<small>'+st.sub+'</small></div>'+
