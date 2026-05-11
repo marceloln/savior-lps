@@ -118,6 +118,25 @@
     .region-toggle button[data-r="sp"].active{background:var(--blue)}
     .region-toggle button[data-r="cons"].active{background:var(--cream);color:var(--navy-deep)}
 
+    .period-toggle{
+      display:flex;gap:0;background:rgba(255,255,255,.04);
+      border:1px solid var(--line);border-radius:8px;padding:3px;
+      margin-bottom:16px;width:fit-content;
+    }
+    .period-toggle button{
+      background:transparent;border:0;
+      font-family:var(--mono);font-weight:600;font-size:11px;
+      letter-spacing:.5px;color:rgba(244,239,230,.55);
+      padding:7px 14px;border-radius:6px;cursor:pointer;
+      transition:all .18s ease;text-transform:uppercase;
+    }
+    .period-toggle button:hover{color:var(--cream)}
+    .period-toggle button.active{
+      background:var(--green);color:var(--navy-deep);
+      box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 0 12px rgba(0,184,124,.3);
+    }
+    .kpi-sub{font-size:11px;color:rgba(244,239,230,.45);margin-bottom:10px}
+
     .spacer{flex:1}
 
     .meta{display:flex;gap:18px;align-items:center}
@@ -142,10 +161,9 @@
     .section-sub{font-size:12px;color:rgba(244,239,230,.5);margin-left:auto}
 
     /* ====== KPI CARDS ====== */
-    .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-    .kpi-row.row-4{grid-template-columns:repeat(4,1fr)}
-    @media(max-width:1240px){.kpi-row{grid-template-columns:repeat(3,1fr)}.kpi-row.row-4{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:720px){.kpi-row{grid-template-columns:repeat(2,1fr)}.kpi-row.row-4{grid-template-columns:1fr}}
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media(max-width:1240px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:720px){.kpi-row{grid-template-columns:1fr}}
 
     .kpi{
       background:linear-gradient(180deg,rgba(28,57,88,.45) 0%,rgba(11,37,64,.55) 100%);
@@ -480,24 +498,20 @@
     <div id="loading"><div class="spinner"></div></div>
     <div class="error-msg" id="err-msg">Não foi possível carregar os dados. Tente novamente.</div>
 
-    <!-- 01 Snapshot Dia -->
+    <!-- 01 Snapshot -->
     <section class="section" id="s-snapshot" style="display:none">
       <div class="section-head">
-        <span class="section-eyebrow">01 · Snapshot do dia</span>
-        <h2 class="section-title">Hoje vs. períodos de referência</h2>
+        <span class="section-eyebrow">01 · Snapshot</span>
+        <h2 class="section-title">Números vs. períodos de referência</h2>
         <span class="section-sub" id="snapshot-date">—</span>
       </div>
-      <div class="kpi-row" id="kpi-dia"></div>
-    </section>
-
-    <!-- 02 Snapshot Semana -->
-    <section class="section" id="s-semana" style="display:none">
-      <div class="section-head">
-        <span class="section-eyebrow">02 · Snapshot da semana</span>
-        <h2 class="section-title">Semana atual vs. períodos de referência</h2>
-        <span class="section-sub">projeção 7d ao ritmo 30d · vs média Q</span>
+      <div class="period-toggle" id="period-toggle">
+        <button data-p="hoje" class="active">Hoje</button>
+        <button data-p="ontem">Ontem</button>
+        <button data-p="semana">Semana</button>
+        <button data-p="mes">Mês</button>
       </div>
-      <div class="kpi-row row-4" id="kpi-semana"></div>
+      <div class="kpi-row" id="kpi-dia"></div>
     </section>
 
     <!-- 03 Funil -->
@@ -640,8 +654,19 @@
     if(data) renderAll(data);
   });
 
+  /* ── Period toggle ────────────────────────────────── */
+  STATE.period = 'hoje';
+  document.getElementById('period-toggle').addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('#period-toggle button').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    STATE.period = btn.dataset.p || 'hoje';
+    if(data) renderAll(data);
+  });
+
   /* ── Data load ─────────────────────────────────────── */
-  var SECTIONS = ['s-snapshot','s-semana','s-funil','s-trend','s-custo','s-camps','s-sinais'];
+  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-custo','s-camps','s-sinais'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
   function showAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='block'})}
 
@@ -707,8 +732,7 @@
       ? new Date(d.gerado_em).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})
       : '—';
 
-    renderKpiDia(hoje, ontem, m30);
-    renderKpiSemana(m30, m90);
+    renderKpiSnapshot(hoje, ontem, m30, m90, d.daily || []);
     renderFunil(hoje, m30);
     renderTrend(m30, m90);
     renderCusto(m30);
@@ -747,36 +771,155 @@
     return '';
   }
 
-  /* ── 01 Snapshot Dia ───────────────────────────────── */
-  function renderKpiDia(hoje, ontem, m30){
-    var defs = [
-      {k:'impressions', l:'Impressões',  fmt:num, lower:false},
-      {k:'ctr',         l:'CTR',         fmt:pct, lower:false},
-      {k:'cpc',         l:'CPC Médio',   fmt:brl, lower:true},
-      {k:'sessions',    l:'Sessões GA4', fmt:num, lower:false},
-      {k:'blip',        l:'Leads Blip',  fmt:num, lower:false},
-      {k:'cpl_blip',    l:'CPL Blip',    fmt:brl, lower:true}
-    ];
-    var html = '';
-    defs.forEach(function(def){
-      var h = hoje[def.k], o = ontem[def.k], m = m30[def.k];
-      var d1 = calcDelta(h, o, def.lower);
-      var d2 = calcDelta(h, m, def.lower);
-      var deltas = buildDeltaRow('vs ontem',d1) + buildDeltaRow('vs média 30d',d2);
-      html += buildKpiCard(def.l, def.fmt(h), deltas, kpiState(d1,d2));
-    });
-    document.getElementById('kpi-dia').innerHTML = html;
+  /* ── 01 Snapshot (multi-period) ────────────────────── */
+  function sumDaily(daily, n, key){
+    var sl = daily.slice(-n);
+    return sl.reduce(function(a,d){return a+(d[key]||0)},0);
+  }
+  function avgDaily(daily, n, key){
+    if(daily.length === 0) return 0;
+    return sumDaily(daily, n, key) / Math.min(n, daily.length);
   }
 
-  /* ── 02 Snapshot Semana ────────────────────────────── */
-  function renderKpiSemana(m30, m90){
-    function w(obj,k){return (obj[k]||0)*7}
-    var html =
-      buildKpiCardWeek('Cliques / semana',    num(w(m30,'ad_clicks'),0), calcDelta(w(m30,'ad_clicks'),w(m90,'ad_clicks'),false), 'projeção ao ritmo 30d') +
-      buildKpiCardWeek('Sessões / semana',    num(w(m30,'sessions'),0),  calcDelta(w(m30,'sessions'),w(m90,'sessions'),false),   'projeção ao ritmo 30d') +
-      buildKpiCardWeek('Leads Blip / semana', num(w(m30,'blip'),1),      calcDelta(w(m30,'blip'),w(m90,'blip'),false),            'projeção ao ritmo 30d') +
-      buildKpiCardWeek('Custo / semana',      brl(w(m30,'cost')),        calcDelta(w(m30,'cost'),w(m90,'cost'),true),              'projeção ao ritmo 30d');
-    document.getElementById('kpi-semana').innerHTML = html;
+  function renderKpiSnapshot(hoje, ontem, m30, m90, daily){
+    var period = STATE.period;
+
+    // Compute 7d averages from daily array
+    var m7d = {
+      impressions: avgDaily(daily, 7, 'impr'),
+      ad_clicks: avgDaily(daily, 7, 'clicks'),
+      sessions: avgDaily(daily, 7, 'sessions'),
+      cost: avgDaily(daily, 7, 'cost'),
+      conversions: avgDaily(daily, 7, 'conv'),
+      blip: avgDaily(daily, 7, 'blip')
+    };
+    m7d.ctr = m7d.impressions > 0 ? (m7d.ad_clicks / m7d.impressions) * 100 : 0;
+    m7d.cpc = m7d.ad_clicks > 0 ? m7d.cost / m7d.ad_clicks : 0;
+    m7d.cpl_blip = m7d.blip > 0 ? m7d.cost / m7d.blip : 0;
+
+    // Determine primary value and comparison references based on period
+    var primary, refs;
+    if(period === 'hoje'){
+      primary = hoje;
+      refs = [
+        {lbl:'vs ontem', ref:ontem},
+        {lbl:'vs média 7d', ref:m7d},
+        {lbl:'vs média mês', ref:m30},
+        {lbl:'vs média Q', ref:m90}
+      ];
+    } else if(period === 'ontem'){
+      primary = ontem;
+      refs = [
+        {lbl:'vs média 7d', ref:m7d},
+        {lbl:'vs média mês', ref:m30},
+        {lbl:'vs média Q', ref:m90}
+      ];
+    } else if(period === 'semana'){
+      // Sum last 7 days
+      primary = {
+        impressions: sumDaily(daily, 7, 'impr'),
+        ad_clicks: sumDaily(daily, 7, 'clicks'),
+        sessions: sumDaily(daily, 7, 'sessions'),
+        cost: sumDaily(daily, 7, 'cost'),
+        conversions: sumDaily(daily, 7, 'conv'),
+        blip: sumDaily(daily, 7, 'blip')
+      };
+      primary.ctr = primary.impressions > 0 ? (primary.ad_clicks / primary.impressions)*100 : 0;
+      primary.cpc = primary.ad_clicks > 0 ? primary.cost / primary.ad_clicks : 0;
+      primary.cpl_blip = primary.blip > 0 ? primary.cost / primary.blip : 0;
+      // Previous week (days 8-14)
+      var prevWeek = {
+        impressions: sumDaily(daily.slice(0, -7), 7, 'impr'),
+        ad_clicks: sumDaily(daily.slice(0, -7), 7, 'clicks'),
+        sessions: sumDaily(daily.slice(0, -7), 7, 'sessions'),
+        cost: sumDaily(daily.slice(0, -7), 7, 'cost'),
+        conversions: sumDaily(daily.slice(0, -7), 7, 'conv'),
+        blip: sumDaily(daily.slice(0, -7), 7, 'blip')
+      };
+      prevWeek.ctr = prevWeek.impressions > 0 ? (prevWeek.ad_clicks / prevWeek.impressions)*100 : 0;
+      prevWeek.cpc = prevWeek.ad_clicks > 0 ? prevWeek.cost / prevWeek.ad_clicks : 0;
+      prevWeek.cpl_blip = prevWeek.blip > 0 ? prevWeek.cost / prevWeek.blip : 0;
+      // Monthly avg week = m30 * 7
+      var avgWeekMonth = {};
+      ['impressions','ad_clicks','sessions','cost','conversions','blip','ctr','cpc','cpl_blip'].forEach(function(k){
+        avgWeekMonth[k] = (k==='ctr'||k==='cpc'||k==='cpl_blip') ? m30[k] : (m30[k]||0)*7;
+      });
+      refs = [
+        {lbl:'vs sem. anterior', ref:prevWeek},
+        {lbl:'vs média sem./mês', ref:avgWeekMonth},
+        {lbl:'vs média sem./Q', ref:{
+          impressions:(m90.impressions||0)*7, ad_clicks:(m90.ad_clicks||0)*7,
+          sessions:(m90.sessions||0)*7, cost:(m90.cost||0)*7,
+          conversions:(m90.conversions||0)*7, blip:(m90.blip||0)*7,
+          ctr:m90.ctr, cpc:m90.cpc, cpl_blip:m90.cpl_blip
+        }}
+      ];
+    } else { // mes
+      // Sum last 30 days
+      primary = {
+        impressions: sumDaily(daily, 30, 'impr'),
+        ad_clicks: sumDaily(daily, 30, 'clicks'),
+        sessions: sumDaily(daily, 30, 'sessions'),
+        cost: sumDaily(daily, 30, 'cost'),
+        conversions: sumDaily(daily, 30, 'conv'),
+        blip: sumDaily(daily, 30, 'blip')
+      };
+      primary.ctr = primary.impressions > 0 ? (primary.ad_clicks / primary.impressions)*100 : 0;
+      primary.cpc = primary.ad_clicks > 0 ? primary.cost / primary.ad_clicks : 0;
+      primary.cpl_blip = primary.blip > 0 ? primary.cost / primary.blip : 0;
+      // vs Q avg month = m90 * 30
+      refs = [
+        {lbl:'vs média mês/Q', ref:{
+          impressions:(m90.impressions||0)*30, ad_clicks:(m90.ad_clicks||0)*30,
+          sessions:(m90.sessions||0)*30, cost:(m90.cost||0)*30,
+          conversions:(m90.conversions||0)*30, blip:(m90.blip||0)*30,
+          ctr:m90.ctr, cpc:m90.cpc, cpl_blip:m90.cpl_blip
+        }}
+      ];
+    }
+
+    var defs = [
+      {k:'impressions', l:'Impressões',  fmt:num, lower:false},
+      {k:'ad_clicks',   l:'Cliques Ads', fmt:num, lower:false},
+      {k:'ctr',         l:'CTR',         fmt:pct, lower:false},
+      {k:'cpc',         l:'CPC Médio',   fmt:brl, lower:true},
+      {k:'sessions',    l:'Sessões Site', fmt:num, lower:false},
+      {k:'cost',        l:'Custo Ads',   fmt:brl, lower:true},
+      {k:'blip',        l:'Tickets Blip', fmt:num, lower:false},
+      {k:'cpl_blip',    l:'CPL Blip',    fmt:brl, lower:true}
+    ];
+
+    var html = '';
+    defs.forEach(function(def){
+      var val = primary[def.k];
+      var deltas = '';
+      var first = null, second = null;
+      refs.forEach(function(r, i){
+        var d = calcDelta(val, r.ref[def.k], def.lower);
+        deltas += buildDeltaRow(r.lbl, d);
+        if(i===0) first = d;
+        if(i===1) second = d;
+      });
+      var state = '';
+      if(first && second) state = kpiState(first, second);
+      else if(first) state = (first.cls==='up'||first.cls==='down-good') ? 'hot' : (first.cls==='down'||first.cls==='up-bad') ? 'bad' : '';
+
+      // Subtitle with reference values
+      var sub = '';
+      if(period === 'hoje'){
+        sub = 'ontem '+def.fmt(ontem[def.k])+' · m7d '+def.fmt(m7d[def.k]);
+      } else if(period === 'ontem'){
+        sub = 'hoje '+def.fmt(hoje[def.k])+' · m7d '+def.fmt(m7d[def.k]);
+      }
+
+      html += '<div class="kpi '+state+'">'+
+        '<div class="kpi-label">'+def.l+'</div>'+
+        '<div class="kpi-value">'+def.fmt(val)+'</div>'+
+        (sub ? '<div class="kpi-sub">'+sub+'</div>' : '')+
+        '<div class="kpi-deltas">'+deltas+'</div>'+
+      '</div>';
+    });
+    document.getElementById('kpi-dia').innerHTML = html;
   }
 
   /* ── 03 Funil ──────────────────────────────────────── */
