@@ -1,0 +1,26 @@
+name = "savior-stats-api"
+main = "index.js"
+compatibility_date = "2024-09-01"
+
+# Cron: atualiza dados a cada hora (minuto 5)
+[triggers]
+crons = ["5 * * * *"]
+
+# KV namespace para cache do JSON
+[[kv_namespaces]]
+binding = "STATS_KV"
+id = "7e83de6e2eb1410592fc424add151ad8"
+
+# Secrets (configurar via wrangler secret put):
+# GOOGLE_ADS_DEVELOPER_TOKEN
+# GOOGLE_ADS_CLIENT_ID
+# GOOGLE_ADS_CLIENT_SECRET
+# GOOGLE_ADS_REFRESH_TOKEN
+# GA4_REFRESH_TOKEN
+# BLIP_HTTP_KEY
+
+[vars]
+GOOGLE_ADS_MCC_ID = "7869980141"
+GOOGLE_ADS_CUSTOMER_ID = "7412268707"
+GA4_PROPERTY_ID = "393620916"
+ALLOWED_ORIGIN = "https://savior.com.br"
