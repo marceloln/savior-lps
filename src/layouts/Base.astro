@@ -327,7 +327,7 @@ const absoluteTwitterImage = twitterImage
 
           // Lead WA → Pipedrive (fire-and-forget, debounce 5s por página)
           var _now = Date.now();
-          if (window._leadSentAt && (_now - window._leadSentAt) < 5000) break;
+          if (window._leadSentAt && (_now - window._leadSentAt) < 5000) return;
           window._leadSentAt = _now;
           var utm = window._saviorUtm || {};
           fetch('https://savior-lead-capture.marcelo-nascimento.workers.dev', {
