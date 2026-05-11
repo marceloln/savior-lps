@@ -41,26 +41,16 @@ async function refreshAccessToken(clientId, clientSecret, refreshToken) {
   return data.access_token;
 }
 
-// ─── Google Ads REST API ─────────────────────────────────
+// ─── Google Ads REST API helpers ─────────────────────────
 
-async function fetchGoogleAds(env, startDate, endDate) {
+async function adsQuery(env, query) {
   const token = await refreshAccessToken(
     env.GOOGLE_ADS_CLIENT_ID,
     env.GOOGLE_ADS_CLIENT_SECRET,
     env.GOOGLE_ADS_REFRESH_TOKEN
   );
-
   const customerId = env.GOOGLE_ADS_CUSTOMER_ID.replace(/-/g, '');
   const mccId = env.GOOGLE_ADS_MCC_ID.replace(/-/g, '');
-
-  const query = `
-    SELECT campaign.name,
-           metrics.impressions, metrics.clicks, metrics.cost_micros,
-           metrics.conversions, metrics.ctr, metrics.average_cpc
-    FROM campaign
-    WHERE segments.date BETWEEN '${startDate}' AND '${endDate}'
-      AND campaign.status = 'ENABLED'
-  `;
 
   const res = await fetch(
     `https://googleads.googleapis.com/v20/customers/${customerId}/googleAds:searchStream`,
@@ -89,16 +79,33 @@ async function fetchGoogleAds(env, startDate, endDate) {
   return rows;
 }
 
+// Fetch aggregated Ads data (no date dimension)
+async function fetchGoogleAds(env, startDate, endDate) {
+  const query = `
+    SELECT campaign.name,
+           metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions, metrics.ctr, metrics.average_cpc
+    FROM campaign
+    WHERE segments.date BETWEEN '${startDate}' AND '${endDate}'
+      AND campaign.status = 'ENABLED'
+  `;
+  return adsQuery(env, query);
+}
+
+// Fetch Ads data with daily breakdown (for trend chart)
+async function fetchGoogleAdsDaily(env, startDate, endDate) {
+  const query = `
+    SELECT segments.date, campaign.name,
+           metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions
+    FROM campaign
+    WHERE segments.date BETWEEN '${startDate}' AND '${endDate}'
+      AND campaign.status = 'ENABLED'
+  `;
+  return adsQuery(env, query);
+}
+
 async function fetchGoogleAdsKeywords(env, startDate, endDate) {
-  const token = await refreshAccessToken(
-    env.GOOGLE_ADS_CLIENT_ID,
-    env.GOOGLE_ADS_CLIENT_SECRET,
-    env.GOOGLE_ADS_REFRESH_TOKEN
-  );
-
-  const customerId = env.GOOGLE_ADS_CUSTOMER_ID.replace(/-/g, '');
-  const mccId = env.GOOGLE_ADS_MCC_ID.replace(/-/g, '');
-
   const query = `
     SELECT ad_group_criterion.keyword.text,
            campaign.name,
@@ -112,37 +119,20 @@ async function fetchGoogleAdsKeywords(env, startDate, endDate) {
     ORDER BY metrics.cost_micros DESC
     LIMIT 50
   `;
+  return adsQuery(env, query);
+}
 
-  const res = await fetch(
-    `https://googleads.googleapis.com/v20/customers/${customerId}/googleAds:searchStream`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'developer-token': env.GOOGLE_ADS_DEVELOPER_TOKEN,
-        'login-customer-id': mccId,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query }),
-    }
-  );
+// ─── Ads row parsers ─────────────────────────────────────
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Google Ads Keywords API error (${res.status}): ${text}`);
-  }
-
-  const chunks = await res.json();
-  const rows = [];
-  for (const chunk of chunks) {
-    if (chunk.results) rows.push(...chunk.results);
-  }
-  return rows;
+function isRJ(name) {
+  return /RJ|Rio|Niter[oó]i|Grande RIO/i.test(name);
 }
 
 function parseAdsRows(rows) {
   const byCampaign = {};
   let totalImpr = 0, totalClicks = 0, totalCost = 0, totalConv = 0;
+  let rjImpr = 0, rjClicks = 0, rjCost = 0, rjConv = 0;
+  let spImpr = 0, spClicks = 0, spCost = 0, spConv = 0;
 
   for (const r of rows) {
     const name = r.campaign?.name || 'unknown';
@@ -164,6 +154,12 @@ function parseAdsRows(rows) {
     totalClicks += clicks;
     totalCost += costMicros / 1_000_000;
     totalConv += conv;
+
+    if (isRJ(name)) {
+      rjImpr += impr; rjClicks += clicks; rjCost += costMicros / 1_000_000; rjConv += conv;
+    } else {
+      spImpr += impr; spClicks += clicks; spCost += costMicros / 1_000_000; spConv += conv;
+    }
   }
 
   const campanhas = Object.entries(byCampaign).map(([name, d]) => ({
@@ -177,15 +173,20 @@ function parseAdsRows(rows) {
 
   campanhas.sort((a, b) => b['Custo RS'] - a['Custo RS']);
 
+  function mkResumo(i, c, co, cv) {
+    return {
+      Impressoes: i, Cliques: c,
+      CTR: i > 0 ? (c / i * 100).toFixed(1) + '%' : '0%',
+      'Gasto RS': round2(co),
+      Conversoes: round2(cv),
+      'CPA RS': cv > 0 ? round2(co / cv) : 0,
+    };
+  }
+
   return {
-    resumo: {
-      Impressoes: totalImpr,
-      Cliques: totalClicks,
-      CTR: totalImpr > 0 ? (totalClicks / totalImpr * 100).toFixed(1) + '%' : '0%',
-      'Gasto RS': round2(totalCost),
-      Conversoes: round2(totalConv),
-      'CPA RS': totalConv > 0 ? round2(totalCost / totalConv) : 0,
-    },
+    resumo: mkResumo(totalImpr, totalClicks, totalCost, totalConv),
+    resumo_rj: mkResumo(rjImpr, rjClicks, rjCost, rjConv),
+    resumo_sp: mkResumo(spImpr, spClicks, spCost, spConv),
     campanhas,
   };
 }
@@ -201,16 +202,39 @@ function parseKeywordRows(rows) {
     const conv = Number(m.conversions) || 0;
     const impr = Number(m.impressions) || 0;
     return {
-      Keyword: kw,
-      Campanha: camp,
-      Impressoes: impr,
-      Cliques: clicks,
+      Keyword: kw, Campanha: camp,
+      Impressoes: impr, Cliques: clicks,
       CTR: impr > 0 ? (clicks / impr * 100).toFixed(1) + '%' : '0%',
       'Custo RS': round2(cost),
       Conv: round2(conv),
       'CPA RS': conv > 0 ? round2(cost / conv) : 0,
     };
   });
+}
+
+// Parse daily rows into { 'YYYY-MM-DD': {clicks, cost, conv, impr, rj_clicks, rj_cost, sp_clicks, sp_cost, ...} }
+function parseDailyAdsRows(rows) {
+  const byDate = {};
+  for (const r of rows) {
+    const date = r.segments?.date;
+    if (!date) continue;
+    const name = r.campaign?.name || '';
+    const m = r.metrics || {};
+    const clicks = Number(m.clicks) || 0;
+    const cost = (Number(m.costMicros) || 0) / 1_000_000;
+    const conv = Number(m.conversions) || 0;
+    const impr = Number(m.impressions) || 0;
+    const rj = isRJ(name);
+
+    if (!byDate[date]) {
+      byDate[date] = { clicks: 0, cost: 0, conv: 0, impr: 0, rj_clicks: 0, rj_cost: 0, rj_conv: 0, sp_clicks: 0, sp_cost: 0, sp_conv: 0 };
+    }
+    const d = byDate[date];
+    d.clicks += clicks; d.cost += cost; d.conv += conv; d.impr += impr;
+    if (rj) { d.rj_clicks += clicks; d.rj_cost += cost; d.rj_conv += conv; }
+    else { d.sp_clicks += clicks; d.sp_cost += cost; d.sp_conv += conv; }
+  }
+  return byDate;
 }
 
 // ─── GA4 Data API ────────────────────────────────────────
@@ -221,18 +245,13 @@ async function fetchGA4(env, startDate, endDate) {
     env.GOOGLE_ADS_CLIENT_SECRET,
     env.GA4_REFRESH_TOKEN
   );
-
   const propertyId = env.GA4_PROPERTY_ID;
 
-  // Sessions
   const sessionsRes = await fetch(
     `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
     {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         dateRanges: [{ startDate, endDate }],
         metrics: [{ name: 'sessions' }, { name: 'bounceRate' }],
@@ -250,15 +269,11 @@ async function fetchGA4(env, startDate, endDate) {
   const sessions = Number(sessionsRow[0]?.value) || 0;
   const bounceRate = Number(sessionsRow[1]?.value) || 0;
 
-  // Events (whatsapp_click, phone_click)
   const eventsRes = await fetch(
     `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
     {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         dateRanges: [{ startDate, endDate }],
         dimensions: [{ name: 'eventName' }],
@@ -289,9 +304,43 @@ async function fetchGA4(env, startDate, endDate) {
   return { sessions, bounceRate: round2(bounceRate * 100), waClicks, phClicks };
 }
 
+// GA4 daily sessions (for trend chart)
+async function fetchGA4Daily(env, startDate, endDate) {
+  const token = await refreshAccessToken(
+    env.GOOGLE_ADS_CLIENT_ID,
+    env.GOOGLE_ADS_CLIENT_SECRET,
+    env.GA4_REFRESH_TOKEN
+  );
+  const propertyId = env.GA4_PROPERTY_ID;
+
+  const res = await fetch(
+    `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [{ name: 'date' }],
+        metrics: [{ name: 'sessions' }],
+      }),
+    }
+  );
+
+  if (!res.ok) return {};
+
+  const data = await res.json();
+  const byDate = {};
+  for (const row of (data.rows || [])) {
+    const raw = row.dimensionValues?.[0]?.value || '';
+    const date = raw.length === 8 ? `${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}` : raw;
+    byDate[date] = Number(row.metricValues?.[0]?.value) || 0;
+  }
+  return byDate;
+}
+
 // ─── Blip API ────────────────────────────────────────────
 
-async function fetchBlipContacts(env, startDate) {
+async function fetchBlipContacts(env, startDate, endDate) {
   const headers = {
     'Authorization': env.BLIP_HTTP_KEY,
     'Content-Type': 'application/json',
@@ -301,6 +350,7 @@ async function fetchBlipContacts(env, startDate) {
   let skip = 0;
   const take = 100;
   const startTs = new Date(startDate + 'T00:00:00-03:00').getTime();
+  const endTs = endDate ? new Date(endDate + 'T23:59:59-03:00').getTime() : Date.now();
   let keepGoing = true;
 
   while (keepGoing) {
@@ -324,9 +374,9 @@ async function fetchBlipContacts(env, startDate) {
 
     for (const c of items) {
       const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
-      if (lastMsg >= startTs) {
+      if (lastMsg >= startTs && lastMsg <= endTs) {
         count++;
-      } else {
+      } else if (lastMsg < startTs) {
         keepGoing = false;
         break;
       }
@@ -335,11 +385,65 @@ async function fetchBlipContacts(env, startDate) {
     if (items.length < take) break;
     skip += take;
 
-    // Safety limit
     if (skip > 2000) break;
   }
 
   return count;
+}
+
+// Blip daily counts for trend chart
+async function fetchBlipDaily(env, startDate, numDays) {
+  const headers = {
+    'Authorization': env.BLIP_HTTP_KEY,
+    'Content-Type': 'application/json',
+  };
+
+  // Build date buckets
+  const buckets = {};
+  const startD = new Date(startDate + 'T00:00:00-03:00');
+  for (let i = 0; i < numDays; i++) {
+    const d = new Date(startD);
+    d.setDate(d.getDate() + i);
+    buckets[fmtDate(d)] = 0;
+  }
+
+  const startTs = startD.getTime();
+  let skip = 0;
+  const take = 100;
+  let keepGoing = true;
+
+  while (keepGoing) {
+    const res = await fetch('https://savior.http.msging.net/commands', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        id: `daily-${Date.now()}-${skip}`,
+        to: 'postmaster@crm.msging.net',
+        method: 'get',
+        uri: `/contacts?$orderby=lastMessageDate+desc&$skip=${skip}&$take=${take}`,
+      }),
+    });
+
+    if (!res.ok) break;
+    const data = await res.json();
+    const items = data.resource?.items || [];
+    if (items.length === 0) break;
+
+    for (const c of items) {
+      const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
+      if (lastMsg < startTs) { keepGoing = false; break; }
+      // Convert to BR timezone date string
+      const brDate = new Date(lastMsg - 3 * 60 * 60 * 1000);
+      const dateKey = fmtDate(brDate);
+      if (dateKey in buckets) buckets[dateKey]++;
+    }
+
+    if (items.length < take) break;
+    skip += take;
+    if (skip > 3000) break;
+  }
+
+  return buckets;
 }
 
 // ─── Date helpers ────────────────────────────────────────
@@ -358,7 +462,7 @@ function round2(v) {
   return Math.round(v * 100) / 100;
 }
 
-// ─── Build funil period ──────────────────────────────────
+// ─── Build funil period (with regional split) ────────────
 
 async function buildPeriod(env, startDate, endDate, days) {
   const [adsRows, ga4] = await Promise.all([
@@ -367,37 +471,56 @@ async function buildPeriod(env, startDate, endDate, days) {
   ]);
 
   let impr = 0, clicks = 0, cost = 0, conv = 0;
+  let rjImpr = 0, rjClicks = 0, rjCost = 0, rjConv = 0;
+  let spImpr = 0, spClicks = 0, spCost = 0, spConv = 0;
+
   for (const r of adsRows) {
+    const name = r.campaign?.name || '';
     const m = r.metrics || {};
-    impr += Number(m.impressions) || 0;
-    clicks += Number(m.clicks) || 0;
-    cost += (Number(m.costMicros) || 0) / 1_000_000;
-    conv += Number(m.conversions) || 0;
+    const _impr = Number(m.impressions) || 0;
+    const _clicks = Number(m.clicks) || 0;
+    const _cost = (Number(m.costMicros) || 0) / 1_000_000;
+    const _conv = Number(m.conversions) || 0;
+
+    impr += _impr; clicks += _clicks; cost += _cost; conv += _conv;
+
+    if (isRJ(name)) {
+      rjImpr += _impr; rjClicks += _clicks; rjCost += _cost; rjConv += _conv;
+    } else {
+      spImpr += _impr; spClicks += _clicks; spCost += _cost; spConv += _conv;
+    }
   }
 
-  const dailyImpr = days > 0 ? impr / days : impr;
-  const dailyClicks = days > 0 ? clicks / days : clicks;
-  const dailySessions = days > 0 ? ga4.sessions / days : ga4.sessions;
-  const dailyCost = days > 0 ? cost / days : cost;
-  const dailyConv = days > 0 ? conv / days : conv;
-  const dailyWa = days > 0 ? ga4.waClicks / days : ga4.waClicks;
-  const dailyPh = days > 0 ? ga4.phClicks / days : ga4.phClicks;
+  function mkPeriod(i, c, co, cv, sess, wa, ph, bounce) {
+    const di = days > 0 ? i / days : i;
+    const dc = days > 0 ? c / days : c;
+    const ds = days > 0 ? sess / days : sess;
+    const dco = days > 0 ? co / days : co;
+    const dcv = days > 0 ? cv / days : cv;
+    const dwa = days > 0 ? wa / days : wa;
+    const dph = days > 0 ? ph / days : ph;
+    return {
+      impressions: round2(di),
+      ad_clicks: round2(dc),
+      sessions: round2(ds),
+      wa_clicks: round2(dwa),
+      ph_clicks: round2(dph),
+      blip: 0,
+      cost: round2(dco),
+      cpc: dc > 0 ? round2(dco / dc) : 0,
+      ctr: di > 0 ? round2((dc / di) * 100) : 0,
+      conversions: round2(dcv),
+      cpl_blip: 0,
+      bounce: bounce || 0,
+      form_start: 0,
+    };
+  }
 
-  return {
-    impressions: round2(dailyImpr),
-    ad_clicks: round2(dailyClicks),
-    sessions: round2(dailySessions),
-    wa_clicks: round2(dailyWa),
-    ph_clicks: round2(dailyPh),
-    blip: 0, // filled later
-    cost: round2(dailyCost),
-    cpc: dailyClicks > 0 ? round2(dailyCost / dailyClicks) : 0,
-    ctr: dailyImpr > 0 ? round2((dailyClicks / dailyImpr) * 100) : 0,
-    conversions: round2(dailyConv),
-    cpl_blip: 0, // filled later
-    bounce: ga4.bounceRate || 0,
-    form_start: 0,
-  };
+  const cons = mkPeriod(impr, clicks, cost, conv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
+  const rj = mkPeriod(rjImpr, rjClicks, rjCost, rjConv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
+  const sp = mkPeriod(spImpr, spClicks, spCost, spConv, ga4.sessions, ga4.waClicks, ga4.phClicks, ga4.bounceRate);
+
+  return { cons, rj, sp };
 }
 
 // ─── Main collection ─────────────────────────────────────
@@ -405,39 +528,88 @@ async function buildPeriod(env, startDate, endDate, days) {
 async function collectAllData(env) {
   const today = fmtDate(new Date());
   const yesterday = fmtDate(daysAgo(1));
-  const d2 = fmtDate(daysAgo(2));
+  const d2Date = fmtDate(daysAgo(2));
   const d30start = fmtDate(daysAgo(30));
   const d90start = fmtDate(daysAgo(90));
 
-  // Collect all periods + ads detail in parallel where possible
-  const [hoje, ontem, periodo30, periodo90, adsDetail, kwDetail] = await Promise.all([
+  // Collect all periods + ads detail + daily series in parallel
+  const [hojeP, ontemP, d2P, periodo30, periodo90, adsDetail, kwDetail, dailyAdsRows, dailyGA4] = await Promise.all([
     buildPeriod(env, today, today, 1),
     buildPeriod(env, yesterday, yesterday, 1),
+    buildPeriod(env, d2Date, d2Date, 1),
     buildPeriod(env, d30start, yesterday, 30),
     buildPeriod(env, d90start, yesterday, 90),
     fetchGoogleAds(env, d30start, yesterday),
-    fetchGoogleAdsKeywords(env, d90start, yesterday),
+    fetchGoogleAdsKeywords(env, d30start, yesterday),
+    fetchGoogleAdsDaily(env, d30start, yesterday),
+    fetchGA4Daily(env, d30start, yesterday),
   ]);
 
-  // Blip contacts (30d and today)
-  let blip30 = 0, blipToday = 0;
+  // Blip contacts: today, yesterday, d2, 30d, 90d + daily
+  let blipToday = 0, blipOntem = 0, blipD2 = 0, blip30 = 0, blip90 = 0;
+  let blipDaily = {};
   try {
-    [blip30, blipToday] = await Promise.all([
-      fetchBlipContacts(env, d30start),
-      fetchBlipContacts(env, today),
+    [blipToday, blipOntem, blipD2, blip30, blip90, blipDaily] = await Promise.all([
+      fetchBlipContacts(env, today, today),
+      fetchBlipContacts(env, yesterday, yesterday),
+      fetchBlipContacts(env, d2Date, d2Date),
+      fetchBlipContacts(env, d30start, yesterday),
+      fetchBlipContacts(env, d90start, yesterday),
+      fetchBlipDaily(env, d30start, 30),
     ]);
   } catch (e) {
     console.error('Blip fetch error:', e.message);
   }
 
   // Fill blip into periods
-  hoje.blip = blipToday;
-  hoje.cpl_blip = blipToday > 0 ? round2(hoje.cost / blipToday) : 0;
+  function fillBlip(period, blipCount, days) {
+    const daily = days > 0 ? blipCount / days : blipCount;
+    period.cons.blip = round2(daily);
+    period.cons.cpl_blip = daily > 0 ? round2(period.cons.cost / daily) : 0;
+    period.rj.blip = round2(daily);
+    period.rj.cpl_blip = daily > 0 ? round2(period.rj.cost / daily) : 0;
+    period.sp.blip = round2(daily);
+    period.sp.cpl_blip = daily > 0 ? round2(period.sp.cost / daily) : 0;
+  }
 
-  periodo30.blip = round2(blip30 / 30);
-  periodo30.cpl_blip = periodo30.blip > 0 ? round2(periodo30.cost / periodo30.blip) : 0;
+  fillBlip(hojeP, blipToday, 1);
+  fillBlip(ontemP, blipOntem, 1);
+  fillBlip(d2P, blipD2, 1);
+  fillBlip(periodo30, blip30, 30);
+  fillBlip(periodo90, blip90, 90);
 
-  // Parse ads detail
+  // Parse daily ads data for trend chart
+  const adsByDate = parseDailyAdsRows(dailyAdsRows);
+
+  // Build daily array (sorted by date)
+  const dailyDates = [];
+  const cursor = new Date(d30start + 'T00:00:00Z');
+  const endCursor = new Date(yesterday + 'T00:00:00Z');
+  while (cursor <= endCursor) {
+    dailyDates.push(fmtDate(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  const daily = dailyDates.map(date => {
+    const ads = adsByDate[date] || {};
+    const sessions = dailyGA4[date] || 0;
+    const blip = blipDaily[date] || 0;
+    return {
+      date,
+      clicks: ads.clicks || 0,
+      cost: round2(ads.cost || 0),
+      conv: round2(ads.conv || 0),
+      impr: ads.impr || 0,
+      sessions,
+      blip,
+      rj_clicks: ads.rj_clicks || 0,
+      rj_cost: round2(ads.rj_cost || 0),
+      sp_clicks: ads.sp_clicks || 0,
+      sp_cost: round2(ads.sp_cost || 0),
+    };
+  });
+
+  // Parse ads detail with regional split
   const ads = parseAdsRows(adsDetail);
   ads.keywords = parseKeywordRows(kwDetail);
   ads.ok = true;
@@ -451,16 +623,27 @@ async function collectAllData(env) {
       labels: {
         hoje: today.slice(5) + ' (parcial)',
         ontem: yesterday.slice(5),
-        d2: d2.slice(5),
+        d2: d2Date.slice(5),
         '30d': 'Méd/dia 30d',
         '90d': 'Méd/dia 90d',
       },
-      hoje,
-      ontem,
-      d2: ontem, // simplified
-      '30d': periodo30,
-      '90d': periodo90,
+      hoje: hojeP.cons,
+      hoje_rj: hojeP.rj,
+      hoje_sp: hojeP.sp,
+      ontem: ontemP.cons,
+      ontem_rj: ontemP.rj,
+      ontem_sp: ontemP.sp,
+      d2: d2P.cons,
+      d2_rj: d2P.rj,
+      d2_sp: d2P.sp,
+      '30d': periodo30.cons,
+      '30d_rj': periodo30.rj,
+      '30d_sp': periodo30.sp,
+      '90d': periodo90.cons,
+      '90d_rj': periodo90.rj,
+      '90d_sp': periodo90.sp,
     },
+    daily,
     resumo: {
       pessoas: 0,
       empresas: 0,
@@ -480,7 +663,6 @@ async function collectAllData(env) {
 async function handleRequest(request, env) {
   const url = new URL(request.url);
 
-  // CORS
   const origin = request.headers.get('Origin') || '';
   const allowedOrigins = [env.ALLOWED_ORIGIN, 'http://localhost:4321', 'http://localhost:3000'];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : env.ALLOWED_ORIGIN;
@@ -509,7 +691,6 @@ async function handleRequest(request, env) {
       });
     }
 
-    // No cache, try to collect fresh
     try {
       const data = await collectAllData(env);
       const json = JSON.stringify(data);
@@ -529,7 +710,6 @@ async function handleRequest(request, env) {
     }
   }
 
-  // Manual trigger
   if (url.pathname === '/refresh' && request.method === 'POST') {
     try {
       const data = await collectAllData(env);
