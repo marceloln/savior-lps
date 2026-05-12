@@ -446,6 +446,62 @@ async function fetchBlipDaily(env, startDate, numDays) {
   return buckets;
 }
 
+// Blip desk tickets closed with "Finalizado com sucesso" tag, bucketed by closeDate
+async function fetchBlipClosedDaily(env, startDate, numDays) {
+  const headers = {
+    'Authorization': env.BLIP_HTTP_KEY,
+    'Content-Type': 'application/json',
+  };
+
+  const buckets = {};
+  const startD = new Date(startDate + 'T00:00:00-03:00');
+  for (let i = 0; i < numDays; i++) {
+    const d = new Date(startD);
+    d.setDate(d.getDate() + i);
+    buckets[fmtDate(d)] = 0;
+  }
+
+  const startTs = startD.getTime();
+  let skip = 0;
+  const take = 100;
+  let keepGoing = true;
+
+  while (keepGoing) {
+    const res = await fetch('https://savior.http.msging.net/commands', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        id: `closed-${Date.now()}-${skip}`,
+        to: 'postmaster@desk.msging.net',
+        method: 'get',
+        uri: `/tickets?$filter=status%20eq%20'ClosedAttendant'&$orderby=storageDate%20desc&$skip=${skip}&$take=${take}`,
+      }),
+    });
+
+    if (!res.ok) break;
+    const data = await res.json();
+    const items = data.resource?.items || [];
+    if (items.length === 0) break;
+
+    for (const t of items) {
+      const closeTs = t.closeDate ? new Date(t.closeDate).getTime() : 0;
+      if (closeTs < startTs) { keepGoing = false; break; }
+      const tags = t.tags || [];
+      if (tags.includes('Finalizado com sucesso')) {
+        const brDate = new Date(closeTs - 3 * 60 * 60 * 1000);
+        const dateKey = fmtDate(brDate);
+        if (dateKey in buckets) buckets[dateKey]++;
+      }
+    }
+
+    if (items.length < take) break;
+    skip += take;
+    if (skip > 3000) break;
+  }
+
+  return buckets;
+}
+
 // ─── Date helpers ────────────────────────────────────────
 
 function nowBRT() {
@@ -510,6 +566,7 @@ async function buildPeriod(env, startDate, endDate, days) {
       wa_clicks: round2(dwa),
       ph_clicks: round2(dph),
       blip: 0,
+      blip_closed: 0,
       cost: round2(dco),
       cpc: dc > 0 ? round2(dco / dc) : 0,
       ctr: di > 0 ? round2((dc / di) * 100) : 0,
@@ -574,24 +631,41 @@ async function collectAllData(env) {
     try { blipD2 = await fetchBlipContacts(env, d2Date, d2Date); } catch(e) { console.error('Blip d2:', e.message); }
   }
 
-  // Fill blip into periods (proportional split by clicks ratio)
-  function fillBlip(period, blipCount, days) {
+  // Blip closed tickets ("Finalizado com sucesso")
+  let blipClosedDaily = {};
+  let bcToday = 0, bcOntem = 0, bcD2 = 0, bc30 = 0, bc90 = 0;
+  try { blipClosedDaily = await fetchBlipClosedDaily(env, d30start, 31); } catch(e) { console.error('Blip closed daily:', e.message); }
+
+  if (Object.keys(blipClosedDaily).length > 0) {
+    bcToday = blipClosedDaily[today] || 0;
+    bcOntem = blipClosedDaily[yesterday] || 0;
+    bcD2 = blipClosedDaily[d2Date] || 0;
+    bc30 = Object.values(blipClosedDaily).reduce((a, v) => a + v, 0);
+    bc90 = bc30;
+  }
+
+  // Fill blip into periods
+  function fillBlip(period, blipCount, closedCount, days) {
     const daily = days > 0 ? blipCount / days : blipCount;
+    const dailyClosed = days > 0 ? closedCount / days : closedCount;
     period.cons.blip = round2(daily);
     period.cons.cpl_blip = daily > 0 ? round2(period.cons.cost / daily) : 0;
+    period.cons.blip_closed = round2(dailyClosed);
 
     // Blip only exists in RJ — SP has no Blip yet
     period.rj.blip = round2(daily);
     period.rj.cpl_blip = daily > 0 ? round2(period.rj.cost / daily) : 0;
+    period.rj.blip_closed = round2(dailyClosed);
     period.sp.blip = 0;
     period.sp.cpl_blip = 0;
+    period.sp.blip_closed = 0;
   }
 
-  fillBlip(hojeP, blipToday, 1);
-  fillBlip(ontemP, blipOntem, 1);
-  fillBlip(d2P, blipD2, 1);
-  fillBlip(periodo30, blip30, 30);
-  fillBlip(periodo90, blip90, 90);
+  fillBlip(hojeP, blipToday, bcToday, 1);
+  fillBlip(ontemP, blipOntem, bcOntem, 1);
+  fillBlip(d2P, blipD2, bcD2, 1);
+  fillBlip(periodo30, blip30, bc30, 30);
+  fillBlip(periodo90, blip90, bc90, 90);
 
   // Parse daily ads data for trend chart
   const adsByDate = parseDailyAdsRows(dailyAdsRows);
@@ -609,6 +683,7 @@ async function collectAllData(env) {
     const ads = adsByDate[date] || {};
     const sessions = dailyGA4[date] || 0;
     const blip = blipDaily[date] || 0;
+    const blip_closed = blipClosedDaily[date] || 0;
     return {
       date,
       clicks: ads.clicks || 0,
@@ -617,6 +692,7 @@ async function collectAllData(env) {
       impr: ads.impr || 0,
       sessions,
       blip,
+      blip_closed,
       rj_clicks: ads.rj_clicks || 0,
       rj_cost: round2(ads.rj_cost || 0),
       sp_clicks: ads.sp_clicks || 0,

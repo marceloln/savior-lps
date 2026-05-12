@@ -254,6 +254,7 @@
     .fbar-fill.session{background:linear-gradient(90deg,#4A8FBE 0%,var(--blue) 100%);color:var(--navy-deep)}
     .fbar-fill.lead{background:linear-gradient(90deg,var(--green-dark) 0%,var(--green-bright) 100%);color:var(--navy-deep)}
     .fbar-fill.ticket{background:linear-gradient(90deg,var(--amber) 0%,#F5C875 100%);color:var(--navy-deep)}
+    .fbar-fill.closed{background:linear-gradient(90deg,#2E7D32 0%,#66BB6A 100%);color:#fff}
     .fbar-fill.cotacao{background:linear-gradient(90deg,#D87E33 0%,var(--amber) 100%);color:var(--navy-deep)}
     .fbar-fill.venda{background:linear-gradient(90deg,var(--red-soft) 0%,var(--red) 100%);color:var(--cream)}
 
@@ -929,7 +930,8 @@
       {label:'Cliques',      sub:'Tráfego pago',        val:m30.ad_clicks||0,   hj:hoje.ad_clicks||0,   fill:'click'},
       {label:'Sessões Site', sub:'GA4 (todos canais)',   val:m30.sessions||0,    hj:hoje.sessions||0,    fill:'session'},
       {label:'Conv. Ads',    sub:'Conversão tracked',    val:m30.conversions||0, hj:hoje.conversions||0, fill:'lead'},
-      {label:'Leads Blip',   sub:'Atendimento iniciado', val:m30.blip||0,        hj:hoje.blip||0,        fill:'ticket'}
+      {label:'Leads Blip',   sub:'Atendimento iniciado', val:m30.blip||0,        hj:hoje.blip||0,        fill:'ticket'},
+      {label:'Fechamentos',  sub:'Finalizado c/ sucesso',val:m30.blip_closed||0, hj:hoje.blip_closed||0, fill:'closed'}
     ];
     var top = stages[0].val || 1;
     var html = '';
@@ -962,11 +964,13 @@
     // Sidebar summary
     var clicks = m30.ad_clicks||0, sessions = m30.sessions||0, blip = m30.blip||0;
     var impr = m30.impressions||1, cost = m30.cost||0;
+    var closed = m30.blip_closed||0;
     var sbHtml =
       '<div class="fs-title">Resumo · últimos 30 dias</div>'+
       '<div class="fs-row"><span class="lbl">CTR médio</span><span class="val">'+(clicks > 0 ? ((clicks/impr)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Landing Rate</span><span class="val">'+(clicks > 0 ? ((sessions/clicks)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Taxa Blip</span><span class="val good">'+(sessions > 0 ? ((blip/sessions)*100).toFixed(1)+'%' : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">Taxa Fechamento</span><span class="val good">'+(blip > 0 ? ((closed/blip)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">CPL Blip (30d)</span><span class="val">'+(blip > 0 ? brl(cost/blip) : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">CPA Google Ads</span><span class="val">'+(m30.conversions > 0 ? brl(cost/m30.conversions) : '—')+'</span></div>';
     document.getElementById('funnel-summary').innerHTML = sbHtml;
