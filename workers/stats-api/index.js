@@ -448,12 +448,16 @@ async function fetchBlipDaily(env, startDate, numDays) {
 
 // ─── Date helpers ────────────────────────────────────────
 
+function nowBRT() {
+  return new Date(Date.now() - 3 * 60 * 60 * 1000);
+}
+
 function fmtDate(d) {
   return d.toISOString().slice(0, 10);
 }
 
 function daysAgo(n) {
-  const d = new Date();
+  const d = nowBRT();
   d.setDate(d.getDate() - n);
   return d;
 }
@@ -530,7 +534,7 @@ async function buildPeriod(env, startDate, endDate, days) {
 // ─── Main collection ─────────────────────────────────────
 
 async function collectAllData(env) {
-  const today = fmtDate(new Date());
+  const today = fmtDate(nowBRT());
   const yesterday = fmtDate(daysAgo(1));
   const d2Date = fmtDate(daysAgo(2));
   const d30start = fmtDate(daysAgo(30));
