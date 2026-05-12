@@ -520,7 +520,12 @@
       <div class="section-head">
         <span class="section-eyebrow">03 · Funil completo de conversão</span>
         <h2 class="section-title">Da impressão Ads até o lead</h2>
-        <span class="section-sub">hoje vs média diária · últimos 30 dias</span>
+        <span class="section-sub" id="funil-sub">hoje vs média diária · últimos 30 dias</span>
+      </div>
+      <div class="period-toggle" id="funil-period-toggle">
+        <button data-fp="dia" class="active">Dia</button>
+        <button data-fp="semana">Semana</button>
+        <button data-fp="mes">Mês</button>
       </div>
       <div class="funnel-wrap">
         <div class="funnel-grid">
@@ -666,6 +671,17 @@
     if(data) renderAll(data);
   });
 
+  // Funnel period toggle (Dia/Semana/Mês)
+  STATE.funilPeriod = 'dia';
+  document.getElementById('funil-period-toggle').addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('#funil-period-toggle button').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    STATE.funilPeriod = btn.dataset.fp || 'dia';
+    renderFunil(STATE.funilPeriod);
+  });
+
   /* ── Data load ─────────────────────────────────────── */
   var SECTIONS = ['s-snapshot','s-funil','s-trend','s-custo','s-camps','s-sinais'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
@@ -693,6 +709,7 @@
   }
 
   /* ── Formatters ────────────────────────────────────── */
+  function round2(v){ return Math.round(v*100)/100; }
   function brl(v){
     if(v==null) return '—';
     return 'R$\u202f'+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -734,7 +751,7 @@
       : '—';
 
     renderKpiSnapshot(hoje, ontem, m30, m90, d.daily || []);
-    renderFunil(hoje, m30);
+    renderFunil(STATE.funilPeriod || 'dia');
     renderTrend(m30, m90);
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
@@ -924,17 +941,77 @@
   }
 
   /* ── 03 Funil ──────────────────────────────────────── */
-  function renderFunil(hoje, m30){
+  // Helper: sum a field from daily array over a slice
+  function sumDaily(daily, field, count) {
+    var sl = daily.slice(-count);
+    return sl.reduce(function(a, r){ return a + (r[field] || 0); }, 0);
+  }
+
+  // Map funnel field names to daily array field names
+  var funilFieldMap = {
+    impressions: 'impr',
+    ad_clicks: 'clicks',
+    sessions: 'sessions',
+    conversions: 'conv',
+    blip: 'blip',
+    blip_closed: 'blip_closed',
+    cost: 'cost'
+  };
+
+  function renderFunil(mode){
+    if(!data) return;
+    var sfx = STATE.region === 'cons' ? '' : '_'+STATE.region;
+    var hoje  = data.funil['hoje'+sfx] || data.funil.hoje;
+    var m30   = data.funil['30d'+sfx] || data.funil['30d'];
+    var m90   = data.funil['90d'+sfx] || data.funil['90d'];
+    var daily = data.daily || [];
+
+    // Build actual and comparison values based on mode
+    var actual = {}, avg = {};
+    var subText = '';
+
+    if (mode === 'dia') {
+      // Actual: today's values; Avg: 30d daily average
+      actual = hoje;
+      avg = m30;
+      subText = 'hoje vs média diária · últimos 30 dias';
+    } else if (mode === 'semana') {
+      // Actual: sum last 7 days; Avg: 30d daily avg * 7 (weekly avg over month)
+      actual = {};
+      avg = {};
+      var fields = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
+      fields.forEach(function(f){
+        var dKey = funilFieldMap[f] || f;
+        actual[f] = round2(sumDaily(daily, dKey, 7));
+        avg[f] = round2((m30[f]||0) * 7);
+      });
+      subText = 'últimos 7 dias vs média semanal · últimos 30 dias';
+    } else if (mode === 'mes') {
+      // Actual: sum last 30 days; Avg: 90d daily avg * 30 (monthly avg over trimestre)
+      actual = {};
+      avg = {};
+      var fields2 = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
+      fields2.forEach(function(f){
+        var dKey = funilFieldMap[f] || f;
+        actual[f] = round2(sumDaily(daily, dKey, 30));
+        avg[f] = round2((m90[f]||0) * 30);
+      });
+      subText = 'últimos 30 dias vs média mensal · últimos 90 dias';
+    }
+
+    document.getElementById('funil-sub').textContent = subText;
+
     var stages = [
-      {label:'Impressões',   sub:'Google Ads',          val:m30.impressions||0, hj:hoje.impressions||0, fill:'imp'},
-      {label:'Cliques',      sub:'Tráfego pago',        val:m30.ad_clicks||0,   hj:hoje.ad_clicks||0,   fill:'click'},
-      {label:'Sessões Site', sub:'GA4 (todos canais)',   val:m30.sessions||0,    hj:hoje.sessions||0,    fill:'session'},
-      {label:'Conv. Ads',    sub:'Conversão tracked',    val:m30.conversions||0, hj:hoje.conversions||0, fill:'lead'},
-      {label:'Leads Blip',   sub:'Atendimento iniciado', val:m30.blip||0,        hj:hoje.blip||0,        fill:'ticket'},
-      {label:'Fechamentos',  sub:'Finalizado c/ sucesso',val:m30.blip_closed||0, hj:hoje.blip_closed||0, fill:'closed'}
+      {label:'Impressões',   sub:'Google Ads',          val:avg.impressions||0, hj:actual.impressions||0, fill:'imp'},
+      {label:'Cliques',      sub:'Tráfego pago',        val:avg.ad_clicks||0,   hj:actual.ad_clicks||0,   fill:'click'},
+      {label:'Sessões Site', sub:'GA4 (todos canais)',   val:avg.sessions||0,    hj:actual.sessions||0,    fill:'session'},
+      {label:'Conv. Ads',    sub:'Conversão tracked',    val:avg.conversions||0, hj:actual.conversions||0, fill:'lead'},
+      {label:'Leads Blip',   sub:'Atendimento iniciado', val:avg.blip||0,        hj:actual.blip||0,        fill:'ticket'},
+      {label:'Fechamentos',  sub:'Finalizado c/ sucesso',val:avg.blip_closed||0, hj:actual.blip_closed||0, fill:'closed'}
     ];
     var top = stages[0].val || 1;
     var html = '';
+    var prefixActual = mode === 'dia' ? 'hj' : (mode === 'semana' ? '7d' : '30d');
     stages.forEach(function(st, i){
       var pctVal = top > 0 ? (st.val/top) : 0;
       var widthPct = Math.max(2, pctVal*100);
@@ -943,7 +1020,7 @@
       var dropCls = drop < 0.05 ? 'bad' : (drop < 0.2 ? 'warn' : '');
       var avgStr = st.val >= 100 ? num(Math.round(st.val)) : num(st.val,1);
       var hjStr = st.hj >= 100 ? num(Math.round(st.hj)) : num(st.hj,1);
-      var valStr = '<span style="opacity:.5;font-size:12px">hj </span>'+hjStr+'<span style="opacity:.35;margin:0 6px">|</span><span style="opacity:.5;font-size:12px">μ </span>'+avgStr;
+      var valStr = '<span style="opacity:.5;font-size:12px">'+prefixActual+' </span>'+hjStr+'<span style="opacity:.35;margin:0 6px">|</span><span style="opacity:.5;font-size:12px">μ </span>'+avgStr;
       var showInside = widthPct >= 95;
       html += '<div class="fstage">'+
         '<div class="fstage-name">'+st.label+'<small>'+st.sub+'</small></div>'+
@@ -961,18 +1038,19 @@
     });
     document.getElementById('funnel-stages').innerHTML = html;
 
-    // Sidebar summary
-    var clicks = m30.ad_clicks||0, sessions = m30.sessions||0, blip = m30.blip||0;
-    var impr = m30.impressions||1, cost = m30.cost||0;
-    var closed = m30.blip_closed||0;
+    // Sidebar summary (uses avg values for ratios)
+    var clicks = avg.ad_clicks||0, sessions = avg.sessions||0, blip = avg.blip||0;
+    var impr = avg.impressions||1, cost = avg.cost||0;
+    var closed = avg.blip_closed||0;
+    var periodLabel = mode === 'dia' ? 'média diária 30d' : (mode === 'semana' ? 'média semanal 30d' : 'média mensal 90d');
     var sbHtml =
-      '<div class="fs-title">Resumo · últimos 30 dias</div>'+
+      '<div class="fs-title">Resumo · '+periodLabel+'</div>'+
       '<div class="fs-row"><span class="lbl">CTR médio</span><span class="val">'+(clicks > 0 ? ((clicks/impr)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Landing Rate</span><span class="val">'+(clicks > 0 ? ((sessions/clicks)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Taxa Blip</span><span class="val good">'+(sessions > 0 ? ((blip/sessions)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Taxa Fechamento</span><span class="val good">'+(blip > 0 ? ((closed/blip)*100).toFixed(1)+'%' : '—')+'</span></div>'+
-      '<div class="fs-row"><span class="lbl">CPL Blip (30d)</span><span class="val">'+(blip > 0 ? brl(cost/blip) : '—')+'</span></div>'+
-      '<div class="fs-row"><span class="lbl">CPA Google Ads</span><span class="val">'+(m30.conversions > 0 ? brl(cost/m30.conversions) : '—')+'</span></div>';
+      '<div class="fs-row"><span class="lbl">CPL Blip</span><span class="val">'+(blip > 0 ? brl(cost/blip) : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">CPA Google Ads</span><span class="val">'+(avg.conversions > 0 ? brl(cost/avg.conversions) : '—')+'</span></div>';
     document.getElementById('funnel-summary').innerHTML = sbHtml;
   }
 

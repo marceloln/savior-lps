@@ -478,8 +478,9 @@ async function fetchBlipClosedDaily(env, startDate, numDays) {
       }),
     });
 
-    if (!res.ok) break;
+    if (!res.ok) { console.error('Blip closed HTTP error:', res.status); break; }
     const data = await res.json();
+    if (data.status === 'failure') { console.error('Blip closed API failure:', data.reason); break; }
     const items = data.resource?.items || [];
     if (items.length === 0) break;
 
@@ -634,7 +635,11 @@ async function collectAllData(env) {
   // Blip closed tickets ("Finalizado com sucesso")
   let blipClosedDaily = {};
   let bcToday = 0, bcOntem = 0, bcD2 = 0, bc30 = 0, bc90 = 0;
-  try { blipClosedDaily = await fetchBlipClosedDaily(env, d30start, 31); } catch(e) { console.error('Blip closed daily:', e.message); }
+  try {
+    blipClosedDaily = await fetchBlipClosedDaily(env, d30start, 31);
+    const bcTotal = Object.values(blipClosedDaily).reduce((a,v) => a+v, 0);
+    console.log('Blip closed daily OK, total:', bcTotal, 'keys:', Object.keys(blipClosedDaily).length);
+  } catch(e) { console.error('Blip closed daily ERROR:', e.message, e.stack); }
 
   if (Object.keys(blipClosedDaily).length > 0) {
     bcToday = blipClosedDaily[today] || 0;
