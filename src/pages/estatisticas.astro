@@ -942,7 +942,7 @@
 
   /* ── 03 Funil ──────────────────────────────────────── */
   // Helper: sum a field from daily array over a slice
-  function sumDaily(daily, field, count) {
+  function sumDailyField(daily, field, count) {
     var sl = daily.slice(-count);
     return sl.reduce(function(a, r){ return a + (r[field] || 0); }, 0);
   }
@@ -982,7 +982,7 @@
       var fields = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
       fields.forEach(function(f){
         var dKey = funilFieldMap[f] || f;
-        actual[f] = round2(sumDaily(daily, dKey, 7));
+        actual[f] = round2(sumDailyField(daily, dKey, 7));
         avg[f] = round2((m30[f]||0) * 7);
       });
       subText = 'últimos 7 dias vs média semanal · últimos 30 dias';
@@ -993,7 +993,7 @@
       var fields2 = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
       fields2.forEach(function(f){
         var dKey = funilFieldMap[f] || f;
-        actual[f] = round2(sumDaily(daily, dKey, 30));
+        actual[f] = round2(sumDailyField(daily, dKey, 30));
         avg[f] = round2((m90[f]||0) * 30);
       });
       subText = 'últimos 30 dias vs média mensal · últimos 90 dias';
