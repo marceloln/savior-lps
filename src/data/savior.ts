@@ -146,19 +146,17 @@ export const GOOGLE_BUSINESS_SP = {
   name: 'SAVIOR Medical Service São Paulo',
 };
 
-// Utilitário para gerar link do WhatsApp com tag de atribuição na mensagem
-// O param `location` identifica qual CTA disparou (hero, final-cta, floating, etc.)
-// A tag [campaign-location-v01] é gerada no SSG como fallback — o script
-// wa-enhance.ts a substitui no client com os UTMs reais do cookie.
+// Utilitário para gerar link do WhatsApp com mensagem limpa.
+// A atribuição (UTM, gclid, campaign) é gerenciada pelo wa-enhance.ts (Ref Code v2),
+// que substitui o texto no client-side com "Ref: XXXXX" e armazena os dados no Worker KV.
+// O HTML gerado contém apenas a mensagem limpa, sem tags poluindo a conversa.
+// Os params utmCampaign e location são mantidos na assinatura por compatibilidade,
+// mas não são mais inseridos no texto da mensagem.
 export function whatsappUrl(
   number: string,
-  utmCampaign: string,
+  _utmCampaign: string,
   message: string = 'Oi, preciso de ambulância.',
-  location: string = 'unknown'
+  _location: string = 'unknown'
 ): string {
-  const tag = `[${utmCampaign}-${location}-v01]`
-  const params = new URLSearchParams({
-    text: `${message} ${tag}`,
-  })
-  return `https://wa.me/${number}?${params.toString()}`
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`
 }
