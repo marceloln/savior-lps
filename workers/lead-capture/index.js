@@ -36,12 +36,24 @@ export default {
     if (request.method === 'OPTIONS') {
       return corsOk();
     }
+
+    // Roteamento por pathname
+    const url = new URL(request.url);
+
+    // POST /ref — armazena UTM data com código curto no KV
+    if (url.pathname === '/ref' && request.method === 'POST') {
+      return handleRefStore(request, env);
+    }
+
+    // GET /ref/:code — consulta UTM data pelo código curto
+    if (url.pathname.startsWith('/ref/') && request.method === 'GET') {
+      return handleRefLookup(url, env);
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method Not Allowed', { status: 405 });
     }
 
-    // Roteamento por pathname
-    const url = new URL(request.url);
     if (url.pathname === '/blip-webhook') {
       return handleBlipWebhook(request, env);
     }
@@ -424,6 +436,48 @@ export default {
 };
 
 // ============================================================
+// Ref Store — armazena UTM data com código curto no KV
+// Chamado pelo wa-enhance.ts no site (fire-and-forget)
+// TTL: 90 dias (7776000s)
+// ============================================================
+async function handleRefStore(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return new Response('Bad Request', { status: 400, headers: corsHeaders() }); }
+
+  const { ref, campaign, gclid, kw, source, medium, ga_client_id, location, page } = body;
+  if (!ref) return new Response(JSON.stringify({ ok: false, error: 'missing ref' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+
+  const data = { campaign: campaign || '', gclid: gclid || '', kw: kw || '', source: source || '', medium: medium || '', ga_client_id: ga_client_id || '', location: location || '', page: page || '', stored_at: new Date().toISOString() };
+
+  try {
+    await env.UTM_STORE.put(ref, JSON.stringify(data), { expirationTtl: 7776000 });
+  } catch (err) {
+    console.error('KV put error:', err);
+    return new Response(JSON.stringify({ ok: false, error: 'kv_error' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+  }
+
+  return new Response(JSON.stringify({ ok: true, ref }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+}
+
+// ============================================================
+// Ref Lookup — consulta UTM data pelo código curto
+// Usado pelo Blip webhook e para debug
+// ============================================================
+async function handleRefLookup(url, env) {
+  const code = url.pathname.replace('/ref/', '').trim();
+  if (!code) return new Response(JSON.stringify({ found: false }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+
+  try {
+    const raw = await env.UTM_STORE.get(code);
+    if (!raw) return new Response(JSON.stringify({ found: false }), { status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+    return new Response(JSON.stringify({ found: true, data: JSON.parse(raw) }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+  } catch (err) {
+    console.error('KV get error:', err);
+    return new Response(JSON.stringify({ found: false, error: 'kv_error' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+  }
+}
+
+// ============================================================
 // Blip Webhook — recebe evento de nova conversa do Blip Builder
 // 1. Envia evento blip_contact ao GA4 via Measurement Protocol
 // 2. Enriquece Deal anônimo no Pipedrive com telefone real do lead
@@ -438,18 +492,29 @@ async function handleBlipWebhook(request, env) {
   const contactPhone = body.contact_phone || extras.phone || '';
   const contactName  = body.contact_name || extras.name || '';
 
-  // Extrair da mensagem (fallback: extras já pré-processados pelo Blip)
+  // --- Resolver Ref code via KV (novo formato limpo) ---
+  const refMatch = msg.match(/Ref:\s*([a-z0-9]{5,10})/i);
+  let refData = null;
+  if (refMatch && env.UTM_STORE) {
+    try {
+      const stored = await env.UTM_STORE.get(refMatch[1]);
+      if (stored) refData = JSON.parse(stored);
+    } catch (err) { console.error('KV ref lookup error:', err); }
+  }
+
+  // Fallback: formato antigo [campaign-location-v01] [gclid:xxx] (backward compat)
   const tagMatch    = msg.match(/\[([a-z0-9_-]{3,60})\]/i);
   const gclidMatch  = msg.match(/\[gclid:([^\]]+)\]/);
   const gaMatch     = msg.match(/\[ga:([0-9.]+)\]/);
   const kwMatch     = msg.match(/\[kw:([^\]]+)\]/);
   const srcMatch    = msg.match(/\[src:([^\]]+)\]/);
 
-  const campaign  = extras.utm_tag      || (tagMatch  ? tagMatch[1]  : 'blip-direct');
-  const gclid     = extras.gclid        || (gclidMatch ? gclidMatch[1] : '');
-  const clientId  = extras.ga_client_id || (gaMatch   ? gaMatch[1]   : '');
-  const keyword   = extras.utm_keyword  || (kwMatch   ? kwMatch[1]   : '');
-  const source    = extras.utm_source   || (srcMatch  ? srcMatch[1]  : '');
+  // Prioridade: refData (KV) > extras (Blip) > regex (mensagem)
+  const campaign  = refData?.campaign  || extras.utm_tag      || (tagMatch   ? tagMatch[1]   : 'blip-direct');
+  const gclid     = refData?.gclid     || extras.gclid        || (gclidMatch ? gclidMatch[1] : '');
+  const clientId  = refData?.ga_client_id || extras.ga_client_id || (gaMatch ? gaMatch[1]    : '');
+  const keyword   = refData?.kw        || extras.utm_keyword  || (kwMatch    ? kwMatch[1]    : '');
+  const source    = refData?.source    || extras.utm_source   || (srcMatch   ? srcMatch[1]   : '');
 
   console.log(`Blip webhook: contact=${body.contact_id} phone=${contactPhone} name=${contactName} campaign=${campaign}`);
 

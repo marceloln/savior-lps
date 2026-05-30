@@ -2,5 +2,9 @@ name = "savior-lead-capture"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
+[[kv_namespaces]]
+binding = "UTM_STORE"
+id = "a324cabb85ca413791f4714fd602be3b"
+
 [vars]
 # PIPEDRIVE_TOKEN deve ser configurado via: wrangler secret put PIPEDRIVE_TOKEN

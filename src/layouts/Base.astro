@@ -453,27 +453,34 @@ const absoluteTwitterImage = twitterImage
 
     <slot />
 
-    <!-- ============ WhatsApp link enhancer ============ -->
-    <!-- Reescreve todos os a[data-whatsapp] com UTMs reais do cookie savior_utm.
-         Roda pós-DOM — substitui a tag base gerada no SSG pelo tag real com gclid.
+    <!-- ============ WhatsApp link enhancer — Ref code (v2) ============ -->
+    <!-- Gera código curto, armazena UTMs no Worker KV, e coloca apenas "Ref: XXXXX"
+         na mensagem WA. Elimina as tags longas [campaign] [gclid:...] que poluíam a conversa.
          Fonte documentada em TypeScript: src/scripts/wa-enhance.ts -->
     <script is:inline>
       (function(){
-        var C='savior_utm',V='v01'
+        var C='savior_utm',WORKER='https://savior-lead-capture.marcelo-nascimento.workers.dev'
         function read(){if(window._saviorUtm)return window._saviorUtm;var m=document.cookie.match('(^|;)\\s*'+C+'\\s*=\\s*([^;]+)');try{return m?JSON.parse(decodeURIComponent(m[2])):null}catch(e){return null}}
-        // Extrai client_id GA4 do cookie _ga (formato GA1.1.XXXXXXXXXX.XXXXXXXXXX)
         function gaId(){var m=document.cookie.match('(^|;)\\s*_ga\\s*=\\s*([^;]+)');if(!m)return '';var p=m[2].split('.');return p.length>=4?p[2]+'.'+p[3]:''}
-        function tag(c,l,g,ga,kw,src){var b='['+c+'-'+l+'-'+V+']';if(kw)b+=' [kw:'+kw+']';if(src&&src!=='direct'&&src!=='google'&&/organic|bing/.test(src))b+=' [src:'+src+']';if(g)b+=' [gclid:'+g+']';if(ga)b+=' [ga:'+ga+']';return b}
+        function genRef(){return Date.now().toString(36).slice(-5)+Math.random().toString(36).slice(2,4)}
         function run(){
           var utm=read();if(!utm)return
-          var c=utm.campaign||'direct',g=utm.gclid,ga=gaId(),kw=utm.term||'',src=utm.source||'direct'
+          var ref=genRef()
+          var c=utm.campaign||'direct',g=utm.gclid||'',kw=utm.term||'',src=utm.source||'direct',med=utm.medium||'none',ga=gaId()
+          var page=location.pathname.replace(/^\/|\/$/g,'')||'home'
+          // Armazena ref→UTM no Worker KV (fire-and-forget)
+          fetch(WORKER+'/ref',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:ref,campaign:c,gclid:g,kw:kw,source:src,medium:med,ga_client_id:ga,page:page})}).catch(function(){})
+          // Atualiza links WA com mensagem limpa + ref code
           document.querySelectorAll('a[data-whatsapp]').forEach(function(a){
-            var loc=a.dataset.location||'unknown',h=a.getAttribute('href');if(!h)return
+            var h=a.getAttribute('href');if(!h)return
             var m=h.match(/[?&]text=([^&]*)/);if(!m)return
-            var raw=decodeURIComponent(m[1]),base=raw.replace(/(\s*\[[^\]]+\])+$/,'').trimEnd()
-            var nh=h.replace(/([?&]text=)[^&]*/,function(_,pre){return pre+encodeURIComponent(base+' '+tag(c,loc,g,ga,kw,src))})
+            var raw=decodeURIComponent(m[1]).replace(/\+/g,' ')
+            // Remove tags antigas [xxx] e Ref: antigos
+            var base=raw.replace(/(\s*\[[^\]]+\])+$/,'').replace(/\s*Ref:\s*\w+$/,'').trimEnd()
+            var nh=h.replace(/([?&]text=)[^&]*/,function(_,pre){return pre+encodeURIComponent(base+' Ref: '+ref)})
             a.setAttribute('href',nh)
           })
+          window._saviorRef=ref
         }
         if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',run)}else{run()}
       })()

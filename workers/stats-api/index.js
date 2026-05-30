@@ -7,7 +7,7 @@
  * Secrets (wrangler secret put):
  *   GOOGLE_ADS_DEVELOPER_TOKEN, GOOGLE_ADS_CLIENT_ID,
  *   GOOGLE_ADS_CLIENT_SECRET, GOOGLE_ADS_REFRESH_TOKEN,
- *   GA4_REFRESH_TOKEN, BLIP_HTTP_KEY
+ *   GA4_REFRESH_TOKEN, BLIP_HTTP_KEY, BLIP_SP_HTTP_KEY
  *
  * Vars (wrangler.toml):
  *   GOOGLE_ADS_MCC_ID, GOOGLE_ADS_CUSTOMER_ID,
@@ -237,6 +237,46 @@ function parseDailyAdsRows(rows) {
   return byDate;
 }
 
+// Fetch Ads data for a single day with hourly breakdown (for "vs ontem no mesmo horário")
+async function fetchGoogleAdsHourly(env, date) {
+  const query = `
+    SELECT segments.hour, campaign.name,
+           metrics.impressions, metrics.clicks, metrics.cost_micros,
+           metrics.conversions
+    FROM campaign
+    WHERE segments.date = '${date}'
+      AND campaign.status = 'ENABLED'
+  `;
+  return adsQuery(env, query);
+}
+
+function parseHourlyAdsRows(rows, maxHour) {
+  let impr = 0, clicks = 0, cost = 0, conv = 0;
+  let rjImpr = 0, rjClicks = 0, rjCost = 0, rjConv = 0;
+  let spImpr = 0, spClicks = 0, spCost = 0, spConv = 0;
+
+  for (const r of rows) {
+    const hour = Number(r.segments?.hour ?? 99);
+    if (hour > maxHour) continue;
+
+    const name = r.campaign?.name || '';
+    const m = r.metrics || {};
+    const _impr = Number(m.impressions) || 0;
+    const _clicks = Number(m.clicks) || 0;
+    const _cost = (Number(m.costMicros) || 0) / 1_000_000;
+    const _conv = Number(m.conversions) || 0;
+
+    impr += _impr; clicks += _clicks; cost += _cost; conv += _conv;
+    if (isRJ(name)) {
+      rjImpr += _impr; rjClicks += _clicks; rjCost += _cost; rjConv += _conv;
+    } else {
+      spImpr += _impr; spClicks += _clicks; spCost += _cost; spConv += _conv;
+    }
+  }
+
+  return { impr, clicks, cost, conv, rjImpr, rjClicks, rjCost, rjConv, spImpr, spClicks, spCost, spConv };
+}
+
 // ─── GA4 Data API ────────────────────────────────────────
 
 async function fetchGA4(env, startDate, endDate) {
@@ -338,11 +378,63 @@ async function fetchGA4Daily(env, startDate, endDate) {
   return byDate;
 }
 
+// GA4 hourly sessions for a single day (for "vs ontem no mesmo horário")
+async function fetchGA4Hourly(env, date) {
+  const token = await refreshAccessToken(
+    env.GOOGLE_ADS_CLIENT_ID,
+    env.GOOGLE_ADS_CLIENT_SECRET,
+    env.GA4_REFRESH_TOKEN
+  );
+  const propertyId = env.GA4_PROPERTY_ID;
+
+  const res = await fetch(
+    `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dateRanges: [{ startDate: date, endDate: date }],
+        dimensions: [{ name: 'hour' }],
+        metrics: [{ name: 'sessions' }, { name: 'bounceRate' }],
+      }),
+    }
+  );
+
+  if (!res.ok) return {};
+
+  const data = await res.json();
+  const byHour = {};
+  for (const row of (data.rows || [])) {
+    const hour = Number(row.dimensionValues?.[0]?.value) || 0;
+    byHour[hour] = {
+      sessions: Number(row.metricValues?.[0]?.value) || 0,
+      bounceRate: Number(row.metricValues?.[1]?.value) || 0,
+    };
+  }
+  return byHour;
+}
+
+// Sum GA4 hourly data up to maxHour
+function sumGA4Hourly(byHour, maxHour) {
+  let sessions = 0, bounceSum = 0, bounceCount = 0;
+  for (let h = 0; h <= maxHour; h++) {
+    if (byHour[h]) {
+      sessions += byHour[h].sessions;
+      bounceSum += byHour[h].bounceRate * byHour[h].sessions;
+      bounceCount += byHour[h].sessions;
+    }
+  }
+  return {
+    sessions,
+    bounceRate: bounceCount > 0 ? round2((bounceSum / bounceCount) * 100) : 0,
+  };
+}
+
 // ─── Blip API ────────────────────────────────────────────
 
-async function fetchBlipContacts(env, startDate, endDate) {
+async function fetchBlipContacts(httpKey, startDate, endDate) {
   const headers = {
-    'Authorization': env.BLIP_HTTP_KEY,
+    'Authorization': httpKey,
     'Content-Type': 'application/json',
   };
 
@@ -392,9 +484,9 @@ async function fetchBlipContacts(env, startDate, endDate) {
 }
 
 // Blip daily counts for trend chart
-async function fetchBlipDaily(env, startDate, numDays) {
+async function fetchBlipDaily(httpKey, startDate, numDays) {
   const headers = {
-    'Authorization': env.BLIP_HTTP_KEY,
+    'Authorization': httpKey,
     'Content-Type': 'application/json',
   };
 
@@ -447,9 +539,9 @@ async function fetchBlipDaily(env, startDate, numDays) {
 }
 
 // Blip desk tickets closed with "Finalizado com sucesso" tag, bucketed by closeDate
-async function fetchBlipClosedDaily(env, startDate, numDays) {
+async function fetchBlipClosedDaily(httpKey, startDate, numDays) {
   const headers = {
-    'Authorization': env.BLIP_HTTP_KEY,
+    'Authorization': httpKey,
     'Content-Type': 'application/json',
   };
 
@@ -598,8 +690,11 @@ async function collectAllData(env) {
   const d30start = fmtDate(daysAgo(30));
   const d90start = fmtDate(daysAgo(90));
 
-  // Collect all periods + ads detail + daily series in parallel
-  const [hojeP, ontemP, d2P, periodo30, periodo90, adsDetail, kwDetail, dailyAdsRows, dailyGA4] = await Promise.all([
+  // Current BRT hour (for "vs ontem no mesmo horário")
+  const currentBRTHour = nowBRT().getUTCHours();
+
+  // Collect all periods + ads detail + daily series + hourly yesterday in parallel
+  const [hojeP, ontemP, d2P, periodo30, periodo90, adsDetail, kwDetail, dailyAdsRows, dailyGA4, ontemHourlyAds, ontemHourlyGA4] = await Promise.all([
     buildPeriod(env, today, today, 1),
     buildPeriod(env, yesterday, yesterday, 1),
     buildPeriod(env, d2Date, d2Date, 1),
@@ -609,68 +704,118 @@ async function collectAllData(env) {
     fetchGoogleAdsKeywords(env, d30start, yesterday),
     fetchGoogleAdsDaily(env, d30start, yesterday),
     fetchGA4Daily(env, d30start, yesterday),
+    fetchGoogleAdsHourly(env, yesterday),
+    fetchGA4Hourly(env, yesterday),
   ]);
 
-  // Blip contacts — run sequentially to avoid concurrent HTTP limits
-  let blipToday = 0, blipOntem = 0, blipD2 = 0, blip30 = 0, blip90 = 0;
-  let blipDaily = {};
-  try { blipDaily = await fetchBlipDaily(env, d30start, 31); } catch(e) { console.error('Blip daily:', e.message); }
+  // Build "ontem até agora" — yesterday's data only up to current BRT hour
+  const adsPartial = parseHourlyAdsRows(ontemHourlyAds, currentBRTHour);
+  const ga4Partial = sumGA4Hourly(ontemHourlyGA4, currentBRTHour);
 
-  // Derive period counts from daily buckets (avoids redundant API calls)
-  if (Object.keys(blipDaily).length > 0) {
-    blipToday = blipDaily[today] || 0;
-    blipOntem = blipDaily[yesterday] || 0;
-    blipD2 = blipDaily[d2Date] || 0;
-    blip30 = Object.values(blipDaily).reduce((a, v) => a + v, 0);
-    // 90d: estimate from 30d average (full 90d scan too heavy for Workers)
-    blip90 = blip30;
-  } else {
-    // Fallback: fetch individually if daily failed
-    try { blip30 = await fetchBlipContacts(env, d30start, yesterday); } catch(e) { console.error('Blip 30d:', e.message); }
-    try { blipToday = await fetchBlipContacts(env, today, today); } catch(e) { console.error('Blip today:', e.message); }
-    try { blipOntem = await fetchBlipContacts(env, yesterday, yesterday); } catch(e) { console.error('Blip ontem:', e.message); }
-    try { blipD2 = await fetchBlipContacts(env, d2Date, d2Date); } catch(e) { console.error('Blip d2:', e.message); }
+  function mkPartialPeriod(i, c, co, cv, sess, bounce) {
+    return {
+      impressions: round2(i),
+      ad_clicks: round2(c),
+      sessions: round2(sess),
+      wa_clicks: 0,
+      ph_clicks: 0,
+      blip: 0,
+      blip_closed: 0,
+      cost: round2(co),
+      cpc: c > 0 ? round2(co / c) : 0,
+      ctr: i > 0 ? round2((c / i) * 100) : 0,
+      conversions: round2(cv),
+      cpl_blip: 0,
+      bounce: bounce || 0,
+      form_start: 0,
+    };
   }
 
-  // Blip closed tickets ("Finalizado com sucesso")
-  let blipClosedDaily = {};
-  let bcToday = 0, bcOntem = 0, bcD2 = 0, bc30 = 0, bc90 = 0;
+  const rjRatioPartial = adsPartial.clicks > 0 ? adsPartial.rjClicks / adsPartial.clicks : 0;
+
+  const ontemAteAgora = {
+    cons: mkPartialPeriod(adsPartial.impr, adsPartial.clicks, adsPartial.cost, adsPartial.conv, ga4Partial.sessions, ga4Partial.bounceRate),
+    rj: mkPartialPeriod(adsPartial.rjImpr, adsPartial.rjClicks, adsPartial.rjCost, adsPartial.rjConv, Math.round(ga4Partial.sessions * rjRatioPartial), ga4Partial.bounceRate),
+    sp: mkPartialPeriod(adsPartial.spImpr, adsPartial.spClicks, adsPartial.spCost, adsPartial.spConv, Math.round(ga4Partial.sessions * (1 - rjRatioPartial)), ga4Partial.bounceRate),
+  };
+
+  // Blip contacts — RJ + SP separately
+  function derivePeriods(daily, today, yesterday, d2Date) {
+    let t = 0, o = 0, d2 = 0, sum = 0;
+    if (Object.keys(daily).length > 0) {
+      t = daily[today] || 0;
+      o = daily[yesterday] || 0;
+      d2 = daily[d2Date] || 0;
+      sum = Object.values(daily).reduce((a, v) => a + v, 0);
+    }
+    return { today: t, ontem: o, d2, d30: sum, d90: sum };
+  }
+
+  // RJ Blip
+  let rjBlipDaily = {};
+  try { rjBlipDaily = await fetchBlipDaily(env.BLIP_HTTP_KEY, d30start, 31); } catch(e) { console.error('Blip RJ daily:', e.message); }
+  const rjBlip = derivePeriods(rjBlipDaily, today, yesterday, d2Date);
+
+  // SP Blip
+  let spBlipDaily = {};
+  if (env.BLIP_SP_HTTP_KEY) {
+    try { spBlipDaily = await fetchBlipDaily(env.BLIP_SP_HTTP_KEY, d30start, 31); } catch(e) { console.error('Blip SP daily:', e.message); }
+  }
+  const spBlip = derivePeriods(spBlipDaily, today, yesterday, d2Date);
+
+  // Blip closed tickets ("Finalizado com sucesso") — RJ
+  let rjClosedDaily = {};
   try {
-    blipClosedDaily = await fetchBlipClosedDaily(env, d30start, 31);
-    const bcTotal = Object.values(blipClosedDaily).reduce((a,v) => a+v, 0);
-    console.log('Blip closed daily OK, total:', bcTotal, 'keys:', Object.keys(blipClosedDaily).length);
-  } catch(e) { console.error('Blip closed daily ERROR:', e.message, e.stack); }
+    rjClosedDaily = await fetchBlipClosedDaily(env.BLIP_HTTP_KEY, d30start, 31);
+    console.log('Blip RJ closed OK, total:', Object.values(rjClosedDaily).reduce((a,v) => a+v, 0));
+  } catch(e) { console.error('Blip RJ closed ERROR:', e.message); }
+  const rjClosed = derivePeriods(rjClosedDaily, today, yesterday, d2Date);
 
-  if (Object.keys(blipClosedDaily).length > 0) {
-    bcToday = blipClosedDaily[today] || 0;
-    bcOntem = blipClosedDaily[yesterday] || 0;
-    bcD2 = blipClosedDaily[d2Date] || 0;
-    bc30 = Object.values(blipClosedDaily).reduce((a, v) => a + v, 0);
-    bc90 = bc30;
+  // Blip closed tickets — SP
+  let spClosedDaily = {};
+  if (env.BLIP_SP_HTTP_KEY) {
+    try {
+      spClosedDaily = await fetchBlipClosedDaily(env.BLIP_SP_HTTP_KEY, d30start, 31);
+      console.log('Blip SP closed OK, total:', Object.values(spClosedDaily).reduce((a,v) => a+v, 0));
+    } catch(e) { console.error('Blip SP closed ERROR:', e.message); }
+  }
+  const spClosed = derivePeriods(spClosedDaily, today, yesterday, d2Date);
+
+  // Fill blip into periods (RJ + SP separate)
+  function fillBlip(period, rjCount, spCount, rjClosedCount, spClosedCount, days) {
+    const rjDaily = days > 0 ? rjCount / days : rjCount;
+    const spDaily = days > 0 ? spCount / days : spCount;
+    const rjClosedD = days > 0 ? rjClosedCount / days : rjClosedCount;
+    const spClosedD = days > 0 ? spClosedCount / days : spClosedCount;
+    const totalDaily = rjDaily + spDaily;
+    const totalClosed = rjClosedD + spClosedD;
+
+    period.cons.blip = round2(totalDaily);
+    period.cons.cpl_blip = totalDaily > 0 ? round2(period.cons.cost / totalDaily) : 0;
+    period.cons.blip_closed = round2(totalClosed);
+
+    period.rj.blip = round2(rjDaily);
+    period.rj.cpl_blip = rjDaily > 0 ? round2(period.rj.cost / rjDaily) : 0;
+    period.rj.blip_closed = round2(rjClosedD);
+
+    period.sp.blip = round2(spDaily);
+    period.sp.cpl_blip = spDaily > 0 ? round2(period.sp.cost / spDaily) : 0;
+    period.sp.blip_closed = round2(spClosedD);
   }
 
-  // Fill blip into periods
-  function fillBlip(period, blipCount, closedCount, days) {
-    const daily = days > 0 ? blipCount / days : blipCount;
-    const dailyClosed = days > 0 ? closedCount / days : closedCount;
-    period.cons.blip = round2(daily);
-    period.cons.cpl_blip = daily > 0 ? round2(period.cons.cost / daily) : 0;
-    period.cons.blip_closed = round2(dailyClosed);
-
-    // Blip only exists in RJ — SP has no Blip yet
-    period.rj.blip = round2(daily);
-    period.rj.cpl_blip = daily > 0 ? round2(period.rj.cost / daily) : 0;
-    period.rj.blip_closed = round2(dailyClosed);
-    period.sp.blip = 0;
-    period.sp.cpl_blip = 0;
-    period.sp.blip_closed = 0;
-  }
-
-  fillBlip(hojeP, blipToday, bcToday, 1);
-  fillBlip(ontemP, blipOntem, bcOntem, 1);
-  fillBlip(d2P, blipD2, bcD2, 1);
-  fillBlip(periodo30, blip30, bc30, 30);
-  fillBlip(periodo90, blip90, bc90, 90);
+  fillBlip(hojeP, rjBlip.today, spBlip.today, rjClosed.today, spClosed.today, 1);
+  fillBlip(ontemP, rjBlip.ontem, spBlip.ontem, rjClosed.ontem, spClosed.ontem, 1);
+  // Blip for ontem_ate_agora uses same full-day ontem counts (Blip API has no hourly granularity)
+  // But we proportionally reduce: (currentBRTHour + 1) / 24 of yesterday's total
+  const hourFraction = (currentBRTHour + 1) / 24;
+  fillBlip(ontemAteAgora,
+    Math.round(rjBlip.ontem * hourFraction),
+    Math.round(spBlip.ontem * hourFraction),
+    Math.round(rjClosed.ontem * hourFraction),
+    Math.round(spClosed.ontem * hourFraction), 1);
+  fillBlip(d2P, rjBlip.d2, spBlip.d2, rjClosed.d2, spClosed.d2, 1);
+  fillBlip(periodo30, rjBlip.d30, spBlip.d30, rjClosed.d30, spClosed.d30, 30);
+  fillBlip(periodo90, rjBlip.d90, spBlip.d90, rjClosed.d90, spClosed.d90, 90);
 
   // Parse daily ads data for trend chart
   const adsByDate = parseDailyAdsRows(dailyAdsRows);
@@ -687,8 +832,10 @@ async function collectAllData(env) {
   const daily = dailyDates.map(date => {
     const ads = adsByDate[date] || {};
     const sessions = dailyGA4[date] || 0;
-    const blip = blipDaily[date] || 0;
-    const blip_closed = blipClosedDaily[date] || 0;
+    const blip_rj = rjBlipDaily[date] || 0;
+    const blip_sp = spBlipDaily[date] || 0;
+    const blip_closed_rj = rjClosedDaily[date] || 0;
+    const blip_closed_sp = spClosedDaily[date] || 0;
     return {
       date,
       clicks: ads.clicks || 0,
@@ -696,8 +843,12 @@ async function collectAllData(env) {
       conv: round2(ads.conv || 0),
       impr: ads.impr || 0,
       sessions,
-      blip,
-      blip_closed,
+      blip: blip_rj + blip_sp,
+      blip_closed: blip_closed_rj + blip_closed_sp,
+      blip_rj,
+      blip_sp,
+      blip_closed_rj,
+      blip_closed_sp,
       rj_clicks: ads.rj_clicks || 0,
       rj_cost: round2(ads.rj_cost || 0),
       sp_clicks: ads.sp_clicks || 0,
@@ -729,6 +880,10 @@ async function collectAllData(env) {
       ontem: ontemP.cons,
       ontem_rj: ontemP.rj,
       ontem_sp: ontemP.sp,
+      ontem_ate_agora: ontemAteAgora.cons,
+      ontem_ate_agora_rj: ontemAteAgora.rj,
+      ontem_ate_agora_sp: ontemAteAgora.sp,
+      hora_corte: currentBRTHour,
       d2: d2P.cons,
       d2_rj: d2P.rj,
       d2_sp: d2P.sp,
@@ -743,7 +898,7 @@ async function collectAllData(env) {
     resumo: {
       pessoas: 0,
       empresas: 0,
-      leads_wa_30d: blip30,
+      leads_wa_30d: rjBlip.d30 + spBlip.d30,
       formularios_30d: 0,
     },
     por_mes: {},

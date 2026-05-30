@@ -560,6 +560,18 @@
       </div>
     </section>
 
+    <!-- 04b Funil Diário (4 linhas) -->
+    <section class="section" id="s-funil-diario" style="display:none">
+      <div class="section-head">
+        <span class="section-eyebrow">04b · Funil diário completo</span>
+        <h2 class="section-title">Custo, sessões, entradas e fechamentos</h2>
+        <span class="section-sub">4 séries sobrepostas · últimos 30 dias</span>
+      </div>
+      <div class="chart-card">
+        <div class="chart-container"><canvas id="funil-diario-canvas"></canvas></div>
+      </div>
+    </section>
+
     <!-- 05 Custo por Etapa -->
     <section class="section" id="s-custo" style="display:none">
       <div class="section-head">
@@ -633,6 +645,7 @@
   var KEY = 'savior79';
   var data = null;
   var trendChart = null;
+  var funilDiarioChart = null;
   var STATE = {campSort:'custo', campDir:-1, kwSort:'custo', kwDir:-1, metric:'clicks', range:30, region:'cons'};
 
   /* ── Auth ──────────────────────────────────────────── */
@@ -683,7 +696,7 @@
   });
 
   /* ── Data load ─────────────────────────────────────── */
-  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-custo','s-camps','s-sinais'];
+  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-diario','s-custo','s-camps','s-sinais'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
   function showAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='block'})}
 
@@ -736,6 +749,8 @@
     var sfx = STATE.region === 'cons' ? '' : '_' + STATE.region;
     var hoje  = d.funil['hoje'+sfx] || d.funil.hoje;
     var ontem = d.funil['ontem'+sfx] || d.funil.ontem;
+    var ontemAteAgora = d.funil['ontem_ate_agora'+sfx] || d.funil.ontem_ate_agora || null;
+    var horaCorte = d.funil.hora_corte;
     var m30   = d.funil['30d'+sfx] || d.funil['30d'];
     var m90   = d.funil['90d'+sfx] || d.funil['90d'];
 
@@ -750,9 +765,10 @@
       ? new Date(d.gerado_em).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})
       : '—';
 
-    renderKpiSnapshot(hoje, ontem, m30, m90, d.daily || []);
+    renderKpiSnapshot(hoje, ontem, ontemAteAgora, horaCorte, m30, m90, d.daily || []);
     renderFunil(STATE.funilPeriod || 'dia');
     renderTrend(m30, m90);
+    renderFunilDiario();
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
     renderSinais(hoje, ontem, m30, d.ads);
@@ -799,7 +815,7 @@
     return sumDaily(daily, n, key) / Math.min(n, daily.length);
   }
 
-  function renderKpiSnapshot(hoje, ontem, m30, m90, daily){
+  function renderKpiSnapshot(hoje, ontem, ontemAteAgora, horaCorte, m30, m90, daily){
     var period = STATE.period;
 
     // Compute 7d averages from daily array
@@ -818,9 +834,14 @@
     // Determine primary value and comparison references based on period
     var primary, refs;
     if(period === 'hoje'){
+      // Use "ontem até agora" (same hours) for fair comparison, fallback to full ontem
+      var ontemRef = ontemAteAgora || ontem;
+      var ontemLbl = ontemAteAgora
+        ? 'vs ontem (até ' + (horaCorte != null ? horaCorte + 'h' : 'msm hr') + ')'
+        : 'vs ontem';
       primary = hoje;
       refs = [
-        {lbl:'vs ontem', ref:ontem},
+        {lbl:ontemLbl, ref:ontemRef},
         {lbl:'vs média 7d', ref:m7d},
         {lbl:'vs média mês', ref:m30},
         {lbl:'vs média Q', ref:m90}
@@ -1069,6 +1090,112 @@
       var s = arr.slice(Math.max(0,i-w+1),i+1);
       return s.reduce(function(a,v){return a+v},0)/s.length;
     });
+  }
+
+  /* ── 04b Funil Diário (4 linhas) ──────────────────── */
+  function renderFunilDiario(){
+    waitChart(function(){_doRenderFunilDiario()});
+  }
+  function _doRenderFunilDiario(){
+    if(funilDiarioChart){funilDiarioChart.destroy();funilDiarioChart=null}
+    var daily = (data && data.daily) || [];
+    var sfx = STATE.region === 'cons' ? '' : '_' + STATE.region;
+    var costKey = STATE.region === 'rj' ? 'rj_cost' : (STATE.region === 'sp' ? 'sp_cost' : 'cost');
+    var sessKey = 'sessions';
+    var blipKey = STATE.region === 'rj' ? 'blip_rj' : (STATE.region === 'sp' ? 'blip_sp' : 'blip');
+    var closedKey = STATE.region === 'rj' ? 'blip_closed_rj' : (STATE.region === 'sp' ? 'blip_closed_sp' : 'blip_closed');
+
+    var labels = daily.map(function(d){var p=d.date.split('-');return p[2]+'/'+p[1]});
+    var costVals = daily.map(function(d){return d[costKey]||0});
+    var sessVals = daily.map(function(d){return d[sessKey]||0});
+    var blipVals = daily.map(function(d){return d[blipKey]||0});
+    var closedVals = daily.map(function(d){return d[closedKey]||0});
+
+    var ctx = document.getElementById('funil-diario-canvas').getContext('2d');
+    try{
+    funilDiarioChart = new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:labels,
+        datasets:[
+          {
+            label:'Custo Ads (R$)',
+            data:costVals,
+            borderColor:'#E74C3C',
+            backgroundColor:'rgba(231,76,60,.06)',
+            borderWidth:2,pointRadius:2,pointHoverRadius:5,
+            tension:.3,yAxisID:'yCost',fill:true
+          },
+          {
+            label:'Sessões LP',
+            data:sessVals,
+            borderColor:'#5DADE2',
+            backgroundColor:'rgba(93,173,226,.06)',
+            borderWidth:2,pointRadius:2,pointHoverRadius:5,
+            tension:.3,yAxisID:'y',fill:true
+          },
+          {
+            label:'Entradas Blip',
+            data:blipVals,
+            borderColor:'#00B87C',
+            backgroundColor:'rgba(0,184,124,.06)',
+            borderWidth:2,pointRadius:2,pointHoverRadius:5,
+            tension:.3,yAxisID:'y',fill:true
+          },
+          {
+            label:'Finalizado c/ Sucesso',
+            data:closedVals,
+            borderColor:'#F0A93B',
+            backgroundColor:'rgba(240,169,59,.06)',
+            borderWidth:2,pointRadius:2,pointHoverRadius:5,
+            tension:.3,yAxisID:'y',fill:true
+          }
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{
+            display:true,
+            labels:{
+              color:'rgba(244,239,230,.7)',
+              font:{family:'IBM Plex Mono',size:10},
+              usePointStyle:true,boxWidth:8
+            }
+          },
+          tooltip:{
+            backgroundColor:'rgba(7,24,43,.95)',
+            titleColor:'#F4EFE6',
+            bodyColor:'#F4EFE6',
+            borderColor:'rgba(244,239,230,.12)',borderWidth:1,
+            padding:12,
+            callbacks:{
+              label:function(ctx){
+                if(ctx.dataset.yAxisID==='yCost') return ctx.dataset.label+': R$ '+ctx.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:2});
+                return ctx.dataset.label+': '+ctx.parsed.y;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{ticks:{color:'rgba(244,239,230,.4)',font:{size:10},maxRotation:45},grid:{color:'rgba(244,239,230,.04)'}},
+          y:{
+            position:'left',
+            ticks:{color:'#5DADE2',font:{size:10}},
+            grid:{color:'rgba(244,239,230,.04)'},
+            title:{display:true,text:'Sessões / Tickets',color:'rgba(244,239,230,.4)',font:{size:10}}
+          },
+          yCost:{
+            position:'right',
+            ticks:{color:'#E74C3C',font:{size:10},callback:function(v){return 'R$'+v.toLocaleString('pt-BR')}},
+            grid:{drawOnChartArea:false},
+            title:{display:true,text:'Custo Ads (R$)',color:'rgba(244,239,230,.4)',font:{size:10}}
+          }
+        }
+      }
+    });
+    }catch(e){console.error('funilDiario chart error',e)}
   }
 
   function renderTrend(m30, m90){
