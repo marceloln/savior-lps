@@ -313,7 +313,44 @@ export default {
       'acima_5000': 49,
     };
 
-    // 2b. Lead com dados → Deal na pipeline
+    // 2b. Dedup deal: verificar se ja existe deal aberto pra essa pessoa no mesmo pipeline (7 dias)
+    let existingDealId = null;
+    if (personId) {
+      try {
+        const dRes = await fetch(
+          `${PIPEDRIVE_API}/persons/${personId}/deals?status=open&limit=50&api_token=${token}`
+        );
+        const dData = await dRes.json();
+        const recentDeals = (dData?.data || []).filter(d => {
+          if (d.pipeline_id !== pipelineId) return false;
+          const addDate = new Date(d.add_time);
+          const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          return addDate > sevenDaysAgo;
+        });
+        if (recentDeals.length > 0) {
+          existingDealId = recentDeals[0].id;
+          console.log(`Deal existente encontrado: id=${existingDealId} person=${personId} pipeline=${pipelineId}`);
+        }
+      } catch (err) {
+        console.error('Deal dedup search failed (will create new):', err);
+      }
+    }
+
+    // Se deal existente, apenas adicionar nota e retornar
+    if (existingDealId) {
+      await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deal_id: existingDealId, content: '🔄 Contato repetido (deal existente)\n\n' + utmNote, visible_to: 3 }),
+      });
+      console.log(`Deal duplicado evitado: person=${personId} deal_existente=${existingDealId}`);
+      return new Response(JSON.stringify({ ok: true, person_id: personId, deal_id: existingDealId, deduplicated: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      });
+    }
+
+    // Criar deal novo
     const dealPayload = {
       title: dealTitle,
       pipeline_id: pipelineId,
@@ -622,12 +659,56 @@ async function handleBlipWebhook(request, env) {
         console.log(`Blip: Person criado: id=${personId} phone=${cleanPhone}`);
       }
 
+      // Extrair campos estruturados da mensagem Blip (extras do flow)
+      const blipExtras = body.extras || {};
+      const blipFields = {
+        tipo_evento:       blipExtras.tipo_evento || blipExtras.tipo || '',
+        data_evento:       blipExtras.data_evento || blipExtras.data || '',
+        horario:           blipExtras.horario || '',
+        bairro:            blipExtras.bairro || blipExtras.local || '',
+        cidade:            blipExtras.cidade || blipExtras.city || '',
+        publico_estimado:  blipExtras.publico_estimado || blipExtras.publico || '',
+        empresa:           blipExtras.empresa || '',
+      };
+
+      // Montar custom fields pra deal (mesmos hashes do formulario)
+      function buildCustomFields(fields, campaignVal, sourceVal) {
+        const cf = {};
+        // Tipo de cliente (enum)
+        const isEvt = campaignVal?.includes('evento') || fields.tipo_evento;
+        if (isEvt) cf['22247c3025a677f2dd4d7ab63548fecb08f05e2f'] = 31; // Eventos
+        // BASE (cidade)
+        const cidLower = (fields.cidade || '').toLowerCase();
+        if (cidLower.includes('paulo') || cidLower.includes('sp')) {
+          cf['8cc112e07d103997aa14b34442fa7a51cb0d2d91'] = 38; // SP
+        } else if (cidLower || campaignVal) {
+          cf['8cc112e07d103997aa14b34442fa7a51cb0d2d91'] = 37; // RJ default
+        }
+        // Data do Evento
+        if (fields.data_evento) cf['79d2372ceaddba4b964ec8430db391885066e5f9'] = fields.data_evento;
+        // Horario
+        if (fields.horario) cf['f3f5ba8126a7db3b7dfb4c7cb6e6d29bfbce3ee9'] = fields.horario;
+        // Local / Bairro
+        if (fields.bairro) cf['b6079a8778fa397928f1a0be04ccdf8435dad258'] = fields.bairro;
+        // Publico Estimado
+        if (fields.publico_estimado) cf['f175f9f18f186ec492358d38ff0b8dccc49c1f40'] = Number(fields.publico_estimado) || fields.publico_estimado;
+        // UTM Source
+        if (sourceVal && sourceVal !== 'direct') cf['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = sourceVal;
+        // UTM Campaign
+        if (campaignVal && campaignVal !== 'blip-direct') cf['2400cc71ad7a60be9480f1ce3a05b08f70caefc4'] = campaignVal;
+        return cf;
+      }
+
+      const customFields = buildCustomFields(blipFields, campaign, source);
+
       if (personId && matchDeal) {
+        // Enriquecer deal existente: vincular person + popular custom fields
         const dealId = matchDeal.id;
+        const updatePayload = { person_id: personId, ...customFields };
         await fetch(`${PIPEDRIVE_API}/deals/${dealId}?api_token=${token}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ person_id: personId }),
+          body: JSON.stringify(updatePayload),
         });
         await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
           method: 'POST',
@@ -638,42 +719,72 @@ async function handleBlipWebhook(request, env) {
             visible_to: 3,
           }),
         });
-        console.log(`Deal ${dealId} enriquecido: person=${personId} phone=${contactPhone}`);
+        console.log(`Deal ${dealId} enriquecido: person=${personId} phone=${contactPhone} fields=${Object.keys(customFields).length}`);
       } else if (personId) {
-        const nowBrt = new Date().toLocaleString('pt-BR', {
-          timeZone: 'America/Sao_Paulo',
-          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
-        }).replace(',', '');
-        const newDealPayload = {
-          title: `Blip | ${contactName || contactPhone} | ${campaign} | ${nowBrt}`,
-          pipeline_id: blipPipelineId,
-          stage_id: blipStageId,
-          status: 'open',
-          visible_to: 3,
-          person_id: personId,
-        };
-        if (source === 'google') newDealPayload['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = source;
-        if (campaign !== 'blip-direct') newDealPayload['2400cc71ad7a60be9480f1ce3a05b08f70caefc4'] = campaign;
+        // Dedup: verificar se ja existe deal aberto pra essa pessoa no pipeline (7 dias)
+        let blipExistingDeal = null;
+        try {
+          const edRes = await fetch(
+            `${PIPEDRIVE_API}/persons/${personId}/deals?status=open&limit=50&api_token=${token}`
+          );
+          const edData = await edRes.json();
+          const recent = (edData?.data || []).filter(d => {
+            if (d.pipeline_id !== blipPipelineId) return false;
+            return new Date(d.add_time) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          });
+          if (recent.length > 0) blipExistingDeal = recent[0];
+        } catch (err) {
+          console.error('Blip deal dedup failed:', err);
+        }
 
-        const newDealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newDealPayload),
-        });
-        const newDealData = await newDealRes.json();
-        const newDealId = newDealData?.data?.id;
-
-        if (newDealId) {
+        if (blipExistingDeal) {
+          // Deal ja existe: apenas adicionar nota
           await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              deal_id: newDealId,
-              content: `🌐 LEAD VIA BLIP (sem WA click prévio)\n📱 Telefone: ${contactPhone}\n👤 Nome: ${contactName || 'não informado'}\n🎯 Campaign: ${campaign}\n💬 Primeira msg: ${msg.substring(0, 200)}`,
+              deal_id: blipExistingDeal.id,
+              content: `🔄 Contato repetido via Blip\n📱 ${contactPhone}\n🎯 ${campaign}\n💬 ${msg.substring(0, 200)}`,
               visible_to: 3,
             }),
           });
-          console.log(`Novo deal Blip criado: deal=${newDealId} person=${personId} pipeline=${blipPipelineId}`);
+          console.log(`Blip deal duplicado evitado: person=${personId} deal=${blipExistingDeal.id}`);
+        } else {
+          // Criar deal novo com custom fields
+          const nowBrt = new Date().toLocaleString('pt-BR', {
+            timeZone: 'America/Sao_Paulo',
+            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
+          }).replace(',', '');
+          const newDealPayload = {
+            title: `Blip | ${contactName || contactPhone} | ${campaign} | ${nowBrt}`,
+            pipeline_id: blipPipelineId,
+            stage_id: blipStageId,
+            status: 'open',
+            visible_to: 3,
+            person_id: personId,
+            ...customFields,
+          };
+
+          const newDealRes = await fetch(`${PIPEDRIVE_API}/deals?api_token=${token}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newDealPayload),
+          });
+          const newDealData = await newDealRes.json();
+          const newDealId = newDealData?.data?.id;
+
+          if (newDealId) {
+            await fetch(`${PIPEDRIVE_API}/notes?api_token=${token}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                deal_id: newDealId,
+                content: `🌐 LEAD VIA BLIP\n📱 Telefone: ${contactPhone}\n👤 Nome: ${contactName || 'não informado'}\n🎯 Campaign: ${campaign}\n💬 Primeira msg: ${msg.substring(0, 200)}`,
+                visible_to: 3,
+              }),
+            });
+            console.log(`Novo deal Blip: deal=${newDealId} person=${personId} pipeline=${blipPipelineId} fields=${Object.keys(customFields).length}`);
+          }
         }
       }
     } catch (err) {
