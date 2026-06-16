@@ -8,8 +8,8 @@
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import FAQ from '../components/FAQ.astro';
-import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP, whatsappUrl } from '../data/savior.ts';
-import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP } from '../data/savior.ts';
+
 
 // ============ SEO ============
 const title = 'Ambulância para Eventos no Rio de Janeiro | Posto Médico | Savior';
@@ -79,12 +79,8 @@ const schema = JSON.stringify({
   ]
 });
 
-// ============ WhatsApp URLs ============
-const WA_MSG = 'Oi, preciso de cobertura médica para um evento.';
-const waHero   = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'hero');
-const waHeader = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'header');
-const waCTA    = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'cta');
-const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float');
+// ============ Contact for events ============
+const eventosEmail = 'eventos@savior.com.br';
 
 ---
 
@@ -108,13 +104,13 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
           <span class="ev-sh-tag">Medical Service</span>
         </div>
         <div class="ev-sh-actions">
-          <a class="ev-sh-wa" href={waHeader} data-whatsapp data-campaign="eventos-rj" data-location="header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          <a class="ev-sh-wa" href="#orcamento" data-event="cta_click" data-campaign="eventos-rj" data-location="header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Orçamento
           </a>
-          <a class="ev-sh-phone" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos-rj" data-location="header">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            {CONTACT_RJ.phone}
+          <a class="ev-sh-phone" href={`mailto:${eventosEmail}`} data-event="cta_click" data-campaign="eventos-rj" data-location="header-email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            {eventosEmail}
           </a>
         </div>
       </div>
@@ -166,13 +162,13 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
             <p class="ev-hero-sub">Ambulância UTI, posto médico montado e equipe dedicada — do primeiro ao último participante. Documentação para alvará inclusa. Shows, eventos corporativos e esportivos no Rio de Janeiro e São Paulo.</p>
             <p class="ev-hero-note"><strong>Atenção:</strong> hotéis, estádios e centros de convenção não liberam o início do evento sem equipe médica posicionada. A Savior chega com antecedência — seu evento não atrasa.</p>
             <div class="ev-hero-ctas">
-              <a class="btn btn-primary" href={waHero} data-whatsapp data-campaign="eventos-rj" data-location="hero">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              <a class="btn btn-primary" href="#orcamento" data-event="cta_click" data-campaign="eventos-rj" data-location="hero">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 Solicitar orçamento
               </a>
-              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos-rj" data-location="hero">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                {CONTACT_RJ.phone}
+              <a class="btn btn-secondary on-dark" href={`mailto:${eventosEmail}`} data-event="cta_click" data-campaign="eventos-rj" data-location="hero-email">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                {eventosEmail}
               </a>
             </div>
             <div class="ev-hero-rating" role="img" aria-label="4,7 estrelas — 730 avaliações no Google">
@@ -555,13 +551,13 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
             <h2 id="fcta-heading">Tem um evento?<br><em>A gente cuida.</em></h2>
             <p>Conte o tipo, a data e o tamanho. A Savior monta o plano médico e envia a proposta.</p>
             <div class="ev-fcta-btns">
-              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_RJ.phoneHref}`} data-phone data-campaign="eventos-rj" data-location="cta">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                RJ {CONTACT_RJ.phone}
+              <a class="btn btn-primary" href="#orcamento" data-event="cta_click" data-campaign="eventos-rj" data-location="cta">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Preencher formulário
               </a>
-              <a class="btn btn-secondary on-dark" href={`tel:${CONTACT_SP.phoneLandlineHref}`} data-phone data-campaign="eventos-rj" data-location="cta-sp">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 013.09 5.18 2 2 0 015.11 3h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 11.91a16 16 0 006 6l2.27-2.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                SP {CONTACT_SP.phoneLandline}
+              <a class="btn btn-secondary on-dark" href={`mailto:${eventosEmail}`} data-event="cta_click" data-campaign="eventos-rj" data-location="cta-email">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                {eventosEmail}
               </a>
             </div>
           </div>
@@ -662,39 +658,6 @@ const waFloat  = whatsappUrl(CONTACT_RJ.whatsapp, 'eventos-rj', WA_MSG, 'float')
     }
   </script>
 
-  <!-- ═══ FLOATING WHATSAPP — mobile, sobe acima do Blip ═══ -->
-  <style>
-    /* Sobe o pill de WA para não sobrepor o launcher do Blip no mobile */
-    @media (max-width: 960px) { .fw { bottom: 76px; } }
-  </style>
-
-  <!-- ═══ BLIP CHAT — Eventos ═══ -->
-  <!-- Carregamento lazy: script só é injetado no primeiro evento de interação do usuário.
-       Elimina o TBT de +200-400ms causado pelo widget no carregamento inicial. -->
-  <script is:inline>
-    (function () {
-      var loaded = false;
-      function loadBlip() {
-        if (loaded) return;
-        loaded = true;
-        var s = document.createElement('script');
-        s.src = 'https://unpkg.com/blip-chat-widget';
-        s.onload = function () {
-          new BlipChat()
-            .withAppKey('c2F2aW9ycHJpbmNpcGFsOjFlMmY2NTA1LWI2OGUtNGZmOC04NzllLWUzMDhiZmZiNDkyMw==')
-            .withButton({ color: '#00B87C', icon: '' })
-            .withCustomCommonUrl('https://savior.chat.blip.ai/')
-            .build();
-        };
-        document.head.appendChild(s);
-      }
-      ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'].forEach(function (e) {
-        document.addEventListener(e, loadBlip, { once: true, passive: true });
-      });
-    })();
-  </script>
-
-  <FloatingWhatsApp waCampaign="eventos-rj" />
 
 </Base>
 

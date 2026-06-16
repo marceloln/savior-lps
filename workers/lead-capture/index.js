@@ -319,6 +319,7 @@ export default {
       pipeline_id: pipelineId,
       stage_id: stageId,
       status: 'open',
+      visible_to: 3,
       person_id: personId,
     };
     if (orgId) dealPayload.org_id = orgId;
@@ -648,6 +649,7 @@ async function handleBlipWebhook(request, env) {
           pipeline_id: blipPipelineId,
           stage_id: blipStageId,
           status: 'open',
+          visible_to: 3,
           person_id: personId,
         };
         if (source === 'google') newDealPayload['5b28245c502bdaf5444fbf9cb3a51343f94cdcfa'] = source;

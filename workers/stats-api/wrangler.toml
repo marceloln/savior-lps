@@ -9,7 +9,7 @@ crons = ["5 * * * *"]
 # KV namespace para cache do JSON
 [[kv_namespaces]]
 binding = "STATS_KV"
-id = "7e83de6e2eb1410592fc424add151ad8"
+id = "e970a7f6b32f42219f707e6307745ae6"
 
 # Secrets (configurar via wrangler secret put):
 # GOOGLE_ADS_DEVELOPER_TOKEN

@@ -560,15 +560,22 @@
       </div>
     </section>
 
-    <!-- 04b Funil Diário (4 linhas) -->
-    <section class="section" id="s-funil-diario" style="display:none">
+    <!-- 04b Funil RJ diário -->
+    <section class="section" id="s-funil-rj" style="display:none">
       <div class="section-head">
-        <span class="section-eyebrow">04b · Funil diário completo</span>
-        <h2 class="section-title">Custo, sessões, entradas e fechamentos</h2>
-        <span class="section-sub">4 séries sobrepostas · últimos 30 dias</span>
+        <span class="section-eyebrow">04b · Funil RJ diário</span>
+        <h2 class="section-title">Custo Ads vs Blip vs Fechamentos (Rio de Janeiro)</h2>
+        <span class="section-sub">4 métricas sobrepostas para ver correlação investimento → resultado</span>
       </div>
       <div class="chart-card">
-        <div class="chart-container"><canvas id="funil-diario-canvas"></canvas></div>
+        <div class="chart-toolbar">
+          <div class="toolbar-group" id="rjFunilRange">
+            <button data-rjrange="30" class="active">30d</button>
+            <button data-rjrange="14">14d</button>
+            <button data-rjrange="7">7d</button>
+          </div>
+        </div>
+        <div class="chart-container"><canvas id="rj-funil-canvas"></canvas></div>
       </div>
     </section>
 
@@ -645,7 +652,8 @@
   var KEY = 'savior79';
   var data = null;
   var trendChart = null;
-  var funilDiarioChart = null;
+  var rjFunilChart = null;
+  var rjFunilRange = 30;
   var STATE = {campSort:'custo', campDir:-1, kwSort:'custo', kwDir:-1, metric:'clicks', range:30, region:'cons'};
 
   /* ── Auth ──────────────────────────────────────────── */
@@ -696,7 +704,7 @@
   });
 
   /* ── Data load ─────────────────────────────────────── */
-  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-diario','s-custo','s-camps','s-sinais'];
+  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-rj','s-custo','s-camps','s-sinais'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
   function showAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='block'})}
 
@@ -744,13 +752,61 @@
     return {cls:cls, arrow:isUp?'▲':'▼', label:(diff>0?'+':'')+diff.toFixed(0)+'%'};
   }
 
+  function currentFunilPeriod(prefix){
+    if(!data || !data.funil) return {};
+    var sfx = prefix ? '_' + prefix : '';
+    return data.funil['hoje' + sfx] || data.funil.hoje || {};
+  }
+
+  function statsDateKey(){
+    if(!data || !data.gerado_em) return null;
+    try{
+      return new Date(data.gerado_em).toLocaleDateString('sv-SE',{timeZone:'America/Sao_Paulo'});
+    }catch(e){return null}
+  }
+
+  function todayDailyPoint(){
+    var date = statsDateKey();
+    if(!date) return null;
+    var h = currentFunilPeriod('');
+    var rj = currentFunilPeriod('rj');
+    var sp = currentFunilPeriod('sp');
+    return {
+      date: date,
+      clicks: h.ad_clicks || 0,
+      cost: h.cost || 0,
+      conv: h.conversions || 0,
+      impr: h.impressions || 0,
+      sessions: h.sessions || 0,
+      blip: h.blip || 0,
+      blip_closed: h.blip_closed || 0,
+      blip_rj: rj.blip || 0,
+      blip_sp: sp.blip || 0,
+      blip_closed_rj: rj.blip_closed || 0,
+      blip_closed_sp: sp.blip_closed || 0,
+      rj_clicks: rj.ad_clicks || 0,
+      rj_cost: rj.cost || 0,
+      sp_clicks: sp.ad_clicks || 0,
+      sp_cost: sp.cost || 0,
+      partial: true
+    };
+  }
+
+  function dailyWithToday(){
+    var daily = ((data && data.daily) || []).slice();
+    var today = todayDailyPoint();
+    if(!today) return daily;
+    var last = daily[daily.length - 1];
+    if(last && last.date === today.date) daily[daily.length - 1] = Object.assign({}, last, today);
+    else daily.push(today);
+    return daily;
+  }
+
   /* ── renderAll ─────────────────────────────────────── */
   function renderAll(d){
     var sfx = STATE.region === 'cons' ? '' : '_' + STATE.region;
     var hoje  = d.funil['hoje'+sfx] || d.funil.hoje;
     var ontem = d.funil['ontem'+sfx] || d.funil.ontem;
-    var ontemAteAgora = d.funil['ontem_ate_agora'+sfx] || d.funil.ontem_ate_agora || null;
-    var horaCorte = d.funil.hora_corte;
     var m30   = d.funil['30d'+sfx] || d.funil['30d'];
     var m90   = d.funil['90d'+sfx] || d.funil['90d'];
 
@@ -765,10 +821,10 @@
       ? new Date(d.gerado_em).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})
       : '—';
 
-    renderKpiSnapshot(hoje, ontem, ontemAteAgora, horaCorte, m30, m90, d.daily || []);
+    renderKpiSnapshot(hoje, ontem, m30, m90, d.daily || []);
     renderFunil(STATE.funilPeriod || 'dia');
     renderTrend(m30, m90);
-    renderFunilDiario();
+    renderRjFunil();
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
     renderSinais(hoje, ontem, m30, d.ads);
@@ -815,7 +871,7 @@
     return sumDaily(daily, n, key) / Math.min(n, daily.length);
   }
 
-  function renderKpiSnapshot(hoje, ontem, ontemAteAgora, horaCorte, m30, m90, daily){
+  function renderKpiSnapshot(hoje, ontem, m30, m90, daily){
     var period = STATE.period;
 
     // Compute 7d averages from daily array
@@ -834,14 +890,9 @@
     // Determine primary value and comparison references based on period
     var primary, refs;
     if(period === 'hoje'){
-      // Use "ontem até agora" (same hours) for fair comparison, fallback to full ontem
-      var ontemRef = ontemAteAgora || ontem;
-      var ontemLbl = ontemAteAgora
-        ? 'vs ontem (até ' + (horaCorte != null ? horaCorte + 'h' : 'msm hr') + ')'
-        : 'vs ontem';
       primary = hoje;
       refs = [
-        {lbl:ontemLbl, ref:ontemRef},
+        {lbl:'vs ontem', ref:ontem},
         {lbl:'vs média 7d', ref:m7d},
         {lbl:'vs média mês', ref:m30},
         {lbl:'vs média Q', ref:m90}
@@ -1092,112 +1143,6 @@
     });
   }
 
-  /* ── 04b Funil Diário (4 linhas) ──────────────────── */
-  function renderFunilDiario(){
-    waitChart(function(){_doRenderFunilDiario()});
-  }
-  function _doRenderFunilDiario(){
-    if(funilDiarioChart){funilDiarioChart.destroy();funilDiarioChart=null}
-    var daily = (data && data.daily) || [];
-    var sfx = STATE.region === 'cons' ? '' : '_' + STATE.region;
-    var costKey = STATE.region === 'rj' ? 'rj_cost' : (STATE.region === 'sp' ? 'sp_cost' : 'cost');
-    var sessKey = 'sessions';
-    var blipKey = STATE.region === 'rj' ? 'blip_rj' : (STATE.region === 'sp' ? 'blip_sp' : 'blip');
-    var closedKey = STATE.region === 'rj' ? 'blip_closed_rj' : (STATE.region === 'sp' ? 'blip_closed_sp' : 'blip_closed');
-
-    var labels = daily.map(function(d){var p=d.date.split('-');return p[2]+'/'+p[1]});
-    var costVals = daily.map(function(d){return d[costKey]||0});
-    var sessVals = daily.map(function(d){return d[sessKey]||0});
-    var blipVals = daily.map(function(d){return d[blipKey]||0});
-    var closedVals = daily.map(function(d){return d[closedKey]||0});
-
-    var ctx = document.getElementById('funil-diario-canvas').getContext('2d');
-    try{
-    funilDiarioChart = new Chart(ctx,{
-      type:'line',
-      data:{
-        labels:labels,
-        datasets:[
-          {
-            label:'Custo Ads (R$)',
-            data:costVals,
-            borderColor:'#E74C3C',
-            backgroundColor:'rgba(231,76,60,.06)',
-            borderWidth:2,pointRadius:2,pointHoverRadius:5,
-            tension:.3,yAxisID:'yCost',fill:true
-          },
-          {
-            label:'Sessões LP',
-            data:sessVals,
-            borderColor:'#5DADE2',
-            backgroundColor:'rgba(93,173,226,.06)',
-            borderWidth:2,pointRadius:2,pointHoverRadius:5,
-            tension:.3,yAxisID:'y',fill:true
-          },
-          {
-            label:'Entradas Blip',
-            data:blipVals,
-            borderColor:'#00B87C',
-            backgroundColor:'rgba(0,184,124,.06)',
-            borderWidth:2,pointRadius:2,pointHoverRadius:5,
-            tension:.3,yAxisID:'y',fill:true
-          },
-          {
-            label:'Finalizado c/ Sucesso',
-            data:closedVals,
-            borderColor:'#F0A93B',
-            backgroundColor:'rgba(240,169,59,.06)',
-            borderWidth:2,pointRadius:2,pointHoverRadius:5,
-            tension:.3,yAxisID:'y',fill:true
-          }
-        ]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{
-            display:true,
-            labels:{
-              color:'rgba(244,239,230,.7)',
-              font:{family:'IBM Plex Mono',size:10},
-              usePointStyle:true,boxWidth:8
-            }
-          },
-          tooltip:{
-            backgroundColor:'rgba(7,24,43,.95)',
-            titleColor:'#F4EFE6',
-            bodyColor:'#F4EFE6',
-            borderColor:'rgba(244,239,230,.12)',borderWidth:1,
-            padding:12,
-            callbacks:{
-              label:function(ctx){
-                if(ctx.dataset.yAxisID==='yCost') return ctx.dataset.label+': R$ '+ctx.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:2});
-                return ctx.dataset.label+': '+ctx.parsed.y;
-              }
-            }
-          }
-        },
-        scales:{
-          x:{ticks:{color:'rgba(244,239,230,.4)',font:{size:10},maxRotation:45},grid:{color:'rgba(244,239,230,.04)'}},
-          y:{
-            position:'left',
-            ticks:{color:'#5DADE2',font:{size:10}},
-            grid:{color:'rgba(244,239,230,.04)'},
-            title:{display:true,text:'Sessões / Tickets',color:'rgba(244,239,230,.4)',font:{size:10}}
-          },
-          yCost:{
-            position:'right',
-            ticks:{color:'#E74C3C',font:{size:10},callback:function(v){return 'R$'+v.toLocaleString('pt-BR')}},
-            grid:{drawOnChartArea:false},
-            title:{display:true,text:'Custo Ads (R$)',color:'rgba(244,239,230,.4)',font:{size:10}}
-          }
-        }
-      }
-    });
-    }catch(e){console.error('funilDiario chart error',e)}
-  }
-
   function renderTrend(m30, m90){
     waitChart(function(){_doRenderTrend(m30, m90)});
   }
@@ -1205,13 +1150,13 @@
   function _doRenderTrend(m30, m90){
     if(trendChart){trendChart.destroy();trendChart=null}
 
-    var daily = (data && data.daily) || [];
+    var daily = dailyWithToday();
     var days = STATE.range;
     var sliced = daily.slice(-days);
 
     var labels = sliced.map(function(d){
       var parts = d.date.split('-');
-      return parts[2]+'/'+parts[1];
+      return parts[2]+'/'+parts[1]+(d.partial ? ' · parcial' : '');
     });
 
     var metricMap = {
@@ -1304,6 +1249,58 @@
     });
     }catch(e){console.error('Chart render failed:',e)}
   }
+
+  /* ── 04b Funil RJ diário ──────────────────────────── */
+  function renderRjFunil(){
+    waitChart(function(){ _doRenderRjFunil(); });
+  }
+  function _doRenderRjFunil(){
+    if(rjFunilChart){rjFunilChart.destroy();rjFunilChart=null}
+    var daily = dailyWithToday();
+    var sliced = daily.slice(-rjFunilRange);
+    var labels = sliced.map(function(d){ var p=d.date.split('-'); return p[2]+'/'+p[1]+(d.partial ? ' · parcial' : ''); });
+    var costData = sliced.map(function(d){return d.rj_cost||0});
+    var blipData = sliced.map(function(d){return d.blip_rj||0});
+    var closedData = sliced.map(function(d){return d.blip_closed_rj||0});
+    var sessData = sliced.map(function(d){return d.sessions||0});
+    var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
+    try{
+    rjFunilChart = new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:labels,
+        datasets:[
+          {label:'Custo Ads RJ (R$)',data:costData,borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,0.08)',yAxisID:'yCost',tension:.3,borderWidth:2,pointRadius:2,fill:true},
+          {label:'Sessões LP',data:sessData,borderColor:'#5DADE2',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:2,borderDash:[4,3]},
+          {label:'Entradas Blip RJ',data:blipData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.1)',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:3,fill:true},
+          {label:'Fechamentos RJ',data:closedData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded'}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{labels:{color:'rgba(244,239,230,.7)',font:{family:'IBM Plex Mono',size:10},usePointStyle:true,boxWidth:8}},
+          tooltip:{backgroundColor:'rgba(7,24,43,.95)',bodyColor:'#F4EFE6',callbacks:{
+            label:function(c){return c.dataset.label+': '+(c.dataset.yAxisID==='yCost'?'R$ '+c.parsed.y.toFixed(2):c.parsed.y)}
+          }}
+        },
+        scales:{
+          x:{ticks:{color:'rgba(244,239,230,.5)',font:{size:10},maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},
+          yCost:{type:'linear',position:'right',title:{display:true,text:'Custo (R$)',color:'#E74C3C',font:{size:10}},ticks:{color:'#E74C3C',font:{size:10}},grid:{display:false}},
+          yCount:{type:'linear',position:'left',title:{display:true,text:'Quantidade',color:'#00B87C',font:{size:10}},ticks:{color:'#00B87C',font:{size:10}},grid:{color:'rgba(255,255,255,.05)'}}
+        }
+      }
+    });
+    }catch(e){console.error('RJ Funil chart error:',e)}
+  }
+
+  delegate('rjFunilRange','click','button',function(btn){
+    btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    rjFunilRange = parseInt(btn.dataset.rjrange)||30;
+    renderRjFunil();
+  });
 
   /* ── 05 Custo cascade ──────────────────────────────── */
   function renderCusto(m30){
@@ -1438,6 +1435,15 @@
   /* ── 07 Sinais ─────────────────────────────────────── */
   function renderSinais(hoje, ontem, m30, ads){
     var insights = [];
+
+    var clickSessionRate = hoje.ad_clicks > 0 ? (hoje.sessions || 0) / hoje.ad_clicks : null;
+    if(hoje.ad_clicks >= 30 && clickSessionRate !== null && clickSessionRate < 0.6){
+      insights.push({
+        type:'alert',
+        eyebrow:'tracking clique → sessão',
+        text:'Só <strong>'+pct(clickSessionRate*100)+'</strong> dos cliques Ads viraram sessões GA4 hoje ('+num(hoje.sessions)+' sessões / '+num(hoje.ad_clicks)+' cliques). Verificar GA4, redirects, consent/CSP ou tráfego com saída antes do carregamento.'
+      });
+    }
 
     var cpcD = ((hoje.cpc||0)-(m30.cpc||0)) / (m30.cpc||1) * 100;
     if(m30.cpc > 0){
