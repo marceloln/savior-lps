@@ -275,8 +275,10 @@ async function fetchGA4Daily(env, startDate, endDate) {
   return byDate;
 }
 
-// Blip RJ: fetch desk tickets with entry/closed/sucesso/sem_tag buckets
-async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
+// Blip: fetch desk tickets with entry/closed/sucesso/sem_tag/venda buckets
+// endpoint optional: defaults to https://{botDomain}.http.msging.net/commands
+async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoint) {
+  const url = endpoint || `https://${botDomain}.http.msging.net/commands`;
   const headers = { "Authorization": httpKey, "Content-Type": "application/json" };
   const entryBuckets = {};
   const closedBuckets = {};
@@ -299,7 +301,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
   const take = 100;
   let keepGoing = true;
   while (keepGoing) {
-    const res = await fetch(`https://${botDomain}.http.msging.net/commands`, {
+    const res = await fetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -545,7 +547,13 @@ async function collectAllData(env) {
   let blipVendaRJ = {}, blipVendaSP = {};
   let blipContactsRJ = {}, blipContactsSP = {};
 
-  // RJ: desk tickets + CRM contacts
+  // RJ: desk tickets from saviorprincipal + saviorrj (both serve RJ)
+  function mergeBuckets(target, source) {
+    for (const k of Object.keys(source)) {
+      if (k in target) target[k] += source[k];
+      else target[k] = source[k];
+    }
+  }
   try {
     const rjBoth = await fetchBlipBothDaily(rjKey, BOT_DOMAIN, d30start, 31);
     blipDailyRJ = rjBoth.entries;
@@ -553,8 +561,21 @@ async function collectAllData(env) {
     blipSucessoRJ = rjBoth.sucesso;
     blipSemTagRJ = rjBoth.sem_tag;
     blipVendaRJ = rjBoth.venda;
-    console.log("Blip RJ OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "closed:", Object.values(blipClosedDailyRJ).reduce((a,v)=>a+v,0), "venda:", Object.values(blipVendaRJ).reduce((a,v)=>a+v,0));
-  } catch (e) { console.error("Blip RJ ERROR:", e.message); }
+    console.log("Blip RJ Principal OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "venda:", Object.values(blipVendaRJ).reduce((a,v)=>a+v,0));
+  } catch (e) { console.error("Blip RJ Principal ERROR:", e.message); }
+
+  // RJ: also fetch from saviorrj bot (had real traffic in some periods)
+  if (env.BLIP_RJ_HTTP_KEY) {
+    try {
+      const rjBot = await fetchBlipBothDaily(env.BLIP_RJ_HTTP_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(blipDailyRJ, rjBot.entries);
+      mergeBuckets(blipClosedDailyRJ, rjBot.closed);
+      mergeBuckets(blipSucessoRJ, rjBot.sucesso);
+      mergeBuckets(blipSemTagRJ, rjBot.sem_tag);
+      mergeBuckets(blipVendaRJ, rjBot.venda);
+      console.log("Blip RJ Bot OK, entries:", Object.values(rjBot.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjBot.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("Blip RJ Bot ERROR:", e.message); }
+  }
 
   // RJ CRM contacts (bot interactions, superset of desk tickets)
   try {
