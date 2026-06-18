@@ -718,7 +718,7 @@
     hideAll();
     var STATS_URL = location.hostname === 'localhost'
       ? '/stats-data.json'
-      : 'https://savior-stats-api.marcelo-nascimento.workers.dev/stats-data.json';
+      : 'https://savior-stats-api.marcelo-4f2.workers.dev/stats-data.json';
     fetch(STATS_URL+'?_='+Date.now())
       .then(function(r){return r.json()})
       .then(function(d){
