@@ -324,6 +324,8 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
         const brOpen = new Date(openTs - 3 * 60 * 60 * 1e3);
         const openKey = fmtDate(brOpen);
         if (openKey in entryBuckets) entryBuckets[openKey]++;
+        // Count vendas by tag regardless of close status (attendants tag before closing)
+        if (tags.includes("Venda realizada") && openKey in vendaBuckets) vendaBuckets[openKey]++;
       }
       if (t.closed && t.closeDate) {
         const closeTs = new Date(t.closeDate).getTime();
@@ -332,7 +334,6 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
         if (closeKey in closedBuckets) {
           closedBuckets[closeKey]++;
           if (tags.includes("Finalizado com sucesso") || tags.includes("Venda realizada")) sucessoBuckets[closeKey]++;
-          if (tags.includes("Venda realizada")) vendaBuckets[closeKey]++;
           if (tags.length === 0) semTagBuckets[closeKey]++;
         }
       }
