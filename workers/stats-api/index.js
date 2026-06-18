@@ -282,6 +282,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
   const closedBuckets = {};
   const sucessoBuckets = {};
   const semTagBuckets = {};
+  const vendaBuckets = {};
   const startD = new Date(startDate + "T00:00:00-03:00");
   for (let i = 0; i < numDays; i++) {
     const d = new Date(startD);
@@ -291,6 +292,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
     closedBuckets[key] = 0;
     sucessoBuckets[key] = 0;
     semTagBuckets[key] = 0;
+    vendaBuckets[key] = 0;
   }
   const startTs = startD.getTime();
   let skip = 0;
@@ -328,6 +330,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
           closedBuckets[closeKey]++;
           const tags = t.tags || [];
           if (tags.includes("Finalizado com sucesso") || tags.includes("Venda realizada")) sucessoBuckets[closeKey]++;
+          if (tags.includes("Venda realizada")) vendaBuckets[closeKey]++;
           if (tags.length === 0) semTagBuckets[closeKey]++;
         }
       }
@@ -336,7 +339,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
     skip += take;
     if (skip > 5000) break;
   }
-  return { entries: entryBuckets, closed: closedBuckets, sucesso: sucessoBuckets, sem_tag: semTagBuckets };
+  return { entries: entryBuckets, closed: closedBuckets, sucesso: sucessoBuckets, sem_tag: semTagBuckets, venda: vendaBuckets };
 }
 
 // Blip SP: count CRM contacts (SP router has NO desk module)
@@ -493,7 +496,7 @@ async function buildPeriod(env, startDate, endDate, days) {
     return {
       impressions: round2(di), ad_clicks: round2(dc), sessions: round2(ds),
       wa_clicks: round2(dwa), ph_clicks: round2(dph),
-      blip: 0, blip_closed: 0, blip_sucesso: 0, blip_sem_tag: 0,
+      blip: 0, blip_closed: 0, blip_sucesso: 0, blip_sem_tag: 0, blip_venda: 0, blip_contacts: 0,
       cost: round2(dco), cpc: dc > 0 ? round2(dco / dc) : 0,
       ctr: di > 0 ? round2(dc / di * 100) : 0,
       conversions: round2(dcv), cpl_blip: 0,
@@ -534,16 +537,26 @@ async function collectAllData(env) {
   let blipClosedDailyRJ = {}, blipClosedDailySP = {};
   let blipSucessoRJ = {}, blipSucessoSP = {};
   let blipSemTagRJ = {}, blipSemTagSP = {};
+  let blipVendaRJ = {}, blipVendaSP = {};
+  let blipContactsRJ = {}, blipContactsSP = {};
 
-  // RJ: uses desk tickets (has desk module)
+  // RJ: desk tickets + CRM contacts
   try {
     const rjBoth = await fetchBlipBothDaily(rjKey, BOT_DOMAIN, d30start, 31);
     blipDailyRJ = rjBoth.entries;
     blipClosedDailyRJ = rjBoth.closed;
     blipSucessoRJ = rjBoth.sucesso;
     blipSemTagRJ = rjBoth.sem_tag;
-    console.log("Blip RJ OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "closed:", Object.values(blipClosedDailyRJ).reduce((a,v)=>a+v,0));
+    blipVendaRJ = rjBoth.venda;
+    console.log("Blip RJ OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "closed:", Object.values(blipClosedDailyRJ).reduce((a,v)=>a+v,0), "venda:", Object.values(blipVendaRJ).reduce((a,v)=>a+v,0));
   } catch (e) { console.error("Blip RJ ERROR:", e.message); }
+
+  // RJ CRM contacts (bot interactions, superset of desk tickets)
+  try {
+    const rjCrm = await fetchBlipCrmDaily(rjKey, BOT_DOMAIN, d30start, 31);
+    blipContactsRJ = rjCrm.entries;
+    console.log("Blip RJ CRM OK, contacts:", Object.values(blipContactsRJ).reduce((a,v)=>a+v,0));
+  } catch (e) { console.error("Blip RJ CRM ERROR:", e.message); }
 
   // SP: uses CRM contacts (SP router has NO desk module)
   if (spKey) {
@@ -553,6 +566,7 @@ async function collectAllData(env) {
       blipClosedDailySP = spBoth.closed;
       blipSucessoSP = spBoth.sucesso;
       blipSemTagSP = spBoth.sem_tag;
+      blipContactsSP = spBoth.entries; // SP CRM contacts = entries (no desk)
       console.log("Blip SP OK, entries:", Object.values(blipDailySP).reduce((a,v)=>a+v,0));
     } catch (e) { console.error("Blip SP ERROR:", e.message); }
   }
@@ -569,27 +583,49 @@ async function collectAllData(env) {
   const bcRjD2 = dayVal(blipClosedDailyRJ, d2Date), bcSpD2 = dayVal(blipClosedDailySP, d2Date);
   const bcRj30 = sumBuckets(blipClosedDailyRJ), bcSp30 = sumBuckets(blipClosedDailySP);
 
-  function fillBlip(period, rjBlip, spBlip, rjClosed, spClosed, days) {
+  // Venda realizada (tag específica)
+  const vdRjToday = dayVal(blipVendaRJ, today), vdRjOntem = dayVal(blipVendaRJ, yesterday), vdRjD2 = dayVal(blipVendaRJ, d2Date);
+  const vdRj30 = sumBuckets(blipVendaRJ);
+  // SP não tem desk, venda sempre 0
+  const vdSpToday = 0, vdSpOntem = 0, vdSpD2 = 0, vdSp30 = 0;
+
+  // Contatos CRM (bot interactions, superset de desk tickets)
+  const ctRjToday = dayVal(blipContactsRJ, today), ctSpToday = dayVal(blipContactsSP, today);
+  const ctRjOntem = dayVal(blipContactsRJ, yesterday), ctSpOntem = dayVal(blipContactsSP, yesterday);
+  const ctRjD2 = dayVal(blipContactsRJ, d2Date), ctSpD2 = dayVal(blipContactsSP, d2Date);
+  const ctRj30 = sumBuckets(blipContactsRJ), ctSp30 = sumBuckets(blipContactsSP);
+
+  function fillBlip(period, rjBlip, spBlip, rjClosed, spClosed, rjVenda, spVenda, rjContacts, spContacts, days) {
     const dRj = days > 0 ? rjBlip / days : rjBlip;
     const dSp = days > 0 ? spBlip / days : spBlip;
     const dRjC = days > 0 ? rjClosed / days : rjClosed;
     const dSpC = days > 0 ? spClosed / days : spClosed;
+    const dRjV = days > 0 ? rjVenda / days : rjVenda;
+    const dSpV = days > 0 ? spVenda / days : spVenda;
+    const dRjCt = days > 0 ? rjContacts / days : rjContacts;
+    const dSpCt = days > 0 ? spContacts / days : spContacts;
     period.cons.blip = round2(dRj + dSp);
     period.cons.cpl_blip = (dRj + dSp) > 0 ? round2(period.cons.cost / (dRj + dSp)) : 0;
     period.cons.blip_closed = round2(dRjC + dSpC);
+    period.cons.blip_venda = round2(dRjV + dSpV);
+    period.cons.blip_contacts = round2(dRjCt + dSpCt);
     period.rj.blip = round2(dRj);
     period.rj.cpl_blip = dRj > 0 ? round2(period.rj.cost / dRj) : 0;
     period.rj.blip_closed = round2(dRjC);
+    period.rj.blip_venda = round2(dRjV);
+    period.rj.blip_contacts = round2(dRjCt);
     period.sp.blip = round2(dSp);
     period.sp.cpl_blip = dSp > 0 ? round2(period.sp.cost / dSp) : 0;
     period.sp.blip_closed = round2(dSpC);
+    period.sp.blip_venda = round2(dSpV);
+    period.sp.blip_contacts = round2(dSpCt);
   }
 
-  fillBlip(hojeP, rjToday, spToday, bcRjToday, bcSpToday, 1);
-  fillBlip(ontemP, rjOntem, spOntem, bcRjOntem, bcSpOntem, 1);
-  fillBlip(d2P, rjD2, spD2, bcRjD2, bcSpD2, 1);
-  fillBlip(periodo30, rj30, sp30, bcRj30, bcSp30, 30);
-  fillBlip(periodo90, rj30, sp30, bcRj30, bcSp30, 90);
+  fillBlip(hojeP, rjToday, spToday, bcRjToday, bcSpToday, vdRjToday, vdSpToday, ctRjToday, ctSpToday, 1);
+  fillBlip(ontemP, rjOntem, spOntem, bcRjOntem, bcSpOntem, vdRjOntem, vdSpOntem, ctRjOntem, ctSpOntem, 1);
+  fillBlip(d2P, rjD2, spD2, bcRjD2, bcSpD2, vdRjD2, vdSpD2, ctRjD2, ctSpD2, 1);
+  fillBlip(periodo30, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 30);
+  fillBlip(periodo90, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 90);
 
   const adsByDate = parseDailyAdsRows(dailyAdsRows);
   const dailyDates = [];
@@ -611,13 +647,20 @@ async function collectAllData(env) {
     const blip_sucesso_sp = (blipSucessoSP[date] || 0);
     const blip_sem_tag_rj = (blipSemTagRJ[date] || 0);
     const blip_sem_tag_sp = (blipSemTagSP[date] || 0);
+    const blip_venda_rj = (blipVendaRJ[date] || 0);
+    const blip_venda_sp = 0; // SP não tem desk
+    const blip_contacts_rj = (blipContactsRJ[date] || 0);
+    const blip_contacts_sp = (blipContactsSP[date] || 0);
     return {
       date, clicks: ads2.clicks || 0, cost: round2(ads2.cost || 0),
       conv: round2(ads2.conv || 0), impr: ads2.impr || 0, sessions,
       blip: blip_rj + blip_sp, blip_closed: blip_closed_rj + blip_closed_sp,
       blip_sucesso: blip_sucesso_rj + blip_sucesso_sp,
       blip_sem_tag: blip_sem_tag_rj + blip_sem_tag_sp,
+      blip_venda: blip_venda_rj + blip_venda_sp,
+      blip_contacts: blip_contacts_rj + blip_contacts_sp,
       blip_rj, blip_sp, blip_closed_rj, blip_closed_sp,
+      blip_contacts_rj, blip_contacts_sp, blip_venda_rj, blip_venda_sp,
       rj_clicks: ads2.rj_clicks || 0, rj_cost: round2(ads2.rj_cost || 0),
       sp_clicks: ads2.sp_clicks || 0, sp_cost: round2(ads2.sp_cost || 0)
     };

@@ -161,8 +161,9 @@
     .section-sub{font-size:12px;color:rgba(244,239,230,.5);margin-left:auto}
 
     /* ====== KPI CARDS ====== */
-    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    @media(max-width:1240px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+    .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    @media(max-width:1400px){.kpi-row{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:1060px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:720px){.kpi-row{grid-template-columns:1fr}}
 
     .kpi{
@@ -253,6 +254,7 @@
     .fbar-fill.click{background:linear-gradient(90deg,var(--blue) 0%,#7BC8E8 100%);color:var(--navy-deep)}
     .fbar-fill.session{background:linear-gradient(90deg,#4A8FBE 0%,var(--blue) 100%);color:var(--navy-deep)}
     .fbar-fill.lead{background:linear-gradient(90deg,var(--green-dark) 0%,var(--green-bright) 100%);color:var(--navy-deep)}
+    .fbar-fill.contact{background:linear-gradient(90deg,#7B68EE 0%,#9B8BFF 100%);color:#fff}
     .fbar-fill.ticket{background:linear-gradient(90deg,var(--amber) 0%,#F5C875 100%);color:var(--navy-deep)}
     .fbar-fill.closed{background:linear-gradient(90deg,#2E7D32 0%,#66BB6A 100%);color:#fff}
     .fbar-fill.cotacao{background:linear-gradient(90deg,#D87E33 0%,var(--amber) 100%);color:var(--navy-deep)}
@@ -547,7 +549,9 @@
           <div class="toolbar-group metric" id="metricSelector">
             <button data-metric="clicks" class="active">Cliques</button>
             <button data-metric="sessions">Sessões</button>
-            <button data-metric="blip">Leads Blip</button>
+            <button data-metric="contacts">Contatos</button>
+            <button data-metric="blip">Tickets</button>
+            <button data-metric="venda">Vendas</button>
             <button data-metric="cost">Custo</button>
           </div>
           <div class="toolbar-group" id="rangeSelector">
@@ -881,7 +885,9 @@
       sessions: avgDaily(daily, 7, 'sessions'),
       cost: avgDaily(daily, 7, 'cost'),
       conversions: avgDaily(daily, 7, 'conv'),
-      blip: avgDaily(daily, 7, 'blip')
+      blip: avgDaily(daily, 7, 'blip'),
+      blip_contacts: avgDaily(daily, 7, 'blip_contacts'),
+      blip_venda: avgDaily(daily, 7, 'blip_venda')
     };
     m7d.ctr = m7d.impressions > 0 ? (m7d.ad_clicks / m7d.impressions) * 100 : 0;
     m7d.cpc = m7d.ad_clicks > 0 ? m7d.cost / m7d.ad_clicks : 0;
@@ -912,7 +918,9 @@
         sessions: sumDaily(daily, 7, 'sessions'),
         cost: sumDaily(daily, 7, 'cost'),
         conversions: sumDaily(daily, 7, 'conv'),
-        blip: sumDaily(daily, 7, 'blip')
+        blip: sumDaily(daily, 7, 'blip'),
+        blip_contacts: sumDaily(daily, 7, 'blip_contacts'),
+        blip_venda: sumDaily(daily, 7, 'blip_venda')
       };
       primary.ctr = primary.impressions > 0 ? (primary.ad_clicks / primary.impressions)*100 : 0;
       primary.cpc = primary.ad_clicks > 0 ? primary.cost / primary.ad_clicks : 0;
@@ -924,14 +932,16 @@
         sessions: sumDaily(daily.slice(0, -7), 7, 'sessions'),
         cost: sumDaily(daily.slice(0, -7), 7, 'cost'),
         conversions: sumDaily(daily.slice(0, -7), 7, 'conv'),
-        blip: sumDaily(daily.slice(0, -7), 7, 'blip')
+        blip: sumDaily(daily.slice(0, -7), 7, 'blip'),
+        blip_contacts: sumDaily(daily.slice(0, -7), 7, 'blip_contacts'),
+        blip_venda: sumDaily(daily.slice(0, -7), 7, 'blip_venda')
       };
       prevWeek.ctr = prevWeek.impressions > 0 ? (prevWeek.ad_clicks / prevWeek.impressions)*100 : 0;
       prevWeek.cpc = prevWeek.ad_clicks > 0 ? prevWeek.cost / prevWeek.ad_clicks : 0;
       prevWeek.cpl_blip = prevWeek.blip > 0 ? prevWeek.cost / prevWeek.blip : 0;
       // Monthly avg week = m30 * 7
       var avgWeekMonth = {};
-      ['impressions','ad_clicks','sessions','cost','conversions','blip','ctr','cpc','cpl_blip'].forEach(function(k){
+      ['impressions','ad_clicks','sessions','cost','conversions','blip','blip_contacts','blip_venda','ctr','cpc','cpl_blip'].forEach(function(k){
         avgWeekMonth[k] = (k==='ctr'||k==='cpc'||k==='cpl_blip') ? m30[k] : (m30[k]||0)*7;
       });
       refs = [
@@ -941,6 +951,7 @@
           impressions:(m90.impressions||0)*7, ad_clicks:(m90.ad_clicks||0)*7,
           sessions:(m90.sessions||0)*7, cost:(m90.cost||0)*7,
           conversions:(m90.conversions||0)*7, blip:(m90.blip||0)*7,
+          blip_contacts:(m90.blip_contacts||0)*7, blip_venda:(m90.blip_venda||0)*7,
           ctr:m90.ctr, cpc:m90.cpc, cpl_blip:m90.cpl_blip
         }}
       ];
@@ -952,7 +963,9 @@
         sessions: sumDaily(daily, 30, 'sessions'),
         cost: sumDaily(daily, 30, 'cost'),
         conversions: sumDaily(daily, 30, 'conv'),
-        blip: sumDaily(daily, 30, 'blip')
+        blip: sumDaily(daily, 30, 'blip'),
+        blip_contacts: sumDaily(daily, 30, 'blip_contacts'),
+        blip_venda: sumDaily(daily, 30, 'blip_venda')
       };
       primary.ctr = primary.impressions > 0 ? (primary.ad_clicks / primary.impressions)*100 : 0;
       primary.cpc = primary.ad_clicks > 0 ? primary.cost / primary.ad_clicks : 0;
@@ -963,20 +976,23 @@
           impressions:(m90.impressions||0)*30, ad_clicks:(m90.ad_clicks||0)*30,
           sessions:(m90.sessions||0)*30, cost:(m90.cost||0)*30,
           conversions:(m90.conversions||0)*30, blip:(m90.blip||0)*30,
+          blip_contacts:(m90.blip_contacts||0)*30, blip_venda:(m90.blip_venda||0)*30,
           ctr:m90.ctr, cpc:m90.cpc, cpl_blip:m90.cpl_blip
         }}
       ];
     }
 
     var defs = [
-      {k:'impressions', l:'Impressões',  fmt:num, lower:false},
-      {k:'ad_clicks',   l:'Cliques Ads', fmt:num, lower:false},
-      {k:'ctr',         l:'CTR',         fmt:pct, lower:false},
-      {k:'cpc',         l:'CPC Médio',   fmt:brl, lower:true},
-      {k:'sessions',    l:'Sessões Site', fmt:num, lower:false},
-      {k:'cost',        l:'Custo Ads',   fmt:brl, lower:true},
-      {k:'blip',        l:'Tickets Blip', fmt:num, lower:false},
-      {k:'cpl_blip',    l:'CPL Blip',    fmt:brl, lower:true}
+      {k:'impressions',    l:'Impressões',     fmt:num, lower:false},
+      {k:'ad_clicks',      l:'Cliques Ads',    fmt:num, lower:false},
+      {k:'ctr',            l:'CTR',            fmt:pct, lower:false},
+      {k:'cpc',            l:'CPC Médio',      fmt:brl, lower:true},
+      {k:'sessions',       l:'Sessões Site',   fmt:num, lower:false},
+      {k:'cost',           l:'Custo Ads',      fmt:brl, lower:true},
+      {k:'blip_contacts',  l:'Contatos Blip',  fmt:num, lower:false},
+      {k:'blip',           l:'Tickets Blip',   fmt:num, lower:false},
+      {k:'blip_venda',     l:'Vendas',         fmt:num, lower:false},
+      {k:'cpl_blip',       l:'CPL Blip',       fmt:brl, lower:true}
     ];
 
     var html = '';
@@ -1025,7 +1041,9 @@
     ad_clicks: 'clicks',
     sessions: 'sessions',
     conversions: 'conv',
+    blip_contacts: 'blip_contacts',
     blip: 'blip',
+    blip_venda: 'blip_venda',
     blip_closed: 'blip_closed',
     cost: 'cost'
   };
@@ -1051,7 +1069,7 @@
       // Actual: sum last 7 days; Avg: 30d daily avg * 7 (weekly avg over month)
       actual = {};
       avg = {};
-      var fields = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
+      var fields = ['impressions','ad_clicks','sessions','conversions','blip_contacts','blip','blip_venda','blip_closed','cost'];
       fields.forEach(function(f){
         var dKey = funilFieldMap[f] || f;
         actual[f] = round2(sumDailyField(daily, dKey, 7));
@@ -1062,7 +1080,7 @@
       // Actual: sum last 30 days; Avg: 90d daily avg * 30 (monthly avg over trimestre)
       actual = {};
       avg = {};
-      var fields2 = ['impressions','ad_clicks','sessions','conversions','blip','blip_closed','cost'];
+      var fields2 = ['impressions','ad_clicks','sessions','conversions','blip_contacts','blip','blip_venda','blip_closed','cost'];
       fields2.forEach(function(f){
         var dKey = funilFieldMap[f] || f;
         actual[f] = round2(sumDailyField(daily, dKey, 30));
@@ -1074,12 +1092,13 @@
     document.getElementById('funil-sub').textContent = subText;
 
     var stages = [
-      {label:'Impressões',   sub:'Google Ads',          val:avg.impressions||0, hj:actual.impressions||0, fill:'imp'},
-      {label:'Cliques',      sub:'Tráfego pago',        val:avg.ad_clicks||0,   hj:actual.ad_clicks||0,   fill:'click'},
-      {label:'Sessões Site', sub:'GA4 (todos canais)',   val:avg.sessions||0,    hj:actual.sessions||0,    fill:'session'},
-      {label:'Conv. Ads',    sub:'Conversão tracked',    val:avg.conversions||0, hj:actual.conversions||0, fill:'lead'},
-      {label:'Leads Blip',   sub:'Atendimento iniciado', val:avg.blip||0,        hj:actual.blip||0,        fill:'ticket'},
-      {label:'Fechamentos',  sub:'Finalizado c/ sucesso',val:avg.blip_closed||0, hj:actual.blip_closed||0, fill:'closed'}
+      {label:'Impressões',      sub:'Google Ads',           val:avg.impressions||0,    hj:actual.impressions||0,    fill:'imp'},
+      {label:'Cliques',         sub:'Tráfego pago',         val:avg.ad_clicks||0,      hj:actual.ad_clicks||0,      fill:'click'},
+      {label:'Sessões Site',    sub:'GA4 (todos canais)',    val:avg.sessions||0,       hj:actual.sessions||0,       fill:'session'},
+      {label:'Conv. Ads',       sub:'Conversão tracked',     val:avg.conversions||0,    hj:actual.conversions||0,    fill:'lead'},
+      {label:'Contatos Blip',   sub:'Interação com bot',     val:avg.blip_contacts||0,  hj:actual.blip_contacts||0,  fill:'contact'},
+      {label:'Tickets Blip',    sub:'Atendimento humano',    val:avg.blip||0,           hj:actual.blip||0,           fill:'ticket'},
+      {label:'Vendas',          sub:'Tag: Venda realizada',  val:avg.blip_venda||0,     hj:actual.blip_venda||0,     fill:'closed'}
     ];
     var top = stages[0].val || 1;
     var html = '';
@@ -1113,15 +1132,18 @@
     // Sidebar summary (uses avg values for ratios)
     var clicks = avg.ad_clicks||0, sessions = avg.sessions||0, blip = avg.blip||0;
     var impr = avg.impressions||1, cost = avg.cost||0;
-    var closed = avg.blip_closed||0;
+    var contacts = avg.blip_contacts||0;
+    var venda = avg.blip_venda||0;
     var periodLabel = mode === 'dia' ? 'média diária 30d' : (mode === 'semana' ? 'média semanal 30d' : 'média mensal 90d');
     var sbHtml =
       '<div class="fs-title">Resumo · '+periodLabel+'</div>'+
       '<div class="fs-row"><span class="lbl">CTR médio</span><span class="val">'+(clicks > 0 ? ((clicks/impr)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">Landing Rate</span><span class="val">'+(clicks > 0 ? ((sessions/clicks)*100).toFixed(1)+'%' : '—')+'</span></div>'+
-      '<div class="fs-row"><span class="lbl">Taxa Blip</span><span class="val good">'+(sessions > 0 ? ((blip/sessions)*100).toFixed(1)+'%' : '—')+'</span></div>'+
-      '<div class="fs-row"><span class="lbl">Taxa Fechamento</span><span class="val good">'+(blip > 0 ? ((closed/blip)*100).toFixed(1)+'%' : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">Taxa Contato</span><span class="val">'+(sessions > 0 ? ((contacts/sessions)*100).toFixed(1)+'%' : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">Taxa Ticket</span><span class="val">'+(contacts > 0 ? ((blip/contacts)*100).toFixed(1)+'%' : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">Taxa Venda</span><span class="val good">'+(blip > 0 ? ((venda/blip)*100).toFixed(1)+'%' : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">CPL Blip</span><span class="val">'+(blip > 0 ? brl(cost/blip) : '—')+'</span></div>'+
+      '<div class="fs-row"><span class="lbl">Custo/Venda</span><span class="val">'+(venda > 0 ? brl(cost/venda) : '—')+'</span></div>'+
       '<div class="fs-row"><span class="lbl">CPA Google Ads</span><span class="val">'+(avg.conversions > 0 ? brl(cost/avg.conversions) : '—')+'</span></div>';
     document.getElementById('funnel-summary').innerHTML = sbHtml;
   }
@@ -1162,7 +1184,9 @@
     var metricMap = {
       clicks:{key:'clicks', rjKey:'rj_clicks', spKey:'sp_clicks', label:'Cliques Ads', color:'#5DADE2'},
       sessions:{key:'sessions', rjKey:'sessions', spKey:'sessions', label:'Sessões Site', color:'#C5AA81'},
-      blip:{key:'blip', rjKey:'blip', spKey:'blip', label:'Leads Blip', color:'#00B87C'},
+      contacts:{key:'blip_contacts', rjKey:'blip_contacts_rj', spKey:'blip_contacts_sp', label:'Contatos Blip', color:'#7B68EE'},
+      blip:{key:'blip', rjKey:'blip_rj', spKey:'blip_sp', label:'Tickets Blip', color:'#00B87C'},
+      venda:{key:'blip_venda', rjKey:'blip_venda_rj', spKey:'blip_venda_sp', label:'Vendas Realizadas', color:'#2E7D32'},
       cost:{key:'cost', rjKey:'rj_cost', spKey:'sp_cost', label:'Custo (R$)', color:'#F0A93B'}
     };
     var sel = metricMap[STATE.metric] || metricMap.clicks;
