@@ -324,8 +324,8 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
         const brOpen = new Date(openTs - 3 * 60 * 60 * 1e3);
         const openKey = fmtDate(brOpen);
         if (openKey in entryBuckets) entryBuckets[openKey]++;
-        // Count vendas by tag regardless of close status (attendants tag before closing)
-        if (tags.includes("Venda realizada") && openKey in vendaBuckets) vendaBuckets[openKey]++;
+        // Count vendas by tag regardless of close status (both current and legacy tag)
+        if ((tags.includes("Venda realizada") || tags.includes("Finalizado com sucesso")) && openKey in vendaBuckets) vendaBuckets[openKey]++;
       }
       if (t.closed && t.closeDate) {
         const closeTs = new Date(t.closeDate).getTime();
@@ -666,8 +666,8 @@ async function collectAllData(env) {
       blip_contacts: blip_contacts_rj + blip_contacts_sp,
       blip_rj, blip_sp, blip_closed_rj, blip_closed_sp,
       blip_contacts_rj, blip_contacts_sp, blip_venda_rj, blip_venda_sp,
-      rj_clicks: ads2.rj_clicks || 0, rj_cost: round2(ads2.rj_cost || 0),
-      sp_clicks: ads2.sp_clicks || 0, sp_cost: round2(ads2.sp_cost || 0)
+      rj_clicks: ads2.rj_clicks || 0, rj_cost: round2(ads2.rj_cost || 0), rj_conv: round2(ads2.rj_conv || 0),
+      sp_clicks: ads2.sp_clicks || 0, sp_cost: round2(ads2.sp_cost || 0), sp_conv: round2(ads2.sp_conv || 0)
     };
   });
 
