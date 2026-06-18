@@ -568,8 +568,8 @@
     <section class="section" id="s-funil-rj" style="display:none">
       <div class="section-head">
         <span class="section-eyebrow">04b · Funil RJ diário</span>
-        <h2 class="section-title">Custo Ads vs Blip vs Fechamentos (Rio de Janeiro)</h2>
-        <span class="section-sub">4 métricas sobrepostas para ver correlação investimento → resultado</span>
+        <h2 class="section-title">Conv. Ads → Contatos → Tickets → Vendas (Rio de Janeiro)</h2>
+        <span class="section-sub">Funil completo RJ · Tags: Venda realizada + Finalizado c/ sucesso</span>
       </div>
       <div class="chart-card">
         <div class="chart-toolbar">
@@ -1283,10 +1283,10 @@
     var daily = dailyWithToday();
     var sliced = daily.slice(-rjFunilRange);
     var labels = sliced.map(function(d){ var p=d.date.split('-'); return p[2]+'/'+p[1]+(d.partial ? ' · parcial' : ''); });
-    var costData = sliced.map(function(d){return d.rj_cost||0});
-    var blipData = sliced.map(function(d){return d.blip_rj||0});
-    var closedData = sliced.map(function(d){return d.blip_venda_rj||0});
-    var sessData = sliced.map(function(d){return d.sessions||0});
+    var convData = sliced.map(function(d){return d.rj_conv||0});
+    var contactsData = sliced.map(function(d){return d.blip_contacts_rj||0});
+    var ticketsData = sliced.map(function(d){return d.blip_rj||0});
+    var vendaData = sliced.map(function(d){return d.blip_venda_rj||0});
     var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
     try{
     rjFunilChart = new Chart(ctx,{
@@ -1294,10 +1294,10 @@
       data:{
         labels:labels,
         datasets:[
-          {label:'Custo Ads RJ (R$)',data:costData,borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,0.08)',yAxisID:'yCost',tension:.3,borderWidth:2,pointRadius:2,fill:true},
-          {label:'Sessões LP',data:sessData,borderColor:'#5DADE2',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:2,borderDash:[4,3]},
-          {label:'Entradas Blip RJ',data:blipData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.1)',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:3,fill:true},
-          {label:'Vendas RJ',data:closedData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded'}
+          {label:'Conv. Ads RJ',data:convData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.06)',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3,fill:true},
+          {label:'Contatos Blip RJ',data:contactsData,borderColor:'#7B68EE',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
+          {label:'Tickets Blip RJ',data:ticketsData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
+          {label:'Vendas RJ',data:vendaData,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,0.25)',yAxisID:'yVenda',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded',fill:true,type:'bar'}
         ]
       },
       options:{
@@ -1306,12 +1306,12 @@
         plugins:{
           legend:{labels:{color:'rgba(244,239,230,.7)',font:{family:'IBM Plex Mono',size:10},usePointStyle:true,boxWidth:8}},
           tooltip:{backgroundColor:'rgba(7,24,43,.95)',bodyColor:'#F4EFE6',callbacks:{
-            label:function(c){return c.dataset.label+': '+(c.dataset.yAxisID==='yCost'?'R$ '+c.parsed.y.toFixed(2):c.parsed.y)}
+            label:function(c){return c.dataset.label+': '+c.parsed.y}
           }}
         },
         scales:{
           x:{ticks:{color:'rgba(244,239,230,.5)',font:{size:10},maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},
-          yCost:{type:'linear',position:'right',title:{display:true,text:'Custo (R$)',color:'#E74C3C',font:{size:10}},ticks:{color:'#E74C3C',font:{size:10}},grid:{display:false}},
+          yVenda:{type:'linear',position:'right',title:{display:true,text:'Vendas',color:'#2E7D32',font:{size:10}},ticks:{color:'#2E7D32',font:{size:10}},grid:{display:false},min:0},
           yCount:{type:'linear',position:'left',title:{display:true,text:'Quantidade',color:'#00B87C',font:{size:10}},ticks:{color:'#00B87C',font:{size:10}},grid:{color:'rgba(255,255,255,.05)'}}
         }
       }
