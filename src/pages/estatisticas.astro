@@ -1285,7 +1285,7 @@
     var labels = sliced.map(function(d){ var p=d.date.split('-'); return p[2]+'/'+p[1]+(d.partial ? ' · parcial' : ''); });
     var costData = sliced.map(function(d){return d.rj_cost||0});
     var blipData = sliced.map(function(d){return d.blip_rj||0});
-    var closedData = sliced.map(function(d){return d.blip_closed_rj||0});
+    var closedData = sliced.map(function(d){return d.blip_venda_rj||0});
     var sessData = sliced.map(function(d){return d.sessions||0});
     var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
     try{
@@ -1297,7 +1297,7 @@
           {label:'Custo Ads RJ (R$)',data:costData,borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,0.08)',yAxisID:'yCost',tension:.3,borderWidth:2,pointRadius:2,fill:true},
           {label:'Sessões LP',data:sessData,borderColor:'#5DADE2',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:2,borderDash:[4,3]},
           {label:'Entradas Blip RJ',data:blipData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.1)',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:3,fill:true},
-          {label:'Fechamentos RJ',data:closedData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded'}
+          {label:'Vendas RJ',data:closedData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded'}
         ]
       },
       options:{
@@ -1319,7 +1319,9 @@
     }catch(e){console.error('RJ Funil chart error:',e)}
   }
 
-  delegate('rjFunilRange','click','button',function(btn){
+  document.getElementById('rjFunilRange').addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if(!btn) return;
     btn.parentNode.querySelectorAll('button').forEach(function(b){b.classList.remove('active')});
     btn.classList.add('active');
     rjFunilRange = parseInt(btn.dataset.rjrange)||30;
