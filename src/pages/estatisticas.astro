@@ -525,7 +525,8 @@
         <span class="section-sub" id="funil-sub">hoje vs média diária · últimos 30 dias</span>
       </div>
       <div class="period-toggle" id="funil-period-toggle">
-        <button data-fp="dia" class="active">Dia</button>
+        <button data-fp="dia" class="active">Hoje</button>
+        <button data-fp="ontem">Ontem</button>
         <button data-fp="semana">Semana</button>
         <button data-fp="mes">Mês</button>
       </div>
@@ -1064,7 +1065,13 @@
       // Actual: today's values; Avg: 30d daily average
       actual = hoje;
       avg = m30;
-      subText = 'hoje vs média diária · últimos 30 dias';
+      subText = 'hoje (parcial) vs média diária · últimos 30 dias';
+    } else if (mode === 'ontem') {
+      // Actual: yesterday's values; Avg: 30d daily average
+      var ontem = data.funil['ontem'+sfx] || data.funil.ontem;
+      actual = ontem;
+      avg = m30;
+      subText = 'ontem vs média diária · últimos 30 dias';
     } else if (mode === 'semana') {
       // Actual: sum last 7 days; Avg: 30d daily avg * 7 (weekly avg over month)
       actual = {};
@@ -1102,7 +1109,7 @@
     ];
     var top = stages[0].val || 1;
     var html = '';
-    var prefixActual = mode === 'dia' ? 'hj' : (mode === 'semana' ? '7d' : '30d');
+    var prefixActual = mode === 'dia' ? 'hj' : (mode === 'ontem' ? 'ont' : (mode === 'semana' ? '7d' : '30d'));
     stages.forEach(function(st, i){
       var pctVal = top > 0 ? (st.val/top) : 0;
       var widthPct = Math.max(2, pctVal*100);
