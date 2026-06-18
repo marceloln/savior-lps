@@ -317,6 +317,9 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
     for (const t of items) {
       const openTs = t.openDate ? new Date(t.openDate).getTime() : 0;
       if (openTs > 0 && openTs < startTs) { keepGoing = false; break; }
+      // Skip test tickets entirely
+      const tags = t.tags || [];
+      if (tags.includes("Teste")) continue;
       if (openTs > 0) {
         const brOpen = new Date(openTs - 3 * 60 * 60 * 1e3);
         const openKey = fmtDate(brOpen);
@@ -328,7 +331,6 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays) {
         const closeKey = fmtDate(brClose);
         if (closeKey in closedBuckets) {
           closedBuckets[closeKey]++;
-          const tags = t.tags || [];
           if (tags.includes("Finalizado com sucesso") || tags.includes("Venda realizada")) sucessoBuckets[closeKey]++;
           if (tags.includes("Venda realizada")) vendaBuckets[closeKey]++;
           if (tags.length === 0) semTagBuckets[closeKey]++;
