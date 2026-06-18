@@ -1,18 +1,5 @@
 {
   "name": "savior-lps",
   "compatibility_date": "2026-04-25",
-  "pages_build_output_dir": "dist",
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "savior-fechamentos",
-      "database_id": "bc8152c7-47e7-4275-91bd-2b1c7fb939d9"
-    }
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "RECEIPTS",
-      "id": "f3ed3412e75144cdb10cca13339cb457"
-    }
-  ]
+  "pages_build_output_dir": "dist"
 }
