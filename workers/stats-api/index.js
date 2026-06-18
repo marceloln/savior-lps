@@ -342,7 +342,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
     }
     if (items.length < take) break;
     skip += take;
-    if (skip > 5000) break;
+    if (skip > 1000) break;
   }
   return { entries: entryBuckets, closed: closedBuckets, sucesso: sucessoBuckets, sem_tag: semTagBuckets, venda: vendaBuckets };
 }
@@ -380,15 +380,15 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
     for (const c of items) {
       const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
       if (lastMsg < startTs) { keepGoing = false; break; }
-      // Skip test contacts (group "Teste" or name starting with "Tester")
-      if (c.group === "Teste" || (c.name && c.name.startsWith("Tester"))) continue;
+      // Skip test contacts (group "Teste"/"Testers" or name starting with "Tester")
+      if (c.group === "Teste" || c.group === "Testers" || (c.name && c.name.startsWith("Tester"))) continue;
       const brDate = new Date(lastMsg - 3 * 60 * 60 * 1e3);
       const dateKey = fmtDate(brDate);
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
     }
     if (items.length < take) break;
     skip += take;
-    if (skip > 3000) break;
+    if (skip > 500) break;
   }
   // SP has no desk, so closed/sucesso/sem_tag are always 0
   const zeroBuckets = {};
@@ -404,7 +404,7 @@ async function fetchPipedriveStats(token) {
   let start = 0;
   let allDeals = [];
   let hasMore = true;
-  while (hasMore && start < 500) {
+  while (hasMore && start < 200) {
     const res = await fetch(`${BASE}/deals?api_token=${token}&status=all_not_deleted&start=${start}&limit=100&sort=add_time DESC`);
     if (!res.ok) { console.error("Pipedrive deals error:", res.status); break; }
     const data = await res.json();
