@@ -377,6 +377,8 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
     for (const c of items) {
       const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
       if (lastMsg < startTs) { keepGoing = false; break; }
+      // Skip test contacts (group "Teste" or name starting with "Tester")
+      if (c.group === "Teste" || (c.name && c.name.startsWith("Tester"))) continue;
       const brDate = new Date(lastMsg - 3 * 60 * 60 * 1e3);
       const dateKey = fmtDate(brDate);
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
