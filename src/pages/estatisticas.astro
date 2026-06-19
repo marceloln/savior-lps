@@ -565,12 +565,12 @@
       </div>
     </section>
 
-    <!-- 04b Funil RJ diário -->
+    <!-- 04b Funil diário (regional) -->
     <section class="section" id="s-funil-rj" style="display:none">
       <div class="section-head">
-        <span class="section-eyebrow">04b · Funil RJ diário</span>
-        <h2 class="section-title">Conv. Ads → Contatos → Tickets → Vendas (Rio de Janeiro)</h2>
-        <span class="section-sub">Funil completo RJ · Tags: Venda realizada + Finalizado c/ sucesso</span>
+        <span class="section-eyebrow">04b · Funil diário</span>
+        <h2 class="section-title" id="funil-rj-title">Conv. Ads → Contatos → Tickets → Vendas</h2>
+        <span class="section-sub" id="funil-rj-sub">Tags: Venda realizada + Finalizado c/ sucesso</span>
       </div>
       <div class="chart-card">
         <div class="chart-toolbar">
@@ -1295,13 +1295,25 @@
   }
   function _doRenderRjFunil(){
     if(rjFunilChart){rjFunilChart.destroy();rjFunilChart=null}
+    var rgn = STATE.region;
+    var regionLabel = rgn === 'rj' ? 'Rio de Janeiro' : (rgn === 'sp' ? 'São Paulo' : 'Consolidado RJ + SP');
+    document.getElementById('funil-rj-title').textContent = 'Conv. Ads → Contatos → Tickets → Vendas ('+regionLabel+')';
+    document.getElementById('funil-rj-sub').textContent = 'Funil completo '+regionLabel+' · Tags: Venda realizada + Finalizado c/ sucesso';
+
+    // Map region to daily field keys
+    var convKey = rgn === 'rj' ? 'rj_conv' : (rgn === 'sp' ? 'sp_conv' : 'conv');
+    var contactsKey = rgn === 'cons' ? 'blip_contacts' : ('blip_contacts_'+rgn);
+    var ticketsKey = rgn === 'cons' ? 'blip' : ('blip_'+rgn);
+    var vendaKey = rgn === 'cons' ? 'blip_venda' : ('blip_venda_'+rgn);
+    var sfxLabel = rgn === 'rj' ? ' RJ' : (rgn === 'sp' ? ' SP' : '');
+
     var daily = dailyWithToday();
     var sliced = daily.slice(-rjFunilRange);
     var labels = sliced.map(function(d){ var p=d.date.split('-'); return p[2]+'/'+p[1]+(d.partial ? ' · parcial' : ''); });
-    var convData = sliced.map(function(d){return d.rj_conv||0});
-    var contactsData = sliced.map(function(d){return d.blip_contacts_rj||0});
-    var ticketsData = sliced.map(function(d){return d.blip_rj||0});
-    var vendaData = sliced.map(function(d){return d.blip_venda_rj||0});
+    var convData = sliced.map(function(d){return d[convKey]||0});
+    var contactsData = sliced.map(function(d){return d[contactsKey]||0});
+    var ticketsData = sliced.map(function(d){return d[ticketsKey]||0});
+    var vendaData = sliced.map(function(d){return d[vendaKey]||0});
     var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
     try{
     rjFunilChart = new Chart(ctx,{
@@ -1309,10 +1321,10 @@
       data:{
         labels:labels,
         datasets:[
-          {label:'Conv. Ads RJ',data:convData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.06)',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3,fill:true},
-          {label:'Contatos Blip RJ',data:contactsData,borderColor:'#7B68EE',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
-          {label:'Tickets Blip RJ',data:ticketsData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
-          {label:'Vendas RJ',data:vendaData,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,0.25)',yAxisID:'yVenda',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded',fill:true,type:'bar'}
+          {label:'Conv. Ads'+sfxLabel,data:convData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.06)',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3,fill:true},
+          {label:'Contatos Blip'+sfxLabel,data:contactsData,borderColor:'#7B68EE',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
+          {label:'Tickets Blip'+sfxLabel,data:ticketsData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
+          {label:'Vendas'+sfxLabel,data:vendaData,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,0.25)',yAxisID:'yVenda',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded',fill:true,type:'bar'}
         ]
       },
       options:{
