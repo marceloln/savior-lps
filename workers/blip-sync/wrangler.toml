@@ -1,0 +1,20 @@
+name = "savior-blip-sync"
+main = "index.js"
+compatibility_date = "2024-09-01"
+
+# Cron: a cada 15 minutos
+[triggers]
+crons = ["*/15 * * * *"]
+
+# KV para controle de sync (quem ja foi processado)
+[[kv_namespaces]]
+binding = "SYNC_KV"
+id = "72ada4d8f42a45219d99d9f70a471c22"
+
+[vars]
+ALLOWED_ORIGIN = "https://savior.com.br"
+
+# Secrets (configurar via wrangler secret put):
+# BLIP_PRINCIPAL_KEY  — Key do saviorprincipal
+# BLIP_RJ_KEY         — Key do saviorrj
+# PIPEDRIVE_TOKEN     — Token API Pipedrive
