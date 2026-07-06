@@ -388,7 +388,7 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
     }
     if (items.length < take) break;
     skip += take;
-    if (skip > 500) break;
+    if (skip > 2000) break;
   }
   // SP has no desk, so closed/sucesso/sem_tag are always 0
   const zeroBuckets = {};
@@ -577,9 +577,10 @@ async function collectAllData(env) {
     } catch (e) { console.error("Blip RJ Bot ERROR:", e.message); }
   }
 
-  // RJ CRM contacts (bot interactions, superset of desk tickets)
+  // RJ CRM contacts — use router key (traffic goes to saviorrj via router, not saviorprincipal)
+  const rjCrmKey = env.BLIP_ROUTER_KEY || rjKey;
   try {
-    const rjCrm = await fetchBlipCrmDaily(rjKey, BOT_DOMAIN, d30start, 31);
+    const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31);
     blipContactsRJ = rjCrm.entries;
     console.log("Blip RJ CRM OK, contacts:", Object.values(blipContactsRJ).reduce((a,v)=>a+v,0));
   } catch (e) { console.error("Blip RJ CRM ERROR:", e.message); }
