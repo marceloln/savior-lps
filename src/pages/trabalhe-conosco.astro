@@ -438,14 +438,13 @@ const faqItems = [
         }),
       }).then(function (res) {
         if (!res.ok) throw new Error('send failed');
-        // Tracking (evento próprio de candidatura, fora do funil comercial)
+        // Tracking (evento próprio de candidatura, fora do funil comercial:
+        // NÃO usar generate_lead/Lead pra não poluir as conversões de venda)
+        var evParams = { cargo: cargo, estado: estado, lead_source: 'trabalhe-conosco-form', page: 'trabalhe-conosco' };
         window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'job_application',
-          cargo: cargo,
-          estado: estado,
-          lead_source: 'trabalhe-conosco-form',
-        });
+        window.dataLayer.push(Object.assign({ event: 'job_application' }, evParams));
+        if (typeof window.gtag === 'function') window.gtag('event', 'job_application', evParams);
+        if (typeof window.fbq === 'function') window.fbq('trackCustom', 'JobApplication', { cargo: cargo, estado: estado });
         tcShowSuccess();
       }).catch(function () {
         submitBtn.disabled = false;
