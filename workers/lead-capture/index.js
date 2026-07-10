@@ -36,6 +36,14 @@ const PIPELINE_STAGE_NOVO_LEAD = {
 
 const PIPEDRIVE_API = 'https://api.pipedrive.com/v1';
 
+// E-mails de RH por estado — candidaturas Trabalhe Conosco
+// (fluxo 100% e-mail: sem Pipedrive e sem Blip, pra não inflar atendimentos)
+const RH_EMAIL = {
+  rj: 'central@savior.com.br',
+  sp: 'central.sp@savior.com.br',
+};
+const RH_CC = ['savior@savior.com.br'];
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -68,6 +76,11 @@ export default {
       body = await request.json();
     } catch {
       return new Response('Bad Request', { status: 400 });
+    }
+
+    // Candidatura Trabalhe Conosco — só e-mail. Sem Pipedrive, sem Blip.
+    if (body.type === 'candidatura') {
+      return handleCandidatura(body, env);
     }
 
     const {
@@ -469,6 +482,100 @@ export default {
     });
   },
 };
+
+// ============================================================
+// Candidatura Trabalhe Conosco — envia e-mail pro RH do estado
+// com cópia pra savior@savior.com.br. NÃO cria deal no Pipedrive
+// e NÃO passa pelo Blip (currículo não pode inflar atendimentos).
+// ============================================================
+async function handleCandidatura(body, env) {
+  const {
+    estado = '',
+    cargo = '',
+    cargo_label = '',
+    nome = '',
+    whatsapp = '',
+    email = '',
+    registro = '',
+    experiencia = '',
+    utm_source = 'direct',
+    utm_campaign = 'none',
+  } = body;
+
+  const uf = estado === 'sp' ? 'sp' : 'rj';
+  const ufLabel = uf === 'sp' ? 'São Paulo' : 'Rio de Janeiro';
+  const cargoLabel = (cargo_label || cargo || 'Não informado').toString().slice(0, 60);
+
+  if (!nome.trim() || !email.trim()) {
+    return new Response(JSON.stringify({ ok: false, error: 'nome e email obrigatórios' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    });
+  }
+
+  if (!env.RESEND_API_KEY) {
+    console.error('Candidatura sem RESEND_API_KEY configurada');
+    return new Response(JSON.stringify({ ok: false, error: 'email não configurado' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    });
+  }
+
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const row = (label, val) => val ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:5px 0;font-weight:500">${esc(val)}</td></tr>` : '';
+  const dateTag = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+  const emailBody = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+    <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
+      <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
+      <span style="color:rgba(255,255,255,.5);font-size:12px;margin-left:12px">Nova candidatura — Trabalhe Conosco</span>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px">
+      <table style="border-collapse:collapse;font-size:14px;width:100%">
+        ${row('Função', cargoLabel)}
+        ${row('Estado', ufLabel)}
+        ${row('Nome', nome)}
+        ${row('WhatsApp', whatsapp)}
+        ${row('E-mail', email)}
+        ${row('Registro', registro)}
+        ${row('Experiência', experiencia)}
+      </table>
+      <div style="margin-top:20px">
+        <a href="mailto:${esc(email)}" style="display:inline-block;padding:10px 20px;background:#0B2540;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">✉️ Responder ao candidato</a>
+      </div>
+      <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
+      <p style="font-size:12px;color:#9ca3af;margin:0">🔗 ${esc(utm_source)} · 🎯 ${esc(utm_campaign)} · Enviado pelo site /trabalhe-conosco</p>
+    </div>
+  </div>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'Site Savior <noreply@savior.com.br>',
+      to: [RH_EMAIL[uf]],
+      cc: RH_CC,
+      reply_to: email,
+      subject: `Trabalhe Conosco - ${cargoLabel} (${uf.toUpperCase()}) — ${dateTag}`,
+      html: emailBody,
+    }),
+  }).catch((err) => {
+    console.error('Candidatura email send failed:', err);
+    return null;
+  });
+
+  const ok = !!(res && res.ok);
+  if (!ok && res) console.error('Candidatura Resend error:', res.status, await res.text().catch(() => ''));
+  console.log(`Candidatura ${ok ? 'enviada' : 'FALHOU'}: cargo=${cargo} estado=${uf}`);
+
+  return new Response(JSON.stringify({ ok }), {
+    status: ok ? 200 : 502,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+  });
+}
 
 // ============================================================
 // Ref Store — armazena UTM data com código curto no KV

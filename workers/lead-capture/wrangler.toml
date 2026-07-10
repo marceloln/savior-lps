@@ -4,7 +4,7 @@ compatibility_date = "2024-01-01"
 
 [[kv_namespaces]]
 binding = "UTM_STORE"
-id = "a324cabb85ca413791f4714fd602be3b"
+id = "bf84c7323bef4f939d843c6caa18b80a"
 
 [vars]
 # PIPEDRIVE_TOKEN deve ser configurado via: wrangler secret put PIPEDRIVE_TOKEN

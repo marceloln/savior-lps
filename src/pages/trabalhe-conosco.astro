@@ -1,0 +1,803 @@
+---
+// ============================================================
+// /trabalhe-conosco — Página de Carreiras
+// Savior Medical Service — candidatura por estado (RJ/SP) e cargo
+// Candidatura vai por E-MAIL pro RH do estado (worker lead-capture,
+// type=candidatura). SEM WhatsApp e SEM Blip de propósito:
+// currículo não pode entrar no bot e inflar os atendimentos.
+// ============================================================
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import FAQ from '../components/FAQ.astro';
+
+const CARGOS = [
+  {
+    slug: 'socorrista',
+    nome: 'Socorrista',
+    desc: 'Atendimento pré-hospitalar na ponta. Você chega primeiro, avalia e age com protocolo.',
+    req: 'Curso de APH e experiência em atendimento de urgência contam pontos.',
+  },
+  {
+    slug: 'condutor_socorrista',
+    nome: 'Condutor(a) Socorrista',
+    desc: 'Dirige a ambulância e integra a equipe de atendimento. Direção segura salva tempo, e tempo salva vidas.',
+    req: 'CNH categoria D e curso de condutor de veículo de emergência.',
+  },
+  {
+    slug: 'tecnico_enfermagem',
+    nome: 'Técnico(a) de Enfermagem',
+    desc: 'Assistência direta ao paciente dentro da ambulância, do suporte básico ao avançado, junto com a equipe.',
+    req: 'COREN ativo. Experiência em urgência e emergência é diferencial.',
+  },
+  {
+    slug: 'enfermeiro',
+    nome: 'Enfermeiro(a)',
+    desc: 'Coordena o cuidado assistencial nas remoções e atendimentos, com autonomia técnica e apoio da central 24h.',
+    req: 'COREN ativo. Vivência em APH, UTI ou emergência é diferencial.',
+  },
+  {
+    slug: 'medico',
+    nome: 'Médico(a)',
+    desc: 'Atua nas UTIs móveis e no suporte avançado de vida, com equipamento completo e equipe treinada.',
+    req: 'CRM ativo. Experiência em emergência, terapia intensiva ou APH.',
+  },
+  {
+    slug: 'administrativo',
+    nome: 'Administrativo',
+    desc: 'Central de atendimento, operações, comercial e financeiro. A retaguarda que faz a operação rodar 24h.',
+    req: 'Perfil organizado e boa comunicação. Vivência em saúde é diferencial.',
+  },
+];
+
+const datePosted = '2026-07-10';
+
+const jobLocationRJ = {
+  "@type": "Place",
+  "address": { "@type": "PostalAddress", "streetAddress": "R. Gen. Padilha, 73", "addressLocality": "Rio de Janeiro", "addressRegion": "RJ", "postalCode": "20920-390", "addressCountry": "BR" }
+};
+const jobLocationSP = {
+  "@type": "Place",
+  "address": { "@type": "PostalAddress", "streetAddress": "Av. do Rio Bonito, 287", "addressLocality": "São Paulo", "addressRegion": "SP", "addressCountry": "BR" }
+};
+const hiringOrg = {
+  "@type": "Organization",
+  "name": "Savior Medical Service",
+  "sameAs": "https://www.savior.com.br",
+  "logo": "https://www.savior.com.br/favicon.svg"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    ...CARGOS.map((c) => ({
+      "@type": "JobPosting",
+      "title": c.nome,
+      "description": `<p>${c.desc} ${c.req}</p>`,
+      "datePosted": datePosted,
+      "employmentType": "FULL_TIME",
+      "hiringOrganization": hiringOrg,
+      "jobLocation": [jobLocationRJ, jobLocationSP],
+      "directApply": true
+    })),
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Como funciona o processo seletivo da Savior?", "acceptedAnswer": { "@type": "Answer", "text": "Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica." } },
+        { "@type": "Question", "name": "Preciso ter experiência em APH para me candidatar?", "acceptedAnswer": { "@type": "Answer", "text": "Para os cargos assistenciais, experiência em urgência e emergência conta pontos, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial." } },
+        { "@type": "Question", "name": "A contratação é direta ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa." } },
+        { "@type": "Question", "name": "Posso me candidatar mesmo sem vaga aberta?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. Toda candidatura entra no banco de talentos e é consultada quando abre uma posição no seu estado e cargo." } }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.savior.com.br/trabalhe-conosco",
+      "url": "https://www.savior.com.br/trabalhe-conosco",
+      "name": "Trabalhe Conosco | Carreiras na Savior Medical Service",
+      "inLanguage": "pt-BR",
+      "isPartOf": { "@id": "https://www.savior.com.br/#website" },
+      "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".tc-hero-sub"] }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Savior Medical Service", "item": "https://www.savior.com.br/" },
+        { "@type": "ListItem", "position": 2, "name": "Trabalhe Conosco", "item": "https://www.savior.com.br/trabalhe-conosco" }
+      ]
+    }
+  ]
+});
+
+const faqItems = [
+  { q: 'Como funciona o processo seletivo da Savior?', a: 'Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica.' },
+  { q: 'Preciso ter experiência em APH para me candidatar?', a: 'Para os cargos assistenciais, experiência em urgência e emergência conta pontos, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial.' },
+  { q: 'Quais registros e documentos são exigidos?', a: 'Depende do cargo: COREN ativo para enfermagem e técnico de enfermagem, CRM ativo para médicos, CNH categoria D e curso de condutor de veículo de emergência para condutor socorrista. Os detalhes são confirmados na entrevista.' },
+  { q: 'A contratação é direta ou terceirizada?', a: 'Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa.' },
+  { q: 'Como funcionam as escalas?', a: 'A operação roda 24h e as equipes trabalham em regime de escala, que varia conforme o cargo e a base. O formato exato é apresentado na entrevista, antes de qualquer decisão.' },
+  { q: 'Posso me candidatar mesmo sem vaga aberta?', a: 'Sim. Toda candidatura entra no banco de talentos e é consultada quando abre uma posição no seu estado e cargo.' },
+];
+---
+
+<Base
+  title="Trabalhe Conosco | Carreiras na Savior Medical Service"
+  description="Venha trabalhar em quem cuida há 46 anos. Vagas para socorrista, condutor socorrista, enfermagem, medicina e administrativo no RJ e em SP. Equipe 100% própria, contratação direta."
+  canonical="https://www.savior.com.br/trabalhe-conosco"
+  schema={schema}
+  dateModified="2026-07-10"
+  lcpImageSrcset="/img/gallery/team-mobile.webp 720w, /img/gallery/team.webp 1536w"
+>
+
+<!-- Sem StickyHeader de propósito: os CTAs dele levam pro WhatsApp
+     do atendimento (Blip) e currículo não pode entrar no bot -->
+
+<!-- ═══ 2. HERO + ESCOLHA DE ESTADO ═══ -->
+<section class="tc-hero" id="topo">
+  <div class="tc-hero-bg" aria-hidden="true">
+    <picture>
+      <source media="(max-width: 767px)" srcset="/img/gallery/team-mobile.webp" type="image/webp" />
+      <img src="/img/gallery/team.webp" srcset="/img/gallery/team-mobile.webp 720w, /img/gallery/team.webp 1536w" sizes="100vw" alt="" width="1536" height="1024" loading="eager" fetchpriority="high" />
+    </picture>
+  </div>
+  <div class="tc-hero-overlay" aria-hidden="true"></div>
+  <div class="tc-hero-content wrap">
+    <a href="/" class="tc-hero-brand" aria-label="Savior Medical Service, página inicial">
+      <div>
+        <div class="tc-hero-wordmark">SAVIOR</div>
+        <div class="tc-hero-descriptor">Medical Service</div>
+      </div>
+    </a>
+    <div class="tc-hero-main">
+      <p class="eyebrow on-dark" style="margin-bottom:18px">Trabalhe conosco</p>
+      <h1>Quando cada segundo conta, <em class="tc-green-bright">cada pessoa conta.</em></h1>
+      <p class="tc-hero-sub">Há 46 anos a Savior cuida de quem precisa no Rio de Janeiro e em São Paulo. Esse cuidado começa dentro de casa: equipe própria, treinada e escutada. Se você quer trabalhar salvando vidas, seu lugar pode ser aqui.</p>
+
+      <div class="tc-estado-box" role="group" aria-labelledby="estado-label">
+        <p id="estado-label" class="tc-estado-label">Primeiro, escolha onde você quer trabalhar:</p>
+        <div class="tc-estado-grid">
+          <button type="button" class="tc-estado-card" data-estado="rj" data-event="cta_click" data-event-category="cta" data-event-label="trabalhe-estado-rj">
+            <span class="tc-estado-uf">RJ</span>
+            <span class="tc-estado-cidade">Rio de Janeiro</span>
+            <span class="tc-estado-base">Base São Cristóvão</span>
+          </button>
+          <button type="button" class="tc-estado-card" data-estado="sp" data-event="cta_click" data-event-category="cta" data-event-label="trabalhe-estado-sp">
+            <span class="tc-estado-uf">SP</span>
+            <span class="tc-estado-cidade">São Paulo</span>
+            <span class="tc-estado-base">Base Socorro</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. CARGOS ═══ -->
+<section class="section tc-cargos" id="cargos" aria-labelledby="cargos-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:12px">Nossas equipes</p>
+    <h2 id="cargos-heading">Escolha a sua função</h2>
+    <p class="tc-section-intro">Da direção da ambulância à central de atendimento, cada função aqui existe por um motivo: chegar a tempo e cuidar bem. Veja onde você se encaixa.</p>
+    <div class="tc-cargos-grid">
+      {CARGOS.map((c) => (
+        <article class="tc-cargo-card">
+          <h3>{c.nome}</h3>
+          <p class="tc-cargo-desc">{c.desc}</p>
+          <p class="tc-cargo-req">{c.req}</p>
+          <button type="button" class="tc-cargo-cta" data-cargo={c.slug} data-cargo-nome={c.nome} data-event="cta_click" data-event-category="cta" data-event-label={`trabalhe-cargo-${c.slug}`}>Candidatar a esta função →</button>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 4. POR QUE TRABALHAR NA SAVIOR ═══ -->
+<section class="section tc-beneficios" aria-labelledby="beneficios-heading">
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:12px">Por que a Savior</p>
+    <h2 id="beneficios-heading">O que você encontra aqui</h2>
+    <div class="tc-beneficios-grid">
+      <div class="tc-beneficio">
+        <h3>Contratação direta</h3>
+        <p>A equipe é 100% própria. Você é contratado, treinado e avaliado pela Savior, sem intermediários.</p>
+      </div>
+      <div class="tc-beneficio">
+        <h3>Treinamento contínuo</h3>
+        <p>Protocolos de atendimento pré-hospitalar, reciclagens e acompanhamento técnico. Ninguém entra na ambulância sem preparo.</p>
+      </div>
+      <div class="tc-beneficio">
+        <h3>Estrutura de verdade</h3>
+        <p>Frota certificada, equipamentos completos nas UTIs móveis e central de operações 24h dando retaguarda a cada atendimento.</p>
+      </div>
+      <div class="tc-beneficio">
+        <h3>46 anos de história</h3>
+        <p>Empresa estabelecida desde 1979, com operação contínua no RJ e em SP e clientes que renovam ano após ano.</p>
+      </div>
+      <div class="tc-beneficio">
+        <h3>Gestão que escuta</h3>
+        <p>Liderança próxima da operação. Quem está na rua tem voz nas decisões que afetam o trabalho de todo dia.</p>
+      </div>
+      <div class="tc-beneficio">
+        <h3>Trabalho com propósito</h3>
+        <p>Cada plantão termina com uma certeza: alguém chegou ao hospital porque a sua equipe estava pronta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 5. NO QUE ACREDITAMOS ═══ -->
+<section class="section navy tc-valores" aria-labelledby="valores-heading">
+  <div class="wrap">
+    <p class="eyebrow on-dark" style="margin-bottom:12px">No que acreditamos</p>
+    <h2 id="valores-heading">O jeito Savior de cuidar</h2>
+    <div class="tc-valores-grid">
+      <div class="tc-valor">
+        <span class="tc-valor-num">01</span>
+        <h3>A escuta vem primeiro</h3>
+        <p>Antes de agir, a gente escuta. Vale para o paciente no telefone e vale para o colega no plantão.</p>
+      </div>
+      <div class="tc-valor">
+        <span class="tc-valor-num">02</span>
+        <h3>Prontidão é compromisso</h3>
+        <p>Estar pronto não é sorte, é preparo. Equipamento revisado, protocolo treinado, equipe descansada.</p>
+      </div>
+      <div class="tc-valor">
+        <span class="tc-valor-num">03</span>
+        <h3>Cuidamos de quem cuida</h3>
+        <p>Quem passa o dia salvando vidas precisa de uma empresa que olhe pela sua. Condições de trabalho são levadas a sério aqui.</p>
+      </div>
+      <div class="tc-valor">
+        <span class="tc-valor-num">04</span>
+        <h3>Cada segundo conta</h3>
+        <p>É o nosso lema desde 1979. Na emergência, na remoção agendada e também na resposta à sua candidatura.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6. FORMULÁRIO DE CANDIDATURA ═══ -->
+<section class="section tc-form-section" id="candidatura" aria-labelledby="form-heading">
+  <div class="wrap">
+    <div class="tc-form-grid">
+      <div class="tc-form-left">
+        <p class="eyebrow" style="margin-bottom:12px">Candidatura</p>
+        <h2 id="form-heading">Envie sua candidatura. A gente escuta primeiro.</h2>
+        <p class="tc-form-lead">Preencha os dados ao lado e a candidatura chega por e-mail direto ao RH do estado escolhido. Sem robô decidindo por você: uma pessoa do time lê cada candidatura.</p>
+        <div class="tc-form-trust">
+          <div class="tc-form-trust-item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><polyline points="16 5 8 14 4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Candidatura vai pro estado certo: RJ ou SP</span>
+          </div>
+          <div class="tc-form-trust-item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><polyline points="16 5 8 14 4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Sem vaga aberta? Você entra no banco de talentos</span>
+          </div>
+          <div class="tc-form-trust-item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><polyline points="16 5 8 14 4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Seus dados ficam só com o RH da Savior</span>
+          </div>
+        </div>
+      </div>
+      <div class="tc-form-right">
+        <form class="tc-form-card" id="tcFormCandidatura" novalidate>
+          <div class="tc-form-row">
+            <div class="tc-form-field">
+              <label class="tc-form-label" for="tc-estado">Estado *</label>
+              <select class="tc-form-input tc-form-select" id="tc-estado" name="estado" required aria-required="true">
+                <option value="" disabled selected>Selecione</option>
+                <option value="rj">Rio de Janeiro</option>
+                <option value="sp">São Paulo</option>
+              </select>
+            </div>
+            <div class="tc-form-field">
+              <label class="tc-form-label" for="tc-cargo">Função *</label>
+              <select class="tc-form-input tc-form-select" id="tc-cargo" name="cargo" required aria-required="true">
+                <option value="" disabled selected>Selecione</option>
+                {CARGOS.map((c) => <option value={c.slug}>{c.nome}</option>)}
+              </select>
+            </div>
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-nome">Nome completo *</label>
+            <input class="tc-form-input" type="text" id="tc-nome" name="nome" placeholder="Ex: Maria da Silva" required aria-required="true" autocomplete="name" />
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-whatsapp">WhatsApp *</label>
+            <input class="tc-form-input" type="tel" id="tc-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required aria-required="true" autocomplete="tel" />
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-email">E-mail *</label>
+            <input class="tc-form-input" type="email" id="tc-email" name="email" placeholder="seu@email.com.br" required aria-required="true" autocomplete="email" />
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-registro">Registro profissional <span class="tc-form-opt">(COREN, CRM ou CNH D, se tiver)</span></label>
+            <input class="tc-form-input" type="text" id="tc-registro" name="registro" placeholder="Ex: COREN-RJ 123456" />
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-exp">Resumo da sua experiência <span class="tc-form-opt">(opcional)</span></label>
+            <textarea class="tc-form-input tc-form-textarea" id="tc-exp" name="experiencia" rows="3" placeholder="Conte em poucas linhas onde você trabalhou e com o quê"></textarea>
+          </div>
+          <button class="btn btn-primary tc-form-submit" type="submit">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Enviar candidatura
+          </button>
+          <p class="tc-form-note">Sua candidatura vai por e-mail direto pro RH do estado escolhido. Você recebe o retorno pelos contatos informados.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 7. FAQ ═══ -->
+<FAQ
+  items={faqItems}
+  titleHtml="Perguntas de quem quer entrar pro time"
+  eyebrow="Dúvidas frequentes"
+  subtitle="Respostas diretas sobre processo seletivo, registros e escalas."
+/>
+
+<!-- ═══ 8. CTA FINAL ═══ -->
+<section class="tc-cta-final" aria-labelledby="cta-heading">
+  <div class="wrap">
+    <div class="atend-layout">
+      <div class="atend-photo" aria-hidden="true">
+        <picture>
+          <source srcset="/img/atendentes/SAVIOR_ATEND_3.webp" type="image/webp" />
+          <img src="/img/atendentes/SAVIOR_ATEND_3.png" alt="" width="450" height="450" loading="lazy" decoding="async" />
+        </picture>
+      </div>
+      <div class="atend-content">
+        <p class="eyebrow on-dark" style="margin-bottom:16px">Próximo passo</p>
+        <h2 id="cta-heading" style="color:#fff">Pronto pra vestir o uniforme?<br><em class="tc-green-bright">A gente te espera.</em></h2>
+        <p class="tc-cta-sub">Escolha seu estado, sua função e envie a candidatura. O RH responde a todas as mensagens.</p>
+        <div class="tc-cta-btns">
+          <a href="#candidatura" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="trabalhe-cta-final">Enviar candidatura</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9. FOOTER ═══ -->
+<Footer showBothCities={true} showBairros={false} />
+
+<!-- ═══ SCRIPTS ═══ -->
+<script is:inline>
+  // Escolha de estado no hero → sincroniza com o form
+  var tcEstadoSelect = document.getElementById('tc-estado');
+  var tcCards = document.querySelectorAll('.tc-estado-card');
+  tcCards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      tcCards.forEach(function (c) { c.classList.remove('tc-estado-card--active'); });
+      card.classList.add('tc-estado-card--active');
+      tcEstadoSelect.value = card.getAttribute('data-estado');
+      var cargos = document.getElementById('cargos');
+      if (cargos) cargos.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Botão do card de cargo → seta função no form e rola até ele
+  document.querySelectorAll('.tc-cargo-cta').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.getElementById('tc-cargo').value = btn.getAttribute('data-cargo');
+      var form = document.getElementById('candidatura');
+      if (form) form.scrollIntoView({ behavior: 'smooth' });
+      var nome = document.getElementById('tc-nome');
+      if (nome) setTimeout(function () { nome.focus({ preventScroll: true }); }, 600);
+    });
+  });
+
+  // Submit → envia candidatura por e-mail via worker (sem WhatsApp, sem Blip)
+  var tcForm = document.getElementById('tcFormCandidatura');
+  var CARGO_LABEL = {
+    socorrista: 'Socorrista',
+    condutor_socorrista: 'Condutor(a) Socorrista',
+    tecnico_enfermagem: 'Técnico(a) de Enfermagem',
+    enfermeiro: 'Enfermeiro(a)',
+    medico: 'Médico(a)',
+    administrativo: 'Administrativo',
+  };
+  if (tcForm) {
+    tcForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var estado   = document.getElementById('tc-estado').value;
+      var cargo    = document.getElementById('tc-cargo').value;
+      var nome     = document.getElementById('tc-nome').value.trim();
+      var wpp      = document.getElementById('tc-whatsapp').value.trim();
+      var email    = document.getElementById('tc-email').value.trim();
+      var registro = document.getElementById('tc-registro').value.trim();
+      var exp      = document.getElementById('tc-exp').value.trim();
+
+      var firstInvalid = !estado ? 'tc-estado' : !cargo ? 'tc-cargo' : !nome ? 'tc-nome' : !wpp ? 'tc-whatsapp' : !email ? 'tc-email' : null;
+      if (firstInvalid) {
+        var el = document.getElementById(firstInvalid);
+        el.focus();
+        el.reportValidity();
+        return;
+      }
+
+      var submitBtn = tcForm.querySelector('.tc-form-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+
+      var tcUtm = window._saviorUtm || {};
+      // Worker na conta binky (marcelo-4f2) — tem a rota candidatura + RESEND_API_KEY.
+      // O worker antigo (marcelo-nascimento) roda código desatualizado em conta sem acesso.
+      fetch('https://savior-lead-capture.marcelo-4f2.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'candidatura',
+          estado: estado,
+          cargo: cargo,
+          cargo_label: CARGO_LABEL[cargo] || cargo,
+          nome: nome,
+          whatsapp: wpp,
+          email: email,
+          registro: registro,
+          experiencia: exp,
+          utm_source: tcUtm.source || 'direct',
+          utm_campaign: tcUtm.campaign || 'none',
+        }),
+      }).then(function (res) {
+        if (!res.ok) throw new Error('send failed');
+        // Tracking (evento próprio de candidatura, fora do funil comercial)
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'job_application',
+          cargo: cargo,
+          estado: estado,
+          lead_source: 'trabalhe-conosco-form',
+        });
+        tcShowSuccess();
+      }).catch(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Tentar de novo';
+        var errNote = document.getElementById('tc-form-error');
+        if (!errNote) {
+          errNote = document.createElement('p');
+          errNote.id = 'tc-form-error';
+          errNote.style.cssText = 'color:var(--alert);font-size:13px;text-align:center;margin-top:12px';
+          errNote.textContent = 'Não conseguimos enviar agora. Tente de novo em instantes ou mande direto pra savior@savior.com.br';
+          tcForm.appendChild(errNote);
+        }
+      });
+    });
+
+    var tcShowSuccess = function () {
+      while (tcForm.firstChild) { tcForm.removeChild(tcForm.firstChild); }
+      var sw = document.createElement('div');
+      sw.style.cssText = 'text-align:center;padding:48px 24px';
+      var si = document.createElement('div');
+      si.setAttribute('aria-hidden', 'true');
+      si.style.cssText = 'width:52px;height:52px;border-radius:50%;background:var(--green-dark);display:flex;align-items:center;justify-content:center;margin:0 auto 20px';
+      var svgNS = 'http://www.w3.org/2000/svg';
+      var checkSvg = document.createElementNS(svgNS, 'svg');
+      checkSvg.setAttribute('viewBox', '0 0 24 24');
+      checkSvg.setAttribute('fill', 'none');
+      checkSvg.setAttribute('stroke', '#fff');
+      checkSvg.setAttribute('stroke-width', '2.5');
+      checkSvg.setAttribute('stroke-linecap', 'round');
+      checkSvg.setAttribute('stroke-linejoin', 'round');
+      checkSvg.setAttribute('width', '26');
+      checkSvg.setAttribute('height', '26');
+      var checkPoly = document.createElementNS(svgNS, 'polyline');
+      checkPoly.setAttribute('points', '20 6 9 17 4 12');
+      checkSvg.appendChild(checkPoly);
+      si.appendChild(checkSvg);
+      var sh = document.createElement('h3');
+      sh.style.cssText = 'color:var(--navy-deep);font-size:20px;font-weight:700;margin-bottom:10px';
+      sh.textContent = 'Candidatura enviada!';
+      var sp = document.createElement('p');
+      sp.style.cssText = 'color:var(--gray);font-size:14px;line-height:1.6;max-width:320px;margin:0 auto';
+      sp.textContent = 'Sua candidatura chegou ao RH da Savior. Se o perfil combinar com uma vaga aberta, entramos em contato pelos dados informados.';
+      sw.appendChild(si);
+      sw.appendChild(sh);
+      sw.appendChild(sp);
+      tcForm.appendChild(sw);
+    };
+  }
+</script>
+
+<style>
+  /* ═══ Hero ═══ */
+  .tc-hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--navy-deep);
+  }
+  .tc-hero-bg,
+  .tc-hero-bg picture,
+  .tc-hero-bg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .tc-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7, 24, 43, 0.55) 0%, rgba(7, 24, 43, 0.82) 60%, var(--navy-deep) 100%);
+  }
+  .tc-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-top: 28px;
+    padding-bottom: 64px;
+  }
+  .tc-hero-brand { text-decoration: none; }
+  .tc-hero-wordmark {
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.14em;
+    color: #fff;
+  }
+  .tc-hero-descriptor {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+  }
+  .tc-hero-main {
+    margin-top: auto;
+    max-width: 760px;
+  }
+  .tc-hero h1 { color: #fff; margin-bottom: 18px; }
+  .tc-green-bright { color: var(--green-bright); font-style: normal; }
+  .tc-hero-sub {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 17px;
+    line-height: 1.65;
+    max-width: 640px;
+    margin-bottom: 34px;
+  }
+
+  /* ═══ Escolha de estado ═══ */
+  .tc-estado-label {
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .tc-estado-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 260px));
+    gap: 16px;
+  }
+  .tc-estado-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 18px 22px;
+    border-radius: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .tc-estado-card:hover {
+    border-color: var(--green-bright);
+    background: rgba(0, 184, 124, 0.12);
+    transform: translateY(-2px);
+  }
+  .tc-estado-card--active {
+    border-color: var(--green);
+    background: rgba(0, 184, 124, 0.18);
+  }
+  .tc-estado-uf {
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--green-bright);
+  }
+  .tc-estado-cidade { font-weight: 700; font-size: 15px; }
+  .tc-estado-base { font-size: 12px; color: rgba(255, 255, 255, 0.65); }
+
+  /* ═══ Seções ═══ */
+  .tc-section-intro {
+    color: var(--gray, #4a5a6a);
+    max-width: 620px;
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+
+  /* Cargos */
+  .tc-cargos { background: var(--cream); }
+  .tc-cargos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .tc-cargo-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    padding: 26px 24px;
+    border: 1px solid var(--cream-dark);
+  }
+  .tc-cargo-card h3 {
+    font-size: 18px;
+    color: var(--navy-deep);
+    margin-bottom: 10px;
+  }
+  .tc-cargo-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--gray, #4a5a6a);
+    margin-bottom: 10px;
+  }
+  .tc-cargo-req {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--navy-mid);
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .tc-cargo-cta {
+    margin-top: auto;
+    align-self: flex-start;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tc-cargo-cta:hover { text-decoration: underline; }
+
+  /* Benefícios */
+  .tc-beneficios { background: var(--cream-light); }
+  .tc-beneficios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px 32px;
+    margin-top: 12px;
+  }
+  .tc-beneficio h3 {
+    font-size: 16px;
+    color: var(--navy-deep);
+    margin-bottom: 8px;
+    padding-left: 14px;
+    border-left: 3px solid var(--green);
+  }
+  .tc-beneficio p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--gray, #4a5a6a);
+    padding-left: 17px;
+  }
+
+  /* Valores */
+  .tc-valores-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 40px;
+    margin-top: 12px;
+  }
+  .tc-valor-num {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--green-bright);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+  .tc-valor h3 {
+    color: #fff;
+    font-size: 18px;
+    margin: 6px 0 8px;
+  }
+  .tc-valor p {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  /* Form */
+  .tc-form-section { background: var(--cream); }
+  .tc-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .tc-form-lead {
+    color: var(--gray, #4a5a6a);
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+  .tc-form-trust { display: flex; flex-direction: column; gap: 12px; }
+  .tc-form-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--navy-mid);
+    font-weight: 500;
+  }
+  .tc-form-trust-item svg { width: 18px; height: 18px; color: var(--green-dark); flex-shrink: 0; }
+  .tc-form-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 28px;
+    border: 1px solid var(--cream-dark);
+    box-shadow: 0 8px 30px rgba(11, 37, 64, 0.08);
+  }
+  .tc-form-field { margin-bottom: 16px; }
+  .tc-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .tc-form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy-deep);
+    margin-bottom: 6px;
+  }
+  .tc-form-opt { font-weight: 400; color: var(--gray, #7a8a9a); font-size: 12px; }
+  .tc-form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--navy-deep);
+    background: #fff;
+    transition: border-color 0.2s;
+  }
+  .tc-form-input:focus {
+    outline: none;
+    border-color: var(--green);
+  }
+  .tc-form-textarea { resize: vertical; min-height: 76px; }
+  .tc-form-select { appearance: auto; }
+  .tc-form-submit { width: 100%; justify-content: center; margin-top: 6px; }
+  .tc-form-note {
+    font-size: 12.5px;
+    color: var(--gray, #7a8a9a);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* CTA final */
+  .tc-cta-final {
+    background: var(--navy-deep);
+    padding: 72px 0;
+  }
+  .tc-cta-sub {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 28px;
+    line-height: 1.65;
+  }
+  .tc-cta-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* ═══ Responsivo ═══ */
+  @media (max-width: 960px) {
+    .tc-cargos-grid { grid-template-columns: repeat(2, 1fr); }
+    .tc-beneficios-grid { grid-template-columns: repeat(2, 1fr); }
+    .tc-form-grid { grid-template-columns: 1fr; gap: 36px; }
+  }
+  @media (max-width: 640px) {
+    .tc-hero { min-height: 92vh; }
+    .tc-estado-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tc-cargos-grid { grid-template-columns: 1fr; }
+    .tc-beneficios-grid { grid-template-columns: 1fr; }
+    .tc-valores-grid { grid-template-columns: 1fr; }
+    .tc-form-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+</Base>
