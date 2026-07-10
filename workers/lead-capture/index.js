@@ -558,8 +558,10 @@ async function handleCandidatura(body, env) {
         ${row('Experiência', experiencia)}
         ${row('Currículo', attachments.length ? `📎 ${attachments[0].filename} (anexo)` : (cv_filename ? 'enviado mas recusado (formato/tamanho)' : ''))}
       </table>
-      <div style="margin-top:20px">
-        <a href="mailto:${esc(email)}" style="display:inline-block;padding:10px 20px;background:#0B2540;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">✉️ Responder ao candidato</a>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+        ${whatsapp ? `<a href="https://wa.me/55${String(whatsapp).replace(/\D/g, '').replace(/^55/, '')}" style="display:inline-block;padding:10px 20px;background:#25D366;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">💬 Responder no WhatsApp</a>` : ''}
+        <a href="mailto:${esc(email)}" style="display:inline-block;padding:10px 20px;background:#0B2540;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">✉️ Enviar e-mail</a>
+        ${linkedin ? `<a href="${esc(linkedin)}" style="display:inline-block;padding:10px 20px;background:#0A66C2;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">💼 Ver LinkedIn</a>` : ''}
       </div>
       <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
       <p style="font-size:12px;color:#9ca3af;margin:0">🔗 ${esc(utm_source)} · 🎯 ${esc(utm_campaign)} · Enviado pelo site /trabalhe-conosco</p>
