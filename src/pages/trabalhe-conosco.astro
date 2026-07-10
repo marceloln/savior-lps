@@ -72,6 +72,13 @@ const CARGOS = [
   },
 ];
 
+const VALORES = [
+  { num: '01', icon: ICON.ear, titulo: 'A escuta vem primeiro', texto: 'Antes de agir, a gente escuta. Vale para o paciente no telefone e vale para o colega no plantão.' },
+  { num: '02', icon: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>', titulo: 'Prontidão é compromisso', texto: 'Estar pronto não é sorte, é preparo. Equipamento revisado, protocolo treinado, equipe descansada.' },
+  { num: '03', icon: ICON.heart, titulo: 'Cuidamos de quem cuida', texto: 'Quem passa o dia salvando vidas precisa de uma empresa que olhe pela sua. Condições de trabalho são levadas a sério aqui.' },
+  { num: '04', icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', titulo: 'Cada segundo conta', texto: 'É o nosso lema desde 1979. Na emergência, na remoção agendada e também na resposta à sua candidatura.' },
+];
+
 const BENEFICIOS = [
   { icon: ICON.badgeCheck, titulo: 'Contratação direta', texto: 'A equipe é 100% própria. Você é contratado, treinado e avaliado pela Savior, sem intermediários.' },
   { icon: ICON.gradCap, titulo: 'Treinamento contínuo', texto: 'Protocolos de atendimento pré-hospitalar, reciclagens e acompanhamento técnico. Ninguém entra na ambulância sem preparo.' },
@@ -266,26 +273,16 @@ const faqItems = [
     <p class="eyebrow on-dark" style="margin-bottom:12px">No que acreditamos</p>
     <h2 id="valores-heading">O jeito Savior de cuidar</h2>
     <div class="tc-valores-grid">
-      <div class="tc-valor">
-        <span class="tc-valor-num">01</span>
-        <h3>A escuta vem primeiro</h3>
-        <p>Antes de agir, a gente escuta. Vale para o paciente no telefone e vale para o colega no plantão.</p>
-      </div>
-      <div class="tc-valor">
-        <span class="tc-valor-num">02</span>
-        <h3>Prontidão é compromisso</h3>
-        <p>Estar pronto não é sorte, é preparo. Equipamento revisado, protocolo treinado, equipe descansada.</p>
-      </div>
-      <div class="tc-valor">
-        <span class="tc-valor-num">03</span>
-        <h3>Cuidamos de quem cuida</h3>
-        <p>Quem passa o dia salvando vidas precisa de uma empresa que olhe pela sua. Condições de trabalho são levadas a sério aqui.</p>
-      </div>
-      <div class="tc-valor">
-        <span class="tc-valor-num">04</span>
-        <h3>Cada segundo conta</h3>
-        <p>É o nosso lema desde 1979. Na emergência, na remoção agendada e também na resposta à sua candidatura.</p>
-      </div>
+      {VALORES.map((v) => (
+        <div class="tc-valor">
+          <div class="tc-valor-head">
+            <svg class="tc-valor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={v.icon} />
+            <span class="tc-valor-num">{v.num}</span>
+          </div>
+          <h3>{v.titulo}</h3>
+          <p>{v.texto}</p>
+        </div>
+      ))}
     </div>
   </div>
 </section>
@@ -602,18 +599,24 @@ const faqItems = [
     padding-top: 28px;
     padding-bottom: 64px;
   }
-  .tc-hero-brand { text-decoration: none; }
+  /* Marca — mesma identidade do Hero das outras páginas (Ethnocentric + mono) */
+  .tc-hero-brand { text-decoration: none; display: inline-block; }
   .tc-hero-wordmark {
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: 0.14em;
+    font-family: 'Ethnocentric', var(--sans);
+    font-weight: 400;
+    font-size: 27px;
+    letter-spacing: 0.08em;
     color: #fff;
+    line-height: 1;
   }
   .tc-hero-descriptor {
+    font-family: var(--mono);
+    font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--green-bright);
+    margin-top: 5px;
   }
   .tc-hero-main {
     margin-top: auto;
@@ -786,8 +789,8 @@ const faqItems = [
   .tc-beneficios-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: clamp(28px, 4vw, 44px) clamp(28px, 3vw, 40px);
-    margin-top: 12px;
+    gap: clamp(32px, 5vw, 52px) clamp(28px, 3vw, 40px);
+    margin-top: clamp(28px, 4vw, 44px);
   }
   .tc-beneficio-head {
     display: flex;
@@ -818,8 +821,20 @@ const faqItems = [
   .tc-valores-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: clamp(28px, 4vw, 48px) clamp(36px, 5vw, 64px);
-    margin-top: 12px;
+    gap: clamp(32px, 5vw, 56px) clamp(36px, 5vw, 64px);
+    margin-top: clamp(28px, 4vw, 44px);
+  }
+  .tc-valor-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .tc-valor-icon {
+    width: 21px;
+    height: 21px;
+    color: var(--green-bright);
+    flex-shrink: 0;
   }
   .tc-valor-num {
     font-family: 'IBM Plex Mono', monospace;
@@ -830,7 +845,7 @@ const faqItems = [
   .tc-valor h3 {
     color: #fff;
     font-size: 18px;
-    margin: 6px 0 8px;
+    margin: 0 0 8px;
   }
   .tc-valor p {
     color: rgba(255, 255, 255, 0.75);
@@ -930,11 +945,13 @@ const faqItems = [
     line-height: 1.5;
   }
 
-  /* CTA final */
+  /* CTA final — foto da atendente encosta no footer (sem gap) */
   .tc-cta-final {
     background: var(--navy-deep);
-    padding: clamp(64px, 8vw, 100px) 0;
+    padding: clamp(64px, 8vw, 100px) 0 0;
   }
+  .tc-cta-final .atend-photo { align-items: flex-end; padding-top: 0; }
+  .tc-cta-final .atend-content { padding-bottom: clamp(56px, 7vw, 88px); }
   .tc-cta-sub {
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 28px;
