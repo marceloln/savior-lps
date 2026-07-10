@@ -311,6 +311,15 @@ const faqItems = [
             <input class="tc-form-input" type="text" id="tc-registro" name="registro" placeholder="Ex: COREN-RJ 123456" />
           </div>
           <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-linkedin">LinkedIn <span class="tc-form-opt">(opcional)</span></label>
+            <input class="tc-form-input" type="url" id="tc-linkedin" name="linkedin" placeholder="https://linkedin.com/in/seu-perfil" autocomplete="url" />
+          </div>
+          <div class="tc-form-field">
+            <label class="tc-form-label" for="tc-cv">Currículo <span class="tc-form-opt">(PDF ou Word, até 5MB, opcional)</span></label>
+            <input class="tc-form-input tc-form-file" type="file" id="tc-cv" name="cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+            <p class="tc-form-file-hint" id="tc-cv-hint"></p>
+          </div>
+          <div class="tc-form-field">
             <label class="tc-form-label" for="tc-exp">Resumo da sua experiência <span class="tc-form-opt">(opcional)</span></label>
             <textarea class="tc-form-input tc-form-textarea" id="tc-exp" name="experiencia" rows="3" placeholder="Conte em poucas linhas onde você trabalhou e com o quê"></textarea>
           </div>
@@ -403,7 +412,10 @@ const faqItems = [
       var wpp      = document.getElementById('tc-whatsapp').value.trim();
       var email    = document.getElementById('tc-email').value.trim();
       var registro = document.getElementById('tc-registro').value.trim();
+      var linkedin = document.getElementById('tc-linkedin').value.trim();
       var exp      = document.getElementById('tc-exp').value.trim();
+      var cvInput  = document.getElementById('tc-cv');
+      var cvFile   = cvInput.files && cvInput.files[0] ? cvInput.files[0] : null;
 
       var firstInvalid = !estado ? 'tc-estado' : !cargo ? 'tc-cargo' : !nome ? 'tc-nome' : !wpp ? 'tc-whatsapp' : !email ? 'tc-email' : null;
       if (firstInvalid) {
@@ -413,14 +425,21 @@ const faqItems = [
         return;
       }
 
+      if (cvFile && cvFile.size > 5 * 1024 * 1024) {
+        cvInput.focus();
+        document.getElementById('tc-cv-hint').textContent = 'Arquivo maior que 5MB. Escolha uma versão mais leve ou envie sem anexo.';
+        return;
+      }
+
       var submitBtn = tcForm.querySelector('.tc-form-submit');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Enviando...';
 
-      var tcUtm = window._saviorUtm || {};
-      // Worker na conta binky (marcelo-4f2) — tem a rota candidatura + RESEND_API_KEY.
-      // O worker antigo (marcelo-nascimento) roda código desatualizado em conta sem acesso.
-      fetch('https://savior-lead-capture.marcelo-4f2.workers.dev', {
+      var enviar = function (cvBase64) {
+        var tcUtm = window._saviorUtm || {};
+        // Worker na conta binky (marcelo-4f2) — tem a rota candidatura + RESEND_API_KEY.
+        // O worker antigo (marcelo-nascimento) roda código desatualizado em conta sem acesso.
+        fetch('https://savior-lead-capture.marcelo-4f2.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -432,7 +451,10 @@ const faqItems = [
           whatsapp: wpp,
           email: email,
           registro: registro,
+          linkedin: linkedin,
           experiencia: exp,
+          cv_filename: cvFile ? cvFile.name : '',
+          cv_content: cvBase64 || '',
           utm_source: tcUtm.source || 'direct',
           utm_campaign: tcUtm.campaign || 'none',
         }),
@@ -458,6 +480,20 @@ const faqItems = [
           tcForm.appendChild(errNote);
         }
       });
+      };
+
+      if (cvFile) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          // readAsDataURL → "data:tipo;base64,XXXX" — manda só o XXXX
+          var b64 = String(reader.result).split(',')[1] || '';
+          enviar(b64);
+        };
+        reader.onerror = function () { enviar(''); };
+        reader.readAsDataURL(cvFile);
+      } else {
+        enviar('');
+      }
     });
 
     var tcShowSuccess = function () {
@@ -761,6 +797,25 @@ const faqItems = [
     border-color: var(--green);
   }
   .tc-form-textarea { resize: vertical; min-height: 76px; }
+  .tc-form-file { padding: 10px 12px; cursor: pointer; }
+  .tc-form-file::file-selector-button {
+    border: none;
+    border-radius: 7px;
+    background: var(--navy);
+    color: #fff;
+    padding: 7px 14px;
+    margin-right: 12px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .tc-form-file-hint {
+    font-size: 12px;
+    color: var(--alert);
+    margin-top: 5px;
+    min-height: 0;
+  }
   .tc-form-select { appearance: auto; }
   .tc-form-submit { width: 100%; justify-content: center; margin-top: 6px; }
   .tc-form-note {

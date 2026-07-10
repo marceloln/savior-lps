@@ -497,7 +497,10 @@ async function handleCandidatura(body, env) {
     whatsapp = '',
     email = '',
     registro = '',
+    linkedin = '',
     experiencia = '',
+    cv_filename = '',
+    cv_content = '',
     utm_source = 'direct',
     utm_campaign = 'none',
   } = body;
@@ -525,6 +528,19 @@ async function handleCandidatura(body, env) {
   const row = (label, val) => val ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:5px 0;font-weight:500">${esc(val)}</td></tr>` : '';
   const dateTag = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
+  // Anexo do currículo: só PDF/DOC/DOCX, base64 até ~7MB (5MB de arquivo)
+  const attachments = [];
+  if (cv_content && cv_filename) {
+    const safeName = String(cv_filename).replace(/[^\w.\- ()áéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ]/g, '_').slice(0, 120);
+    const extOk = /\.(pdf|doc|docx)$/i.test(safeName);
+    const sizeOk = String(cv_content).length <= 7.5 * 1024 * 1024;
+    if (extOk && sizeOk) {
+      attachments.push({ filename: safeName, content: cv_content });
+    } else {
+      console.log(`Candidatura: anexo recusado (ext=${extOk} size=${sizeOk}) ${safeName}`);
+    }
+  }
+
   const emailBody = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
     <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
       <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
@@ -538,7 +554,9 @@ async function handleCandidatura(body, env) {
         ${row('WhatsApp', whatsapp)}
         ${row('E-mail', email)}
         ${row('Registro', registro)}
+        ${linkedin ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">LinkedIn</td><td style="padding:5px 0;font-weight:500"><a href="${esc(linkedin)}" style="color:#0B2540">${esc(linkedin)}</a></td></tr>` : ''}
         ${row('Experiência', experiencia)}
+        ${row('Currículo', attachments.length ? `📎 ${attachments[0].filename} (anexo)` : (cv_filename ? 'enviado mas recusado (formato/tamanho)' : ''))}
       </table>
       <div style="margin-top:20px">
         <a href="mailto:${esc(email)}" style="display:inline-block;padding:10px 20px;background:#0B2540;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">✉️ Responder ao candidato</a>
@@ -561,6 +579,7 @@ async function handleCandidatura(body, env) {
       reply_to: email,
       subject: `Trabalhe Conosco - ${cargoLabel} (${uf.toUpperCase()}) — ${dateTag}`,
       html: emailBody,
+      ...(attachments.length ? { attachments } : {}),
     }),
   }).catch((err) => {
     console.error('Candidatura email send failed:', err);
