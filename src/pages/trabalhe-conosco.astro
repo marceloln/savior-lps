@@ -13,7 +13,6 @@ import FleetBand from '../components/FleetBand.astro';
 
 // Ícones monocromáticos (stroke 2, currentColor) — paths Lucide
 const ICON = {
-  heartPulse: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
   car: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
   cross: '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>',
   clipboardPlus: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h6"/><path d="M12 11v6"/>',
@@ -28,13 +27,6 @@ const ICON = {
 };
 
 const CARGOS = [
-  {
-    slug: 'socorrista',
-    nome: 'Socorrista',
-    icon: ICON.heartPulse,
-    desc: 'Atendimento pré-hospitalar na ponta. Você chega primeiro, avalia e age com protocolo.',
-    req: 'Curso de APH e experiência em urgência são diferenciais.',
-  },
   {
     slug: 'condutor_socorrista',
     nome: 'Condutor(a) Socorrista',
@@ -130,7 +122,7 @@ const schema = JSON.stringify({
       "mainEntity": [
         { "@type": "Question", "name": "Como funciona o processo seletivo da Savior?", "acceptedAnswer": { "@type": "Answer", "text": "Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica." } },
         { "@type": "Question", "name": "Preciso ter experiência em APH para me candidatar?", "acceptedAnswer": { "@type": "Answer", "text": "Para os cargos assistenciais, experiência em urgência e emergência é um diferencial, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial." } },
-        { "@type": "Question", "name": "A contratação é direta ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa." } },
+        { "@type": "Question", "name": "A contratação é direta ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, condutores socorristas e atendentes são contratados, treinados e avaliados pela própria empresa." } },
         { "@type": "Question", "name": "Posso me candidatar mesmo sem vaga aberta?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. Toda candidatura entra no banco de talentos e é consultada quando abre uma posição no seu estado e cargo." } }
       ]
     },
@@ -157,7 +149,7 @@ const faqItems = [
   { q: 'Como funciona o processo seletivo da Savior?', a: 'Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica.' },
   { q: 'Preciso ter experiência em APH para me candidatar?', a: 'Para os cargos assistenciais, experiência em urgência e emergência é um diferencial, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial.' },
   { q: 'Quais registros e documentos são exigidos?', a: 'Depende do cargo: COREN ativo para enfermagem e técnico de enfermagem, CRM ativo para médicos, CNH categoria D e curso de condutor de veículo de emergência para condutor socorrista. Os detalhes são confirmados na entrevista.' },
-  { q: 'A contratação é direta ou terceirizada?', a: 'Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa.' },
+  { q: 'A contratação é direta ou terceirizada?', a: 'Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, condutores socorristas e atendentes são contratados, treinados e avaliados pela própria empresa.' },
   { q: 'Como funcionam as escalas?', a: 'A operação roda 24h e as equipes trabalham em regime de escala, que varia conforme o cargo e a base. O formato exato é apresentado na entrevista, antes de qualquer decisão.' },
   { q: 'Posso me candidatar mesmo sem vaga aberta?', a: 'Sim. Toda candidatura entra no banco de talentos e é consultada quando abre uma posição no seu estado e cargo.' },
 ];
@@ -165,7 +157,7 @@ const faqItems = [
 
 <Base
   title="Trabalhe Conosco | Carreiras na Savior Medical Service"
-  description="Vagas na Savior Medical Service: socorrista, condutor socorrista, atendente, enfermagem, medicina e administrativo no RJ e em SP. Equipe 100% própria, contratação direta há 46 anos."
+  description="Vagas na Savior Medical Service: condutor socorrista, atendente, enfermagem, medicina e administrativo no RJ e em SP. Equipe 100% própria, contratação direta há 46 anos."
   canonical="https://www.savior.com.br/trabalhe-conosco"
   schema={schema}
   dateModified="2026-07-10"
@@ -438,11 +430,11 @@ const faqItems = [
   // Submit → envia candidatura por e-mail via worker (sem WhatsApp, sem Blip)
   var tcForm = document.getElementById('tcFormCandidatura');
   var CARGO_LABEL = {
-    socorrista: 'Socorrista',
     condutor_socorrista: 'Condutor(a) Socorrista',
     tecnico_enfermagem: 'Técnico(a) de Enfermagem',
     enfermeiro: 'Enfermeiro(a)',
     medico: 'Médico(a)',
+    atendente: 'Atendente',
     administrativo: 'Administrativo',
   };
   if (tcForm) {
