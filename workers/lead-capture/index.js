@@ -39,10 +39,24 @@ const PIPEDRIVE_API = 'https://api.pipedrive.com/v1';
 // E-mails de RH por estado — candidaturas Trabalhe Conosco
 // (fluxo 100% e-mail: sem Pipedrive e sem Blip, pra não inflar atendimentos)
 const RH_EMAIL = {
-  rj: 'central@savior.com.br',
-  sp: 'central.sp@savior.com.br',
+  rj: 'recrutamento.rj@savior.com.br',
+  sp: 'recrutamento.sp@savior.com.br',
 };
-const RH_CC = ['savior@savior.com.br'];
+// Resumo semanal gerencial (cron segunda 08:00 BRT) — só o consolidado, sem currículos
+const RESUMO_EMAILS = [
+  'savior@savior.com.br',
+  'dp@savior.com.br',
+  'adm.rj@savior.com.br',
+  'savior.sp@savior.com.br',
+];
+const CARGO_LABELS = {
+  condutor_socorrista: 'Condutor(a) Socorrista',
+  tecnico_enfermagem: 'Técnico(a) de Enfermagem',
+  enfermeiro: 'Enfermeiro(a)',
+  medico: 'Médico(a)',
+  atendente: 'Atendente',
+  administrativo: 'Administrativo',
+};
 
 export default {
   async fetch(request, env) {
@@ -69,6 +83,15 @@ export default {
 
     if (url.pathname === '/blip-webhook') {
       return handleBlipWebhook(request, env);
+    }
+
+    // POST /rh-resumo-test — envia exemplo do resumo semanal só pro Marcelo (dados fictícios)
+    if (url.pathname === '/rh-resumo-test') {
+      const ok = await sendResumoSemanal(env, { to: ['marcelo@binky.com.br'], sample: true, subjectPrefix: '[TESTE] ' });
+      return new Response(JSON.stringify({ ok }), {
+        status: ok ? 200 : 502,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+      });
     }
 
     let body;
@@ -481,12 +504,135 @@ export default {
       headers: { 'Content-Type': 'application/json', ...corsHeaders() },
     });
   },
+
+  // Cron semanal (segunda 08:00 BRT / 11:00 UTC) — resumo gerencial de currículos
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(sendResumoSemanal(env));
+  },
 };
 
 // ============================================================
-// Candidatura Trabalhe Conosco — envia e-mail pro RH do estado
-// com cópia pra savior@savior.com.br. NÃO cria deal no Pipedrive
+// Contador de candidaturas por semana/estado/cargo no KV.
+// Chave: cand:{segunda YYYY-MM-DD}:{uf}:{cargo} → inteiro, TTL 90d
+// ============================================================
+function spNow() {
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+}
+function mondayOf(d) {
+  const x = new Date(d);
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  return x;
+}
+function ymd(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function dmy(d) {
+  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+async function bumpCandCount(env, uf, cargo) {
+  if (!env.UTM_STORE) return;
+  try {
+    const key = `cand:${ymd(mondayOf(spNow()))}:${uf}:${String(cargo || 'outro').slice(0, 40)}`;
+    const cur = parseInt(await env.UTM_STORE.get(key), 10) || 0;
+    await env.UTM_STORE.put(key, String(cur + 1), { expirationTtl: 7776000 });
+  } catch (e) {
+    console.error('bumpCandCount falhou:', e);
+  }
+}
+
+// ============================================================
+// Resumo semanal gerencial — total de currículos por cargo/estado
+// da semana fechada (segunda a domingo anteriores). Sem anexos,
+// sem dados pessoais: só os números.
+// ============================================================
+async function sendResumoSemanal(env, opts = {}) {
+  const { to = RESUMO_EMAILS, sample = false, subjectPrefix = '' } = opts;
+  if (!env.RESEND_API_KEY) {
+    console.error('Resumo semanal sem RESEND_API_KEY');
+    return false;
+  }
+
+  const thisMonday = mondayOf(spNow());
+  const weekStart = new Date(thisMonday);
+  weekStart.setDate(weekStart.getDate() - 7);
+  const weekEnd = new Date(thisMonday);
+  weekEnd.setDate(weekEnd.getDate() - 1);
+
+  let counts = { rj: {}, sp: {} };
+  if (sample) {
+    counts = {
+      rj: { atendente: 4, condutor_socorrista: 3, tecnico_enfermagem: 5, enfermeiro: 2, medico: 1 },
+      sp: { atendente: 2, tecnico_enfermagem: 3, administrativo: 1 },
+    };
+  } else if (env.UTM_STORE) {
+    const list = await env.UTM_STORE.list({ prefix: `cand:${ymd(weekStart)}:` });
+    for (const k of list.keys) {
+      const [, , uf, cargo] = k.name.split(':');
+      const v = parseInt(await env.UTM_STORE.get(k.name), 10) || 0;
+      if (counts[uf]) counts[uf][cargo] = (counts[uf][cargo] || 0) + v;
+    }
+  }
+
+  const totalUf = (uf) => Object.values(counts[uf]).reduce((a, b) => a + b, 0);
+  const total = totalUf('rj') + totalUf('sp');
+  const plural = (n) => (n === 1 ? 'currículo' : 'currículos');
+
+  const rows = (uf) => {
+    const entries = Object.entries(counts[uf]).sort((a, b) => b[1] - a[1]);
+    if (!entries.length) return '<tr><td colspan="2" style="padding:8px 0;color:#9ca3af;font-size:14px">Nenhum currículo nesta semana</td></tr>';
+    return entries
+      .map(([cargo, n]) => `<tr><td style="padding:8px 16px 8px 0;color:#444;border-bottom:1px solid #f3f4f6">${CARGO_LABELS[cargo] || cargo}</td><td style="padding:8px 0;text-align:right;font-weight:600;color:#0B2540;border-bottom:1px solid #f3f4f6">${n}</td></tr>`)
+      .join('');
+  };
+  const block = (uf, label) => `
+    <h3 style="margin:24px 0 4px;font-size:13px;color:#00A06C;text-transform:uppercase;letter-spacing:.06em">${label} · ${totalUf(uf)} ${plural(totalUf(uf))}</h3>
+    <table style="border-collapse:collapse;font-size:14px;width:100%">${rows(uf)}</table>`;
+
+  const periodo = `${dmy(weekStart)} a ${dmy(weekEnd)}`;
+  const html = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+    <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
+      <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
+      <span style="color:rgba(255,255,255,.5);font-size:12px;margin-left:12px">Resumo semanal — Trabalhe Conosco</span>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px">
+      <p style="font-size:14px;color:#444;margin:0">Currículos recebidos pelo site na semana de <strong>${periodo}</strong>:</p>
+      <p style="font-size:36px;font-weight:700;color:#0B2540;margin:10px 0 0">${total} <span style="font-size:14px;font-weight:400;color:#9ca3af">no total</span></p>
+      ${block('rj', 'Rio de Janeiro')}
+      ${block('sp', 'São Paulo')}
+      <hr style="margin:24px 0 16px;border:none;border-top:1px solid #e5e7eb">
+      <p style="font-size:12px;color:#9ca3af;margin:0">Os currículos completos chegam a recrutamento.rj@ e recrutamento.sp@ no momento de cada candidatura. Este resumo é enviado automaticamente toda segunda-feira às 8h.</p>
+    </div>
+  </div>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'Site Savior <noreply@savior.com.br>',
+      to,
+      subject: `${subjectPrefix}Resumo semanal Trabalhe Conosco — ${periodo} (${total} ${plural(total)})`,
+      html,
+    }),
+  }).catch((err) => {
+    console.error('Resumo semanal send failed:', err);
+    return null;
+  });
+
+  const ok = !!(res && res.ok);
+  if (!ok && res) console.error('Resumo Resend error:', res.status, await res.text().catch(() => ''));
+  console.log(`Resumo semanal ${ok ? 'enviado' : 'FALHOU'}: ${periodo} total=${total} to=${to.join(',')}`);
+  return ok;
+}
+
+// ============================================================
+// Candidatura Trabalhe Conosco — envia e-mail pro RH de
+// recrutamento do estado (sem cópias). NÃO cria deal no Pipedrive
 // e NÃO passa pelo Blip (currículo não pode inflar atendimentos).
+// Gerência recebe só o resumo semanal (sendResumoSemanal).
 // ============================================================
 async function handleCandidatura(body, env) {
   const {
@@ -577,7 +723,6 @@ async function handleCandidatura(body, env) {
     body: JSON.stringify({
       from: 'Site Savior <noreply@savior.com.br>',
       to: [RH_EMAIL[uf]],
-      cc: RH_CC,
       reply_to: email,
       subject: `Trabalhe Conosco - ${cargoLabel} (${uf.toUpperCase()}) — ${dateTag}`,
       html: emailBody,
@@ -591,6 +736,7 @@ async function handleCandidatura(body, env) {
   const ok = !!(res && res.ok);
   if (!ok && res) console.error('Candidatura Resend error:', res.status, await res.text().catch(() => ''));
   console.log(`Candidatura ${ok ? 'enviada' : 'FALHOU'}: cargo=${cargo} estado=${uf}`);
+  if (ok) await bumpCandCount(env, uf, cargo);
 
   return new Response(JSON.stringify({ ok }), {
     status: ok ? 200 : 502,
