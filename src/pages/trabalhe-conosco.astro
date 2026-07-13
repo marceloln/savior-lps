@@ -33,7 +33,7 @@ const CARGOS = [
     nome: 'Socorrista',
     icon: ICON.heartPulse,
     desc: 'Atendimento pré-hospitalar na ponta. Você chega primeiro, avalia e age com protocolo.',
-    req: 'Curso de APH e experiência em atendimento de urgência contam pontos.',
+    req: 'Curso de APH e experiência em urgência são diferenciais.',
   },
   {
     slug: 'condutor_socorrista',
@@ -46,14 +46,14 @@ const CARGOS = [
     slug: 'tecnico_enfermagem',
     nome: 'Técnico(a) de Enfermagem',
     icon: ICON.cross,
-    desc: 'Assistência direta ao paciente dentro da ambulância, do suporte básico ao avançado, junto com a equipe.',
+    desc: 'Assistência direta ao paciente na ambulância, do suporte básico ao avançado.',
     req: 'COREN ativo. Experiência em urgência e emergência é diferencial.',
   },
   {
     slug: 'enfermeiro',
     nome: 'Enfermeiro(a)',
     icon: ICON.clipboardPlus,
-    desc: 'Coordena o cuidado assistencial nas remoções e atendimentos, com autonomia técnica e apoio da central 24h.',
+    desc: 'Coordena o cuidado assistencial nas remoções e atendimentos, com apoio da central 24h.',
     req: 'COREN ativo. Vivência em APH, UTI ou emergência é diferencial.',
   },
   {
@@ -67,8 +67,8 @@ const CARGOS = [
     slug: 'atendente',
     nome: 'Atendente',
     icon: ICON.headset,
-    desc: 'Operadora da central 24h. Você atende quem liga precisando de ajuda, escuta primeiro e aciona a equipe certa.',
-    req: 'Boa comunicação e calma sob pressão. Experiência em atendimento ou saúde é diferencial.',
+    desc: 'Operadora da central 24h. Recebe as ligações, orienta com calma e aciona a equipe certa.',
+    req: 'Boa comunicação e calma sob pressão. Experiência em atendimento receptivo é um diferencial.',
   },
   {
     slug: 'administrativo',
@@ -80,7 +80,7 @@ const CARGOS = [
 ];
 
 const VALORES = [
-  { num: '01', icon: ICON.ear, titulo: 'A escuta vem primeiro', texto: 'Antes de agir, a gente escuta. Vale para o paciente no telefone e vale para o colega no plantão.' },
+  { num: '01', icon: ICON.ear, titulo: 'A escuta vem primeiro', texto: 'Antes de agir, escutamos. Vale para o paciente no telefone e para o colega no plantão.' },
   { num: '02', icon: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>', titulo: 'Prontidão é compromisso', texto: 'Estar pronto não é sorte, é preparo. Equipamento revisado, protocolo treinado, equipe descansada.' },
   { num: '03', icon: ICON.heart, titulo: 'Cuidamos de quem cuida', texto: 'Quem passa o dia salvando vidas precisa de uma empresa que olhe pela sua. Condições de trabalho são levadas a sério aqui.' },
   { num: '04', icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', titulo: 'Cada segundo conta', texto: 'É o nosso lema desde 1979. Na emergência, na remoção agendada e também na resposta à sua candidatura.' },
@@ -129,7 +129,7 @@ const schema = JSON.stringify({
       "@type": "FAQPage",
       "mainEntity": [
         { "@type": "Question", "name": "Como funciona o processo seletivo da Savior?", "acceptedAnswer": { "@type": "Answer", "text": "Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica." } },
-        { "@type": "Question", "name": "Preciso ter experiência em APH para me candidatar?", "acceptedAnswer": { "@type": "Answer", "text": "Para os cargos assistenciais, experiência em urgência e emergência conta pontos, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial." } },
+        { "@type": "Question", "name": "Preciso ter experiência em APH para me candidatar?", "acceptedAnswer": { "@type": "Answer", "text": "Para os cargos assistenciais, experiência em urgência e emergência é um diferencial, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial." } },
         { "@type": "Question", "name": "A contratação é direta ou terceirizada?", "acceptedAnswer": { "@type": "Answer", "text": "Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa." } },
         { "@type": "Question", "name": "Posso me candidatar mesmo sem vaga aberta?", "acceptedAnswer": { "@type": "Answer", "text": "Sim. Toda candidatura entra no banco de talentos e é consultada quando abre uma posição no seu estado e cargo." } }
       ]
@@ -155,7 +155,7 @@ const schema = JSON.stringify({
 
 const faqItems = [
   { q: 'Como funciona o processo seletivo da Savior?', a: 'Você escolhe o estado (RJ ou SP), envia a candidatura pelo formulário ou pelo WhatsApp e o RH faz a triagem. Se o perfil combinar com uma vaga aberta, chamamos para entrevista e avaliação técnica.' },
-  { q: 'Preciso ter experiência em APH para me candidatar?', a: 'Para os cargos assistenciais, experiência em urgência e emergência conta pontos, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial.' },
+  { q: 'Preciso ter experiência em APH para me candidatar?', a: 'Para os cargos assistenciais, experiência em urgência e emergência é um diferencial, mas a Savior treina toda a equipe nos protocolos internos. O registro profissional ativo é o requisito essencial.' },
   { q: 'Quais registros e documentos são exigidos?', a: 'Depende do cargo: COREN ativo para enfermagem e técnico de enfermagem, CRM ativo para médicos, CNH categoria D e curso de condutor de veículo de emergência para condutor socorrista. Os detalhes são confirmados na entrevista.' },
   { q: 'A contratação é direta ou terceirizada?', a: 'Direta. A equipe da Savior é 100% própria: médicos, enfermeiros, técnicos, socorristas e condutores são contratados, treinados e avaliados pela própria empresa.' },
   { q: 'Como funcionam as escalas?', a: 'A operação roda 24h e as equipes trabalham em regime de escala, que varia conforme o cargo e a base. O formato exato é apresentado na entrevista, antes de qualquer decisão.' },
@@ -165,7 +165,7 @@ const faqItems = [
 
 <Base
   title="Trabalhe Conosco | Carreiras na Savior Medical Service"
-  description="Venha trabalhar em quem cuida há 46 anos. Vagas para socorrista, condutor socorrista, enfermagem, medicina e administrativo no RJ e em SP. Equipe 100% própria, contratação direta."
+  description="Vagas na Savior Medical Service: socorrista, condutor socorrista, atendente, enfermagem, medicina e administrativo no RJ e em SP. Equipe 100% própria, contratação direta há 46 anos."
   canonical="https://www.savior.com.br/trabalhe-conosco"
   schema={schema}
   dateModified="2026-07-10"
@@ -220,7 +220,7 @@ const faqItems = [
   <div class="wrap">
     <p class="eyebrow" style="margin-bottom:12px">Nossas equipes</p>
     <h2 id="cargos-heading">Escolha a sua função</h2>
-    <p class="tc-section-intro">Da direção da ambulância à central de atendimento, cada função aqui existe por um motivo: chegar a tempo e cuidar bem. Veja onde você se encaixa.</p>
+    <p class="tc-section-intro">Da direção da ambulância à central de atendimento, cada função existe para chegar a tempo e cuidar bem.</p>
     <div class="tc-cargos-grid">
       {CARGOS.map((c) => (
         <article class="tc-cargo-card">
@@ -300,12 +300,12 @@ const faqItems = [
     <div class="tc-form-grid">
       <div class="tc-form-left">
         <p class="eyebrow" style="margin-bottom:12px">Candidatura</p>
-        <h2 id="form-heading">Envie sua candidatura. A gente escuta primeiro.</h2>
-        <p class="tc-form-lead">Preencha os dados ao lado e a candidatura chega por e-mail direto ao RH do estado escolhido. Sem robô decidindo por você: uma pessoa do time lê cada candidatura.</p>
+        <h2 id="form-heading">Envie sua candidatura. Uma pessoa do RH lê cada uma.</h2>
+        <p class="tc-form-lead">Preencha os dados ao lado e a candidatura chega por e-mail ao RH do estado escolhido.</p>
         <div class="tc-form-trust">
           <div class="tc-form-trust-item">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><polyline points="16 5 8 14 4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Candidatura vai pro estado certo: RJ ou SP</span>
+            <span>Candidatura enviada ao estado escolhido: RJ ou SP</span>
           </div>
           <div class="tc-form-trust-item">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><polyline points="16 5 8 14 4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -369,7 +369,7 @@ const faqItems = [
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Enviar candidatura
           </button>
-          <p class="tc-form-note">Sua candidatura vai por e-mail direto pro RH do estado escolhido. Você recebe o retorno pelos contatos informados.</p>
+          <p class="tc-form-note">Sua candidatura segue por e-mail ao RH do estado escolhido. O retorno chega pelos contatos informados.</p>
         </form>
       </div>
     </div>
@@ -379,7 +379,7 @@ const faqItems = [
 <!-- ═══ 7. FAQ ═══ -->
 <FAQ
   items={faqItems}
-  titleHtml="Perguntas de quem quer entrar pro time"
+  titleHtml="Perguntas de quem quer entrar para o time"
   eyebrow="Dúvidas frequentes"
   subtitle="Respostas diretas sobre processo seletivo, registros e escalas."
 />
@@ -396,7 +396,7 @@ const faqItems = [
       </div>
       <div class="atend-content">
         <p class="eyebrow on-dark" style="margin-bottom:16px">Próximo passo</p>
-        <h2 id="cta-heading" style="color:#fff">Pronto pra vestir o uniforme?<br><em class="tc-green-bright">A gente te espera.</em></h2>
+        <h2 id="cta-heading" style="color:#fff">Pronto para vestir o uniforme?<br><em class="tc-green-bright">Esperamos você.</em></h2>
         <p class="tc-cta-sub">Escolha seu estado, sua função e envie a candidatura. O RH responde a todas as mensagens.</p>
         <div class="tc-cta-btns">
           <a href="#candidatura" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="trabalhe-cta-final">Enviar candidatura</a>
@@ -518,7 +518,7 @@ const faqItems = [
           errNote = document.createElement('p');
           errNote.id = 'tc-form-error';
           errNote.style.cssText = 'color:var(--alert);font-size:13px;text-align:center;margin-top:12px';
-          errNote.textContent = 'Não conseguimos enviar agora. Tente de novo em instantes ou mande direto pra savior@savior.com.br';
+          errNote.textContent = 'Não conseguimos enviar agora. Tente novamente em instantes ou envie para savior@savior.com.br';
           tcForm.appendChild(errNote);
         }
       });
