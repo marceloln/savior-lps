@@ -264,7 +264,7 @@ Portaria GM/MS nº 2.048, de 5 de novembro de 2002. Define 6 categorias (A a F) 
 ### Páginas relacionadas na Savior
 - /ambulancia-rj — Atendimento RJ
 - /ambulancia-sp — Atendimento SP
-- /corporativo — Planos com UTI móvel 24h
+- /corporativo — Planos corporativos com Ambulância UTI 24h
 - /eventos — Cobertura médica para eventos com ambulância básica
 
 ---
