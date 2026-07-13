@@ -7,6 +7,7 @@
 
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
+import CareersBanner from '../components/CareersBanner.astro';
 import FAQ from '../components/FAQ.astro';
 import { CONTACT_RJ, CONTACT_SP, BRAND, GOOGLE_BUSINESS, GOOGLE_BUSINESS_SP } from '../data/savior.ts';
 
@@ -564,6 +565,9 @@ const eventosEmail = 'eventos@savior.com.br';
         </div>
       </div>
     </section>
+
+    <!-- ═══ BANNER TRABALHE CONOSCO ═══ -->
+    <CareersBanner page="eventos-rj" />
 
     <!-- ═══ FOOTER ═══ -->
     <Footer showBothCities={true} showBairros={true} />

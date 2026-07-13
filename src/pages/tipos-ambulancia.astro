@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
 import StickyHeader from '../components/StickyHeader.astro';
 import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
 import Footer from '../components/Footer.astro';
+import CareersBanner from '../components/CareersBanner.astro';
 import FAQ from '../components/FAQ.astro';
 import { whatsappUrl, CONTACT_RJ, CONTACT_SP, BRAND, METRICS } from '../data/savior';
 
@@ -826,6 +827,9 @@ const schema = JSON.stringify({
     </section>
 
   </main>
+
+  <!-- ═══ BANNER TRABALHE CONOSCO ═══ -->
+  <CareersBanner page="tipos-ambulancia" />
 
   <Footer showBothCities={true} showBairros={true} />
 

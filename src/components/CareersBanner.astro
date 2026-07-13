@@ -1,0 +1,93 @@
+---
+// ============================================================
+// CAREERS BANNER — faixa "Trabalhe Conosco" antes do Footer
+// Objetivo: desviar candidatos do WhatsApp/Blip pro site
+// (candidatura na página é 100% por e-mail, sem bot)
+// ============================================================
+
+interface Props {
+  /** ex: "home", "ambulancia-rj" — vira o label do evento GA4 */
+  page?: string;
+}
+
+const { page = 'unknown' } = Astro.props;
+---
+
+<aside class="careers-banner" aria-label="Vagas na Savior">
+  <div class="wrap cb-inner">
+    <div class="cb-text">
+      <p class="cb-eyebrow">Trabalhe conosco</p>
+      <p class="cb-title">Quer trabalhar salvando vidas? A Savior contrata no RJ e em SP</p>
+      <p class="cb-sub">Socorrista, condutor(a) socorrista, enfermagem, medicina e administrativo. A candidatura é feita direto pelo site, sem WhatsApp.</p>
+    </div>
+    <a href="/trabalhe-conosco" class="cb-cta" data-event="cta_click" data-event-category="cta" data-event-label={`careers-banner-${page}`}>
+      Ver vagas e se candidatar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+</aside>
+
+<style>
+  .careers-banner {
+    background: var(--cream-dark);
+    border-top: 1px solid rgba(11, 37, 64, 0.08);
+  }
+  .cb-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(24px, 4vw, 56px);
+    padding-top: clamp(36px, 5vw, 56px);
+    padding-bottom: clamp(36px, 5vw, 56px);
+  }
+  .cb-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+  .cb-title {
+    font-size: clamp(19px, 2.4vw, 24px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--navy-deep);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .cb-sub {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--navy-mid);
+    max-width: 62ch;
+  }
+  .cb-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 14px 24px;
+    border-radius: 10px;
+    background: var(--navy-deep);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .cb-cta:hover {
+    background: var(--navy-mid);
+    transform: translateY(-1px);
+  }
+  .cb-cta svg { width: 18px; height: 18px; }
+
+  @media (max-width: 720px) {
+    .cb-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cb-cta { width: 100%; justify-content: center; }
+  }
+</style>
