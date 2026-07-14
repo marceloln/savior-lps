@@ -174,10 +174,20 @@ const schema = JSON.stringify({
 
     <!-- ═══ CTA FINAL ═══ -->
     <section class="section pf-cta-final" aria-labelledby="ctaf-heading">
-      <div class="wrap pf-cta-inner">
-        <p class="eyebrow on-dark" style="margin-bottom:16px">Falta pouco</p>
-        <h2 id="ctaf-heading" class="on-dark">Sua família na frente da fila.<br /><em class="pf-green-bright">Entre na lista de espera.</em></h2>
-        <a href="#lista" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="pf-cta-final">Entrar na lista</a>
+      <div class="wrap">
+        <div class="atend-layout">
+          <div class="atend-photo" aria-hidden="true">
+            <picture>
+              <source srcset="/img/atendentes/SAVIOR_ATEND_7.webp" type="image/webp" />
+              <img src="/img/atendentes/SAVIOR_ATEND_7.png" alt="" width="450" height="450" loading="lazy" decoding="async" />
+            </picture>
+          </div>
+          <div class="atend-content pf-cta-inner">
+            <p class="eyebrow on-dark" style="margin-bottom:16px">Falta pouco</p>
+            <h2 id="ctaf-heading" class="on-dark">Sua família na frente da fila.<br /><em class="pf-green-bright">Entre na lista de espera.</em></h2>
+            <div><a href="#lista" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="pf-cta-final">Entrar na lista</a></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -507,10 +517,6 @@ const schema = JSON.stringify({
     /* ══ CTA FINAL ══ */
     .pf-cta-final {
       background: var(--navy-deep);
-    }
-
-    .pf-cta-inner {
-      text-align: center;
     }
 
     .pf-cta-inner h2 {
