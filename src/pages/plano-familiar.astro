@@ -86,9 +86,9 @@ const schema = JSON.stringify({
                 <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                 <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
               </svg>
-              <span style="font-weight:700;color:#fff;font-size:13px">4,7</span>
-              <span style="color:#FBBC05;font-size:11px">★★★★★</span>
-              <span style="color:rgba(255,255,255,.6);font-size:12px">730+ avaliações no Google</span>
+              <span aria-hidden="true" style="font-weight:700;color:#fff;font-size:13px">4,7</span>
+              <span aria-hidden="true" style="color:#FBBC05;font-size:11px">★★★★★</span>
+              <span aria-hidden="true" style="color:rgba(255,255,255,.6);font-size:12px">730+ avaliações no Google</span>
             </div>
           </div>
           <div class="pf-hero-right" id="lista">
@@ -185,6 +185,7 @@ const schema = JSON.stringify({
     /* ══ HERO ══ */
     .pf-hero {
       position: relative;
+      min-height: 100vh;
       min-height: 100svh;
       display: flex;
       align-items: center;
@@ -530,8 +531,10 @@ const schema = JSON.stringify({
     (function () {
       var form = document.getElementById('pfForm');
       if (!form) return;
+      var enviando = false;
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        if (enviando) return;
         var fb = document.getElementById('pfFeedback');
         var btn = form.querySelector('.pf-submit');
         var nome = document.getElementById('pf-nome').value.trim();
@@ -539,8 +542,9 @@ const schema = JSON.stringify({
         var email = document.getElementById('pf-email').value.trim();
         var cidade = document.getElementById('pf-cidade').value;
         if (!nome || !whatsapp || !email || !cidade) { fb.textContent = 'Preencha todos os campos.'; return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fb.textContent = 'Confira o e-mail digitado.'; return; }
         var utm = window._saviorUtm || {};
-        btn.disabled = true; btn.textContent = 'Enviando...';
+        enviando = true; btn.disabled = true; btn.textContent = 'Enviando...';
         fetch('https://savior-lead-capture.marcelo-4f2.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -551,14 +555,14 @@ const schema = JSON.stringify({
           })
         }).then(function (r) { return r.json(); }).then(function (d) {
           if (d && d.ok) {
-            form.querySelectorAll('input, select, .pf-submit, .pf-label').forEach(function (el) { el.style.display = 'none'; });
+            Array.prototype.forEach.call(form.children, function (el) { if (el.id !== 'pfFeedback') el.style.display = 'none'; });
             fb.textContent = 'Pronto! Você está na lista. Vamos te avisar em primeira mão no lançamento.';
             fb.classList.add('ok');
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ event: 'pf_interesse', page: 'plano-familiar', cidade: cidade });
           } else { throw new Error('fail'); }
         }).catch(function () {
-          btn.disabled = false; btn.textContent = 'Quero ser avisado';
+          enviando = false; btn.disabled = false; btn.textContent = 'Quero ser avisado';
           fb.textContent = 'Não conseguimos enviar agora. Tente novamente em instantes.';
         });
       });
