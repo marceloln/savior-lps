@@ -1111,10 +1111,14 @@ async function handlePlanoFamiliar(body, env) {
     utm_campaign = 'none',
   } = body;
 
+  const nomeS = String(nome).slice(0, 200);
+  const whatsappS = String(whatsapp).slice(0, 40);
+  const emailS = String(email).slice(0, 200);
+
   const uf = cidade === 'sp' ? 'sp' : cidade === 'rj' ? 'rj' : 'outra';
   const ufLabel = uf === 'sp' ? 'São Paulo' : uf === 'rj' ? 'Rio de Janeiro' : 'Outra cidade';
 
-  if (!nome.trim() || !email.trim() || !whatsapp.trim()) {
+  if (!nomeS.trim() || !emailS.trim() || !whatsappS.trim()) {
     return new Response(JSON.stringify({ ok: false, error: 'nome, whatsapp e email obrigatórios' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json', ...corsHeaders() },
@@ -1139,9 +1143,9 @@ async function handlePlanoFamiliar(body, env) {
     </div>
     <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px">
       <table style="border-collapse:collapse;font-size:14px;width:100%">
-        ${row('Nome', nome)}
-        ${row('WhatsApp', whatsapp)}
-        ${row('E-mail', email)}
+        ${row('Nome', nomeS)}
+        ${row('WhatsApp', whatsappS)}
+        ${row('E-mail', emailS)}
         ${row('Cidade', ufLabel)}
       </table>
       <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
@@ -1149,13 +1153,15 @@ async function handlePlanoFamiliar(body, env) {
     </div>
   </div>`;
 
+  const safeReplyTo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailS) ? emailS : undefined;
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: 'Site Savior <noreply@savior.com.br>',
       to: PF_EMAIL,
-      reply_to: email,
+      ...(safeReplyTo ? { reply_to: safeReplyTo } : {}),
       subject: `Plano Familiar - Interessado (${uf.toUpperCase()}) — ${dateTag}`,
       html: emailBody,
     }),
