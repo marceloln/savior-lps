@@ -173,7 +173,7 @@ const schema = JSON.stringify({
     <FAQ items={faqItems} titleHtml="Perguntas sobre o <em>Plano Familiar</em>" eyebrow="DÚVIDAS" />
 
     <!-- ═══ CTA FINAL ═══ -->
-    <section class="section pf-cta-final" aria-labelledby="ctaf-heading">
+    <section class="pf-cta-final" aria-labelledby="ctaf-heading">
       <div class="wrap">
         <div class="atend-layout">
           <div class="atend-photo" aria-hidden="true">
@@ -517,6 +517,12 @@ const schema = JSON.stringify({
     /* ══ CTA FINAL ══ */
     .pf-cta-final {
       background: var(--navy-deep);
+      overflow: hidden;
+    }
+
+    .pf-cta-final .wrap {
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     .pf-cta-inner h2 {
