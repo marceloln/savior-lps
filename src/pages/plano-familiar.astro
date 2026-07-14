@@ -1,0 +1,162 @@
+---
+// ============================================================
+// /plano-familiar — pré-lançamento (lista de espera)
+// Sem WhatsApp de propósito: conversão é o form (ver spec
+// docs/superpowers/specs/2026-07-14-plano-familiar-design.md)
+// ============================================================
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import FAQ from '../components/FAQ.astro';
+
+const BENEFICIOS = [
+  { icon: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>', titulo: 'Ambulância 24h, sem limite', texto: 'Emergência não escolhe hora. Acionamento ilimitado, todos os dias do ano, direto na central Savior.' },
+  { icon: '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>', titulo: 'UTI móvel com médico', texto: 'Suporte avançado de vida com médico e enfermeiro a bordo quando o quadro exigir.' },
+  { icon: '<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>', titulo: 'Orientação médica por telefone', texto: 'Antes da ambulância sair, um profissional escuta e orienta os primeiros passos.' },
+  { icon: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>', titulo: 'Equipe 100% própria', texto: 'Médicos, enfermeiros e condutores contratados e treinados pela Savior. Nada terceirizado.' },
+  { icon: '<circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 1.9.7 3.4 1.8 4.9L12 22l6.2-7.1C19.3 13.4 20 11.9 20 10a8 8 0 0 0-8-8Z"/>', titulo: 'Rio de Janeiro e São Paulo', texto: 'Bases próprias nas duas cidades, com a mesma central 24h que opera há 46 anos.' },
+  { icon: '<path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>', titulo: 'Prioridade de quem está na lista', texto: 'Quem entra na lista é avisado primeiro e garante a condição especial de lançamento.' },
+];
+
+const PASSOS = [
+  { num: '01', titulo: 'Entre na lista', texto: 'Preencha o formulário com seus dados. Leva menos de um minuto.' },
+  { num: '02', titulo: 'Seja avisado primeiro', texto: 'Quando o plano abrir, você recebe as condições antes da divulgação geral.' },
+  { num: '03', titulo: 'Contrate com condição de fundador', texto: 'A lista de espera tem prioridade e condição especial de lançamento.' },
+];
+
+const faqItems = [
+  { q: 'O que é o Plano Familiar da Savior?', a: 'Uma assinatura de assistência de emergência para sua família: ambulância 24h, UTI móvel e orientação médica por telefone, com a estrutura própria da Savior no Rio de Janeiro e em São Paulo.' },
+  { q: 'Quando o plano será lançado?', a: 'A data será anunciada em breve. Quem está na lista de espera é avisado primeiro, antes da divulgação geral.' },
+  { q: 'Quanto vai custar?', a: 'Os valores serão divulgados no lançamento. A lista de espera garante a condição especial de fundador.' },
+  { q: 'Onde o plano vai funcionar?', a: 'No Rio de Janeiro e em São Paulo, nas mesmas áreas de cobertura da operação Savior. Outras cidades entram no radar conforme a demanda da lista.' },
+  { q: 'É um plano de saúde?', a: 'Não. É um serviço de assistência de emergência que complementa o plano de saúde: a maioria dos planos não cobre ambulância particular com resposta rápida.' },
+];
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      "name": "Plano Familiar Savior",
+      "serviceType": "Assistência de emergência médica por assinatura",
+      "provider": { "@type": "MedicalClinic", "name": "Savior Medical Service", "url": "https://www.savior.com.br" },
+      "areaServed": ["Rio de Janeiro", "São Paulo"],
+      "description": "Assinatura de assistência de emergência para famílias: ambulância 24h, UTI móvel e orientação médica por telefone. Pré-lançamento com lista de espera."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faqItems.map((i) => ({ "@type": "Question", "name": i.q, "acceptedAnswer": { "@type": "Answer", "text": i.a } }))
+    }
+  ]
+});
+---
+
+<Base
+  title="Plano Familiar | Ambulância UTI por assinatura — Savior"
+  description="Assistência de emergência 24h para sua família: ambulância UTI, orientação médica e equipe própria, no RJ e em SP. Entre na lista de espera do lançamento."
+  canonical="https://www.savior.com.br/plano-familiar"
+  schema={schema}
+  dateModified="2026-07-14"
+>
+  <main id="main">
+    <section class="pf-hero" id="topo">
+      <div class="pf-hero-bg" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 767px)" srcset="/img/gallery/team-mobile.webp" type="image/webp" />
+          <img src="/img/gallery/team.webp" alt="" width="1536" height="1024" loading="eager" fetchpriority="high" />
+        </picture>
+      </div>
+      <div class="pf-hero-overlay" aria-hidden="true"></div>
+      <div class="pf-hero-content wrap">
+        <a href="/" class="pf-hero-brand" aria-label="Savior Medical Service, página inicial">
+          <div>
+            <div class="pf-hero-wordmark">SAVIOR</div>
+            <div class="pf-hero-descriptor">Medical Service</div>
+          </div>
+        </a>
+        <div class="pf-hero-grid">
+          <div class="pf-hero-left">
+            <p class="eyebrow on-dark" style="margin-bottom:18px">Plano Familiar · Em breve</p>
+            <h1>Ambulância UTI para a sua família. <em class="pf-green-bright">Sem depender de plano de saúde.</em></h1>
+            <p class="pf-hero-sub">Assistência de emergência 24h por assinatura, com a estrutura que atende o Rio de Janeiro e São Paulo há 46 anos. Entre na lista e seja avisado no lançamento.</p>
+            <a href="#lista" class="btn btn-primary pf-hero-cta-mobile" data-event="cta_click" data-event-category="cta" data-event-label="pf-hero-lista">Entrar na lista</a>
+            <div class="pf-hero-rating" role="img" aria-label="4,7 estrelas, mais de 730 avaliações no Google">
+              <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+                <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span style="font-weight:700;color:#fff;font-size:13px">4,7</span>
+              <span style="color:#FBBC05;font-size:11px">★★★★★</span>
+              <span style="color:rgba(255,255,255,.6);font-size:12px">730+ avaliações no Google</span>
+            </div>
+          </div>
+          <div class="pf-hero-right" id="lista">
+            <form class="pf-form-card" id="pfForm" novalidate>
+              <p class="pf-form-title">Entre na lista de espera</p>
+              <p class="pf-form-sub">Sem compromisso. Você é avisado primeiro e garante a condição de lançamento.</p>
+              <label class="pf-label" for="pf-nome">Nome *</label>
+              <input class="pf-input" id="pf-nome" name="nome" type="text" required autocomplete="name" />
+              <label class="pf-label" for="pf-whatsapp">WhatsApp *</label>
+              <input class="pf-input" id="pf-whatsapp" name="whatsapp" type="tel" required autocomplete="tel" placeholder="(21) 99999-9999" />
+              <label class="pf-label" for="pf-email">E-mail *</label>
+              <input class="pf-input" id="pf-email" name="email" type="email" required autocomplete="email" placeholder="voce@email.com.br" />
+              <label class="pf-label" for="pf-cidade">Cidade *</label>
+              <select class="pf-input" id="pf-cidade" name="cidade" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="rj">Rio de Janeiro</option>
+                <option value="sp">São Paulo</option>
+                <option value="outra">Outra cidade</option>
+              </select>
+              <button type="submit" class="btn btn-primary pf-submit" data-event="cta_click" data-event-category="cta" data-event-label="pf-form-submit">Quero ser avisado</button>
+              <p class="pf-form-note">Seus dados ficam só com a Savior e são usados apenas pra te avisar do lançamento.</p>
+              <p class="pf-form-feedback" id="pfFeedback" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer showBothCities={true} showBairros={false} />
+
+  <script is:inline>
+    (function () {
+      var form = document.getElementById('pfForm');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var fb = document.getElementById('pfFeedback');
+        var btn = form.querySelector('.pf-submit');
+        var nome = document.getElementById('pf-nome').value.trim();
+        var whatsapp = document.getElementById('pf-whatsapp').value.trim();
+        var email = document.getElementById('pf-email').value.trim();
+        var cidade = document.getElementById('pf-cidade').value;
+        if (!nome || !whatsapp || !email || !cidade) { fb.textContent = 'Preencha todos os campos.'; return; }
+        var utm = window._saviorUtm || {};
+        btn.disabled = true; btn.textContent = 'Enviando...';
+        fetch('https://savior-lead-capture.marcelo-4f2.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'plano_familiar_interesse',
+            nome: nome, whatsapp: whatsapp, email: email, cidade: cidade,
+            utm_source: utm.source || 'direct', utm_campaign: utm.campaign || 'none'
+          })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.ok) {
+            form.querySelectorAll('input, select, .pf-submit, .pf-label').forEach(function (el) { el.style.display = 'none'; });
+            fb.textContent = 'Pronto! Você está na lista. Vamos te avisar em primeira mão no lançamento.';
+            fb.classList.add('ok');
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'pf_interesse', page: 'plano-familiar', cidade: cidade });
+          } else { throw new Error('fail'); }
+        }).catch(function () {
+          btn.disabled = false; btn.textContent = 'Quero ser avisado';
+          fb.textContent = 'Não conseguimos enviar agora. Tente novamente em instantes.';
+        });
+      });
+    })();
+  </script>
+</Base>
