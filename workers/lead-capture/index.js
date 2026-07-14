@@ -42,6 +42,8 @@ const RH_EMAIL = {
   rj: 'recrutamento.rj@savior.com.br',
   sp: 'recrutamento.sp@savior.com.br',
 };
+// Leads do Plano Familiar (pré-lançamento) — e-mail por lead + contagem no resumo semanal
+const PF_EMAIL = ['savior@savior.com.br'];
 // Resumo semanal gerencial (cron segunda 08:00 BRT) — só o consolidado, sem currículos
 const RESUMO_EMAILS = [
   'savior@savior.com.br',
@@ -104,6 +106,11 @@ export default {
     // Candidatura Trabalhe Conosco — só e-mail. Sem Pipedrive, sem Blip.
     if (body.type === 'candidatura') {
       return handleCandidatura(body, env);
+    }
+
+    // Interesse no Plano Familiar (pré-lançamento) — só e-mail + contador. Sem Pipedrive, sem Blip.
+    if (body.type === 'plano_familiar_interesse') {
+      return handlePlanoFamiliar(body, env);
     }
 
     const {
@@ -574,6 +581,20 @@ async function sendResumoSemanal(env, opts = {}) {
     }
   }
 
+  // Interessados Plano Familiar da mesma semana
+  let pfam = { rj: 0, sp: 0, outra: 0 };
+  if (sample) {
+    pfam = { rj: 7, sp: 4, outra: 1 };
+  } else if (env.UTM_STORE) {
+    const pfList = await env.UTM_STORE.list({ prefix: `pfam:${ymd(weekStart)}:` });
+    for (const k of pfList.keys) {
+      const uf = k.name.split(':')[2];
+      const v = parseInt(await env.UTM_STORE.get(k.name), 10) || 0;
+      if (uf in pfam) pfam[uf] += v;
+    }
+  }
+  const pfamTotal = pfam.rj + pfam.sp + pfam.outra;
+
   const totalUf = (uf) => Object.values(counts[uf]).reduce((a, b) => a + b, 0);
   const total = totalUf('rj') + totalUf('sp');
   const plural = (n) => (n === 1 ? 'currículo' : 'currículos');
@@ -600,6 +621,12 @@ async function sendResumoSemanal(env, opts = {}) {
       <p style="font-size:36px;font-weight:700;color:#0B2540;margin:10px 0 0">${total} <span style="font-size:14px;font-weight:400;color:#9ca3af">no total</span></p>
       ${block('rj', 'Rio de Janeiro')}
       ${block('sp', 'São Paulo')}
+      <h3 style="margin:24px 0 4px;font-size:13px;color:#00A06C;text-transform:uppercase;letter-spacing:.06em">Plano Familiar · ${pfamTotal} interessado${pfamTotal === 1 ? '' : 's'}</h3>
+      <table style="border-collapse:collapse;font-size:14px;width:100%">
+        <tr><td style="padding:8px 16px 8px 0;color:#444;border-bottom:1px solid #f3f4f6">Rio de Janeiro</td><td style="padding:8px 0;text-align:right;font-weight:600;color:#0B2540;border-bottom:1px solid #f3f4f6">${pfam.rj}</td></tr>
+        <tr><td style="padding:8px 16px 8px 0;color:#444;border-bottom:1px solid #f3f4f6">São Paulo</td><td style="padding:8px 0;text-align:right;font-weight:600;color:#0B2540;border-bottom:1px solid #f3f4f6">${pfam.sp}</td></tr>
+        <tr><td style="padding:8px 16px 8px 0;color:#444">Outras cidades</td><td style="padding:8px 0;text-align:right;font-weight:600;color:#0B2540">${pfam.outra}</td></tr>
+      </table>
       <hr style="margin:24px 0 16px;border:none;border-top:1px solid #e5e7eb">
       <p style="font-size:12px;color:#9ca3af;margin:0">Os currículos completos chegam a recrutamento.rj@ e recrutamento.sp@ no momento de cada candidatura. Este resumo é enviado automaticamente toda segunda-feira às 8h.</p>
     </div>
@@ -1067,6 +1094,96 @@ async function handleBlipWebhook(request, env) {
   }
 
   return new Response('OK', { status: 200, headers: corsHeaders() });
+}
+
+// ============================================================
+// Plano Familiar (pré-lançamento) — e-mail do interessado pra
+// PF_EMAIL + contador semanal no KV (pfam:{segunda}:{uf}).
+// Sem Pipedrive e sem Blip: é lista de espera, não atendimento.
+// ============================================================
+async function handlePlanoFamiliar(body, env) {
+  const {
+    nome = '',
+    whatsapp = '',
+    email = '',
+    cidade = '',
+    utm_source = 'direct',
+    utm_campaign = 'none',
+  } = body;
+
+  const uf = cidade === 'sp' ? 'sp' : cidade === 'rj' ? 'rj' : 'outra';
+  const ufLabel = uf === 'sp' ? 'São Paulo' : uf === 'rj' ? 'Rio de Janeiro' : 'Outra cidade';
+
+  if (!nome.trim() || !email.trim() || !whatsapp.trim()) {
+    return new Response(JSON.stringify({ ok: false, error: 'nome, whatsapp e email obrigatórios' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    });
+  }
+  if (!env.RESEND_API_KEY) {
+    console.error('Plano Familiar sem RESEND_API_KEY configurada');
+    return new Response(JSON.stringify({ ok: false, error: 'email não configurado' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+    });
+  }
+
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const row = (label, val) => val ? `<tr><td style="padding:5px 16px 5px 0;color:#888;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:5px 0;font-weight:500">${esc(val)}</td></tr>` : '';
+  const dateTag = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+  const emailBody = `<div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+    <div style="background:#0B2540;padding:18px 24px;border-radius:8px 8px 0 0">
+      <span style="color:#00B87C;font-weight:700;font-size:18px;letter-spacing:.05em">SAVIOR</span>
+      <span style="color:rgba(255,255,255,.5);font-size:12px;margin-left:12px">Interessado — Plano Familiar (lista de espera)</span>
+    </div>
+    <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px">
+      <table style="border-collapse:collapse;font-size:14px;width:100%">
+        ${row('Nome', nome)}
+        ${row('WhatsApp', whatsapp)}
+        ${row('E-mail', email)}
+        ${row('Cidade', ufLabel)}
+      </table>
+      <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
+      <p style="font-size:12px;color:#9ca3af;margin:0">🔗 ${esc(utm_source)} · 🎯 ${esc(utm_campaign)} · Enviado pelo site /plano-familiar</p>
+    </div>
+  </div>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'Site Savior <noreply@savior.com.br>',
+      to: PF_EMAIL,
+      reply_to: email,
+      subject: `Plano Familiar - Interessado (${uf.toUpperCase()}) — ${dateTag}`,
+      html: emailBody,
+    }),
+  }).catch((err) => {
+    console.error('Plano Familiar email send failed:', err);
+    return null;
+  });
+
+  const ok = !!(res && res.ok);
+  if (!ok && res) console.error('Plano Familiar Resend error:', res.status, await res.text().catch(() => ''));
+  console.log(`Plano Familiar ${ok ? 'enviado' : 'FALHOU'}: uf=${uf}`);
+  if (ok) await bumpPfamCount(env, uf);
+
+  return new Response(JSON.stringify({ ok }), {
+    status: ok ? 200 : 502,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+  });
+}
+
+async function bumpPfamCount(env, uf) {
+  if (!env.UTM_STORE) return;
+  try {
+    const key = `pfam:${ymd(mondayOf(spNow()))}:${uf}`;
+    const cur = parseInt(await env.UTM_STORE.get(key), 10) || 0;
+    await env.UTM_STORE.put(key, String(cur + 1), { expirationTtl: 7776000 });
+  } catch (e) {
+    console.error('bumpPfamCount falhou:', e);
+  }
 }
 
 function corsHeaders() {
