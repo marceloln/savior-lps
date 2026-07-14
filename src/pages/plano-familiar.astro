@@ -117,9 +117,414 @@ const schema = JSON.stringify({
       </div>
     </section>
 
+    <!-- ═══ BENEFÍCIOS ═══ -->
+    <section class="section pf-beneficios" aria-labelledby="ben-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="margin-bottom:12px">O que está incluído</p>
+        <h2 id="ben-heading">Emergência resolvida, <em class="accent-text">sem susto no boleto</em></h2>
+        <p class="pf-section-intro">O Plano Familiar coloca a estrutura da Savior de prontidão para as pessoas que você ama.</p>
+        <div class="pf-ben-grid">
+          {BENEFICIOS.map((b) => (
+            <article class="pf-ben-card">
+              <svg class="pf-ben-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={b.icon} />
+              <h3>{b.titulo}</h3>
+              <p>{b.texto}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ COMO VAI FUNCIONAR ═══ -->
+    <section class="section pf-passos" aria-labelledby="passos-heading">
+      <div class="wrap">
+        <p class="eyebrow on-dark" style="margin-bottom:12px">Como vai funcionar</p>
+        <h2 id="passos-heading" class="on-dark">Três passos até o lançamento</h2>
+        <div class="pf-passos-grid">
+          {PASSOS.map((p) => (
+            <div class="pf-passo">
+              <span class="pf-passo-num">{p.num}</span>
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ POR QUE A SAVIOR ═══ -->
+    <section class="section pf-prova" aria-labelledby="prova-heading">
+      <div class="wrap">
+        <p class="eyebrow" style="margin-bottom:12px">Por que a Savior</p>
+        <h2 id="prova-heading">Quem vai atender sua família <em class="accent-text">já atende há 46 anos</em></h2>
+        <div class="pf-stats">
+          <div class="pf-stat"><strong>46</strong><span>anos de operação contínua</span></div>
+          <div class="pf-stat"><strong>+100k</strong><span>atendimentos nos últimos 12 meses</span></div>
+          <div class="pf-stat"><strong>+450</strong><span>médicos, enfermeiros e socorristas</span></div>
+          <div class="pf-stat"><strong>4,7★</strong><span>mais de 730 avaliações no Google</span></div>
+        </div>
+      </div>
+    </section>
+
+    <FAQ items={faqItems} titleHtml="Perguntas sobre o <em>Plano Familiar</em>" eyebrow="DÚVIDAS" />
+
+    <!-- ═══ CTA FINAL ═══ -->
+    <section class="section pf-cta-final" aria-labelledby="ctaf-heading">
+      <div class="wrap pf-cta-inner">
+        <p class="eyebrow on-dark" style="margin-bottom:16px">Falta pouco</p>
+        <h2 id="ctaf-heading" class="on-dark">Sua família na frente da fila.<br /><em class="pf-green-bright">Entre na lista de espera.</em></h2>
+        <a href="#lista" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="pf-cta-final">Entrar na lista</a>
+      </div>
+    </section>
+
   </main>
 
   <Footer showBothCities={true} showBairros={false} />
+
+  <style>
+    /* ══ HERO ══ */
+    .pf-hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      background: var(--navy-deep);
+      padding: 80px 0 64px;
+    }
+
+    .pf-hero-bg,
+    .pf-hero-bg picture,
+    .pf-hero-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pf-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7,24,43,.92) 0%, rgba(7,24,43,.55) 100%);
+    }
+
+    .pf-hero-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .pf-hero-brand { text-decoration: none; display: inline-block; }
+
+    .pf-hero-wordmark {
+      font-family: 'Ethnocentric', var(--sans);
+      font-weight: 400;
+      font-size: 27px;
+      color: #fff;
+      letter-spacing: .12em;
+      line-height: 1;
+    }
+
+    .pf-hero-descriptor {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      margin-top: 4px;
+    }
+
+    .pf-hero h1 {
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.08;
+      margin-bottom: 18px;
+    }
+
+    .pf-green-bright {
+      color: var(--green-bright);
+      font-style: normal;
+    }
+
+    .pf-hero-sub {
+      color: rgba(255,255,255,.8);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 600px;
+      margin-bottom: 0;
+    }
+
+    /* ══ HERO GRID ══ */
+    .pf-hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    /* Rating */
+    .pf-hero-rating {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    /* CTA mobile (aparece só em telas estreitas) */
+    .pf-hero-cta-mobile {
+      display: none;
+    }
+
+    /* ══ FORM CARD ══ */
+    .pf-form-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.25);
+    }
+
+    .pf-form-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .pf-form-sub {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 0;
+    }
+
+    .pf-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--green-dark);
+      margin: 14px 0 6px;
+    }
+
+    .pf-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--cream-dark);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: var(--sans);
+      box-sizing: border-box;
+    }
+
+    .pf-input:focus {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+    }
+
+    .pf-submit {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .pf-form-note {
+      font-size: 12px;
+      color: #888;
+      margin-top: 12px;
+    }
+
+    .pf-form-feedback {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .pf-form-feedback.ok {
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    /* ══ RESPONSIVO HERO ══ */
+    @media (max-width: 960px) {
+      .pf-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .pf-hero-cta-mobile {
+        display: inline-flex;
+        margin-top: 20px;
+      }
+    }
+
+    /* ══ BENEFÍCIOS ══ */
+    .pf-beneficios {
+      background: var(--cream-light);
+    }
+
+    .pf-beneficios h2 {
+      color: var(--navy);
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      margin-bottom: 14px;
+    }
+
+    .accent-text {
+      color: var(--green-dark);
+      font-style: normal;
+    }
+
+    .pf-section-intro {
+      font-size: 16px;
+      color: #555;
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+
+    .pf-ben-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .pf-ben-card {
+      background: #fff;
+      border: 1px solid var(--cream-dark);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .pf-ben-card h3 {
+      font-size: 17px;
+      color: var(--navy);
+      margin: 10px 0 6px;
+    }
+
+    .pf-ben-card p {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .pf-ben-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--green-dark);
+    }
+
+    @media (max-width: 960px) {
+      .pf-ben-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .pf-ben-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══ PASSOS ══ */
+    .pf-passos {
+      background: var(--navy);
+    }
+
+    .pf-passos h2 {
+      color: #fff;
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      margin-bottom: 40px;
+    }
+
+    .pf-passos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pf-passo h3 {
+      color: #fff;
+      font-size: 18px;
+      margin: 10px 0 8px;
+    }
+
+    .pf-passo p {
+      color: rgba(255,255,255,.7);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .pf-passo-num {
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: .1em;
+      color: var(--green-bright);
+      font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+      .pf-passos-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══ PROVA SOCIAL ══ */
+    .pf-prova {
+      background: #fff;
+    }
+
+    .pf-prova h2 {
+      color: var(--navy);
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      margin-bottom: 40px;
+    }
+
+    .pf-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .pf-stat strong {
+      display: block;
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+    }
+
+    .pf-stat span {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 700px) {
+      .pf-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ══ CTA FINAL ══ */
+    .pf-cta-final {
+      background: var(--navy-deep);
+    }
+
+    .pf-cta-inner {
+      text-align: center;
+    }
+
+    .pf-cta-inner h2 {
+      color: #fff;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin-bottom: 32px;
+    }
+
+    /* Focus visible acessível */
+    .pf-input:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid var(--green-bright);
+      outline-offset: 3px;
+    }
+  </style>
 
   <script is:inline>
     (function () {
