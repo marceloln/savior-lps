@@ -10,26 +10,26 @@ import FAQ from '../components/FAQ.astro';
 import Testimonials from '../components/Testimonials.astro';
 
 const BENEFICIOS = [
-  { icon: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>', titulo: 'Ambulância 24h, sem limite', texto: 'Emergência não escolhe hora. Acionamento ilimitado, todos os dias do ano, direto na central Savior.' },
-  { icon: '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>', titulo: 'UTI móvel com médico', texto: 'Suporte avançado de vida com médico e enfermeiro a bordo quando o quadro exigir.' },
-  { icon: '<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>', titulo: 'Orientação médica por telefone', texto: 'Antes da ambulância sair, um profissional escuta e orienta os primeiros passos.' },
+  { icon: '<path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>', titulo: 'Atendimento 24 horas', texto: 'Emergência não escolhe hora. A central própria da Savior responde todos os dias do ano, com a solução adequada para cada situação.' },
+  { icon: '<path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>', titulo: 'Telemedicina e atendimento em casa', texto: 'Orientação médica a distância e equipe de saúde na sua residência, conforme a necessidade de cada caso.' },
+  { icon: '<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>', titulo: 'Orientação médica por telefone', texto: 'Um profissional de saúde escuta e orienta os primeiros passos, a qualquer hora do dia ou da noite.' },
   { icon: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>', titulo: 'Equipe 100% própria', texto: 'Médicos, enfermeiros e condutores contratados e treinados pela Savior. Nada terceirizado.' },
   { icon: '<circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 1.9.7 3.4 1.8 4.9L12 22l6.2-7.1C19.3 13.4 20 11.9 20 10a8 8 0 0 0-8-8Z"/>', titulo: 'Rio de Janeiro e São Paulo', texto: 'Bases próprias nas duas cidades, com a mesma central 24h que opera há 46 anos.' },
-  { icon: '<path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>', titulo: 'Prioridade de quem está na lista', texto: 'Quem entra na lista é avisado primeiro e garante a condição especial de lançamento.' },
+  { icon: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', titulo: 'Lançamento em primeira mão', texto: 'Quem está na lista é avisado antes da divulgação geral e participa do lançamento com condições especiais.' },
 ];
 
 const PASSOS = [
   { num: '01', titulo: 'Entre na lista', texto: 'Preencha o formulário com seus dados. Leva menos de um minuto.' },
   { num: '02', titulo: 'Seja avisado primeiro', texto: 'Quando o plano abrir, você recebe as condições antes da divulgação geral.' },
-  { num: '03', titulo: 'Contrate com condição de fundador', texto: 'A lista de espera tem prioridade e condição especial de lançamento.' },
+  { num: '03', titulo: 'Contrate com condições especiais', texto: 'A lista de espera tem prioridade e condições especiais de lançamento.' },
 ];
 
 const faqItems = [
-  { q: 'O que é o Plano Familiar da Savior?', a: 'Uma assinatura de assistência de emergência para sua família: ambulância 24h, UTI móvel e orientação médica por telefone, com a estrutura própria da Savior no Rio de Janeiro e em São Paulo.' },
+  { q: 'O que é o Plano Familiar da Savior?', a: 'Uma assinatura de assistência para sua família: telemedicina, atendimento na residência e resposta de emergência 24 horas, com a estrutura própria da Savior no Rio de Janeiro e em São Paulo.' },
   { q: 'Quando o plano será lançado?', a: 'A data será anunciada em breve. Quem está na lista de espera é avisado primeiro, antes da divulgação geral.' },
-  { q: 'Quanto vai custar?', a: 'Os valores serão divulgados no lançamento. A lista de espera garante a condição especial de fundador.' },
-  { q: 'Onde o plano vai funcionar?', a: 'No Rio de Janeiro e em São Paulo, nas mesmas áreas de cobertura da operação Savior. Outras cidades entram no radar conforme a demanda da lista.' },
-  { q: 'É um plano de saúde?', a: 'Não. É um serviço de assistência de emergência que complementa o plano de saúde: a maioria dos planos não cobre ambulância particular com resposta rápida.' },
+  { q: 'Quanto vai custar?', a: 'Os valores serão divulgados no lançamento. A lista de espera garante condições especiais.' },
+  { q: 'Onde o plano vai funcionar?', a: 'No Rio de Janeiro e em São Paulo, nas mesmas áreas de cobertura da operação Savior. Outras regiões serão avaliadas conforme a demanda da lista.' },
+  { q: 'É um plano de saúde?', a: 'Não. É um serviço de assistência que complementa o plano de saúde: a maioria dos planos não cobre atendimento imediato por telefone e na residência.' },
 ];
 
 const schema = JSON.stringify({
@@ -38,10 +38,10 @@ const schema = JSON.stringify({
     {
       "@type": "Service",
       "name": "Plano Familiar Savior",
-      "serviceType": "Assistência de emergência médica por assinatura",
+      "serviceType": "Assistência médica familiar por assinatura",
       "provider": { "@type": "MedicalClinic", "name": "Savior Medical Service", "url": "https://www.savior.com.br" },
       "areaServed": ["Rio de Janeiro", "São Paulo"],
-      "description": "Assinatura de assistência de emergência para famílias: ambulância 24h, UTI móvel e orientação médica por telefone. Pré-lançamento com lista de espera."
+      "description": "Assinatura de assistência para famílias: telemedicina, atendimento na residência e resposta de emergência 24 horas. Pré-lançamento com lista de espera."
     },
     {
       "@type": "FAQPage",
@@ -52,12 +52,12 @@ const schema = JSON.stringify({
 ---
 
 <Base
-  title="Plano Familiar | Ambulância UTI por assinatura — Savior"
-  description="Assistência de emergência 24h para sua família: ambulância UTI, orientação médica e equipe própria, no RJ e em SP. Entre na lista de espera do lançamento."
+  title="Plano Familiar | Atendimento 24h por assinatura — Savior"
+  description="Atendimento para sua família, sem depender de plano de saúde: telemedicina, atendimento em casa e emergência 24h no RJ e em SP. Entre na lista de espera do lançamento."
   canonical="https://www.savior.com.br/plano-familiar"
   schema={schema}
   ogImage="/og/plano-familiar-og-1200x630.jpg"
-  ogImageAlt="Frota de ambulâncias UTI da Savior em Copacabana — Plano Familiar em breve, lista de espera aberta"
+  ogImageAlt="Frota da Savior em Copacabana — Plano Familiar: atendimento 24h por assinatura, lista de espera aberta"
   twitterImage="/og/plano-familiar-twitter-card-1200x628.jpg"
   dateModified="2026-07-14"
 >
@@ -80,8 +80,8 @@ const schema = JSON.stringify({
         <div class="pf-hero-grid">
           <div class="pf-hero-left">
             <p class="eyebrow on-dark" style="margin-bottom:18px">Plano Familiar · Em breve</p>
-            <h1>Ambulância UTI para a sua família. <em class="pf-green-bright">Sem depender de plano de saúde.</em></h1>
-            <p class="pf-hero-sub">Assistência de emergência 24h por assinatura, com a estrutura que atende o Rio de Janeiro e São Paulo há 46 anos. Entre na lista e seja avisado no lançamento.</p>
+            <h1>Atendimento para a sua família, sem depender de plano de saúde. <em class="pf-green-bright">24 horas por dia.</em></h1>
+            <p class="pf-hero-sub">Telemedicina, atendimento em casa e resposta de emergência por assinatura, com a estrutura que atende o Rio de Janeiro e São Paulo há 46 anos. Entre na lista e seja avisado no lançamento.</p>
             <a href="#lista" class="btn btn-primary pf-hero-cta-mobile" data-event="cta_click" data-event-category="cta" data-event-label="pf-hero-lista">Entrar na lista</a>
             <div class="pf-hero-rating" role="img" aria-label="4,7 estrelas, mais de 730 avaliações no Google">
               <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
@@ -98,22 +98,34 @@ const schema = JSON.stringify({
           <div class="pf-hero-right" id="lista">
             <form class="pf-form-card" id="pfForm" novalidate>
               <p class="pf-form-title">Entre na lista de espera</p>
-              <p class="pf-form-sub">Sem compromisso. Você é avisado primeiro e garante a condição de lançamento.</p>
+              <p class="pf-form-sub">Sem compromisso. Você é avisado primeiro e garante as condições especiais de lançamento.</p>
               <label class="pf-label" for="pf-nome">Nome *</label>
               <input class="pf-input" id="pf-nome" name="nome" type="text" required autocomplete="name" />
               <label class="pf-label" for="pf-whatsapp">WhatsApp *</label>
               <input class="pf-input" id="pf-whatsapp" name="whatsapp" type="tel" required autocomplete="tel" placeholder="(21) 99999-9999" />
               <label class="pf-label" for="pf-email">E-mail *</label>
               <input class="pf-input" id="pf-email" name="email" type="email" required autocomplete="email" placeholder="voce@email.com.br" />
-              <label class="pf-label" for="pf-cidade">Cidade *</label>
-              <select class="pf-input" id="pf-cidade" name="cidade" required>
+              <label class="pf-label" for="pf-estado">Estado *</label>
+              <select class="pf-input" id="pf-estado" name="estado" required>
                 <option value="" disabled selected>Selecione</option>
                 <option value="rj">Rio de Janeiro</option>
                 <option value="sp">São Paulo</option>
-                <option value="outra">Outra cidade</option>
+                <option value="outra">Outro estado</option>
+              </select>
+              <label class="pf-label" for="pf-bairro">Bairro ou CEP da residência *</label>
+              <input class="pf-input" id="pf-bairro" name="bairro_cep" type="text" required autocomplete="postal-code" placeholder="Ex: Copacabana ou 22070-000" />
+              <label class="pf-label" for="pf-pessoas">Pessoas na família *</label>
+              <select class="pf-input" id="pf-pessoas" name="pessoas" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6 ou mais">6 ou mais</option>
               </select>
               <button type="submit" class="btn btn-primary pf-submit" data-event="cta_click" data-event-category="cta" data-event-label="pf-form-submit">Quero ser avisado</button>
-              <p class="pf-form-note">Seus dados ficam só com a Savior e são usados apenas pra te avisar do lançamento.</p>
+              <p class="pf-form-note">Seus dados ficam com a Savior e são usados apenas para avisar você sobre o lançamento.</p>
               <p class="pf-form-feedback" id="pfFeedback" role="status" aria-live="polite"></p>
             </form>
           </div>
@@ -125,7 +137,7 @@ const schema = JSON.stringify({
     <section class="section pf-beneficios" aria-labelledby="ben-heading">
       <div class="wrap">
         <p class="eyebrow" style="margin-bottom:12px">O que está incluído</p>
-        <h2 id="ben-heading">Emergência resolvida, <em class="accent-text">sem susto no boleto</em></h2>
+        <h2 id="ben-heading">Assistência completa, <em class="accent-text">com custo previsível</em></h2>
         <p class="pf-section-intro">O Plano Familiar coloca a estrutura da Savior de prontidão para as pessoas que você ama.</p>
         <div class="pf-ben-grid">
           {BENEFICIOS.map((b) => (
@@ -186,9 +198,9 @@ const schema = JSON.stringify({
             </picture>
           </div>
           <div class="atend-content pf-cta-inner">
-            <p class="eyebrow on-dark" style="margin-bottom:16px">Falta pouco</p>
-            <h2 id="ctaf-heading" class="on-dark">Sua família na frente da fila.<br /><em class="pf-green-bright">Entre na lista de espera.</em></h2>
-            <div><a href="#lista" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="pf-cta-final">Entrar na lista</a></div>
+            <p class="eyebrow on-dark" style="margin-bottom:16px">Lançamento</p>
+            <h2 id="ctaf-heading" class="on-dark">Proteção para a sua família.<br /><em class="pf-green-bright">Condições especiais de lançamento.</em></h2>
+            <div><a href="#lista" class="btn btn-primary on-dark" data-event="cta_click" data-event-category="cta" data-event-label="pf-cta-final">Entrar na lista de espera</a></div>
           </div>
         </div>
       </div>
@@ -559,8 +571,10 @@ const schema = JSON.stringify({
         var nome = document.getElementById('pf-nome').value.trim();
         var whatsapp = document.getElementById('pf-whatsapp').value.trim();
         var email = document.getElementById('pf-email').value.trim();
-        var cidade = document.getElementById('pf-cidade').value;
-        if (!nome || !whatsapp || !email || !cidade) { fb.textContent = 'Preencha todos os campos.'; return; }
+        var estado = document.getElementById('pf-estado').value;
+        var bairro = document.getElementById('pf-bairro').value.trim();
+        var pessoas = document.getElementById('pf-pessoas').value;
+        if (!nome || !whatsapp || !email || !estado || !bairro || !pessoas) { fb.textContent = 'Preencha todos os campos.'; return; }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fb.textContent = 'Confira o e-mail digitado.'; return; }
         var utm = window._saviorUtm || {};
         enviando = true; btn.disabled = true; btn.textContent = 'Enviando...';
@@ -569,16 +583,17 @@ const schema = JSON.stringify({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             type: 'plano_familiar_interesse',
-            nome: nome, whatsapp: whatsapp, email: email, cidade: cidade,
+            nome: nome, whatsapp: whatsapp, email: email, cidade: estado,
+            bairro_cep: bairro, pessoas: pessoas,
             utm_source: utm.source || 'direct', utm_campaign: utm.campaign || 'none'
           })
         }).then(function (r) { return r.json(); }).then(function (d) {
           if (d && d.ok) {
             Array.prototype.forEach.call(form.children, function (el) { if (el.id !== 'pfFeedback') el.style.display = 'none'; });
-            fb.textContent = 'Pronto! Você está na lista. Vamos te avisar em primeira mão no lançamento.';
+            fb.textContent = 'Pronto. Você está na lista e será avisado em primeira mão no lançamento.';
             fb.classList.add('ok');
             window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event: 'pf_interesse', page: 'plano-familiar', cidade: cidade });
+            window.dataLayer.push({ event: 'pf_interesse', page: 'plano-familiar', cidade: estado });
           } else { throw new Error('fail'); }
         }).catch(function () {
           enviando = false; btn.disabled = false; btn.textContent = 'Quero ser avisado';

@@ -1107,6 +1107,8 @@ async function handlePlanoFamiliar(body, env) {
     whatsapp = '',
     email = '',
     cidade = '',
+    bairro_cep = '',
+    pessoas = '',
     utm_source = 'direct',
     utm_campaign = 'none',
   } = body;
@@ -1114,9 +1116,11 @@ async function handlePlanoFamiliar(body, env) {
   const nomeS = String(nome).slice(0, 200);
   const whatsappS = String(whatsapp).slice(0, 40);
   const emailS = String(email).slice(0, 200);
+  const bairroS = String(bairro_cep).slice(0, 120);
+  const pessoasS = String(pessoas).slice(0, 20);
 
   const uf = cidade === 'sp' ? 'sp' : cidade === 'rj' ? 'rj' : 'outra';
-  const ufLabel = uf === 'sp' ? 'São Paulo' : uf === 'rj' ? 'Rio de Janeiro' : 'Outra cidade';
+  const ufLabel = uf === 'sp' ? 'São Paulo' : uf === 'rj' ? 'Rio de Janeiro' : 'Outro estado';
 
   if (!nomeS.trim() || !emailS.trim() || !whatsappS.trim()) {
     return new Response(JSON.stringify({ ok: false, error: 'nome, whatsapp e email obrigatórios' }), {
@@ -1146,7 +1150,9 @@ async function handlePlanoFamiliar(body, env) {
         ${row('Nome', nomeS)}
         ${row('WhatsApp', whatsappS)}
         ${row('E-mail', emailS)}
-        ${row('Cidade', ufLabel)}
+        ${row('Estado', ufLabel)}
+        ${row('Bairro/CEP', bairroS)}
+        ${row('Pessoas na família', pessoasS)}
       </table>
       <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb">
       <p style="font-size:12px;color:#9ca3af;margin:0">🔗 ${esc(utm_source)} · 🎯 ${esc(utm_campaign)} · Enviado pelo site /plano-familiar</p>
