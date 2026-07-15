@@ -594,7 +594,7 @@
       <div class="table-card" style="max-width:640px">
         <table class="dt" id="filas-table"></table>
         <p style="margin-top:10px;font-size:11px;color:rgba(244,239,230,.4);font-family:var(--mono)">
-          Inclui histórico do bot principal; o bot Novo Fluxo (alfa) entra quando a chave for configurada.
+          Inclui histórico do bot principal + Novo Fluxo (alfa, produção RJ desde 10/07). SP segue no modelo antigo.
         </p>
       </div>
     </section>
@@ -810,6 +810,8 @@
       blip_contacts_sp: sp.blip_contacts || 0,
       blip_venda_rj: rj.blip_venda || 0,
       blip_venda_sp: sp.blip_venda || 0,
+      blip_venda_uti: (rj.blip_venda_uti != null ? rj.blip_venda_uti : h.blip_venda_uti) || 0,
+      blip_venda_bas: (rj.blip_venda_bas != null ? rj.blip_venda_bas : h.blip_venda_bas) || 0,
       rj_clicks: rj.ad_clicks || 0,
       rj_cost: rj.cost || 0,
       rj_conv: rj.conversions || 0,
@@ -1354,6 +1356,9 @@
     var contactsData = sliced.map(function(d){return d[contactsKey]||0});
     var ticketsData = sliced.map(function(d){return d[ticketsKey]||0});
     var vendaData = sliced.map(function(d){return d[vendaKey]||0});
+    var vendaUti = sliced.map(function(d){return d.blip_venda_uti||0});
+    var vendaBas = sliced.map(function(d){return d.blip_venda_bas||0});
+    var vendaLegado = sliced.map(function(d,i){return Math.max(0,(d[vendaKey]||0)-vendaUti[i]-vendaBas[i])});
     var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
     try{
     rjFunilChart = new Chart(ctx,{
@@ -1364,7 +1369,9 @@
           {label:'Conv. Ads'+sfxLabel,data:convData,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.06)',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3,fill:true},
           {label:'Contatos Blip'+sfxLabel,data:contactsData,borderColor:'#7B68EE',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
           {label:'Tickets Blip'+sfxLabel,data:ticketsData,borderColor:'#F0A93B',yAxisID:'yCount',tension:.3,borderWidth:2,pointRadius:3},
-          {label:'Vendas'+sfxLabel,data:vendaData,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,0.25)',yAxisID:'yVenda',tension:.3,borderWidth:2.5,pointRadius:4,pointStyle:'rectRounded',fill:true,type:'bar'}
+          {label:'Vendas UTI'+sfxLabel,data:vendaUti,borderColor:'#00B87C',backgroundColor:'rgba(0,184,124,0.75)',yAxisID:'yVenda',stack:'vendas',borderWidth:1,type:'bar'},
+          {label:'Vendas Básica'+sfxLabel,data:vendaBas,borderColor:'#F0B429',backgroundColor:'rgba(240,180,41,0.75)',yAxisID:'yVenda',stack:'vendas',borderWidth:1,type:'bar'},
+          {label:'Vendas (sem tipo)'+sfxLabel,data:vendaLegado,borderColor:'#2E7D32',backgroundColor:'rgba(46,125,50,0.25)',yAxisID:'yVenda',stack:'vendas',borderWidth:1,type:'bar'}
         ]
       },
       options:{
@@ -1378,7 +1385,7 @@
         },
         scales:{
           x:{ticks:{color:'rgba(244,239,230,.5)',font:{size:10},maxRotation:45},grid:{color:'rgba(255,255,255,.05)'}},
-          yVenda:{type:'linear',position:'right',title:{display:true,text:'Vendas',color:'#2E7D32',font:{size:10}},ticks:{color:'#2E7D32',font:{size:10}},grid:{display:false},min:0},
+          yVenda:{type:'linear',position:'right',stacked:true,title:{display:true,text:'Vendas',color:'#2E7D32',font:{size:10}},ticks:{color:'#2E7D32',font:{size:10}},grid:{display:false},min:0},
           yCount:{type:'linear',position:'left',title:{display:true,text:'Quantidade',color:'#00B87C',font:{size:10}},ticks:{color:'#00B87C',font:{size:10}},grid:{color:'rgba(255,255,255,.05)'}}
         }
       }
@@ -1400,20 +1407,24 @@
     var tbl = document.getElementById('filas-table');
     if(!tbl) return;
     if(!filas || Object.keys(filas).length === 0){
-      tbl.innerHTML = '<tr><td colspan="3" style="color:rgba(244,239,230,.4);font-size:12px;padding:12px 0">Sem dados de fila disponíveis.</td></tr>';
+      tbl.innerHTML = '<tr><td colspan="5" style="color:rgba(244,239,230,.4);font-size:12px;padding:12px 0">Sem dados de fila disponíveis.</td></tr>';
       return;
     }
-    var rows = Object.entries(filas).map(function(e){ return {fila: e[0], d7: e[1].d7||0, d30: e[1].d30||0}; });
+    var rows = Object.entries(filas).map(function(e){ return {fila: e[0], hoje: e[1].hoje||0, ontem: e[1].ontem||0, d7: e[1].d7||0, d30: e[1].d30||0}; });
     rows.sort(function(a,b){ return b.d7 - a.d7; });
     var html = '<thead><tr>'+
       '<th style="text-align:left;padding:8px 12px 6px 0;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Fila</th>'+
+      '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Hoje</th>'+
+      '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Ontem</th>'+
       '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">7 dias</th>'+
       '<th style="text-align:right;padding:8px 0 6px 12px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">30 dias</th>'+
       '</tr></thead><tbody>';
     rows.forEach(function(r){
       html += '<tr>'+
         '<td style="padding:7px 12px 7px 0;font-size:13px;color:var(--cream);border-bottom:1px solid rgba(244,239,230,.05)">'+r.fila+'</td>'+
-        '<td style="padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green-bright);border-bottom:1px solid rgba(244,239,230,.05)">'+r.d7+'</td>'+
+        '<td style="padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green-bright);border-bottom:1px solid rgba(244,239,230,.05)">'+r.hoje+'</td>'+
+        '<td style="padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green);border-bottom:1px solid rgba(244,239,230,.05)">'+r.ontem+'</td>'+
+        '<td style="padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;color:rgba(244,239,230,.85);border-bottom:1px solid rgba(244,239,230,.05)">'+r.d7+'</td>'+
         '<td style="padding:7px 0 7px 12px;text-align:right;font-family:var(--mono);font-size:13px;color:rgba(244,239,230,.7);border-bottom:1px solid rgba(244,239,230,.05)">'+r.d30+'</td>'+
       '</tr>';
     });

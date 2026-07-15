@@ -292,6 +292,10 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
   const startD = new Date(startDate + "T00:00:00-03:00");
   const d7cutoff = new Date(startD);
   d7cutoff.setDate(d7cutoff.getDate() + (numDays - 7));
+  // hoje/ontem em data BR (offset -3h)
+  const nowBR = new Date(Date.now() - 3 * 60 * 60 * 1e3);
+  const todayBR = fmtDate(nowBR);
+  const yesterdayBR = fmtDate(new Date(nowBR.getTime() - 24 * 60 * 60 * 1e3));
   for (let i = 0; i < numDays; i++) {
     const d = new Date(startD);
     d.setDate(d.getDate() + i);
@@ -347,9 +351,11 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
         if (isBas && openKey in vendaBasBuckets) vendaBasBuckets[openKey]++;
         // Contagem por fila (team) — usa data de abertura, mesmos cutoffs d7/d30
         const teamName = (t.team && t.team.trim()) ? t.team.trim() : "DIRECT_TRANSFER";
-        if (!filasMap[teamName]) filasMap[teamName] = { d7: 0, d30: 0 };
+        if (!filasMap[teamName]) filasMap[teamName] = { hoje: 0, ontem: 0, d7: 0, d30: 0 };
         filasMap[teamName].d30++;
         if (openTs >= d7Ts) filasMap[teamName].d7++;
+        if (openKey === todayBR) filasMap[teamName].hoje++;
+        else if (openKey === yesterdayBR) filasMap[teamName].ontem++;
       }
       if (t.closed && t.closeDate) {
         const closeTs = new Date(t.closeDate).getTime();
@@ -591,7 +597,9 @@ async function collectAllData(env) {
   // Merge filas { teamName: {d7, d30} } — soma d7/d30 por fila
   function mergeFilas(target, source) {
     for (const [team, counts] of Object.entries(source)) {
-      if (!target[team]) target[team] = { d7: 0, d30: 0 };
+      if (!target[team]) target[team] = { hoje: 0, ontem: 0, d7: 0, d30: 0 };
+      target[team].hoje += counts.hoje || 0;
+      target[team].ontem += counts.ontem || 0;
       target[team].d7 += counts.d7 || 0;
       target[team].d30 += counts.d30 || 0;
     }
