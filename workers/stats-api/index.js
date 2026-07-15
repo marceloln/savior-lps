@@ -326,8 +326,11 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
         const brOpen = new Date(openTs - 3 * 60 * 60 * 1e3);
         const openKey = fmtDate(brOpen);
         if (openKey in entryBuckets) entryBuckets[openKey]++;
-        // Count vendas by tag regardless of close status (both current and legacy tag)
-        if ((tags.includes("Venda realizada") || tags.includes("Finalizado com sucesso")) && openKey in vendaBuckets) vendaBuckets[openKey]++;
+        // Count vendas by tag regardless of close status.
+        // Tags atuais (Novo Fluxo alfa, desde ~10/07/2026): "VR - UTI" e "VR - BAS".
+        // Legadas mantidas pro histórico: "Venda realizada", "Finalizado com sucesso".
+        const isVenda = tags.includes("Venda realizada") || tags.includes("Finalizado com sucesso") || tags.some((x) => String(x).trim().toUpperCase().startsWith("VR - "));
+        if (isVenda && openKey in vendaBuckets) vendaBuckets[openKey]++;
       }
       if (t.closed && t.closeDate) {
         const closeTs = new Date(t.closeDate).getTime();
@@ -335,7 +338,8 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
         const closeKey = fmtDate(brClose);
         if (closeKey in closedBuckets) {
           closedBuckets[closeKey]++;
-          if (tags.includes("Finalizado com sucesso") || tags.includes("Venda realizada")) sucessoBuckets[closeKey]++;
+          const isSucesso = tags.includes("Finalizado com sucesso") || tags.includes("Venda realizada") || tags.some((x) => String(x).trim().toUpperCase().startsWith("VR - "));
+          if (isSucesso) sucessoBuckets[closeKey]++;
           if (tags.length === 0) semTagBuckets[closeKey]++;
         }
       }
@@ -575,6 +579,19 @@ async function collectAllData(env) {
       mergeBuckets(blipVendaRJ, rjBot.venda);
       console.log("Blip RJ Bot OK, entries:", Object.values(rjBot.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjBot.venda).reduce((a,v)=>a+v,0));
     } catch (e) { console.error("Blip RJ Bot ERROR:", e.message); }
+  }
+
+  // RJ: Novo Fluxo (alfa) — bot de produção desde ~10/07/2026. Requer secret BLIP_ALFA_KEY.
+  if (env.BLIP_ALFA_KEY) {
+    try {
+      const rjAlfa = await fetchBlipBothDaily(env.BLIP_ALFA_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(blipDailyRJ, rjAlfa.entries);
+      mergeBuckets(blipClosedDailyRJ, rjAlfa.closed);
+      mergeBuckets(blipSucessoRJ, rjAlfa.sucesso);
+      mergeBuckets(blipSemTagRJ, rjAlfa.sem_tag);
+      mergeBuckets(blipVendaRJ, rjAlfa.venda);
+      console.log("Blip RJ Alfa OK, entries:", Object.values(rjAlfa.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjAlfa.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("Blip RJ Alfa ERROR:", e.message); }
   }
 
   // RJ CRM contacts — use router key (traffic goes to saviorrj via router, not saviorprincipal)
