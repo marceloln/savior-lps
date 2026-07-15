@@ -584,6 +584,21 @@
       </div>
     </section>
 
+    <!-- 04c Tickets por fila (Blip) -->
+    <section class="section" id="s-filas" style="display:none">
+      <div class="section-head">
+        <span class="section-eyebrow">04c · Tickets por fila</span>
+        <h2 class="section-title">Distribuição de atendimentos por fila no Blip</h2>
+        <span class="section-sub">bot principal RJ (saviorprincipal + saviorrj)</span>
+      </div>
+      <div class="table-card" style="max-width:640px">
+        <table class="dt" id="filas-table"></table>
+        <p style="margin-top:10px;font-size:11px;color:rgba(244,239,230,.4);font-family:var(--mono)">
+          Inclui histórico do bot principal; o bot Novo Fluxo (alfa) entra quando a chave for configurada.
+        </p>
+      </div>
+    </section>
+
     <!-- 05 Custo por Etapa -->
     <section class="section" id="s-custo" style="display:none">
       <div class="section-head">
@@ -709,7 +724,7 @@
   });
 
   /* ── Data load ─────────────────────────────────────── */
-  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-rj','s-custo','s-camps','s-sinais'];
+  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-rj','s-filas','s-custo','s-camps','s-sinais'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
   function showAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='block'})}
 
@@ -838,6 +853,7 @@
     renderFunil(STATE.funilPeriod || 'dia');
     renderTrend(m30, m90);
     renderRjFunil();
+    renderFilas(d.blip_filas);
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
     renderSinais(hoje, ontem, m30, d.ads);
@@ -1027,9 +1043,33 @@
         sub = 'hoje '+def.fmt(hoje[def.k])+' · m7d '+def.fmt(m7d[def.k]);
       }
 
+      // Split UTI/BAS chips para o card de Vendas
+      var splitChips = '';
+      if(def.k === 'blip_venda' && data && data.blip_venda_split){
+        var sp = data.blip_venda_split;
+        var utiN = 0, basN = 0;
+        // Para períodos curtos (hoje/ontem) mostrar acumulado 7d para dar sinal;
+        // para semana usa d7, para mês usa d30
+        var useD30 = (period === 'mes');
+        utiN = useD30 ? ((sp.uti && sp.uti.d30) || 0) : ((sp.uti && sp.uti.d7) || 0);
+        basN = useD30 ? ((sp.bas && sp.bas.d30) || 0) : ((sp.bas && sp.bas.d7) || 0);
+        var chipLabel = useD30 ? ' (30d)' : ' (7d)';
+        if(utiN > 0 || basN > 0){
+          splitChips = '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">'+
+            '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(0,184,124,.15);border:1px solid rgba(0,184,124,.35);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;color:#00B87C">'+
+              '<span style="width:6px;height:6px;border-radius:50%;background:#00B87C;display:inline-block"></span>UTI\u00a0'+utiN+chipLabel+
+            '</span>'+
+            '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(240,180,41,.15);border:1px solid rgba(240,180,41,.35);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;color:#F0B429">'+
+              '<span style="width:6px;height:6px;border-radius:50%;background:#F0B429;display:inline-block"></span>B\u00e1sica\u00a0'+basN+chipLabel+
+            '</span>'+
+          '</div>';
+        }
+      }
+
       html += '<div class="kpi '+state+'">'+
         '<div class="kpi-label">'+def.l+'</div>'+
         '<div class="kpi-value">'+def.fmt(val)+'</div>'+
+        splitChips+
         (sub ? '<div class="kpi-sub">'+sub+'</div>' : '')+
         '<div class="kpi-deltas">'+deltas+'</div>'+
       '</div>';
@@ -1354,6 +1394,32 @@
     rjFunilRange = parseInt(btn.dataset.rjrange)||30;
     renderRjFunil();
   });
+
+  /* ── 04c Filas Blip ────────────────────────────────── */
+  function renderFilas(filas){
+    var tbl = document.getElementById('filas-table');
+    if(!tbl) return;
+    if(!filas || Object.keys(filas).length === 0){
+      tbl.innerHTML = '<tr><td colspan="3" style="color:rgba(244,239,230,.4);font-size:12px;padding:12px 0">Sem dados de fila disponíveis.</td></tr>';
+      return;
+    }
+    var rows = Object.entries(filas).map(function(e){ return {fila: e[0], d7: e[1].d7||0, d30: e[1].d30||0}; });
+    rows.sort(function(a,b){ return b.d7 - a.d7; });
+    var html = '<thead><tr>'+
+      '<th style="text-align:left;padding:8px 12px 6px 0;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Fila</th>'+
+      '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">7 dias</th>'+
+      '<th style="text-align:right;padding:8px 0 6px 12px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">30 dias</th>'+
+      '</tr></thead><tbody>';
+    rows.forEach(function(r){
+      html += '<tr>'+
+        '<td style="padding:7px 12px 7px 0;font-size:13px;color:var(--cream);border-bottom:1px solid rgba(244,239,230,.05)">'+r.fila+'</td>'+
+        '<td style="padding:7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green-bright);border-bottom:1px solid rgba(244,239,230,.05)">'+r.d7+'</td>'+
+        '<td style="padding:7px 0 7px 12px;text-align:right;font-family:var(--mono);font-size:13px;color:rgba(244,239,230,.7);border-bottom:1px solid rgba(244,239,230,.05)">'+r.d30+'</td>'+
+      '</tr>';
+    });
+    html += '</tbody>';
+    tbl.innerHTML = html;
+  }
 
   /* ── 05 Custo cascade ──────────────────────────────── */
   function renderCusto(m30){
