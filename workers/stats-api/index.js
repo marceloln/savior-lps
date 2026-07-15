@@ -285,7 +285,13 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
   const sucessoBuckets = {};
   const semTagBuckets = {};
   const vendaBuckets = {};
+  const vendaUtiBuckets = {};
+  const vendaBasBuckets = {};
+  // filas: { teamName: { d7: int, d30: int } }
+  const filasMap = {};
   const startD = new Date(startDate + "T00:00:00-03:00");
+  const d7cutoff = new Date(startD);
+  d7cutoff.setDate(d7cutoff.getDate() + (numDays - 7));
   for (let i = 0; i < numDays; i++) {
     const d = new Date(startD);
     d.setDate(d.getDate() + i);
@@ -295,8 +301,11 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
     sucessoBuckets[key] = 0;
     semTagBuckets[key] = 0;
     vendaBuckets[key] = 0;
+    vendaUtiBuckets[key] = 0;
+    vendaBasBuckets[key] = 0;
   }
   const startTs = startD.getTime();
+  const d7Ts = d7cutoff.getTime();
   let skip = 0;
   const take = 100;
   let keepGoing = true;
@@ -331,6 +340,16 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
         // Legadas mantidas pro histórico: "Venda realizada", "Finalizado com sucesso".
         const isVenda = tags.includes("Venda realizada") || tags.includes("Finalizado com sucesso") || tags.some((x) => String(x).trim().toUpperCase().startsWith("VR - "));
         if (isVenda && openKey in vendaBuckets) vendaBuckets[openKey]++;
+        // Split UTI vs BAS (novas tags do Novo Fluxo alfa)
+        const isUti = tags.some((x) => String(x).trim().toUpperCase() === "VR - UTI");
+        const isBas = tags.some((x) => String(x).trim().toUpperCase() === "VR - BAS");
+        if (isUti && openKey in vendaUtiBuckets) vendaUtiBuckets[openKey]++;
+        if (isBas && openKey in vendaBasBuckets) vendaBasBuckets[openKey]++;
+        // Contagem por fila (team) — usa data de abertura, mesmos cutoffs d7/d30
+        const teamName = (t.team && t.team.trim()) ? t.team.trim() : "DIRECT_TRANSFER";
+        if (!filasMap[teamName]) filasMap[teamName] = { d7: 0, d30: 0 };
+        filasMap[teamName].d30++;
+        if (openTs >= d7Ts) filasMap[teamName].d7++;
       }
       if (t.closed && t.closeDate) {
         const closeTs = new Date(t.closeDate).getTime();
@@ -348,7 +367,16 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
     skip += take;
     if (skip > 1000) break;
   }
-  return { entries: entryBuckets, closed: closedBuckets, sucesso: sucessoBuckets, sem_tag: semTagBuckets, venda: vendaBuckets };
+  return {
+    entries: entryBuckets,
+    closed: closedBuckets,
+    sucesso: sucessoBuckets,
+    sem_tag: semTagBuckets,
+    venda: vendaBuckets,
+    venda_uti: vendaUtiBuckets,
+    venda_bas: vendaBasBuckets,
+    filas: filasMap
+  };
 }
 
 // Blip SP: count CRM contacts (SP router has NO desk module)
@@ -549,6 +577,8 @@ async function collectAllData(env) {
   let blipSucessoRJ = {}, blipSucessoSP = {};
   let blipSemTagRJ = {}, blipSemTagSP = {};
   let blipVendaRJ = {}, blipVendaSP = {};
+  let blipVendaUtiRJ = {}, blipVendaBasRJ = {};
+  let blipFilasRJ = {};
   let blipContactsRJ = {}, blipContactsSP = {};
 
   // RJ: desk tickets from saviorprincipal + saviorrj (both serve RJ)
@@ -558,6 +588,14 @@ async function collectAllData(env) {
       else target[k] = source[k];
     }
   }
+  // Merge filas { teamName: {d7, d30} } — soma d7/d30 por fila
+  function mergeFilas(target, source) {
+    for (const [team, counts] of Object.entries(source)) {
+      if (!target[team]) target[team] = { d7: 0, d30: 0 };
+      target[team].d7 += counts.d7 || 0;
+      target[team].d30 += counts.d30 || 0;
+    }
+  }
   try {
     const rjBoth = await fetchBlipBothDaily(rjKey, BOT_DOMAIN, d30start, 31);
     blipDailyRJ = rjBoth.entries;
@@ -565,6 +603,9 @@ async function collectAllData(env) {
     blipSucessoRJ = rjBoth.sucesso;
     blipSemTagRJ = rjBoth.sem_tag;
     blipVendaRJ = rjBoth.venda;
+    blipVendaUtiRJ = rjBoth.venda_uti;
+    blipVendaBasRJ = rjBoth.venda_bas;
+    mergeFilas(blipFilasRJ, rjBoth.filas);
     console.log("Blip RJ Principal OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "venda:", Object.values(blipVendaRJ).reduce((a,v)=>a+v,0));
   } catch (e) { console.error("Blip RJ Principal ERROR:", e.message); }
 
@@ -577,6 +618,9 @@ async function collectAllData(env) {
       mergeBuckets(blipSucessoRJ, rjBot.sucesso);
       mergeBuckets(blipSemTagRJ, rjBot.sem_tag);
       mergeBuckets(blipVendaRJ, rjBot.venda);
+      mergeBuckets(blipVendaUtiRJ, rjBot.venda_uti);
+      mergeBuckets(blipVendaBasRJ, rjBot.venda_bas);
+      mergeFilas(blipFilasRJ, rjBot.filas);
       console.log("Blip RJ Bot OK, entries:", Object.values(rjBot.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjBot.venda).reduce((a,v)=>a+v,0));
     } catch (e) { console.error("Blip RJ Bot ERROR:", e.message); }
   }
@@ -590,6 +634,9 @@ async function collectAllData(env) {
       mergeBuckets(blipSucessoRJ, rjAlfa.sucesso);
       mergeBuckets(blipSemTagRJ, rjAlfa.sem_tag);
       mergeBuckets(blipVendaRJ, rjAlfa.venda);
+      mergeBuckets(blipVendaUtiRJ, rjAlfa.venda_uti);
+      mergeBuckets(blipVendaBasRJ, rjAlfa.venda_bas);
+      mergeFilas(blipFilasRJ, rjAlfa.filas);
       console.log("Blip RJ Alfa OK, entries:", Object.values(rjAlfa.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjAlfa.venda).reduce((a,v)=>a+v,0));
     } catch (e) { console.error("Blip RJ Alfa ERROR:", e.message); }
   }
@@ -632,6 +679,17 @@ async function collectAllData(env) {
   const vdRj30 = sumBuckets(blipVendaRJ);
   // SP não tem desk, venda sempre 0
   const vdSpToday = 0, vdSpOntem = 0, vdSpD2 = 0, vdSp30 = 0;
+
+  // Split UTI vs BAS (agrega tudo em d7 e d30)
+  function sumBucketsLast(buckets, days) {
+    const allDates = Object.keys(buckets).sort();
+    const slice = days ? allDates.slice(-days) : allDates;
+    return slice.reduce((a, k) => a + (buckets[k] || 0), 0);
+  }
+  const utiD7 = sumBucketsLast(blipVendaUtiRJ, 7);
+  const utiD30 = sumBuckets(blipVendaUtiRJ);
+  const basD7 = sumBucketsLast(blipVendaBasRJ, 7);
+  const basD30 = sumBuckets(blipVendaBasRJ);
 
   // Contatos CRM (bot interactions, superset de desk tickets)
   const ctRjToday = dayVal(blipContactsRJ, today), ctSpToday = dayVal(blipContactsSP, today);
@@ -693,6 +751,8 @@ async function collectAllData(env) {
     const blip_sem_tag_sp = (blipSemTagSP[date] || 0);
     const blip_venda_rj = (blipVendaRJ[date] || 0);
     const blip_venda_sp = 0; // SP não tem desk
+    const blip_venda_uti = (blipVendaUtiRJ[date] || 0);
+    const blip_venda_bas = (blipVendaBasRJ[date] || 0);
     const blip_contacts_rj = (blipContactsRJ[date] || 0);
     const blip_contacts_sp = (blipContactsSP[date] || 0);
     return {
@@ -702,6 +762,7 @@ async function collectAllData(env) {
       blip_sucesso: blip_sucesso_rj + blip_sucesso_sp,
       blip_sem_tag: blip_sem_tag_rj + blip_sem_tag_sp,
       blip_venda: blip_venda_rj + blip_venda_sp,
+      blip_venda_uti, blip_venda_bas,
       blip_contacts: blip_contacts_rj + blip_contacts_sp,
       blip_rj, blip_sp, blip_closed_rj, blip_closed_sp,
       blip_contacts_rj, blip_contacts_sp, blip_venda_rj, blip_venda_sp,
@@ -753,7 +814,12 @@ async function collectAllData(env) {
     por_pipeline: pipedriveStats.por_pipeline,
     por_tipo: pipedriveStats.por_tipo,
     por_cidade: pipedriveStats.por_cidade,
-    ads
+    ads,
+    blip_venda_split: {
+      uti: { d7: utiD7, d30: utiD30 },
+      bas: { d7: basD7, d30: basD30 }
+    },
+    blip_filas: blipFilasRJ
   };
 }
 
