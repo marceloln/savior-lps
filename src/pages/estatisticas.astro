@@ -1356,8 +1356,9 @@
     var contactsData = sliced.map(function(d){return d[contactsKey]||0});
     var ticketsData = sliced.map(function(d){return d[ticketsKey]||0});
     var vendaData = sliced.map(function(d){return d[vendaKey]||0});
-    var vendaUti = sliced.map(function(d){return d.blip_venda_uti||0});
-    var vendaBas = sliced.map(function(d){return d.blip_venda_bas||0});
+    var splitOk = vendaKey !== 'blip_venda_sp'; // split UTI/Básica vem do bot alfa (só RJ)
+    var vendaUti = sliced.map(function(d){return splitOk ? (d.blip_venda_uti||0) : 0});
+    var vendaBas = sliced.map(function(d){return splitOk ? (d.blip_venda_bas||0) : 0});
     var vendaLegado = sliced.map(function(d,i){return Math.max(0,(d[vendaKey]||0)-vendaUti[i]-vendaBas[i])});
     var ctx = document.getElementById('rj-funil-canvas').getContext('2d');
     try{
