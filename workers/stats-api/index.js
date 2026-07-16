@@ -652,6 +652,15 @@ async function collectAllData(env) {
     } catch (e) { console.error("Blip RJ Alfa ERROR:", e.message); }
   }
 
+  // SP DESK (sub-bot saviorsaopaulo TEM desk com tags de venda — verificado 16/07)
+  if (env.BLIP_SP_DESK_KEY) {
+    try {
+      const spDesk = await fetchBlipBothDaily(env.BLIP_SP_DESK_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      blipVendaSP = spDesk.venda;
+      console.log("Blip SP Desk OK, venda:", Object.values(blipVendaSP).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("Blip SP Desk ERROR:", e.message); }
+  }
+
   // RJ CRM contacts — use router key (traffic goes to saviorrj via router, not saviorprincipal)
   const rjCrmKey = env.BLIP_ROUTER_KEY || rjKey;
   try {
@@ -691,7 +700,8 @@ async function collectAllData(env) {
   const vdRjToday = dayVal(blipVendaRJ, today), vdRjOntem = dayVal(blipVendaRJ, yesterday), vdRjD2 = dayVal(blipVendaRJ, d2Date);
   const vdRj30 = sumBuckets(blipVendaRJ);
   // SP não tem desk, venda sempre 0
-  const vdSpToday = 0, vdSpOntem = 0, vdSpD2 = 0, vdSp30 = 0;
+  const vdSpToday = dayVal(blipVendaSP, today), vdSpOntem = dayVal(blipVendaSP, yesterday), vdSpD2 = dayVal(blipVendaSP, d2Date);
+  const vdSp30 = sumBuckets(blipVendaSP);
 
   // Split UTI vs BAS (agrega tudo em d7 e d30)
   function sumBucketsLast(buckets, days) {
@@ -763,7 +773,7 @@ async function collectAllData(env) {
     const blip_sem_tag_rj = (blipSemTagRJ[date] || 0);
     const blip_sem_tag_sp = (blipSemTagSP[date] || 0);
     const blip_venda_rj = (blipVendaRJ[date] || 0);
-    const blip_venda_sp = 0; // SP não tem desk
+    const blip_venda_sp = (blipVendaSP[date] || 0);
     const blip_venda_uti = (blipVendaUtiRJ[date] || 0);
     const blip_venda_bas = (blipVendaBasRJ[date] || 0);
     const blip_contacts_rj = (blipContactsRJ[date] || 0);
