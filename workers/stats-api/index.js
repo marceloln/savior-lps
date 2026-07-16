@@ -370,6 +370,7 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
       }
     }
     if (items.length < take) break;
+    if (skip >= 600) break;
     skip += take;
     if (skip > 1000) break;
   }
@@ -400,7 +401,8 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
   const take = 100;
   let keepGoing = true;
   while (keepGoing) {
-    const res = await fetch(`https://${botDomain}.http.msging.net/commands`, {
+    const crmHost = botDomain ? `https://${botDomain}.http.msging.net/commands` : "https://http.msging.net/commands";
+    const res = await fetch(crmHost, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -414,7 +416,7 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
     const data = await res.json();
     if (data.status === "failure") { console.error("Blip CRM failure:", data.reason); break; }
     const items = data.resource?.items || [];
-    if (items.length === 0) break;
+    if (items.length === 0 || skip >= 800) break;
     for (const c of items) {
       const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
       if (lastMsg < startTs) { keepGoing = false; break; }
@@ -425,6 +427,7 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
     }
     if (items.length < take) break;
+    await new Promise((r)=>setTimeout(r,250)); // throttle Blip
     skip += take;
     if (skip > 2000) break;
   }
@@ -660,7 +663,7 @@ async function collectAllData(env) {
   // SP: uses CRM contacts (SP router has NO desk module)
   if (spKey) {
     try {
-      const spBoth = await fetchBlipCrmDaily(spKey, BOT_DOMAIN, d30start, 31);
+      const spBoth = await fetchBlipCrmDaily(spKey, null, d30start, 31); // host genérico: evita conexão reutilizada com credencial do RJ
       blipDailySP = spBoth.entries;
       blipClosedDailySP = spBoth.closed;
       blipSucessoSP = spBoth.sucesso;
@@ -669,6 +672,8 @@ async function collectAllData(env) {
       console.log("Blip SP OK, entries:", Object.values(blipDailySP).reduce((a,v)=>a+v,0));
     } catch (e) { console.error("Blip SP ERROR:", e.message); }
   }
+
+
 
   function sumBuckets(buckets) { return Object.values(buckets).reduce((a, v) => a + v, 0); }
   function dayVal(buckets, date) { return buckets[date] || 0; }
