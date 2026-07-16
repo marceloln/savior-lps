@@ -1,5 +1,6 @@
 // savior-stats-api — Cloudflare Worker
 // Aggregates Google Ads, GA4, Blip, and Pipedrive data
+// ALFA-17: Blip coleta dividida em fases RJ/SP com cache KV para evitar corte das últimas chamadas HTTP
 
 var KV_KEY = "stats-data";
 var TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -437,6 +438,144 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
   return { entries: entryBuckets, closed: zeroBuckets, sucesso: zeroBuckets, sem_tag: zeroBuckets };
 }
 
+// --- ALFA-17: Blip collection split into two phases with KV cache ---
+
+// collectBlipRJ: desk saviorprincipal + saviorrj bot + alfa bot + CRM RJ
+// Returns: { entries, closed, sucesso, sem_tag, venda, venda_uti, venda_bas, filas, contacts }
+async function collectBlipRJ(env) {
+  const BOT_DOMAIN = "savior";
+  const d30start = fmtDate(daysAgo(30));
+  const rjKey = env.BLIP_HTTP_KEY;
+
+  let entries = {};
+  let closed = {};
+  let sucesso = {};
+  let sem_tag = {};
+  let venda = {};
+  let venda_uti = {};
+  let venda_bas = {};
+  let filas = {};
+  let contacts = {};
+
+  function mergeBuckets(target, source) {
+    for (const k of Object.keys(source)) {
+      if (k in target) target[k] += source[k];
+      else target[k] = source[k];
+    }
+  }
+  function mergeFilas(target, source) {
+    for (const [team, counts] of Object.entries(source)) {
+      if (!target[team]) target[team] = { hoje: 0, ontem: 0, d7: 0, d30: 0 };
+      target[team].hoje += counts.hoje || 0;
+      target[team].ontem += counts.ontem || 0;
+      target[team].d7 += counts.d7 || 0;
+      target[team].d30 += counts.d30 || 0;
+    }
+  }
+
+  // saviorprincipal desk (domínio custom + BLIP_HTTP_KEY)
+  try {
+    const rjBoth = await fetchBlipBothDaily(rjKey, BOT_DOMAIN, d30start, 31);
+    entries = rjBoth.entries;
+    closed = rjBoth.closed;
+    sucesso = rjBoth.sucesso;
+    sem_tag = rjBoth.sem_tag;
+    venda = rjBoth.venda;
+    venda_uti = rjBoth.venda_uti;
+    venda_bas = rjBoth.venda_bas;
+    mergeFilas(filas, rjBoth.filas);
+    console.log("collectBlipRJ: saviorprincipal OK, entries:", Object.values(entries).reduce((a,v)=>a+v,0), "venda:", Object.values(venda).reduce((a,v)=>a+v,0));
+  } catch (e) { console.error("collectBlipRJ: saviorprincipal ERROR:", e.message); }
+
+  // saviorrj bot (host genérico + BLIP_RJ_HTTP_KEY)
+  if (env.BLIP_RJ_HTTP_KEY) {
+    try {
+      const rjBot = await fetchBlipBothDaily(env.BLIP_RJ_HTTP_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(entries, rjBot.entries);
+      mergeBuckets(closed, rjBot.closed);
+      mergeBuckets(sucesso, rjBot.sucesso);
+      mergeBuckets(sem_tag, rjBot.sem_tag);
+      mergeBuckets(venda, rjBot.venda);
+      mergeBuckets(venda_uti, rjBot.venda_uti);
+      mergeBuckets(venda_bas, rjBot.venda_bas);
+      mergeFilas(filas, rjBot.filas);
+      console.log("collectBlipRJ: saviorrj OK, entries:", Object.values(rjBot.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjBot.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("collectBlipRJ: saviorrj ERROR:", e.message); }
+  }
+
+  // alfa bot (host genérico + BLIP_ALFA_KEY)
+  if (env.BLIP_ALFA_KEY) {
+    try {
+      const rjAlfa = await fetchBlipBothDaily(env.BLIP_ALFA_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(entries, rjAlfa.entries);
+      mergeBuckets(closed, rjAlfa.closed);
+      mergeBuckets(sucesso, rjAlfa.sucesso);
+      mergeBuckets(sem_tag, rjAlfa.sem_tag);
+      mergeBuckets(venda, rjAlfa.venda);
+      mergeBuckets(venda_uti, rjAlfa.venda_uti);
+      mergeBuckets(venda_bas, rjAlfa.venda_bas);
+      mergeFilas(filas, rjAlfa.filas);
+      console.log("collectBlipRJ: alfa OK, entries:", Object.values(rjAlfa.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjAlfa.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("collectBlipRJ: alfa ERROR:", e.message); }
+  }
+
+  // CRM RJ — router key, domínio custom BOT_DOMAIN
+  const rjCrmKey = env.BLIP_ROUTER_KEY || rjKey;
+  try {
+    const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31);
+    contacts = rjCrm.entries;
+    console.log("collectBlipRJ: CRM OK, contacts:", Object.values(contacts).reduce((a,v)=>a+v,0));
+  } catch (e) { console.error("collectBlipRJ: CRM ERROR:", e.message); }
+
+  return { entries, closed, sucesso, sem_tag, venda, venda_uti, venda_bas, filas, contacts };
+}
+
+// collectBlipSP: CRM SP + desk SP antigo + desk contingência SP
+// Returns: { contacts, venda }
+async function collectBlipSP(env) {
+  const d30start = fmtDate(daysAgo(30));
+  const spKey = env.BLIP_SP_HTTP_KEY;
+
+  let contacts = {};
+  let venda = {};
+
+  function mergeBuckets(target, source) {
+    for (const k of Object.keys(source)) {
+      if (k in target) target[k] += source[k];
+      else target[k] = source[k];
+    }
+  }
+
+  // CRM SP (host genérico + BLIP_SP_HTTP_KEY)
+  if (spKey) {
+    try {
+      const spCrm = await fetchBlipCrmDaily(spKey, null, d30start, 31);
+      contacts = spCrm.entries;
+      console.log("collectBlipSP: CRM SP OK, contacts:", Object.values(contacts).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("collectBlipSP: CRM SP ERROR:", e.message); }
+  }
+
+  // desk SP antigo (host genérico + BLIP_SP_DESK_KEY)
+  if (env.BLIP_SP_DESK_KEY) {
+    try {
+      const spDesk = await fetchBlipBothDaily(env.BLIP_SP_DESK_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(venda, spDesk.venda);
+      console.log("collectBlipSP: desk SP OK, venda:", Object.values(spDesk.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("collectBlipSP: desk SP ERROR:", e.message); }
+  }
+
+  // desk contingência SP (host genérico + BLIP_SP_CONT_KEY)
+  if (env.BLIP_SP_CONT_KEY) {
+    try {
+      const spCont = await fetchBlipBothDaily(env.BLIP_SP_CONT_KEY, null, d30start, 31, "https://http.msging.net/commands");
+      mergeBuckets(venda, spCont.venda);
+      console.log("collectBlipSP: contingência SP OK, venda:", Object.values(spCont.venda).reduce((a,v)=>a+v,0));
+    } catch (e) { console.error("collectBlipSP: contingência SP ERROR:", e.message); }
+  }
+
+  return { contacts, venda };
+}
+
 // --- Pipedrive ---
 async function fetchPipedriveStats(token) {
   const BASE = "https://api.pipedrive.com/v1";
@@ -559,7 +698,8 @@ async function buildPeriod(env, startDate, endDate, days) {
   return { cons, rj, sp };
 }
 
-async function collectAllData(env) {
+// --- buildMainJson: lê caches Blip do KV e monta o JSON principal (sem fetches Blip) ---
+async function buildMainJson(env) {
   const today = fmtDate(nowBRT());
   const yesterday = fmtDate(daysAgo(1));
   const d2Date = fmtDate(daysAgo(2));
@@ -578,111 +718,34 @@ async function collectAllData(env) {
     fetchGA4Daily(env, d30start, yesterday)
   ]);
 
-  const BOT_DOMAIN = "savior";
-  const rjKey = env.BLIP_HTTP_KEY;
-  const spKey = env.BLIP_SP_HTTP_KEY;
-  let blipDailyRJ = {}, blipDailySP = {};
-  let blipClosedDailyRJ = {}, blipClosedDailySP = {};
-  let blipSucessoRJ = {}, blipSucessoSP = {};
-  let blipSemTagRJ = {}, blipSemTagSP = {};
-  let blipVendaRJ = {}, blipVendaSP = {};
-  let blipVendaUtiRJ = {}, blipVendaBasRJ = {};
-  let blipFilasRJ = {};
-  let blipContactsRJ = {}, blipContactsSP = {};
+  // Ler caches Blip do KV (sem fetch Blip)
+  const [rjRaw, spRaw] = await Promise.all([
+    env.STATS_KV.get("blipcache_rj"),
+    env.STATS_KV.get("blipcache_sp")
+  ]);
+  const rjCache = rjRaw ? JSON.parse(rjRaw) : {};
+  const spCache = spRaw ? JSON.parse(spRaw) : {};
 
-  // RJ: desk tickets from saviorprincipal + saviorrj (both serve RJ)
-  function mergeBuckets(target, source) {
-    for (const k of Object.keys(source)) {
-      if (k in target) target[k] += source[k];
-      else target[k] = source[k];
-    }
-  }
-  // Merge filas { teamName: {d7, d30} } — soma d7/d30 por fila
-  function mergeFilas(target, source) {
-    for (const [team, counts] of Object.entries(source)) {
-      if (!target[team]) target[team] = { hoje: 0, ontem: 0, d7: 0, d30: 0 };
-      target[team].hoje += counts.hoje || 0;
-      target[team].ontem += counts.ontem || 0;
-      target[team].d7 += counts.d7 || 0;
-      target[team].d30 += counts.d30 || 0;
-    }
-  }
-  try {
-    const rjBoth = await fetchBlipBothDaily(rjKey, BOT_DOMAIN, d30start, 31);
-    blipDailyRJ = rjBoth.entries;
-    blipClosedDailyRJ = rjBoth.closed;
-    blipSucessoRJ = rjBoth.sucesso;
-    blipSemTagRJ = rjBoth.sem_tag;
-    blipVendaRJ = rjBoth.venda;
-    blipVendaUtiRJ = rjBoth.venda_uti;
-    blipVendaBasRJ = rjBoth.venda_bas;
-    mergeFilas(blipFilasRJ, rjBoth.filas);
-    console.log("Blip RJ Principal OK, entries:", Object.values(blipDailyRJ).reduce((a,v)=>a+v,0), "venda:", Object.values(blipVendaRJ).reduce((a,v)=>a+v,0));
-  } catch (e) { console.error("Blip RJ Principal ERROR:", e.message); }
+  const blipDailyRJ = rjCache.entries || {};
+  const blipClosedDailyRJ = rjCache.closed || {};
+  const blipSucessoRJ = rjCache.sucesso || {};
+  const blipSemTagRJ = rjCache.sem_tag || {};
+  const blipVendaRJ = rjCache.venda || {};
+  const blipVendaUtiRJ = rjCache.venda_uti || {};
+  const blipVendaBasRJ = rjCache.venda_bas || {};
+  const blipFilasRJ = rjCache.filas || {};
+  const blipContactsRJ = rjCache.contacts || {};
 
-  // RJ: also fetch from saviorrj bot (had real traffic in some periods)
-  if (env.BLIP_RJ_HTTP_KEY) {
-    try {
-      const rjBot = await fetchBlipBothDaily(env.BLIP_RJ_HTTP_KEY, null, d30start, 31, "https://http.msging.net/commands");
-      mergeBuckets(blipDailyRJ, rjBot.entries);
-      mergeBuckets(blipClosedDailyRJ, rjBot.closed);
-      mergeBuckets(blipSucessoRJ, rjBot.sucesso);
-      mergeBuckets(blipSemTagRJ, rjBot.sem_tag);
-      mergeBuckets(blipVendaRJ, rjBot.venda);
-      mergeBuckets(blipVendaUtiRJ, rjBot.venda_uti);
-      mergeBuckets(blipVendaBasRJ, rjBot.venda_bas);
-      mergeFilas(blipFilasRJ, rjBot.filas);
-      console.log("Blip RJ Bot OK, entries:", Object.values(rjBot.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjBot.venda).reduce((a,v)=>a+v,0));
-    } catch (e) { console.error("Blip RJ Bot ERROR:", e.message); }
-  }
+  const blipContactsSP = spCache.contacts || {};
+  const blipVendaSP = spCache.venda || {};
 
-  // RJ: Novo Fluxo (alfa) — bot de produção desde ~10/07/2026. Requer secret BLIP_ALFA_KEY.
-  if (env.BLIP_ALFA_KEY) {
-    try {
-      const rjAlfa = await fetchBlipBothDaily(env.BLIP_ALFA_KEY, null, d30start, 31, "https://http.msging.net/commands");
-      mergeBuckets(blipDailyRJ, rjAlfa.entries);
-      mergeBuckets(blipClosedDailyRJ, rjAlfa.closed);
-      mergeBuckets(blipSucessoRJ, rjAlfa.sucesso);
-      mergeBuckets(blipSemTagRJ, rjAlfa.sem_tag);
-      mergeBuckets(blipVendaRJ, rjAlfa.venda);
-      mergeBuckets(blipVendaUtiRJ, rjAlfa.venda_uti);
-      mergeBuckets(blipVendaBasRJ, rjAlfa.venda_bas);
-      mergeFilas(blipFilasRJ, rjAlfa.filas);
-      console.log("Blip RJ Alfa OK, entries:", Object.values(rjAlfa.entries).reduce((a,v)=>a+v,0), "venda:", Object.values(rjAlfa.venda).reduce((a,v)=>a+v,0));
-    } catch (e) { console.error("Blip RJ Alfa ERROR:", e.message); }
-  }
-
-  // SP DESK (sub-bot saviorsaopaulo TEM desk com tags de venda — verificado 16/07)
-  if (env.BLIP_SP_DESK_KEY) {
-    try {
-      const spDesk = await fetchBlipBothDaily(env.BLIP_SP_DESK_KEY, null, d30start, 31, "https://http.msging.net/commands");
-      blipVendaSP = spDesk.venda;
-      console.log("Blip SP Desk OK, venda:", Object.values(blipVendaSP).reduce((a,v)=>a+v,0));
-    } catch (e) { console.error("Blip SP Desk ERROR:", e.message); }
-  }
-
-  // RJ CRM contacts — use router key (traffic goes to saviorrj via router, not saviorprincipal)
-  const rjCrmKey = env.BLIP_ROUTER_KEY || rjKey;
-  try {
-    const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31);
-    blipContactsRJ = rjCrm.entries;
-    console.log("Blip RJ CRM OK, contacts:", Object.values(blipContactsRJ).reduce((a,v)=>a+v,0));
-  } catch (e) { console.error("Blip RJ CRM ERROR:", e.message); }
-
-  // SP: uses CRM contacts (SP router has NO desk module)
-  if (spKey) {
-    try {
-      const spBoth = await fetchBlipCrmDaily(spKey, null, d30start, 31); // host genérico: evita conexão reutilizada com credencial do RJ
-      blipDailySP = spBoth.entries;
-      blipClosedDailySP = spBoth.closed;
-      blipSucessoSP = spBoth.sucesso;
-      blipSemTagSP = spBoth.sem_tag;
-      blipContactsSP = spBoth.entries; // SP CRM contacts = entries (no desk)
-      console.log("Blip SP OK, entries:", Object.values(blipDailySP).reduce((a,v)=>a+v,0));
-    } catch (e) { console.error("Blip SP ERROR:", e.message); }
-  }
-
-
+  // SP entries/closed/sucesso/sem_tag derived from contacts (no desk)
+  const blipDailySP = blipContactsSP;
+  const zeroBucketsSP = {};
+  for (const k of Object.keys(blipContactsSP)) zeroBucketsSP[k] = 0;
+  const blipClosedDailySP = zeroBucketsSP;
+  const blipSucessoSP = zeroBucketsSP;
+  const blipSemTagSP = zeroBucketsSP;
 
   function sumBuckets(buckets) { return Object.values(buckets).reduce((a, v) => a + v, 0); }
   function dayVal(buckets, date) { return buckets[date] || 0; }
@@ -699,7 +762,6 @@ async function collectAllData(env) {
   // Venda realizada (tag específica)
   const vdRjToday = dayVal(blipVendaRJ, today), vdRjOntem = dayVal(blipVendaRJ, yesterday), vdRjD2 = dayVal(blipVendaRJ, d2Date);
   const vdRj30 = sumBuckets(blipVendaRJ);
-  // SP não tem desk, venda sempre 0
   const vdSpToday = dayVal(blipVendaSP, today), vdSpOntem = dayVal(blipVendaSP, yesterday), vdSpD2 = dayVal(blipVendaSP, d2Date);
   const vdSp30 = sumBuckets(blipVendaSP);
 
@@ -854,7 +916,7 @@ async function handleRequest(request, env) {
   const corsOrigin = isAllowed ? origin : env.ALLOWED_ORIGIN;
   const corsHeaders = {
     "Access-Control-Allow-Origin": corsOrigin,
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400"
   };
@@ -869,7 +931,7 @@ async function handleRequest(request, env) {
       });
     }
     try {
-      const data = await collectAllData(env);
+      const data = await buildMainJson(env);
       const json = JSON.stringify(data);
       await env.STATS_KV.put(KV_KEY, json, { expirationTtl: 7200 });
       return new Response(json, {
@@ -881,9 +943,40 @@ async function handleRequest(request, env) {
       });
     }
   }
+  // POST /refresh-rj: coleta fase RJ, salva cache blipcache_rj
+  if (url.pathname === "/refresh-rj" && request.method === "POST") {
+    try {
+      const result = await collectBlipRJ(env);
+      await env.STATS_KV.put("blipcache_rj", JSON.stringify(result));
+      console.log("refresh-rj: cache salvo OK");
+      return new Response(JSON.stringify({ ok: true, phase: "rj" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+  }
+  // POST /refresh-sp: coleta fase SP, salva cache blipcache_sp
+  if (url.pathname === "/refresh-sp" && request.method === "POST") {
+    try {
+      const result = await collectBlipSP(env);
+      await env.STATS_KV.put("blipcache_sp", JSON.stringify(result));
+      console.log("refresh-sp: cache salvo OK");
+      return new Response(JSON.stringify({ ok: true, phase: "sp" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+  }
+  // POST /refresh: reconstrói JSON principal lendo caches (sem fetch Blip)
   if (url.pathname === "/refresh" && request.method === "POST") {
     try {
-      const data = await collectAllData(env);
+      const data = await buildMainJson(env);
       const json = JSON.stringify(data);
       await env.STATS_KV.put(KV_KEY, json, { expirationTtl: 7200 });
       return new Response(JSON.stringify({ ok: true, gerado_em: data.gerado_em }), {
@@ -899,14 +992,26 @@ async function handleRequest(request, env) {
 }
 
 async function handleScheduled(event, env) {
-  console.log("Cron: collecting stats data...");
+  const hour = new Date().getUTCHours();
+  const phase = hour % 2 === 0 ? "rj" : "sp";
+  console.log(`Cron: hour=${hour}, running phase=${phase}`);
   try {
-    const data = await collectAllData(env);
+    if (phase === "rj") {
+      const result = await collectBlipRJ(env);
+      await env.STATS_KV.put("blipcache_rj", JSON.stringify(result));
+      console.log("Cron: blipcache_rj saved OK");
+    } else {
+      const result = await collectBlipSP(env);
+      await env.STATS_KV.put("blipcache_sp", JSON.stringify(result));
+      console.log("Cron: blipcache_sp saved OK");
+    }
+    // Reconstruir JSON principal lendo caches (ambas as fases)
+    const data = await buildMainJson(env);
     const json = JSON.stringify(data);
     await env.STATS_KV.put(KV_KEY, json, { expirationTtl: 7200 });
-    console.log("Cron: stats data updated at", data.gerado_em);
+    console.log("Cron: stats-data updated at", data.gerado_em);
   } catch (e) {
-    console.error("Cron: collection failed:", e.message);
+    console.error("Cron: failed:", e.message);
   }
 }
 
