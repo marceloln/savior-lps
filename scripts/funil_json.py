@@ -253,7 +253,84 @@ B = {
     'd0': blip(d0, d0), 'd1': blip(d1, d1), 'd2': blip(d2, d2),
     '1m': blip(mes_s, avg_e), '3m': blip(trim_s, avg_e),
 }
-print(f" ok  ({len(blip_by_campaign)} campanhas no Blip)\n")
+
+# ── Origens UTM (30d) ──────────────────────────────────────────────
+# Leitura read-only dos contatos Blip para distribuição por utm_source
+# e utm_campaign nos últimos 30d. Nenhuma escrita na API.
+origens_source   = {}   # utm_source normalizado → count
+origens_campanha = {}   # utm_campaign → count (exclui "sem-tag" e vazio)
+origens_total    = 0
+
+# Extras UTM são gravados no CRM do ROUTER (blip-utm-sync.py), não no bot.
+# Se o secret do CI ainda não tiver a chave, pula a coleta sem derrubar o run.
+_router_key = creds.get('blip_router_key')
+hdr_router = {"Authorization": _router_key, "Content-Type": "application/json"} if _router_key else None
+if not hdr_router:
+    print("  [origens warning] blip_router_key ausente nas credenciais; bloco origens vazio")
+
+skip2, stop2 = 0, (hdr_router is None)
+while not stop2:
+    p2 = {"id": f"o{skip2}", "to": "postmaster@crm.msging.net", "method": "get",
+          "uri": f"/contacts?$orderby=lastMessageDate+desc&$skip={skip2}&$take=100"}
+    try:
+        items2 = rlib.post("https://msging.net/commands", json=p2,
+                           headers=hdr_router, timeout=15).json().get('resource', {}).get('items', [])
+    except Exception as e2:
+        print(f"  [origens warning] {e2}")
+        break
+    if not items2:
+        break
+    for c2 in items2:
+        lmd2 = c2.get('lastMessageDate', '')
+        if not lmd2:
+            continue
+        try:
+            dt2 = datetime.fromisoformat(lmd2.replace('Z', '+00:00')).astimezone(BRT).date()
+        except:
+            continue
+        if dt2 < mes_s:
+            stop2 = True
+            break
+
+        origens_total += 1
+        extras2 = c2.get('extras', {}) or {}
+        source2  = (extras2.get('utm_source')   or '').strip()
+        camp2    = (extras2.get('utm_campaign') or '').strip()
+
+        # Contatos sem utm_source contam como sem_atribuicao
+        chave_source = source2 if source2 else 'sem_atribuicao'
+        origens_source[chave_source] = origens_source.get(chave_source, 0) + 1
+
+        # Campanhas: registra apenas quando existe e diferente de "sem-tag"
+        if camp2 and camp2 != 'sem-tag':
+            origens_campanha[camp2] = origens_campanha.get(camp2, 0) + 1
+
+    skip2 += 100
+    if len(items2) < 100 or skip2 > 2000:
+        break
+
+# Garante chaves canônicas com zero se ausentes
+for k in ('organico', 'google_cpc', 'google', 'sem_atribuicao'):
+    origens_source.setdefault(k, 0)
+
+# Top 10 campanhas tagueadas por volume
+top_campanhas = dict(
+    sorted(origens_campanha.items(), key=lambda x: -x[1])[:10]
+)
+
+origens_data = {
+    'janela_dias': 30,
+    'total':       origens_total,
+    'por_source':  {
+        'organico':       origens_source.get('organico', 0),
+        'google_cpc':     origens_source.get('google_cpc', 0),
+        'google':         origens_source.get('google', 0),
+        'sem_atribuicao': origens_source.get('sem_atribuicao', 0),
+    },
+    'por_campanha': top_campanhas,
+}
+
+print(f" ok  ({len(blip_by_campaign)} campanhas Blip | {origens_total} contatos 30d para origens)\n")
 
 # ── Cruzar campanha Google Ads × Blip ──────────────────────────────
 for camp in camps_30d:
@@ -339,6 +416,7 @@ data = {
         'keywords':          keywords_30d,      # top 25 keywords por conversão
         'blip_por_campanha': blip_by_campaign,  # distribuição bruta Blip
     },
+    'origens': origens_data,                   # distribuição UTM dos contatos Blip (30d)
 }
 
 # ── Salvar ─────────────────────────────────────────────────────────

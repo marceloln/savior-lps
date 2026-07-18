@@ -402,6 +402,65 @@
     .insight-text{font-size:12px;color:rgba(244,239,230,.85);line-height:1.55}
     .insight-text strong{color:var(--cream);font-weight:600}
 
+    /* ====== ORIGENS ====== */
+    .origens-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:900px){.origens-grid{grid-template-columns:1fr}}
+
+    .origens-chart-wrap{
+      background:linear-gradient(180deg,rgba(28,57,88,.35) 0%,rgba(11,37,64,.45) 100%);
+      border:1px solid var(--line);border-radius:14px;padding:20px;
+    }
+    .origens-chart-wrap h3{
+      font-weight:700;font-size:14px;color:var(--cream);
+      letter-spacing:-.2px;margin-bottom:16px;
+    }
+    .origens-chart-container{position:relative;height:260px}
+
+    .origens-camp-card{
+      background:linear-gradient(180deg,rgba(28,57,88,.35) 0%,rgba(11,37,64,.45) 100%);
+      border:1px solid var(--line);border-radius:14px;padding:20px;
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .origens-camp-card h3{
+      font-weight:700;font-size:14px;color:var(--cream);
+      letter-spacing:-.2px;margin-bottom:0;
+    }
+
+    .origens-bar-list{display:flex;flex-direction:column;gap:8px}
+    .origens-bar-row{display:flex;align-items:center;gap:10px}
+    .origens-bar-label{
+      font-family:var(--mono);font-size:11px;color:rgba(244,239,230,.75);
+      min-width:120px;white-space:nowrap;
+    }
+    .origens-bar-track{
+      flex:1;height:22px;background:rgba(255,255,255,.04);
+      border-radius:4px;border:1px solid var(--line);overflow:hidden;
+    }
+    .origens-bar-fill{
+      height:100%;border-radius:3px;
+      display:flex;align-items:center;padding:0 8px;
+      font-family:var(--mono);font-size:11px;font-weight:600;color:var(--navy-deep);
+      transition:width .6s cubic-bezier(.5,0,.2,1);
+    }
+    .origens-bar-count{
+      font-family:var(--mono);font-size:11px;font-weight:600;
+      color:var(--cream);min-width:34px;text-align:right;
+    }
+
+    .origens-camp-list{display:flex;flex-direction:column;gap:0}
+    .origens-camp-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:7px 0;border-bottom:1px dashed var(--line);
+    }
+    .origens-camp-row:last-child{border-bottom:0}
+    .origens-camp-name{font-size:12px;color:rgba(244,239,230,.85)}
+    .origens-camp-n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green-bright)}
+
+    .origens-note{
+      font-size:11px;color:rgba(244,239,230,.45);font-family:var(--mono);
+      line-height:1.55;padding-top:10px;border-top:1px solid var(--line);
+    }
+
     /* ====== FOOTER ====== */
     .foot{
       border-top:1px solid var(--line);
@@ -651,6 +710,29 @@
       <div class="insights-grid" id="insights-grid"></div>
     </section>
 
+    <!-- 08 Origens -->
+    <section class="section" id="s-origens" style="display:none">
+      <div class="section-head">
+        <span class="section-eyebrow">08 · Origem dos contatos · Blip · 30d</span>
+        <h2 class="section-title">De onde vêm os contatos no WhatsApp</h2>
+        <span class="section-sub">últimos 30 dias · contatos com primeira mensagem</span>
+      </div>
+      <div class="origens-grid">
+        <div class="origens-chart-wrap">
+          <h3>Distribuição por fonte <span id="origens-total-badge" style="font-family:var(--mono);font-size:11px;font-weight:400;color:rgba(244,239,230,.45);margin-left:8px"></span></h3>
+          <div id="origens-bars"></div>
+          <div class="origens-note" id="origens-note"></div>
+        </div>
+        <div class="origens-camp-card">
+          <h3>Campanhas tagueadas <span style="font-family:var(--mono);font-size:10px;font-weight:400;color:rgba(244,239,230,.4);margin-left:6px">utm_campaign ativo</span></h3>
+          <div class="origens-camp-list" id="origens-camp-list"></div>
+          <div class="origens-note">
+            Contatos sem tag de campanha entram como orgânico. Isso inclui quem veio de anúncio por caminhos sem tagueamento (número salvo, extensão de mensagem, site institucional), então o orgânico real é menor que o exibido.
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="foot">
@@ -724,7 +806,7 @@
   });
 
   /* ── Data load ─────────────────────────────────────── */
-  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-rj','s-filas','s-custo','s-camps','s-sinais'];
+  var SECTIONS = ['s-snapshot','s-funil','s-trend','s-funil-rj','s-filas','s-custo','s-camps','s-sinais','s-origens'];
   function hideAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='none'})}
   function showAll(){SECTIONS.forEach(function(id){document.getElementById(id).style.display='block'})}
 
@@ -859,6 +941,7 @@
     renderCusto(m30);
     renderCamps(d.ads, STATE.region);
     renderSinais(hoje, ontem, m30, d.ads);
+    renderOrigens(d.origens);
     showAll();
   }
 
@@ -1609,6 +1692,62 @@
         '<div class="insight-text">'+ins.text+'</div>'+
       '</div>';
     }).join('');
+  }
+
+  /* ── 08 Origens UTM ────────────────────────────────── */
+  function renderOrigens(origens){
+    var sec = document.getElementById('s-origens');
+    if(!sec) return;
+    if(!origens || !origens.por_source){
+      sec.style.display = 'none';
+      return;
+    }
+
+    var total = origens.total || 0;
+    document.getElementById('origens-total-badge').textContent = total + ' contatos';
+
+    var src = origens.por_source;
+    var entries = [
+      {label:'Orgânico',         key:'organico',       n: src.organico       || 0, color:'#00B87C'},
+      {label:'Google CPC',       key:'google_cpc',     n: src.google_cpc     || 0, color:'#5DADE2'},
+      {label:'Google (outros)',  key:'google',         n: src.google         || 0, color:'#7B68EE'},
+      {label:'Sem atribuição',   key:'sem_atribuicao', n: src.sem_atribuicao || 0, color:'#C5AA81'},
+    ];
+    var maxN = Math.max.apply(null, entries.map(function(e){return e.n})) || 1;
+
+    var barsHtml = '<div class="origens-bar-list">';
+    entries.forEach(function(e){
+      var pct = Math.round(e.n / maxN * 100);
+      var pctTotal = total > 0 ? (e.n / total * 100).toFixed(1) + '%' : '0%';
+      barsHtml +=
+        '<div class="origens-bar-row">'+
+          '<span class="origens-bar-label">'+e.label+'</span>'+
+          '<div class="origens-bar-track">'+
+            '<div class="origens-bar-fill" style="width:'+pct+'%;background:'+e.color+'">'+
+              (pct > 18 ? pctTotal : '')+
+            '</div>'+
+          '</div>'+
+          '<span class="origens-bar-count">'+e.n+'</span>'+
+        '</div>';
+    });
+    barsHtml += '</div>';
+    document.getElementById('origens-bars').innerHTML = barsHtml;
+
+    var campObj = origens.por_campanha || {};
+    var campEntries = Object.keys(campObj).map(function(k){return {nome:k, n:campObj[k]}});
+    campEntries.sort(function(a,b){return b.n - a.n});
+
+    var campEl = document.getElementById('origens-camp-list');
+    if(campEntries.length === 0){
+      campEl.innerHTML = '<div style="font-size:12px;color:rgba(244,239,230,.35);font-family:var(--mono);padding:8px 0">Nenhuma campanha tagueada no período.</div>';
+    } else {
+      campEl.innerHTML = campEntries.map(function(c){
+        return '<div class="origens-camp-row">'+
+          '<span class="origens-camp-name">'+c.nome+'</span>'+
+          '<span class="origens-camp-n">'+c.n+'</span>'+
+        '</div>';
+      }).join('');
+    }
   }
 </script>
 

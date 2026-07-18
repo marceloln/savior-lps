@@ -388,7 +388,10 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
 }
 
 // Blip SP: count CRM contacts (SP router has NO desk module)
-async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
+// overrides: mapa identity → data real (ISO), corrige lastMessageDate bumpado
+// pelos backfills de extras de 17-18/07/2026 (o índice do CRM re-indexa
+// lastMessageDate = agora em qualquer merge/set de contato; não é gravável).
+async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrides) {
   const headers = { "Authorization": httpKey, "Content-Type": "application/json" };
   const entryBuckets = {};
   const startD = new Date(startDate + "T00:00:00-03:00");
@@ -419,10 +422,19 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays) {
     const items = data.resource?.items || [];
     if (items.length === 0 || skip >= 800) break;
     for (const c of items) {
-      const lastMsg = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
-      if (lastMsg < startTs) { keepGoing = false; break; }
+      // Terminação da paginação usa SEMPRE a data do índice (ordem desc)
+      const idxTs = c.lastMessageDate ? new Date(c.lastMessageDate).getTime() : 0;
+      if (idxTs < startTs) { keepGoing = false; break; }
       // Skip test contacts (group "Teste"/"Testers" or name starting with "Tester")
       if (c.group === "Teste" || c.group === "Testers" || (c.name && c.name.startsWith("Tester"))) continue;
+      // Bucketing usa a data corrigida quando o contato está no mapa de
+      // overrides e o índice caiu na janela poluída (>= 17/07/2026)
+      let lastMsg = idxTs;
+      const ov = overrides && c.identity ? overrides[c.identity] : null;
+      if (ov && c.lastMessageDate && c.lastMessageDate >= "2026-07-17") {
+        lastMsg = new Date(ov).getTime();
+        if (lastMsg < startTs) continue; // data real anterior à janela: não conta
+      }
       const brDate = new Date(lastMsg - 3 * 60 * 60 * 1e3);
       const dateKey = fmtDate(brDate);
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
@@ -522,7 +534,13 @@ async function collectBlipRJ(env) {
   // CRM RJ — router key, domínio custom BOT_DOMAIN
   const rjCrmKey = env.BLIP_ROUTER_KEY || rjKey;
   try {
-    const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31);
+    // Correção lastMessageDate (incidente backfill 17-18/07/2026)
+    let lmdOverrides = null;
+    try {
+      const ovRaw = await env.STATS_KV.get("lmd_overrides");
+      lmdOverrides = ovRaw ? JSON.parse(ovRaw) : null;
+    } catch (e) { console.error("collectBlipRJ: lmd_overrides parse ERROR:", e.message); }
+    const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31, lmdOverrides);
     contacts = rjCrm.entries;
     console.log("collectBlipRJ: CRM OK, contacts:", Object.values(contacts).reduce((a,v)=>a+v,0));
   } catch (e) { console.error("collectBlipRJ: CRM ERROR:", e.message); }
