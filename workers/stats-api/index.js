@@ -393,6 +393,10 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
 // lastMessageDate = agora em qualquer merge/set de contato; não é gravável).
 async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrides) {
   const headers = { "Authorization": httpKey, "Content-Type": "application/json" };
+  // Distribuição de origem UTM (extras gravados pelo blip-utm-sync)
+  const origSource = { organico: 0, google_cpc: 0, google: 0, sem_atribuicao: 0 };
+  const origCampanha = {};
+  let origTotal = 0;
   const entryBuckets = {};
   const startD = new Date(startDate + "T00:00:00-03:00");
   for (let i = 0; i < numDays; i++) {
@@ -438,6 +442,15 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
       const brDate = new Date(lastMsg - 3 * 60 * 60 * 1e3);
       const dateKey = fmtDate(brDate);
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
+      // Origem UTM do contato (dentro da janela)
+      origTotal++;
+      const ex = c.extras || {};
+      const src = (ex.utm_source || "").trim();
+      if (src in origSource) origSource[src]++;
+      else if (src) origSource[src] = (origSource[src] || 0) + 1;
+      else origSource.sem_atribuicao++;
+      const cmp = (ex.utm_campaign || "").trim();
+      if (cmp && cmp !== "sem-tag") origCampanha[cmp] = (origCampanha[cmp] || 0) + 1;
     }
     if (items.length < take) break;
     await new Promise((r)=>setTimeout(r,250)); // throttle Blip
@@ -447,7 +460,10 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
   // SP has no desk, so closed/sucesso/sem_tag are always 0
   const zeroBuckets = {};
   for (const key of Object.keys(entryBuckets)) zeroBuckets[key] = 0;
-  return { entries: entryBuckets, closed: zeroBuckets, sucesso: zeroBuckets, sem_tag: zeroBuckets };
+  const topCampanhas = {};
+  for (const [k, v] of Object.entries(origCampanha).sort((a, b) => b[1] - a[1]).slice(0, 10)) topCampanhas[k] = v;
+  const origens = { janela_dias: numDays - 1, total: origTotal, por_source: origSource, por_campanha: topCampanhas };
+  return { entries: entryBuckets, closed: zeroBuckets, sucesso: zeroBuckets, sem_tag: zeroBuckets, origens };
 }
 
 // --- ALFA-17: Blip collection split into two phases with KV cache ---
@@ -468,6 +484,7 @@ async function collectBlipRJ(env) {
   let venda_bas = {};
   let filas = {};
   let contacts = {};
+  let origens = null;
 
   function mergeBuckets(target, source) {
     for (const k of Object.keys(source)) {
@@ -542,10 +559,11 @@ async function collectBlipRJ(env) {
     } catch (e) { console.error("collectBlipRJ: lmd_overrides parse ERROR:", e.message); }
     const rjCrm = await fetchBlipCrmDaily(rjCrmKey, BOT_DOMAIN, d30start, 31, lmdOverrides);
     contacts = rjCrm.entries;
-    console.log("collectBlipRJ: CRM OK, contacts:", Object.values(contacts).reduce((a,v)=>a+v,0));
+    origens = rjCrm.origens;
+    console.log("collectBlipRJ: CRM OK, contacts:", Object.values(contacts).reduce((a,v)=>a+v,0), "origens:", origens ? origens.total : 0);
   } catch (e) { console.error("collectBlipRJ: CRM ERROR:", e.message); }
 
-  return { entries, closed, sucesso, sem_tag, venda, venda_uti, venda_bas, filas, contacts };
+  return { entries, closed, sucesso, sem_tag, venda, venda_uti, venda_bas, filas, contacts, origens };
 }
 
 // collectBlipSP: CRM SP + desk SP antigo + desk contingência SP
@@ -892,6 +910,7 @@ async function buildMainJson(env) {
 
   return {
     gerado_em: brOffset.toISOString().replace("Z", "-03:00"),
+    origens: rjCache.origens || null,
     funil: {
       labels: {
         hoje: today.slice(5) + " (parcial)",
