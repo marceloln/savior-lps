@@ -721,6 +721,7 @@
         <div class="origens-chart-wrap">
           <h3>Distribuição por fonte <span id="origens-total-badge" style="font-family:var(--mono);font-size:11px;font-weight:400;color:rgba(244,239,230,.45);margin-left:8px"></span></h3>
           <div id="origens-bars"></div>
+          <div id="origens-periodos-table" style="margin-top:20px"></div>
           <div class="origens-note" id="origens-note"></div>
         </div>
         <div class="origens-camp-card">
@@ -1747,6 +1748,56 @@
           '<span class="origens-camp-n">'+c.n+'</span>'+
         '</div>';
       }).join('');
+    }
+
+    /* ── Tabela comparativa por período ── */
+    var tblEl = document.getElementById('origens-periodos-table');
+    if(tblEl && origens.periodos){
+      var per = origens.periodos;
+      var th = '<th style="text-align:left;padding:8px 12px 6px 0;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Fonte</th>'+
+        '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Hoje</th>'+
+        '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">Ontem</th>'+
+        '<th style="text-align:right;padding:8px 12px 6px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">7 dias</th>'+
+        '<th style="text-align:right;padding:8px 0 6px 12px;font-family:var(--mono);font-size:10px;font-weight:600;color:rgba(244,239,230,.5);letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid rgba(244,239,230,.1)">30 dias</th>';
+      function pCell(periodo, key, isTotal){
+        var p = per[periodo] || {};
+        var v = key === 'total' ? (p.total || 0) : ((p.por_source && p.por_source[key]) || 0);
+        var color = isTotal ? 'var(--green-bright)' : (periodo === 'hoje' ? 'var(--green-bright)' : periodo === 'ontem' ? 'var(--green)' : 'rgba(244,239,230,.85)');
+        var fw = isTotal ? '700' : (periodo === 'hoje' ? '700' : '600');
+        var align = 'right';
+        return '<td style="padding:7px 12px;text-align:'+align+';font-family:var(--mono);font-size:13px;font-weight:'+fw+';color:'+color+';border-bottom:1px solid rgba(244,239,230,.05)">'+v+'</td>';
+      }
+      function pCellLast(periodo, key, isTotal){
+        var p = per[periodo] || {};
+        var v = key === 'total' ? (p.total || 0) : ((p.por_source && p.por_source[key]) || 0);
+        var color = isTotal ? 'var(--green-bright)' : 'rgba(244,239,230,.7)';
+        var fw = isTotal ? '700' : '600';
+        return '<td style="padding:7px 0 7px 12px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:'+fw+';color:'+color+';border-bottom:1px solid rgba(244,239,230,.05)">'+v+'</td>';
+      }
+      function buildRow(label, key, isTotal){
+        var labelStyle = isTotal
+          ? 'padding:7px 12px 7px 0;font-size:13px;font-weight:700;color:var(--green-bright);border-bottom:1px solid rgba(244,239,230,.05)'
+          : 'padding:7px 12px 7px 0;font-size:13px;color:var(--cream);border-bottom:1px solid rgba(244,239,230,.05)';
+        return '<tr>'+
+          '<td style="'+labelStyle+'">'+label+'</td>'+
+          pCell('hoje',  key, isTotal)+
+          pCell('ontem', key, isTotal)+
+          pCell('7d',    key, isTotal)+
+          pCellLast('30d', key, isTotal)+
+        '</tr>';
+      }
+      var tblHtml =
+        '<table class="dt" style="width:100%;border-collapse:collapse">'+
+          '<thead><tr>'+th+'</tr></thead>'+
+          '<tbody>'+
+            buildRow('Total',            'total',          true)+
+            buildRow('Orgânico',         'organico',       false)+
+            buildRow('Google CPC',       'google_cpc',     false)+
+            buildRow('Google (outros)',   'google',         false)+
+            buildRow('Sem atribuição',   'sem_atribuicao', false)+
+          '</tbody>'+
+        '</table>';
+      tblEl.innerHTML = tblHtml;
     }
   }
 </script>

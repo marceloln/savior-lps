@@ -394,9 +394,12 @@ async function fetchBlipBothDaily(httpKey, botDomain, startDate, numDays, endpoi
 async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrides) {
   const headers = { "Authorization": httpKey, "Content-Type": "application/json" };
   // Distribuição de origem UTM (extras gravados pelo blip-utm-sync)
-  const origSource = { organico: 0, google_cpc: 0, google: 0, sem_atribuicao: 0 };
+  const mkTally = () => ({ total: 0, por_source: { organico: 0, google_cpc: 0, google: 0, sem_atribuicao: 0 } });
+  const origPeriodos = { hoje: mkTally(), ontem: mkTally(), "7d": mkTally(), "30d": mkTally() };
   const origCampanha = {};
-  let origTotal = 0;
+  const hojeKey = fmtDate(new Date(Date.now() - 3 * 60 * 60 * 1e3));
+  const ontemKey = fmtDate(new Date(Date.now() - 27 * 60 * 60 * 1e3));
+  const d7Key = fmtDate(new Date(Date.now() - (3 + 24 * 6) * 60 * 60 * 1e3));
   const entryBuckets = {};
   const startD = new Date(startDate + "T00:00:00-03:00");
   for (let i = 0; i < numDays; i++) {
@@ -442,13 +445,17 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
       const brDate = new Date(lastMsg - 3 * 60 * 60 * 1e3);
       const dateKey = fmtDate(brDate);
       if (dateKey in entryBuckets) entryBuckets[dateKey]++;
-      // Origem UTM do contato (dentro da janela)
-      origTotal++;
+      // Origem UTM do contato, por período (dentro da janela de 30d)
       const ex = c.extras || {};
-      const src = (ex.utm_source || "").trim();
-      if (src in origSource) origSource[src]++;
-      else if (src) origSource[src] = (origSource[src] || 0) + 1;
-      else origSource.sem_atribuicao++;
+      const src = (ex.utm_source || "").trim() || "sem_atribuicao";
+      const alvos = [origPeriodos["30d"]];
+      if (dateKey >= d7Key) alvos.push(origPeriodos["7d"]);
+      if (dateKey === hojeKey) alvos.push(origPeriodos.hoje);
+      if (dateKey === ontemKey) alvos.push(origPeriodos.ontem);
+      for (const t of alvos) {
+        t.total++;
+        t.por_source[src] = (t.por_source[src] || 0) + 1;
+      }
       const cmp = (ex.utm_campaign || "").trim();
       if (cmp && cmp !== "sem-tag") origCampanha[cmp] = (origCampanha[cmp] || 0) + 1;
     }
@@ -462,7 +469,8 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
   for (const key of Object.keys(entryBuckets)) zeroBuckets[key] = 0;
   const topCampanhas = {};
   for (const [k, v] of Object.entries(origCampanha).sort((a, b) => b[1] - a[1]).slice(0, 10)) topCampanhas[k] = v;
-  const origens = { janela_dias: numDays - 1, total: origTotal, por_source: origSource, por_campanha: topCampanhas };
+  const origens = { janela_dias: numDays - 1, total: origPeriodos["30d"].total,
+    por_source: origPeriodos["30d"].por_source, por_campanha: topCampanhas, periodos: origPeriodos };
   return { entries: entryBuckets, closed: zeroBuckets, sucesso: zeroBuckets, sem_tag: zeroBuckets, origens };
 }
 
