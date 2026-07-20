@@ -740,7 +740,7 @@ async function buildPeriod(env, startDate, endDate, days) {
     return {
       impressions: round2(di), ad_clicks: round2(dc), sessions: round2(ds),
       wa_clicks: round2(dwa), ph_clicks: round2(dph),
-      blip: 0, blip_closed: 0, blip_sucesso: 0, blip_sem_tag: 0, blip_venda: 0, blip_contacts: 0,
+      blip: 0, blip_closed: 0, blip_sucesso: 0, blip_sem_tag: 0, blip_venda: 0, blip_venda_uti: 0, blip_venda_bas: 0, blip_contacts: 0,
       cost: round2(dco), cpc: dc > 0 ? round2(dco / dc) : 0,
       ctr: di > 0 ? round2(dc / di * 100) : 0,
       conversions: round2(dcv), cpl_blip: 0,
@@ -833,13 +833,21 @@ async function buildMainJson(env) {
   const basD7 = sumBucketsLast(blipVendaBasRJ, 7);
   const basD30 = sumBuckets(blipVendaBasRJ);
 
+  // Valores UTI/BAS por período (hoje, ontem, D2, D30)
+  const utiToday = dayVal(blipVendaUtiRJ, today);
+  const utiOntem = dayVal(blipVendaUtiRJ, yesterday);
+  const utiD2 = dayVal(blipVendaUtiRJ, d2Date);
+  const basToday = dayVal(blipVendaBasRJ, today);
+  const basOntem = dayVal(blipVendaBasRJ, yesterday);
+  const basD2Val = dayVal(blipVendaBasRJ, d2Date);
+
   // Contatos CRM (bot interactions, superset de desk tickets)
   const ctRjToday = dayVal(blipContactsRJ, today), ctSpToday = dayVal(blipContactsSP, today);
   const ctRjOntem = dayVal(blipContactsRJ, yesterday), ctSpOntem = dayVal(blipContactsSP, yesterday);
   const ctRjD2 = dayVal(blipContactsRJ, d2Date), ctSpD2 = dayVal(blipContactsSP, d2Date);
   const ctRj30 = sumBuckets(blipContactsRJ), ctSp30 = sumBuckets(blipContactsSP);
 
-  function fillBlip(period, rjBlip, spBlip, rjClosed, spClosed, rjVenda, spVenda, rjContacts, spContacts, days) {
+  function fillBlip(period, rjBlip, spBlip, rjClosed, spClosed, rjVenda, spVenda, rjContacts, spContacts, days, rjVendaUti, rjVendaBas) {
     const dRj = days > 0 ? rjBlip / days : rjBlip;
     const dSp = days > 0 ? spBlip / days : spBlip;
     const dRjC = days > 0 ? rjClosed / days : rjClosed;
@@ -848,28 +856,36 @@ async function buildMainJson(env) {
     const dSpV = days > 0 ? spVenda / days : spVenda;
     const dRjCt = days > 0 ? rjContacts / days : rjContacts;
     const dSpCt = days > 0 ? spContacts / days : spContacts;
+    const dRjUti = days > 0 ? (rjVendaUti || 0) / days : (rjVendaUti || 0);
+    const dRjBas = days > 0 ? (rjVendaBas || 0) / days : (rjVendaBas || 0);
     period.cons.blip = round2(dRj + dSp);
     period.cons.cpl_blip = (dRj + dSp) > 0 ? round2(period.cons.cost / (dRj + dSp)) : 0;
     period.cons.blip_closed = round2(dRjC + dSpC);
     period.cons.blip_venda = round2(dRjV + dSpV);
+    period.cons.blip_venda_uti = round2(dRjUti);
+    period.cons.blip_venda_bas = round2(dRjBas);
     period.cons.blip_contacts = round2(dRjCt + dSpCt);
     period.rj.blip = round2(dRj);
     period.rj.cpl_blip = dRj > 0 ? round2(period.rj.cost / dRj) : 0;
     period.rj.blip_closed = round2(dRjC);
     period.rj.blip_venda = round2(dRjV);
+    period.rj.blip_venda_uti = round2(dRjUti);
+    period.rj.blip_venda_bas = round2(dRjBas);
     period.rj.blip_contacts = round2(dRjCt);
     period.sp.blip = round2(dSp);
     period.sp.cpl_blip = dSp > 0 ? round2(period.sp.cost / dSp) : 0;
     period.sp.blip_closed = round2(dSpC);
     period.sp.blip_venda = round2(dSpV);
+    period.sp.blip_venda_uti = 0;
+    period.sp.blip_venda_bas = 0;
     period.sp.blip_contacts = round2(dSpCt);
   }
 
-  fillBlip(hojeP, rjToday, spToday, bcRjToday, bcSpToday, vdRjToday, vdSpToday, ctRjToday, ctSpToday, 1);
-  fillBlip(ontemP, rjOntem, spOntem, bcRjOntem, bcSpOntem, vdRjOntem, vdSpOntem, ctRjOntem, ctSpOntem, 1);
-  fillBlip(d2P, rjD2, spD2, bcRjD2, bcSpD2, vdRjD2, vdSpD2, ctRjD2, ctSpD2, 1);
-  fillBlip(periodo30, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 30);
-  fillBlip(periodo90, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 90);
+  fillBlip(hojeP, rjToday, spToday, bcRjToday, bcSpToday, vdRjToday, vdSpToday, ctRjToday, ctSpToday, 1, utiToday, basToday);
+  fillBlip(ontemP, rjOntem, spOntem, bcRjOntem, bcSpOntem, vdRjOntem, vdSpOntem, ctRjOntem, ctSpOntem, 1, utiOntem, basOntem);
+  fillBlip(d2P, rjD2, spD2, bcRjD2, bcSpD2, vdRjD2, vdSpD2, ctRjD2, ctSpD2, 1, utiD2, basD2Val);
+  fillBlip(periodo30, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 30, utiD30, basD30);
+  fillBlip(periodo90, rj30, sp30, bcRj30, bcSp30, vdRj30, vdSp30, ctRj30, ctSp30, 90, utiD30, basD30);
 
   const adsByDate = parseDailyAdsRows(dailyAdsRows);
   const dailyDates = [];
