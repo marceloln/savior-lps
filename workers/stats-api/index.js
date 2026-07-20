@@ -396,6 +396,8 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
   // Distribuição de origem UTM (extras gravados pelo blip-utm-sync)
   const mkTally = () => ({ total: 0, por_source: { organico: 0, google_cpc: 0, google: 0, sem_atribuicao: 0 } });
   const origPeriodos = { hoje: mkTally(), ontem: mkTally(), "7d": mkTally(), "30d": mkTally() };
+  // Último toque (utm_last_*): retornos de contatos já atribuídos via tag recente
+  const lastTouch = { hoje: {}, ontem: {}, "7d": {}, "30d": {} };
   const origCampanha = {};
   const hojeKey = fmtDate(new Date(Date.now() - 3 * 60 * 60 * 1e3));
   const ontemKey = fmtDate(new Date(Date.now() - 27 * 60 * 60 * 1e3));
@@ -458,6 +460,16 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
       }
       const cmp = (ex.utm_campaign || "").trim();
       if (cmp && cmp !== "sem-tag") origCampanha[cmp] = (origCampanha[cmp] || 0) + 1;
+      // Último toque: bucketiza pela data em que a tag recente foi vista
+      const ltc = (ex.utm_last_campaign || "").trim();
+      const ltd = (ex.utm_last_data || "").trim();
+      if (ltc && ltd && ltd >= startDate) {
+        const lb = ["30d"];
+        if (ltd >= d7Key) lb.push("7d");
+        if (ltd === hojeKey) lb.push("hoje");
+        if (ltd === ontemKey) lb.push("ontem");
+        for (const b of lb) lastTouch[b][ltc] = (lastTouch[b][ltc] || 0) + 1;
+      }
     }
     if (items.length < take) break;
     await new Promise((r)=>setTimeout(r,250)); // throttle Blip
@@ -470,7 +482,8 @@ async function fetchBlipCrmDaily(httpKey, botDomain, startDate, numDays, overrid
   const topCampanhas = {};
   for (const [k, v] of Object.entries(origCampanha).sort((a, b) => b[1] - a[1]).slice(0, 10)) topCampanhas[k] = v;
   const origens = { janela_dias: numDays - 1, total: origPeriodos["30d"].total,
-    por_source: origPeriodos["30d"].por_source, por_campanha: topCampanhas, periodos: origPeriodos };
+    por_source: origPeriodos["30d"].por_source, por_campanha: topCampanhas,
+    periodos: origPeriodos, ultimo_toque: lastTouch };
   return { entries: entryBuckets, closed: zeroBuckets, sucesso: zeroBuckets, sem_tag: zeroBuckets, origens };
 }
 
