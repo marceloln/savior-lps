@@ -29,21 +29,15 @@ const hasHighlight = h1Parts.length === 2;
 <section class="geo-hero">
   <!-- Background photo -->
   <div class="geo-hero-bg" aria-hidden="true">
-    <picture>
-      <source media="(max-width: 767px)" srcset="/img/gallery/frota-copacabana-768.webp" type="image/webp" />
-      <source media="(max-width: 1279px)" srcset="/img/gallery/frota-copacabana-1280.webp" type="image/webp" />
-      <img
-        src="/img/gallery/frota-copacabana-1920.webp"
-        srcset="/img/gallery/frota-copacabana-768.webp 768w, /img/gallery/frota-copacabana-1280.webp 1280w, /img/gallery/frota-copacabana-1920.webp 1920w"
-        sizes="100vw"
-        alt=""
-        width="1920"
-        height="915"
-        loading="eager"
-        fetchpriority="high"
-        class="geo-hero-photo"
-      />
-    </picture>
+    <img
+      src={region.heroImage || '/img/gallery/frota-copacabana-1920.webp'}
+      alt={`Vista aérea de ${region.name}`}
+      width="1920"
+      height="1080"
+      loading="eager"
+      fetchpriority="high"
+      class="geo-hero-photo"
+    />
   </div>
   <div class="geo-hero-overlay" aria-hidden="true"></div>
   <div class="geo-hero-green-glow" aria-hidden="true"></div>
