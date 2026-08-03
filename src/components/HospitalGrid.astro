@@ -1,0 +1,185 @@
+---
+// ============================================================
+// HospitalGrid — Grid de hospitais e clínicas da região
+// Props: hospitals (GeoHospital[]), regionName
+// ============================================================
+
+import type { GeoHospital } from '../data/geo-regions';
+
+interface Props {
+  hospitals: GeoHospital[];
+  regionName: string;
+}
+
+const { hospitals, regionName } = Astro.props;
+---
+
+<section class="hosp-section">
+  <div class="wrap">
+    <div class="hosp-head">
+      <span class="eyebrow">HOSPITAIS E CLÍNICAS</span>
+      <h2 class="hosp-h2">Remoções de e para <em>estas unidades</em></h2>
+      <p class="hosp-desc">
+        Atendemos as principais unidades hospitalares de {regionName} e adjacências, tanto para emergências quanto para remoções programadas e transferências inter-hospitalares.
+      </p>
+    </div>
+
+    <div class="hosp-grid">
+      {hospitals.map((hospital) => (
+        <div class="hosp-card">
+          <div
+            class="hosp-initials"
+            style={`background: ${hospital.color.bg}; color: ${hospital.color.text};`}
+            aria-hidden="true"
+          >
+            {hospital.initials}
+          </div>
+          <div class="hosp-info">
+            <div class="hosp-name">{hospital.name}</div>
+            <div class="hosp-detail">{hospital.detail}</div>
+            <span class="hosp-tag">{hospital.tag}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p class="hosp-footer">
+      Também removemos pacientes de {regionName} para hospitais de qualquer outra região: Zona Norte, Barra, Niterói ou outro estado.
+    </p>
+  </div>
+</section>
+
+<style>
+  .hosp-section {
+    padding: var(--space-block) 0;
+    background: white;
+  }
+
+  .hosp-head {
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .hosp-head .eyebrow {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .hosp-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  .hosp-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  .hosp-desc {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* Grid */
+  .hosp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--cream-dark);
+    margin-bottom: 24px;
+  }
+
+  /* Card */
+  .hosp-card {
+    background: white;
+    padding: 24px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: flex-start;
+    transition: background 0.15s;
+  }
+
+  .hosp-card:hover {
+    background: var(--cream-light);
+  }
+
+  /* Initials circle */
+  .hosp-initials {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  /* Info */
+  .hosp-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .hosp-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .hosp-detail {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .hosp-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--green-dark);
+    background: rgba(0, 184, 124, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Footer */
+  .hosp-footer {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.6;
+    max-width: 680px;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 640px) {
+    .hosp-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hosp-initials {
+      width: 48px;
+      height: 48px;
+      font-size: 14px;
+    }
+  }
+</style>

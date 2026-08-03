@@ -1,0 +1,343 @@
+---
+// ============================================================
+// GeoHero — Hero para landing pages regionais
+// Props: region (GeoRegion) + contact opcional
+// ============================================================
+
+import type { GeoRegion } from '../data/geo-regions';
+import { CONTACT_RJ, GOOGLE_BUSINESS, whatsappUrl } from '../data/savior';
+
+interface Props {
+  region: GeoRegion;
+  contact?: typeof CONTACT_RJ;
+}
+
+const { region, contact = CONTACT_RJ } = Astro.props;
+
+const waHref = whatsappUrl(
+  contact.whatsapp,
+  region.hero.waCampaign,
+  region.hero.waMessage,
+  'geo-hero'
+);
+
+// Breadcrumb: substitui h1Highlight por <em> no H1
+const h1Parts = region.hero.h1.split(region.hero.h1Highlight);
+const hasHighlight = h1Parts.length === 2;
+---
+
+<section class="geo-hero">
+  <div class="geo-hero-overlay" aria-hidden="true"></div>
+  <div class="geo-hero-green-glow" aria-hidden="true"></div>
+
+  <div class="wrap geo-hero-inner">
+
+    <!-- Breadcrumb -->
+    <nav class="geo-breadcrumb" aria-label="Navegação estrutural">
+      <ol class="geo-breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="geo-breadcrumb-item">
+          <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <li class="geo-breadcrumb-sep" aria-hidden="true">›</li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="geo-breadcrumb-item">
+          <a href="/ambulancia-rj" itemprop="item"><span itemprop="name">Ambulância RJ</span></a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <li class="geo-breadcrumb-sep" aria-hidden="true">›</li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="geo-breadcrumb-item geo-breadcrumb-current">
+          <span itemprop="name">{region.name}</span>
+          <meta itemprop="position" content="3" />
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Eyebrow -->
+    <div class="geo-hero-eyebrow">
+      <span class="geo-hero-eyebrow-bar" aria-hidden="true"></span>
+      {region.hero.eyebrow}
+    </div>
+
+    <!-- H1 -->
+    <h1 class="geo-hero-h1">
+      {hasHighlight ? (
+        <>
+          {h1Parts[0]}<em>{region.hero.h1Highlight}</em>{h1Parts[1]}
+        </>
+      ) : (
+        region.hero.h1
+      )}
+    </h1>
+
+    <!-- Subhead -->
+    <p class="geo-hero-subhead">{region.hero.subhead}</p>
+
+    <!-- CTAs -->
+    <div class="geo-hero-ctas">
+      <a
+        class="btn btn-primary on-dark geo-hero-btn-wa"
+        href={waHref}
+        data-whatsapp
+        data-campaign={region.hero.waCampaign}
+        data-location="geo-hero"
+        target="_blank"
+        rel="noopener"
+      >
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+        WhatsApp: orçamento
+      </a>
+      <a
+        class="btn btn-secondary on-dark"
+        href={`tel:${contact.phoneHref}`}
+        data-phone
+        data-campaign={region.hero.waCampaign}
+      >
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        {contact.phone}
+      </a>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="geo-stats" role="list" aria-label="Diferenciais Savior">
+      <div class="geo-stat" role="listitem">
+        <div class="geo-stat-value">{GOOGLE_BUSINESS.rating.toFixed(1).replace('.', ',')} ★</div>
+        <div class="geo-stat-label">{GOOGLE_BUSINESS.reviewCount} avaliações no Google</div>
+      </div>
+      <div class="geo-stat" role="listitem">
+        <div class="geo-stat-value">46 anos</div>
+        <div class="geo-stat-label">Operando sem interrupção desde 1979</div>
+      </div>
+      <div class="geo-stat" role="listitem">
+        <div class="geo-stat-value">24h</div>
+        <div class="geo-stat-label">Central atendendo agora, inclusive feriados</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .geo-hero {
+    position: relative;
+    min-height: 80vh;
+    background: linear-gradient(165deg, var(--navy-deep) 0%, var(--navy) 40%, var(--navy-mid) 100%);
+    display: flex;
+    align-items: center;
+    padding: clamp(16px, 4vw, 48px) 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .geo-hero {
+      min-height: auto;
+      padding: clamp(40px, 6vw, 64px) 0 clamp(32px, 5vw, 48px);
+    }
+  }
+
+  /* Overlay sutil no lado direito — toque visual verde */
+  .geo-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 100% 50%, rgba(31, 210, 154, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .geo-hero-green-glow {
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 40%;
+    height: 70%;
+    background: radial-gradient(ellipse, rgba(0, 184, 124, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .geo-hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  /* Breadcrumb */
+  .geo-breadcrumb {
+    margin-bottom: 28px;
+  }
+
+  .geo-breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .geo-breadcrumb-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .geo-breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .geo-breadcrumb-item a:hover {
+    color: var(--green-bright);
+  }
+
+  .geo-breadcrumb-current {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .geo-breadcrumb-sep {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+  }
+
+  @media (max-width: 768px) {
+    /* Em mobile: oculta a parte do caminho, mostra só a região atual */
+    .geo-breadcrumb-item:not(.geo-breadcrumb-current),
+    .geo-breadcrumb-sep {
+      display: none;
+    }
+  }
+
+  /* Eyebrow */
+  .geo-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 20px;
+  }
+
+  .geo-hero-eyebrow-bar {
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background: var(--green-bright);
+    flex-shrink: 0;
+  }
+
+  /* H1 */
+  .geo-hero-h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: white;
+    margin-bottom: 20px;
+    max-width: 820px;
+  }
+
+  .geo-hero-h1 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  /* Subhead */
+  .geo-hero-subhead {
+    font-size: clamp(15px, 2vw, 18px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.70);
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+
+  /* CTAs */
+  .geo-hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(40px, 6vw, 64px);
+  }
+
+  @media (max-width: 768px) {
+    .geo-hero-ctas {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .geo-hero-ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Stats bar */
+  .geo-stats {
+    display: flex;
+    gap: 1px;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 680px;
+  }
+
+  .geo-stat {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px 24px;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .geo-stat:first-child {
+    border-radius: 10px 0 0 10px;
+  }
+
+  .geo-stat:last-child {
+    border-radius: 0 10px 10px 0;
+  }
+
+  .geo-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--green-bright);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    font-family: var(--sans);
+  }
+
+  .geo-stat-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .geo-stats {
+      flex-direction: column;
+      border-radius: 10px;
+      gap: 1px;
+    }
+
+    .geo-stat {
+      border-radius: 0;
+    }
+
+    .geo-stat:first-child {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .geo-stat:last-child {
+      border-radius: 0 0 10px 10px;
+    }
+
+    .geo-stat-value {
+      font-size: 26px;
+    }
+  }
+</style>

@@ -1,0 +1,217 @@
+---
+// ============================================================
+// FeatureBlock — Bloco de destaque regional em navy
+// Props: feature (GeoRegion['feature'])
+// ============================================================
+
+import type { GeoRegion } from '../data/geo-regions';
+
+interface Props {
+  feature: GeoRegion['feature'];
+}
+
+const { feature } = Astro.props;
+
+// Substitui h2Highlight no h2 por <em>
+const h2Parts = feature.h2.split(feature.h2Highlight);
+const hasH2Highlight = h2Parts.length === 2;
+---
+
+<section class="feature-block">
+  <div class="wrap feature-block-inner">
+
+    <!-- Coluna esquerda: texto -->
+    <div class="feature-left">
+      <div class="feature-label">{feature.label}</div>
+
+      <h2 class="feature-h2">
+        {hasH2Highlight ? (
+          <>
+            {h2Parts[0]}<em>{feature.h2Highlight}</em>{h2Parts[1]}
+          </>
+        ) : (
+          feature.h2
+        )}
+      </h2>
+
+      {feature.paragraphs.map((para) => (
+        <p class="feature-para" set:html={para} />
+      ))}
+
+      {feature.callout && (
+        <div class="feature-callout">
+          <div class="feature-callout-title">{feature.callout.title}</div>
+          <p class="feature-callout-body">{feature.callout.body}</p>
+        </div>
+      )}
+    </div>
+
+    <!-- Coluna direita: stat cards -->
+    <div class="feature-right">
+      {feature.stats.map((stat) => (
+        <div class="feature-stat">
+          <div class="feature-stat-value">{stat.value}</div>
+          <div class="feature-stat-desc">{stat.desc}</div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .feature-block {
+    padding: var(--space-block) 0;
+    background: var(--navy);
+    color: white;
+  }
+
+  .feature-block-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  /* Coluna esquerda */
+  .feature-left {
+    min-width: 0;
+  }
+
+  .feature-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 16px;
+  }
+
+  .feature-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    color: white;
+    margin-bottom: 24px;
+  }
+
+  .feature-h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .feature-para {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.70);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .feature-para strong {
+    color: var(--green-bright);
+    font-weight: 600;
+  }
+
+  .feature-para:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Callout box */
+  .feature-callout {
+    background: rgba(0, 184, 124, 0.08);
+    border: 1px solid rgba(0, 184, 124, 0.20);
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 28px;
+  }
+
+  .feature-callout-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 10px;
+  }
+
+  .feature-callout-body {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.80);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Coluna direita: stat cards */
+  .feature-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .feature-stat {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 24px;
+    transition: background 0.15s;
+  }
+
+  .feature-stat:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .feature-stat-value {
+    font-family: var(--sans);
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--green-bright);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .feature-stat-desc {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.50);
+    line-height: 1.5;
+  }
+
+  /* Mobile: coluna única */
+  @media (max-width: 768px) {
+    .feature-block-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .feature-right {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .feature-stat {
+      flex: 1 1 calc(50% - 4px);
+      min-width: 140px;
+      padding: 18px;
+    }
+
+    .feature-stat-value {
+      font-size: 30px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .feature-right {
+      flex-direction: column;
+    }
+
+    .feature-stat {
+      flex: 1 1 auto;
+    }
+  }
+</style>
