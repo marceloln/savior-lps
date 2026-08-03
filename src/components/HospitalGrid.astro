@@ -12,6 +12,18 @@ interface Props {
 }
 
 const { hospitals, regionName } = Astro.props;
+
+function getNetworkClass(network: string): string {
+  if (network.includes("Rede D'Or")) return 'net-dor';
+  if (network === 'SUS' || network.includes('SUS')) return 'net-sus';
+  if (network.includes('Americas')) return 'net-americas';
+  if (network === 'Municipal') return 'net-municipal';
+  return 'net-particular';
+}
+
+function isSus(network: string): boolean {
+  return network === 'SUS' || network.includes('SUS') || network === 'Municipal';
+}
 ---
 
 <section class="hosp-section">
@@ -26,18 +38,42 @@ const { hospitals, regionName } = Astro.props;
 
     <div class="hosp-grid">
       {hospitals.map((hospital) => (
-        <div class="hosp-card">
-          <div
-            class="hosp-initials"
-            style={`background: ${hospital.color.bg}; color: ${hospital.color.text};`}
-            aria-hidden="true"
-          >
-            {hospital.initials}
+        <div class={`hosp-card ${getNetworkClass(hospital.network)}`}>
+          <div class="hosp-avatar-wrap">
+            <div
+              class={`hosp-initials ${getNetworkClass(hospital.network)}`}
+              style={`--bg: ${hospital.color.bg}; --fg: ${hospital.color.text};`}
+              aria-hidden="true"
+            >
+              <span class="initials-text">{hospital.initials}</span>
+              {isSus(hospital.network) && (
+                <span class="sus-label">SUS</span>
+              )}
+            </div>
           </div>
           <div class="hosp-info">
-            <div class="hosp-name">{hospital.name}</div>
+            <div class="hosp-name-row">
+              <div class="hosp-name">{hospital.name}</div>
+              {hospital.emergency24h && (
+                <span class="badge-24h" aria-label="Emergência 24 horas">
+                  <span class="dot-24h" aria-hidden="true"></span>
+                  24h
+                </span>
+              )}
+            </div>
             <div class="hosp-detail">{hospital.detail}</div>
-            <span class="hosp-tag">{hospital.tag}</span>
+            <div class="hosp-bottom">
+              <span class="hosp-tag">{hospital.tag}</span>
+              {hospital.network.includes("Rede D'Or") && (
+                <span class="net-badge badge-dor">D'Or</span>
+              )}
+              {isSus(hospital.network) && (
+                <span class="net-badge badge-sus">SUS</span>
+              )}
+              {hospital.network.includes('Americas') && (
+                <span class="net-badge badge-americas">Américas</span>
+              )}
+            </div>
           </div>
         </div>
       ))}
@@ -100,53 +136,174 @@ const { hospitals, regionName } = Astro.props;
   /* Card */
   .hosp-card {
     background: white;
-    padding: 24px;
+    padding: 20px 22px;
     display: flex;
     flex-direction: row;
     gap: 16px;
     align-items: flex-start;
-    transition: background 0.15s;
+    border-left: 3px solid transparent;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
   }
 
   .hosp-card:hover {
     background: var(--cream-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    border-left-color: var(--green-bright);
+    z-index: 1;
+    position: relative;
   }
 
-  /* Initials circle */
+  /* Network-specific left border at rest */
+  .hosp-card.net-dor {
+    border-left-color: rgba(232, 166, 36, 0.3);
+  }
+  .hosp-card.net-sus,
+  .hosp-card.net-municipal {
+    border-left-color: rgba(0, 120, 200, 0.2);
+  }
+  .hosp-card.net-americas {
+    border-left-color: rgba(180, 0, 80, 0.2);
+  }
+  .hosp-card.net-particular {
+    border-left-color: rgba(0, 184, 124, 0.15);
+  }
+
+  /* Avatar wrapper (for future logo support) */
+  .hosp-avatar-wrap {
+    flex-shrink: 0;
+  }
+
+  /* Initials block */
   .hosp-initials {
-    width: 56px;
-    height: 56px;
-    border-radius: 10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--bg) 90%, white 10%), var(--bg));
+    color: var(--fg);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* D'Or gold accent stripe at bottom */
+  .hosp-initials.net-dor::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #E8A624;
+    opacity: 0.85;
+  }
+
+  /* SUS blue stripe at bottom */
+  .hosp-initials.net-sus::after,
+  .hosp-initials.net-municipal::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #0078C8;
+    opacity: 0.7;
+  }
+
+  .initials-text {
     font-family: var(--sans);
     font-weight: 800;
     font-size: 16px;
-    flex-shrink: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     line-height: 1;
   }
 
-  /* Info */
+  .sus-label {
+    font-family: var(--mono);
+    font-size: 7px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    opacity: 0.75;
+    line-height: 1;
+  }
+
+  /* Info column */
   .hosp-info {
     min-width: 0;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hosp-name-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .hosp-name {
     font-size: 14px;
     font-weight: 700;
     color: var(--navy);
-    margin-bottom: 4px;
     line-height: 1.3;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 24h emergency badge */
+  .badge-24h {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--green-dark);
+    background: rgba(0, 184, 124, 0.1);
+    border: 1px solid rgba(0, 184, 124, 0.25);
+    padding: 2px 6px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .dot-24h {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-bright);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.75); }
   }
 
   .hosp-detail {
     font-size: 12px;
     color: var(--gray);
     line-height: 1.5;
-    margin-bottom: 8px;
+  }
+
+  /* Bottom row: tag + network badge */
+  .hosp-bottom {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
   }
 
   .hosp-tag {
@@ -160,6 +317,36 @@ const { hospitals, regionName } = Astro.props;
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+
+  /* Network badges */
+  .net-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .badge-dor {
+    color: #7A5010;
+    background: rgba(232, 166, 36, 0.15);
+    border: 1px solid rgba(232, 166, 36, 0.3);
+  }
+
+  .badge-sus {
+    color: #00528A;
+    background: rgba(0, 120, 200, 0.1);
+    border: 1px solid rgba(0, 120, 200, 0.25);
+  }
+
+  .badge-americas {
+    color: #7A003A;
+    background: rgba(180, 0, 80, 0.08);
+    border: 1px solid rgba(180, 0, 80, 0.2);
   }
 
   /* Footer */
@@ -179,6 +366,10 @@ const { hospitals, regionName } = Astro.props;
     .hosp-initials {
       width: 48px;
       height: 48px;
+      border-radius: 10px;
+    }
+
+    .initials-text {
       font-size: 14px;
     }
   }
