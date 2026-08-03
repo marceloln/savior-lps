@@ -12,6 +12,7 @@ export interface GeoHospital {
   tag: string;
   color: { bg: string; text: string };
   emergency24h?: boolean;
+  logo?: string;
 }
 
 export interface GeoTempo {
@@ -142,6 +143,7 @@ const copacabana: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/copa-dor.png',
     },
     {
       name: 'Copa Star',
@@ -150,6 +152,7 @@ const copacabana: GeoRegion = {
       detail: 'Rua Figueiredo de Magalhães, 900 · Cardiologia e hemodinâmica',
       tag: 'Cardiologia',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/copa-star.png',
     },
     {
       name: 'Hospital São Lucas Copacabana',
@@ -166,6 +169,7 @@ const copacabana: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      logo: '/img/hospitais/rede-santa-catarina.png',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -174,6 +178,7 @@ const copacabana: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -191,6 +196,7 @@ const copacabana: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/rede-dor.png',
     },
   ],
   services: [
@@ -340,6 +346,7 @@ const zonaSul: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/hospital-samaritano.png',
     },
     {
       name: 'Pró-Cardíaco',
@@ -374,6 +381,7 @@ const zonaSul: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Casa de Saúde São José',
@@ -382,6 +390,7 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      logo: '/img/hospitais/rede-santa-catarina.png',
     },
     {
       name: 'Perinatal Laranjeiras',
@@ -390,6 +399,7 @@ const zonaSul: GeoRegion = {
       detail: 'Rua das Laranjeiras, 374 · Laranjeiras · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
+      logo: '/img/hospitais/grupo-perinatal.png',
     },
     {
       name: 'Hospital Federal da Lagoa',
@@ -398,6 +408,7 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Jardim Botânico, 501 · Lagoa · Ortopedia e neurologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -406,6 +417,7 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Ipanema · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -456,6 +468,7 @@ const zonaSul: GeoRegion = {
       detail: 'Flamengo · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'COT Flamengo',
@@ -621,6 +634,7 @@ const barraReCreio: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Americas Medical City',
@@ -655,6 +669,7 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
+      logo: '/img/hospitais/grupo-perinatal.png',
     },
     {
       name: 'Samaritano Barra',
@@ -663,6 +678,7 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/hospital-samaritano.png',
     },
     {
       name: 'Hospital Lourenço Jorge',
@@ -672,6 +688,7 @@ const barraReCreio: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: "Oncologia D'Or Barra",
@@ -680,6 +697,7 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Tratamento oncológico',
       tag: 'Oncologia',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Barra Day Hospital',
@@ -847,6 +865,7 @@ const niteroi: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Icaraí',
@@ -872,6 +891,7 @@ const niteroi: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Hospital de Clínicas Alameda',
@@ -889,6 +909,7 @@ const niteroi: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Intermédica São Gonçalo',
@@ -906,6 +927,7 @@ const niteroi: GeoRegion = {
       detail: 'São Gonçalo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
+      logo: '/img/hospitais/unimed.png',
     },
     {
       name: 'Hospital do Coração de São Gonçalo',
@@ -1239,6 +1261,7 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital de Jacarepaguá (HCJ)',
@@ -1256,6 +1279,7 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Bangu 24h',
@@ -1265,6 +1289,7 @@ const zonaOeste: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital São Lourenço',
@@ -1447,6 +1472,7 @@ const zonaNorte: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Badim',
@@ -1480,6 +1506,7 @@ const zonaNorte: GeoRegion = {
       detail: 'Zona Norte · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      logo: '/img/hospitais/albert-sabin.png',
     },
     {
       name: "Hospital Norte D'Or",
@@ -1489,6 +1516,7 @@ const zonaNorte: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Memorial',
@@ -1506,6 +1534,7 @@ const zonaNorte: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'ProntoBaby Tijuca',
@@ -1686,6 +1715,7 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'CHN — Centro Hospitalar de Niterói',
@@ -1704,6 +1734,7 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
   ],
   services: [
@@ -1862,6 +1893,7 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Petrópolis · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
+      logo: '/img/hospitais/unimed.png',
     },
     {
       name: 'Clínica Revitalis',
@@ -1895,6 +1927,7 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Nova Friburgo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
+      logo: '/img/hospitais/unimed.png',
     },
     {
       name: 'Hospital Serrano',
@@ -2062,6 +2095,7 @@ const intermunicipal: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital do Retiro',
@@ -2088,6 +2122,7 @@ const intermunicipal: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
     {
       name: 'Hospital São Lucas Macaé',
@@ -2269,6 +2304,7 @@ const buzios: GeoRegion = {
       tag: 'Cabo Frio',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital São José Operário',
@@ -2445,6 +2481,7 @@ const angraDosReis: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
   ],
   services: [
@@ -2594,6 +2631,7 @@ const baixadaFluminense: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Mário Lioni',
@@ -2637,6 +2675,7 @@ const baixadaFluminense: GeoRegion = {
       tag: 'SUS · Trauma',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
   ],
   services: [
@@ -2781,6 +2820,7 @@ const centro: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: "Glória D'Or",
@@ -2789,6 +2829,7 @@ const centro: GeoRegion = {
       detail: 'Glória · Alta complexidade · Cirurgia e internação',
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
+      logo: '/img/hospitais/rede-dor.png',
     },
     {
       name: 'Hospital Espanhol',
@@ -2823,6 +2864,7 @@ const centro: GeoRegion = {
       tag: 'SUS · Maior Emergência',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      logo: '/img/hospitais/sus.png',
     },
   ],
   services: [

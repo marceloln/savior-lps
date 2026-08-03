@@ -40,16 +40,22 @@ function isSus(network: string): boolean {
       {hospitals.map((hospital) => (
         <div class={`hosp-card ${getNetworkClass(hospital.network)}`}>
           <div class="hosp-avatar-wrap">
-            <div
-              class={`hosp-initials ${getNetworkClass(hospital.network)}`}
-              style={`--bg: ${hospital.color.bg}; --fg: ${hospital.color.text};`}
-              aria-hidden="true"
-            >
-              <span class="initials-text">{hospital.initials}</span>
-              {isSus(hospital.network) && (
-                <span class="sus-label">SUS</span>
-              )}
-            </div>
+            {hospital.logo ? (
+              <div class="hosp-avatar hosp-avatar-logo" aria-hidden="true">
+                <img src={hospital.logo} alt={hospital.network} loading="lazy" width="56" height="56" />
+              </div>
+            ) : (
+              <div
+                class={`hosp-initials ${getNetworkClass(hospital.network)}`}
+                style={`--bg: ${hospital.color.bg}; --fg: ${hospital.color.text};`}
+                aria-hidden="true"
+              >
+                <span class="initials-text">{hospital.initials}</span>
+                {isSus(hospital.network) && (
+                  <span class="sus-label">SUS</span>
+                )}
+              </div>
+            )}
           </div>
           <div class="hosp-info">
             <div class="hosp-name-row">
@@ -170,9 +176,33 @@ function isSus(network: string): boolean {
     border-left-color: rgba(0, 184, 124, 0.15);
   }
 
-  /* Avatar wrapper (for future logo support) */
+  /* Avatar wrapper */
   .hosp-avatar-wrap {
     flex-shrink: 0;
+  }
+
+  /* Logo variant */
+  .hosp-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hosp-avatar-logo {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .hosp-avatar-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+    border-radius: 8px;
   }
 
   /* Initials block */
@@ -363,6 +393,7 @@ function isSus(network: string): boolean {
       grid-template-columns: 1fr;
     }
 
+    .hosp-avatar,
     .hosp-initials {
       width: 48px;
       height: 48px;
