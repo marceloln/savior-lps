@@ -44,6 +44,12 @@ const hasHighlight = h1Parts.length === 2;
 
   <div class="wrap geo-hero-inner">
 
+    <!-- Marca Savior -->
+    <a href="/" class="geo-hero-brand" aria-label="Savior Medical Service — página inicial">
+      <span class="geo-hero-wordmark">SAVIOR</span>
+      <span class="geo-hero-descriptor">Medical Service</span>
+    </a>
+
     <!-- Breadcrumb -->
     <nav class="geo-breadcrumb" aria-label="Navegação estrutural">
       <ol class="geo-breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -174,9 +180,9 @@ const hasHighlight = h1Parts.length === 2;
     inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(7, 24, 43, 0.65) 0%,
-      rgba(11, 37, 64, 0.55) 50%,
-      rgba(7, 24, 43, 0.60) 100%
+      rgba(7, 24, 43, 0.78) 0%,
+      rgba(11, 37, 64, 0.68) 50%,
+      rgba(7, 24, 43, 0.72) 100%
     );
     pointer-events: none;
     z-index: 1;
@@ -197,6 +203,39 @@ const hasHighlight = h1Parts.length === 2;
     position: relative;
     z-index: 3;
     width: 100%;
+  }
+
+  /* Marca Savior */
+  .geo-hero-brand {
+    display: inline-flex;
+    flex-direction: column;
+    text-decoration: none;
+    margin-bottom: 24px;
+    line-height: 1;
+  }
+
+  .geo-hero-wordmark {
+    font-family: 'Ethnocentric', var(--sans);
+    font-weight: 400;
+    font-size: 27px;
+    letter-spacing: 0.08em;
+    color: white;
+  }
+
+  .geo-hero-descriptor {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .geo-hero-wordmark {
+      font-size: 22px;
+    }
   }
 
   /* Breadcrumb */
