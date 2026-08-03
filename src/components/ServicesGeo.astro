@@ -12,6 +12,18 @@ interface Props {
 }
 
 const { services, regionName } = Astro.props;
+
+// Mapeia ícone pelo índice (0–3). Cicla se houver mais de 4 serviços.
+const icons = [
+  // 0 — Emergência 24h: sirene / cruz
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  // 1 — Remoção programada: calendário
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  // 2 — Transferência inter-hospitalar: setas entre dois pontos
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  // 3 — Alta / Eventos: escudo com coração
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9.5 10.5l1.5 1.5 3-3"/></svg>`,
+];
 ---
 
 <section class="services-geo-section">
@@ -22,8 +34,9 @@ const { services, regionName } = Astro.props;
     </div>
 
     <div class="services-geo-grid">
-      {services.map((service) => (
+      {services.map((service, i) => (
         <div class={`services-geo-card${service.emphasis ? ' services-geo-card--emphasis' : ''}`}>
+          <div class="services-geo-icon" set:html={icons[i % icons.length]} />
           <div class="services-geo-title">{service.title}</div>
           <p class="services-geo-desc">{service.desc}</p>
         </div>
@@ -85,6 +98,20 @@ const { services, regionName } = Astro.props;
   /* Card com emphasis */
   .services-geo-card--emphasis {
     border-left-color: var(--green);
+  }
+
+  /* Icon container */
+  .services-geo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 184, 124, 0.10);
+    color: var(--green);
+    margin-bottom: 14px;
+    flex-shrink: 0;
   }
 
   .services-geo-title {

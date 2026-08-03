@@ -8,9 +8,10 @@ import type { GeoRegion } from '../data/geo-regions';
 
 interface Props {
   feature: GeoRegion['feature'];
+  image?: string; // optional image URL shown above stat cards
 }
 
-const { feature } = Astro.props;
+const { feature, image } = Astro.props;
 
 // Substitui h2Highlight no h2 por <em>
 const h2Parts = feature.h2.split(feature.h2Highlight);
@@ -46,8 +47,17 @@ const hasH2Highlight = h2Parts.length === 2;
       )}
     </div>
 
-    <!-- Coluna direita: stat cards -->
+    <!-- Coluna direita: foto opcional + stat cards -->
     <div class="feature-right">
+      {image && (
+        <img
+          src={image}
+          alt=""
+          class="feature-photo"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
       {feature.stats.map((stat) => (
         <div class="feature-stat">
           <div class="feature-stat-value">{stat.value}</div>
@@ -143,6 +153,15 @@ const hasH2Highlight = h2Parts.length === 2;
     color: rgba(255, 255, 255, 0.80);
     line-height: 1.6;
     margin: 0;
+  }
+
+  /* Foto opcional acima dos stat cards */
+  .feature-photo {
+    width: 100%;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
   }
 
   /* Coluna direita: stat cards */
