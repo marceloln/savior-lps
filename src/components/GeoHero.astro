@@ -42,18 +42,6 @@ const hasHighlight = h1Parts.length === 2;
   <div class="geo-hero-overlay" aria-hidden="true"></div>
   <div class="geo-hero-green-glow" aria-hidden="true"></div>
 
-  <!-- Ambulância recortada -->
-  <div class="geo-hero-ambulance" aria-hidden="true">
-    <img
-      src="/img/geo/ambulancia-cutout.webp"
-      alt=""
-      width="800"
-      height="600"
-      loading="eager"
-      class="geo-hero-ambulance-img"
-    />
-  </div>
-
   <div class="wrap geo-hero-inner">
 
     <!-- Marca Savior -->
@@ -198,37 +186,6 @@ const hasHighlight = h1Parts.length === 2;
     );
     pointer-events: none;
     z-index: 1;
-  }
-
-  /* Ambulância recortada — canto inferior direito */
-  .geo-hero-ambulance {
-    position: absolute;
-    bottom: -8%;
-    right: 2%;
-    z-index: 2;
-    pointer-events: none;
-    max-width: 50%;
-  }
-
-  .geo-hero-ambulance-img {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.5));
-  }
-
-  @media (max-width: 768px) {
-    .geo-hero-ambulance {
-      max-width: 60%;
-      bottom: -10%;
-      right: -2%;
-      opacity: 0.75;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .geo-hero-ambulance {
-      display: none;
-    }
   }
 
   .geo-hero-green-glow {

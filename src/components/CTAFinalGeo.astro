@@ -25,35 +25,46 @@ const waHref = whatsappUrl(contact.whatsapp, waCampaign, waMessage, 'cta-final')
 ---
 
 <section class="cta-final-geo">
-  <div class="cta-final-geo-inner">
-    <h2 class="cta-final-geo-title" set:html={titleHtml} />
-    <p class="cta-final-geo-sub">{subtitle}</p>
-    <div class="cta-final-geo-btns">
-      <a
-        href={waHref}
-        class="cta-geo-btn cta-geo-btn-green"
-        data-whatsapp
-        data-location="cta-final"
-        data-campaign={waCampaign}
-        target="_blank"
-        rel="noopener"
-      >{ctaLabel}</a>
-      <a
-        href={`tel:${contact.phoneHref}`}
-        class="cta-geo-btn cta-geo-btn-outline"
-        data-phone
-        data-campaign={waCampaign}
-        data-location="cta-final-phone"
-      >{contact.phone}</a>
-      {showSPPhone && (
+  <div class="cta-final-geo-layout">
+    <div class="cta-final-geo-inner">
+      <h2 class="cta-final-geo-title" set:html={titleHtml} />
+      <p class="cta-final-geo-sub">{subtitle}</p>
+      <div class="cta-final-geo-btns">
         <a
-          href={`tel:${CONTACT_SP.phoneLandlineHref}`}
+          href={waHref}
+          class="cta-geo-btn cta-geo-btn-green"
+          data-whatsapp
+          data-location="cta-final"
+          data-campaign={waCampaign}
+          target="_blank"
+          rel="noopener"
+        >{ctaLabel}</a>
+        <a
+          href={`tel:${contact.phoneHref}`}
           class="cta-geo-btn cta-geo-btn-outline"
           data-phone
           data-campaign={waCampaign}
-          data-location="cta-final-phone-sp"
-        >{CONTACT_SP.phoneLandline}</a>
-      )}
+          data-location="cta-final-phone"
+        >{contact.phone}</a>
+        {showSPPhone && (
+          <a
+            href={`tel:${CONTACT_SP.phoneLandlineHref}`}
+            class="cta-geo-btn cta-geo-btn-outline"
+            data-phone
+            data-campaign={waCampaign}
+            data-location="cta-final-phone-sp"
+          >{CONTACT_SP.phoneLandline}</a>
+        )}
+      </div>
+    </div>
+    <div class="cta-final-geo-ambulance" aria-hidden="true">
+      <img
+        src="/img/geo/ambulancia-cutout.webp"
+        alt=""
+        width="700"
+        height="348"
+        loading="lazy"
+      />
     </div>
   </div>
 </section>
@@ -62,13 +73,55 @@ const waHref = whatsappUrl(contact.whatsapp, waCampaign, waMessage, 'cta-final')
   .cta-final-geo {
     background: var(--navy, #0B2540);
     background-image: linear-gradient(135deg, var(--navy-deep, #07182B) 0%, var(--navy-mid, #143458) 100%);
-    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
-    text-align: center;
+    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px) 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .cta-final-geo-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 32px;
   }
 
   .cta-final-geo-inner {
-    max-width: 800px;
-    margin: 0 auto;
+    padding-bottom: clamp(48px, 8vw, 96px);
+  }
+
+  .cta-final-geo-ambulance {
+    position: relative;
+    align-self: end;
+  }
+
+  .cta-final-geo-ambulance img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.4));
+    margin-bottom: -12%;
+  }
+
+  @media (max-width: 768px) {
+    .cta-final-geo-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-final-geo-inner {
+      text-align: center;
+      padding-bottom: 0;
+    }
+
+    .cta-final-geo-ambulance {
+      max-width: 80%;
+      margin: 0 auto;
+    }
+
+    .cta-final-geo-ambulance img {
+      margin-bottom: -15%;
+    }
   }
 
   .cta-final-geo-title {
