@@ -12,6 +12,7 @@ import HospitalGrid from '../../components/HospitalGrid.astro';
 import ServicesGeo from '../../components/ServicesGeo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
 import SocialProofGeo from '../../components/SocialProofGeo.astro';
+import FleetBand from '../../components/FleetBand.astro';
 import FAQ from '../../components/FAQ.astro';
 import NearbyRegions from '../../components/NearbyRegions.astro';
 import CTAInline from '../../components/CTAInline.astro';
@@ -103,7 +104,10 @@ const schema = JSON.stringify([schemaEmergency, schemaFaq, schemaBreadcrumb]);
 
     <ServicesGeo services={region.services} regionName={region.name} />
 
-    <FeatureBlock feature={region.feature} />
+    <FeatureBlock feature={region.feature} image="/img/gallery/interior.webp" />
+
+
+    <FleetBand />
 
     <SocialProofGeo reviews={region.socialProof.reviews} regionName={region.name} />
 
