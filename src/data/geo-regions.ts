@@ -2523,6 +2523,376 @@ const angraDosReis: GeoRegion = {
 };
 
 // ============================================================
+// Z9 — Baixada Fluminense
+// ============================================================
+const baixadaFluminense: GeoRegion = {
+  id: 'baixada-fluminense',
+  name: 'Baixada Fluminense',
+  slug: 'baixada-fluminense',
+  phase: 3,
+  seo: {
+    title: 'Ambulância Baixada Fluminense | Caxias, Nova Iguaçu, Meriti | Savior',
+    description:
+      'Ambulância UTI em Duque de Caxias, Nova Iguaçu, São João de Meriti e Nilópolis. Remoções para hospitais do Rio. Pix e cartão. (21) 3171-3030.',
+    h1: 'Ambulância na Baixada. Da sua casa ao hospital certo, no Rio ou na região.',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/baixada-fluminense',
+    keywords: [
+      'ambulância baixada fluminense',
+      'ambulância duque de caxias',
+      'ambulância nova iguaçu',
+      'ambulância são joão de meriti',
+      'ambulância nilópolis',
+    ],
+  },
+  hero: {
+    eyebrow: 'Baixada Fluminense · Central 24h',
+    h1: 'Ambulância na Baixada. Da sua casa ao hospital certo, no Rio ou na região.',
+    h1Highlight: 'hospital certo',
+    subhead:
+      'Atendemos em Duque de Caxias, Nova Iguaçu, São João de Meriti e Nilópolis. Valor informado no WhatsApp antes de sair. Remoção para hospitais na capital ou na Baixada. Médico e enfermeiro a bordo.',
+    waCampaign: 'geo-baixada',
+    waMessage: 'Oi, preciso de ambulância na Baixada Fluminense.',
+  },
+  tempos: [
+    {
+      region: 'Duque de Caxias',
+      time: '30 a 40 min',
+      route: 'Via Avenida Brasil ou Linha Vermelha',
+      highlight: true,
+    },
+    {
+      region: 'São João de Meriti e Nilópolis',
+      time: '35 a 45 min',
+      route: 'Via Avenida Brasil ou BR-040',
+    },
+    {
+      region: 'Nova Iguaçu e Belford Roxo',
+      time: '40 a 55 min',
+      route: 'Via BR-040 ou Avenida Brasil sentido interior',
+    },
+  ],
+  hospitals: [
+    {
+      name: "Hospital Caxias D'Or",
+      initials: 'CX',
+      network: "Rede D'Or",
+      detail: 'Duque de Caxias · Alta complexidade · Emergência 24h',
+      tag: 'Alta Complexidade',
+      color: { bg: '#003B71', text: '#E8A624' },
+      emergency24h: true,
+    },
+    {
+      name: 'Hospital Mário Lioni',
+      initials: 'ML',
+      network: 'Particular',
+      detail: 'Duque de Caxias · Internação e cirurgia geral',
+      tag: 'Internação',
+      color: { bg: '#1B4F72', text: '#FFFFFF' },
+    },
+    {
+      name: 'Hospital Santa Branca',
+      initials: 'SB',
+      network: 'Particular',
+      detail: 'Duque de Caxias · Clínica médica e emergência',
+      tag: 'Emergência',
+      color: { bg: '#17405A', text: '#FFFFFF' },
+      emergency24h: true,
+    },
+    {
+      name: 'Hospital Prontonil',
+      initials: 'PN',
+      network: 'Particular',
+      detail: 'Duque de Caxias · Pronto-socorro 24h',
+      tag: 'Pronto-socorro',
+      color: { bg: '#154360', text: '#FFFFFF' },
+      emergency24h: true,
+    },
+    {
+      name: 'Hospital Terezinha de Jesus',
+      initials: 'TJ',
+      network: 'Particular',
+      detail: 'São João de Meriti · Maternidade e internação',
+      tag: 'Maternidade',
+      color: { bg: '#6C3483', text: '#FFFFFF' },
+    },
+    {
+      name: 'Hospital Geral de Nova Iguaçu',
+      initials: 'GI',
+      network: 'SUS',
+      detail: 'Nova Iguaçu · Referência em trauma · Emergência 24h',
+      tag: 'SUS · Trauma',
+      color: { bg: '#2E7D32', text: '#FFFFFF' },
+      emergency24h: true,
+    },
+  ],
+  services: [
+    {
+      title: 'Preço confirmado antes de sair',
+      desc: 'Valor informado no WhatsApp assim que o chamado é aberto. Pix com 5% de desconto, cartão em até 3x. Sem surpresa.',
+      emphasis: true,
+    },
+    {
+      title: 'Remoção para o Rio',
+      desc: 'A rota mais comum: base na Baixada até hospital na capital. Coordenamos chegada e leito antes de partir.',
+    },
+    {
+      title: 'Ambulância básica e UTI',
+      desc: 'Ambulância com técnico de enfermagem para remoções simples. UTI móvel com médico e enfermeiro para casos críticos.',
+    },
+    {
+      title: 'Emergência 24h',
+      desc: 'Central ativa todos os dias do ano. Atendimento em menos de 1 minuto.',
+    },
+  ],
+  feature: {
+    label: 'Preço transparente',
+    h2: 'Valor confirmado no WhatsApp antes de sair. Sem surpresa.',
+    h2Highlight: 'Sem surpresa',
+    paragraphs: [
+      'Na Baixada, clareza no preço pesa. Por isso, quando você liga ou manda mensagem, a central já informa o valor antes de escalar a equipe. Sem cobrança surpresa depois da corrida.',
+      'A rota mais comum que atendemos é: casa na Baixada, hospital na capital. Coordenamos a chegada e a vaga simultaneamente com a saída da ambulância, para o paciente não esperar na porta.',
+    ],
+    callout: {
+      title: 'Pix com 5% de desconto',
+      body: 'Básica a partir de R$ 1.200, UTI a partir de R$ 2.200. Pix com 5% de desconto, cartão em até 3x. Confirmamos tudo no WhatsApp antes da equipe sair.',
+    },
+    stats: [
+      { value: '30 min', desc: 'Tempo estimado em Duque de Caxias' },
+      { value: '46 anos', desc: 'Atendendo o Rio de Janeiro' },
+      { value: '24h', desc: 'Central ativa todos os dias do ano' },
+    ],
+  },
+  socialProof: {
+    reviews: [
+      {
+        name: 'Claudia R.',
+        text: 'Precisei de ambulância em Caxias de madrugada. Confirmaram o valor antes de sair, chegaram no tempo prometido e levaram minha mãe para o hospital no Rio sem nenhuma complicação.',
+        source: 'Google',
+        rating: 5,
+      },
+      {
+        name: 'Eduardo S.',
+        text: 'Atendimento rápido e preço honesto. Informaram tudo no WhatsApp antes de sair. Equipe muito profissional durante todo o transporte.',
+        source: 'Google',
+        rating: 5,
+      },
+    ],
+  },
+  faq: [
+    {
+      q: 'Quanto custa a ambulância em Caxias?',
+      a: 'Básica a partir de R$ 1.200, UTI a partir de R$ 2.200. Pix com 5% de desconto, cartão em até 3x. O valor é confirmado no WhatsApp antes da equipe sair.',
+    },
+    {
+      q: 'Vocês levam para hospital no Rio?',
+      a: 'Sim. É a rota mais comum que atendemos: base na Baixada com destino a hospitais na capital. Coordenamos a chegada e a vaga antes de partir.',
+    },
+    {
+      q: 'Atendem de madrugada?',
+      a: 'Sim. A central funciona 24 horas todos os dias do ano. Atendemos chamados a qualquer hora.',
+    },
+    {
+      q: 'Quando preciso de ambulância simples e quando preciso de UTI?',
+      a: 'Ambulância básica atende remoções programadas, altas hospitalares e casos estáveis. UTI móvel é indicada para casos críticos, instabilidade clínica ou quando o médico solicitar monitoramento contínuo. A central orienta conforme o quadro relatado.',
+    },
+  ],
+  nearbyRegions: [
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Tijuca, Méier, base em São Cristóvão' },
+    { name: 'Zona Oeste', slug: 'zona-oeste', highlight: 'Jacarepaguá, Bangu, Campo Grande' },
+    { name: 'Niterói', slug: 'niteroi', highlight: 'Hospital Icaraí, CHN, Vita' },
+  ],
+  schema: {
+    geo: { lat: -22.7856, lng: -43.3111 },
+    areaServed: [
+      { name: 'Duque de Caxias' },
+      { name: 'Nova Iguaçu' },
+      { name: 'São João de Meriti' },
+      { name: 'Nilópolis' },
+      { name: 'Belford Roxo' },
+    ],
+  },
+};
+
+// ============================================================
+// Z10 — Centro
+// ============================================================
+const centro: GeoRegion = {
+  id: 'centro',
+  name: 'Centro',
+  slug: 'centro',
+  phase: 3,
+  seo: {
+    title: 'Ambulância Centro do Rio | Empresas e Eventos | APH Corporativo | Savior',
+    description:
+      'Ambulância no Centro do Rio em 10 a 20 minutos. Empresas, eventos, remoções. Segundo menor tempo de chegada. (21) 3171-3030.',
+    h1: 'Ambulância no Centro do Rio em 10 a 20 minutos.',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/centro',
+    keywords: [
+      'ambulância centro rio de janeiro',
+      'ambulância corporativa rio',
+      'aph evento centro rio',
+      'ambulância lapa',
+      'ambulância porto maravilha',
+    ],
+  },
+  hero: {
+    eyebrow: 'Centro do Rio · 2º menor tempo',
+    h1: 'Ambulância no Centro do Rio em 10 a 20 minutos.',
+    h1Highlight: '10 a 20 minutos',
+    subhead:
+      'Nossa base em São Cristóvão garante o segundo menor tempo de chegada da cidade. Empresas, órgãos públicos e eventos no Centro e na Lapa. Conhecemos os pontos de acesso nas ruas de pedestre e vias do BRT e VLT.',
+    waCampaign: 'geo-centro',
+    waMessage: 'Oi, preciso de ambulância no Centro do Rio.',
+  },
+  tempos: [
+    {
+      region: 'Cidade Nova e Praça da Bandeira',
+      time: '10 a 15 min',
+      route: 'Via Avenida Paulo de Frontin ou Radial Oeste',
+      highlight: true,
+    },
+    {
+      region: 'Centro, Lapa e Porto Maravilha',
+      time: '15 a 20 min',
+      route: 'Via Perimetral ou Avenida Brasil sentido Centro',
+    },
+  ],
+  hospitals: [
+    {
+      name: "Quinta D'Or",
+      initials: 'QD',
+      network: "Rede D'Or",
+      detail: 'São Cristóvão · Vizinho da base · Alta complexidade · Emergência 24h',
+      tag: 'Vizinho da Base',
+      color: { bg: '#003B71', text: '#E8A624' },
+      emergency24h: true,
+    },
+    {
+      name: "Glória D'Or",
+      initials: 'GD',
+      network: "Rede D'Or",
+      detail: 'Glória · Alta complexidade · Cirurgia e internação',
+      tag: 'Alta Complexidade',
+      color: { bg: '#003B71', text: '#E8A624' },
+    },
+    {
+      name: 'Hospital Espanhol',
+      initials: 'HE',
+      network: 'Particular',
+      detail: 'Centro · Internação e cirurgia geral',
+      tag: 'Internação',
+      color: { bg: '#C0392B', text: '#FFFFFF' },
+    },
+    {
+      name: 'Hospital do Carmo',
+      initials: 'HC',
+      network: 'Particular',
+      detail: 'Centro · Clínica médica e emergência',
+      tag: 'Emergência',
+      color: { bg: '#17405A', text: '#FFFFFF' },
+      emergency24h: true,
+    },
+    {
+      name: 'Real Hospital Português',
+      initials: 'RP',
+      network: 'Particular',
+      detail: 'Botafogo · Alta complexidade · Cardio e oncologia',
+      tag: 'Cardio',
+      color: { bg: '#154360', text: '#FFFFFF' },
+    },
+    {
+      name: 'Hospital Souza Aguiar',
+      initials: 'SA',
+      network: 'SUS',
+      detail: 'Centro · Maior emergência do Rio · Referência em trauma',
+      tag: 'SUS · Maior Emergência',
+      color: { bg: '#2E7D32', text: '#FFFFFF' },
+      emergency24h: true,
+    },
+  ],
+  services: [
+    {
+      title: 'APH para eventos corporativos',
+      desc: 'Plantão fixo com equipe médica durante eventos no Centro, Lapa e Porto Maravilha. Orçamento e planejamento com antecedência.',
+      emphasis: true,
+    },
+    {
+      title: 'Plantão fixo para empresas',
+      desc: 'Ambulância e equipe em standby na sede da empresa. Faturamento mensal, contrato com SLA.',
+    },
+    {
+      title: 'Remoção e transferência',
+      desc: 'Remoções programadas e emergenciais. Coordenamos chegada e vaga no hospital destino.',
+    },
+    {
+      title: 'Emergência 24h',
+      desc: 'Central ativa todos os dias do ano. Atendimento em menos de 1 minuto.',
+    },
+  ],
+  feature: {
+    label: 'Centro e corporativo',
+    h2: 'A central conhece cada acesso do Centro. BRT, VLT e ruas de pedestre não são surpresa.',
+    h2Highlight: 'não são surpresa',
+    paragraphs: [
+      'O Centro do Rio concentra restrições de circulação que travam quem não conhece: corredores de BRT, trilhos do VLT, vias exclusivas de pedestre no Porto Maravilha. Nossa central monitora e define a rota antes de sair.',
+      'Além dos chamados de emergência, o Centro concentra sedes de empresas, órgãos públicos e casas de evento. Fornecemos ambulância de plantão fixo, APH para eventos corporativos e remoção com faturamento mensal.',
+    ],
+    callout: {
+      title: 'Conheça os planos corporativos',
+      body: 'Plantão fixo, APH para eventos e remoção com faturamento mensal. Consulte condições pelo WhatsApp ou acesse a página corporativa.',
+    },
+    stats: [
+      { value: '10 min', desc: 'Tempo mínimo para Cidade Nova e Praça da Bandeira' },
+      { value: '46 anos', desc: 'Atendendo o Rio de Janeiro' },
+      { value: '24h', desc: 'Central ativa todos os dias do ano' },
+    ],
+  },
+  socialProof: {
+    reviews: [
+      {
+        name: 'Fernanda O.',
+        text: 'Contratamos a Savior para um evento corporativo no Porto Maravilha. Equipe pontual, discreta e preparada. A central já conhecia os acessos do local.',
+        source: 'Google',
+        rating: 5,
+      },
+    ],
+  },
+  faq: [
+    {
+      q: 'Minha empresa precisa de ambulância de plantão fixo no Centro. Como funciona?',
+      a: 'Fornecemos ambulância com equipe em standby na sede da empresa. Contrato com SLA definido e faturamento mensal. Entre em contato pelo WhatsApp para orçamento.',
+    },
+    {
+      q: 'Entram em rua de pedestre ou área restrita no Centro?',
+      a: 'Sim. Nossa central conhece os pontos de acesso nas vias do BRT, VLT e ruas de pedestre do Porto Maravilha. A rota é definida antes de sair para evitar bloqueios.',
+    },
+    {
+      q: 'Cobrem eventos na Lapa?',
+      a: 'Sim. Atendemos eventos no Centro, Lapa e adjacências com ambulância em standby e equipe médica. Solicite orçamento com antecedência.',
+    },
+    {
+      q: 'Qual o tempo até o Porto Maravilha?',
+      a: 'Entre 15 e 20 minutos da nossa base em São Cristóvão, via rotas que evitam os corredores exclusivos.',
+    },
+  ],
+  nearbyRegions: [
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Base em São Cristóvão, menores tempos' },
+    { name: 'Copacabana', slug: 'copacabana', highlight: 'Orla histórica e hospitais' },
+    { name: 'Zona Sul', slug: 'zona-sul', highlight: 'Ipanema, Leblon, Botafogo' },
+  ],
+  schema: {
+    geo: { lat: -22.9068, lng: -43.1729 },
+    areaServed: [
+      { name: 'Centro' },
+      { name: 'Lapa' },
+      { name: 'Porto Maravilha' },
+      { name: 'Cidade Nova' },
+      { name: 'Praça da Bandeira' },
+    ],
+  },
+};
+
+// ============================================================
 // Exportações principais
 // ============================================================
 export const GEO_REGIONS: GeoRegion[] = [
@@ -2538,6 +2908,8 @@ export const GEO_REGIONS: GeoRegion[] = [
   intermunicipal,
   buzios,
   angraDosReis,
+  baixadaFluminense,
+  centro,
 ];
 
 export function getRegion(id: string): GeoRegion {
