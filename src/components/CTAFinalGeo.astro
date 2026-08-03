@@ -1,0 +1,146 @@
+---
+import { CONTACT_RJ, CONTACT_SP, whatsappUrl } from '../data/savior';
+
+interface Props {
+  waCampaign: string;
+  waMessage: string;
+  ctaLabel?: string;
+  contact?: typeof CONTACT_RJ;
+  showSPPhone?: boolean;
+  titleHtml?: string;
+  subtitle?: string;
+}
+
+const {
+  waCampaign,
+  waMessage,
+  ctaLabel = 'Chamar no WhatsApp',
+  contact = CONTACT_RJ,
+  showSPPhone = false,
+  titleHtml = 'Manda mensagem. <em>Nós já estamos a caminho.</em>',
+  subtitle = 'Central 24 horas. Atendemos em menos de 1 minuto, todos os dias do ano.',
+} = Astro.props;
+
+const waHref = whatsappUrl(contact.whatsapp, waCampaign, waMessage, 'cta-final');
+---
+
+<section class="cta-final-geo">
+  <div class="cta-final-geo-inner">
+    <h2 class="cta-final-geo-title" set:html={titleHtml} />
+    <p class="cta-final-geo-sub">{subtitle}</p>
+    <div class="cta-final-geo-btns">
+      <a
+        href={waHref}
+        class="cta-geo-btn cta-geo-btn-green"
+        data-whatsapp
+        data-location="cta-final"
+        data-campaign={waCampaign}
+        target="_blank"
+        rel="noopener"
+      >{ctaLabel}</a>
+      <a
+        href={`tel:${contact.phoneHref}`}
+        class="cta-geo-btn cta-geo-btn-outline"
+        data-phone
+        data-campaign={waCampaign}
+        data-location="cta-final-phone"
+      >{contact.phone}</a>
+      {showSPPhone && (
+        <a
+          href={`tel:${CONTACT_SP.phoneLandlineHref}`}
+          class="cta-geo-btn cta-geo-btn-outline"
+          data-phone
+          data-campaign={waCampaign}
+          data-location="cta-final-phone-sp"
+        >{CONTACT_SP.phoneLandline}</a>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-final-geo {
+    background: var(--navy, #0B2540);
+    background-image: linear-gradient(135deg, var(--navy-deep, #07182B) 0%, var(--navy-mid, #143458) 100%);
+    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
+    text-align: center;
+  }
+
+  .cta-final-geo-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .cta-final-geo-title {
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    color: #FAFAF8 !important;
+  }
+
+  .cta-final-geo-title :global(em) {
+    font-style: normal;
+    color: var(--green-bright, #1FD29A);
+  }
+
+  .cta-final-geo-sub {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.6) !important;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  .cta-final-geo-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-geo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .cta-geo-btn-green {
+    background: var(--green, #00B87C);
+    color: white !important;
+  }
+
+  .cta-geo-btn-green:hover {
+    background: var(--green-dark, #00A06C);
+  }
+
+  .cta-geo-btn-outline {
+    background: rgba(255, 255, 255, 0.08);
+    color: white !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .cta-geo-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+
+  @media (max-width: 480px) {
+    .cta-final-geo-btns {
+      flex-direction: column;
+      align-items: center;
+    }
+    .cta-geo-btn {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>
