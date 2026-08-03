@@ -1,0 +1,251 @@
+---
+// ============================================================
+// Geo Z11 — /remocao-interestadual
+// Landing page: Remoção Interestadual, Fase 1
+// ============================================================
+
+import Base from '../layouts/Base.astro';
+import StickyHeader from '../components/StickyHeader.astro';
+import GeoHero from '../components/GeoHero.astro';
+import TempoGrid from '../components/TempoGrid.astro';
+import HospitalGrid from '../components/HospitalGrid.astro';
+import ServicesGeo from '../components/ServicesGeo.astro';
+import FeatureBlock from '../components/FeatureBlock.astro';
+import SocialProofGeo from '../components/SocialProofGeo.astro';
+import FAQ from '../components/FAQ.astro';
+import NearbyRegions from '../components/NearbyRegions.astro';
+import CTAInline from '../components/CTAInline.astro';
+import FloatingWhatsApp from '../components/FloatingWhatsApp.astro';
+import Footer from '../components/Footer.astro';
+import { getRegion } from '../data/geo-regions';
+import { CONTACT_RJ, CONTACT_SP, GOOGLE_BUSINESS, whatsappUrl } from '../data/savior';
+
+const region = getRegion('interestadual');
+
+// ============ Schema.org JSON-LD ============
+
+const schemaEmergency = {
+  '@context': 'https://schema.org',
+  '@type': 'EmergencyService',
+  'name': `Savior Medical Service — ${region.name}`,
+  'description': region.seo.description,
+  'url': region.seo.canonical,
+  'telephone': '+552131713030',
+  'address': {
+    '@type': 'PostalAddress',
+    'streetAddress': 'R. Gen. Padilha, 73',
+    'addressLocality': 'Rio de Janeiro',
+    'addressRegion': 'RJ',
+    'postalCode': '20920-390',
+    'addressCountry': 'BR',
+  },
+  'geo': {
+    '@type': 'GeoCoordinates',
+    'latitude': region.schema.geo.lat,
+    'longitude': region.schema.geo.lng,
+  },
+  'areaServed': region.schema.areaServed.map(a => ({ '@type': 'Place', 'name': a.name })),
+  'openingHoursSpecification': {
+    '@type': 'OpeningHoursSpecification',
+    'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    'opens': '00:00',
+    'closes': '23:59',
+  },
+  'aggregateRating': {
+    '@type': 'AggregateRating',
+    'ratingValue': String(GOOGLE_BUSINESS.rating),
+    'reviewCount': String(GOOGLE_BUSINESS.reviewCount),
+  },
+};
+
+const schemaFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': region.faq.map(f => ({
+    '@type': 'Question',
+    'name': f.q,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': f.a,
+    },
+  })),
+};
+
+const schemaBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  'itemListElement': [
+    { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.savior.com.br/' },
+    { '@type': 'ListItem', 'position': 2, 'name': 'Remoção Interestadual', 'item': region.seo.canonical },
+  ],
+};
+
+const schema = JSON.stringify([schemaEmergency, schemaFaq, schemaBreadcrumb]);
+---
+
+<Base
+  title={region.seo.title}
+  description={region.seo.description}
+  canonical={region.seo.canonical}
+  schema={schema}
+  geoRegion="BR-RJ"
+  geoPlacename={region.name}
+  geoPosition={`${region.schema.geo.lat};${region.schema.geo.lng}`}
+  icbm={`${region.schema.geo.lat}, ${region.schema.geo.lng}`}
+>
+  <StickyHeader waCampaign={region.hero.waCampaign} />
+
+  <main id="main">
+    <GeoHero region={region} />
+
+    <TempoGrid tempos={region.tempos} />
+
+    <HospitalGrid hospitals={region.hospitals} regionName={region.name} />
+
+    <ServicesGeo services={region.services} regionName={region.name} />
+
+    <FeatureBlock feature={region.feature} />
+
+    <SocialProofGeo reviews={region.socialProof.reviews} regionName={region.name} />
+
+    <CTAInline
+      variant="medium"
+      text="Precisa de remoção interestadual?"
+      cta="Pedir orçamento no WhatsApp"
+      waCampaign={region.hero.waCampaign}
+      waMessage={region.hero.waMessage}
+      location="geo-mid"
+    />
+
+    <FAQ
+      items={region.faq}
+      titleHtml={`Dúvidas sobre <em>remoção interestadual</em>`}
+      eyebrow="Perguntas frequentes"
+    />
+
+    <NearbyRegions regions={region.nearbyRegions} />
+
+    <section class="cta-final">
+      <h2>Manda mensagem. <em>Nós já estamos a caminho.</em></h2>
+      <p>Central 24 horas. Rio de Janeiro e São Paulo. Atendemos todos os dias do ano.</p>
+      <div class="cta-final-btns">
+        <a
+          href={whatsappUrl(CONTACT_RJ.whatsapp, region.hero.waCampaign, region.hero.waMessage, 'cta-final')}
+          class="btn btn-green"
+          data-whatsapp
+          data-location="cta-final"
+          data-campaign={region.hero.waCampaign}
+          target="_blank"
+          rel="noopener"
+        >Pedir orçamento</a>
+        <a
+          href={`tel:${CONTACT_RJ.phoneHref}`}
+          class="btn btn-outline"
+          data-phone
+          data-campaign={region.hero.waCampaign}
+          data-location="cta-final-phone-rj"
+        >{CONTACT_RJ.phone}</a>
+        <a
+          href={`tel:${CONTACT_SP.phoneLandlineHref}`}
+          class="btn btn-outline"
+          data-phone
+          data-campaign={region.hero.waCampaign}
+          data-location="cta-final-phone-sp"
+        >{CONTACT_SP.phoneLandline}</a>
+      </div>
+    </section>
+  </main>
+
+  <FloatingWhatsApp waCampaign={region.hero.waCampaign} />
+  <Footer coverage="Rio de Janeiro · São Paulo · Via Dutra · Remoção interestadual 24h" />
+</Base>
+
+<style>
+  .cta-final {
+    background: var(--navy);
+    background-image: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+    color: #FAFAF8;
+    text-align: center;
+    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px);
+  }
+
+  .cta-final h2 {
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+
+  .cta-final h2 em {
+    font-style: normal;
+    color: var(--green-bright);
+  }
+
+  .cta-final p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, .6);
+    margin-bottom: 32px;
+  }
+
+  .cta-final-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-green {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--green);
+    color: white;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: background 0.15s;
+  }
+
+  .btn-green:hover {
+    background: var(--green-dark);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: transparent;
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, .4);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .btn-outline:hover {
+    border-color: rgba(255, 255, 255, .7);
+    background: rgba(255, 255, 255, .06);
+  }
+
+  @media (max-width: 480px) {
+    .cta-final-btns {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .btn-green,
+    .btn-outline {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
