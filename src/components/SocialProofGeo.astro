@@ -1,0 +1,229 @@
+---
+// ============================================================
+// SocialProofGeo — Depoimentos de pacientes da região
+// Props: reviews (GeoReview[]), regionName
+// ============================================================
+
+import type { GeoReview } from '../data/geo-regions';
+import { GOOGLE_BUSINESS } from '../data/savior';
+
+interface Props {
+  reviews: GeoReview[];
+  regionName: string;
+}
+
+const { reviews, regionName } = Astro.props;
+
+const hasReviews = reviews.length > 0;
+---
+
+<section class="social-proof-section">
+  <div class="wrap">
+    <div class="social-proof-head">
+      <span class="eyebrow">O QUE DIZEM NOSSOS PACIENTES</span>
+      <h2 class="social-proof-h2">
+        Avaliações de quem precisou em <em>{regionName}</em>
+      </h2>
+    </div>
+
+    {hasReviews ? (
+      <div class="social-proof-grid">
+        {reviews.map((review) => (
+          <article class="social-proof-card">
+            <blockquote class="social-proof-quote">
+              "{review.text}"
+            </blockquote>
+            <div class="social-proof-footer">
+              <span class="social-proof-name">{review.name}</span>
+              <div class="social-proof-badge">
+                <span class="social-proof-source">{review.source}</span>
+                {review.rating && (
+                  <span class="social-proof-stars" aria-label={`${review.rating} estrelas`}>
+                    {'★'.repeat(review.rating)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="social-proof-fallback">
+        <div class="social-proof-fallback-inner">
+          <div class="social-proof-fallback-score">
+            {GOOGLE_BUSINESS.rating.toFixed(1).replace('.', ',')} ★
+          </div>
+          <div class="social-proof-fallback-count">
+            no Google · {GOOGLE_BUSINESS.reviewCount} avaliações
+          </div>
+          <a
+            class="social-proof-fallback-link"
+            href={GOOGLE_BUSINESS.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver avaliações no Google
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .social-proof-section {
+    padding: var(--space-block) 0;
+    background: var(--cream);
+  }
+
+  .social-proof-head {
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .social-proof-head .eyebrow {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .social-proof-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--navy);
+  }
+
+  .social-proof-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  /* Grid de cards */
+  .social-proof-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* Card individual */
+  .social-proof-card {
+    background: white;
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid var(--cream-dark);
+    transition: box-shadow 0.15s;
+  }
+
+  .social-proof-card:hover {
+    box-shadow: 0 2px 12px rgba(11, 37, 64, 0.07);
+  }
+
+  .social-proof-quote {
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+    font-style: italic;
+    flex: 1;
+    margin: 0;
+  }
+
+  .social-proof-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .social-proof-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .social-proof-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 184, 124, 0.07);
+    border: 1px solid rgba(0, 184, 124, 0.15);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+
+  .social-proof-source {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--green-dark);
+    font-weight: 500;
+  }
+
+  .social-proof-stars {
+    color: #F5A623;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  /* Fallback: sem reviews */
+  .social-proof-fallback {
+    display: flex;
+    justify-content: center;
+  }
+
+  .social-proof-fallback-inner {
+    background: white;
+    border: 1px solid var(--cream-dark);
+    border-radius: 10px;
+    padding: 40px 56px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .social-proof-fallback-score {
+    font-family: var(--sans);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--green-dark);
+  }
+
+  .social-proof-fallback-count {
+    font-size: 15px;
+    color: var(--gray);
+  }
+
+  .social-proof-fallback-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+  }
+
+  .social-proof-fallback-link:hover {
+    color: var(--navy);
+  }
+
+  @media (max-width: 640px) {
+    .social-proof-fallback-inner {
+      padding: 32px 24px;
+    }
+
+    .social-proof-fallback-score {
+      font-size: 36px;
+    }
+  }
+</style>

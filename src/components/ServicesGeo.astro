@@ -1,0 +1,110 @@
+---
+// ============================================================
+// ServicesGeo — Grid de serviços da região
+// Props: services (GeoService[]), regionName
+// ============================================================
+
+import type { GeoService } from '../data/geo-regions';
+
+interface Props {
+  services: GeoService[];
+  regionName: string;
+}
+
+const { services, regionName } = Astro.props;
+---
+
+<section class="services-geo-section">
+  <div class="wrap">
+    <div class="services-geo-head">
+      <span class="eyebrow">NOSSOS SERVIÇOS</span>
+      <h2 class="services-geo-h2">O que fazemos em <em>{regionName}</em></h2>
+    </div>
+
+    <div class="services-geo-grid">
+      {services.map((service) => (
+        <div class={`services-geo-card${service.emphasis ? ' services-geo-card--emphasis' : ''}`}>
+          <div class="services-geo-title">{service.title}</div>
+          <p class="services-geo-desc">{service.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-geo-section {
+    padding: var(--space-block) 0;
+    background: var(--cream-light);
+  }
+
+  .services-geo-head {
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .services-geo-head .eyebrow {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .services-geo-h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--navy);
+  }
+
+  .services-geo-h2 em {
+    font-style: normal;
+    color: var(--green-dark);
+  }
+
+  /* Grid: 2 colunas desktop, 1 mobile */
+  .services-geo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Card */
+  .services-geo-card {
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    border-left: 3px solid transparent;
+    transition: box-shadow 0.15s;
+  }
+
+  .services-geo-card:hover {
+    box-shadow: 0 2px 12px rgba(11, 37, 64, 0.08);
+  }
+
+  /* Card com emphasis */
+  .services-geo-card--emphasis {
+    border-left-color: var(--green);
+  }
+
+  .services-geo-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .services-geo-desc {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .services-geo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
