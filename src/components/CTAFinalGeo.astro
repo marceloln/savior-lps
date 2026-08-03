@@ -9,7 +9,6 @@ interface Props {
   showSPPhone?: boolean;
   titleHtml?: string;
   subtitle?: string;
-  heroImage?: string;
 }
 
 const {
@@ -20,18 +19,15 @@ const {
   showSPPhone = false,
   titleHtml = 'Manda mensagem. <em>Nós já estamos a caminho.</em>',
   subtitle = 'Central 24 horas. Atendemos em menos de 1 minuto, todos os dias do ano.',
-  heroImage,
 } = Astro.props;
 
 const waHref = whatsappUrl(contact.whatsapp, waCampaign, waMessage, 'cta-final');
 ---
 
 <section class="cta-final-geo">
-  {heroImage && (
-    <div class="cta-final-geo-bg" aria-hidden="true">
-      <img src={heroImage} alt="" width="1920" height="1080" loading="lazy" />
-    </div>
-  )}
+  <div class="cta-final-geo-bg" aria-hidden="true">
+    <img src="/img/geo/ambulancia-motion.webp" alt="" width="1920" height="849" loading="lazy" />
+  </div>
   <div class="cta-final-geo-overlay" aria-hidden="true"></div>
 
   <div class="cta-final-geo-inner">
@@ -96,9 +92,9 @@ const waHref = whatsappUrl(contact.whatsapp, waCampaign, waMessage, 'cta-final')
     z-index: 1;
     background: linear-gradient(
       180deg,
-      rgba(7, 24, 43, 0.85) 0%,
-      rgba(11, 37, 64, 0.75) 50%,
-      rgba(7, 24, 43, 0.88) 100%
+      rgba(7, 24, 43, 0.7) 0%,
+      rgba(11, 37, 64, 0.55) 50%,
+      rgba(7, 24, 43, 0.65) 100%
     );
   }
 
