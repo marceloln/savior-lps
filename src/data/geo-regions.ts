@@ -1012,6 +1012,8 @@ const niteroi: GeoRegion = {
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
       logo: '/img/hospitais/unimed-v2.webp',
+      address: 'Av. Santa Maria, 107 — Camarão, São Gonçalo',
+      cep: '24436-800',
     },
     {
       name: 'Hospital do Coração de São Gonçalo',
@@ -1020,6 +1022,8 @@ const niteroi: GeoRegion = {
       detail: 'São Gonçalo · Cardiologia e hemodinâmica',
       tag: 'Cardiologia',
       color: { bg: '#7B0000', text: '#FFFFFF' },
+      address: 'R. Dr. Nilo Peçanha, 391 — Estrela do Norte, São Gonçalo',
+      cep: '24445-300',
     },
   ],
   services: [
@@ -1173,6 +1177,8 @@ const interestadual: GeoRegion = {
       detail: 'Resende · Ponto de apoio no trajeto Rio-São Paulo',
       tag: 'Apoio de Rota',
       color: { bg: '#37474F', text: '#FFFFFF' },
+      address: 'Resende, RJ',
+      cep: '',
     },
     {
       name: 'Hospital de Apoio em Volta Redonda',
@@ -1181,6 +1187,8 @@ const interestadual: GeoRegion = {
       detail: 'Volta Redonda · Ponto de apoio no trajeto Rio-São Paulo',
       tag: 'Apoio de Rota',
       color: { bg: '#37474F', text: '#FFFFFF' },
+      address: 'Volta Redonda, RJ',
+      cep: '',
     },
     {
       name: 'Hospital de Apoio em Taubaté',
@@ -1189,6 +1197,8 @@ const interestadual: GeoRegion = {
       detail: 'Taubaté · Ponto de apoio na entrada de São Paulo',
       tag: 'Apoio de Rota',
       color: { bg: '#37474F', text: '#FFFFFF' },
+      address: 'Taubaté, SP',
+      cep: '',
     },
     {
       name: 'Hospital de Apoio em São José dos Campos',
@@ -1197,6 +1207,8 @@ const interestadual: GeoRegion = {
       detail: 'São José dos Campos · Ponto de apoio antes de São Paulo capital',
       tag: 'Apoio de Rota',
       color: { bg: '#37474F', text: '#FFFFFF' },
+      address: 'São José dos Campos, SP',
+      cep: '',
     },
   ],
   services: [
@@ -1390,6 +1402,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Bangu · Internação e clínica médica',
       tag: 'Internação',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      address: 'Av. de Santa Cruz, 3805 — Bangu',
+      cep: '21810-015',
     },
     {
       name: 'Hospital Di Camp',
@@ -1398,6 +1412,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Campo Grande · Atendimento geral',
       tag: 'Clínica Médica',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Av. Albardão, 630 — Campo Grande',
+      cep: '23070-130',
     },
     {
       name: 'Hospital Memorial Santa Cruz',
@@ -1598,6 +1614,8 @@ const zonaNorte: GeoRegion = {
       detail: 'Zona Norte · Internação e cirurgia geral',
       tag: 'Internação',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. Bom Pastor, 295 — Tijuca',
+      cep: '20521-060',
     },
     {
       name: 'Hospital Israelita Albert Sabin',
@@ -1606,6 +1624,8 @@ const zonaNorte: GeoRegion = {
       detail: 'Zona Norte · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      address: 'R. Professor Gabizo, 319 — Maracanã',
+      cep: '20271-065',
       logo: '/img/hospitais/albert-sabin-v2.webp',
     },
     {
@@ -1627,6 +1647,8 @@ const zonaNorte: GeoRegion = {
       detail: 'Engenho de Dentro · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'R. José dos Reis, 81 — Engenho de Dentro',
+      cep: '20770-062',
     },
     {
       name: 'Hospital Salgado Filho',
@@ -1814,6 +1836,8 @@ const regiaoOceanica: GeoRegion = {
       detail: 'Maricá · Referência municipal',
       tag: 'Municipal',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      address: 'R. Domício da Gama, 433 — Centro, Maricá',
+      cep: '24900-001',
     },
     {
       name: "Hospital São Gonçalo D'Or",
@@ -1994,6 +2018,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Petrópolis · Desde 1876 · Referência regional',
       tag: 'Referência Regional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      address: 'R. Paulino Afonso, 477 — Centro, Petrópolis',
+      cep: '25684-900',
       emergency24h: true,
     },
     {
@@ -2014,6 +2040,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Araras · Clínica médica',
       tag: 'Clínica Médica',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Estr. Bernardo Coutinho, 2241 — Araras, Petrópolis',
+      cep: '25725-022',
     },
     {
       name: 'HCTCO — Hospital',
@@ -2023,6 +2051,8 @@ const regiaoSerrana: GeoRegion = {
       tag: 'Cirurgia',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Delfim Moreira, 2211 — Vale Paraíso, Teresópolis',
+      cep: '25976-016',
     },
     {
       name: 'Beneficência Portuguesa Teresópolis',
@@ -2214,6 +2244,8 @@ const intermunicipal: GeoRegion = {
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
       logo: '/img/hospitais/rede-dor-v2.webp',
+      address: 'R. Dr. Miguel Couto, 70 — Jardim Amália, Volta Redonda',
+      cep: '27251-260',
     },
     {
       name: 'Hospital do Retiro',
@@ -2222,6 +2254,8 @@ const intermunicipal: GeoRegion = {
       detail: 'Volta Redonda · Cirurgia e internação',
       tag: 'Internação',
       color: { bg: '#1A3C5E', text: '#FFFFFF' },
+      address: 'Av. Jaraguá, 1020 — Retiro, Volta Redonda',
+      cep: '27277-340',
     },
     {
       name: 'Hospital Plantadores de Cana',
@@ -2231,6 +2265,8 @@ const intermunicipal: GeoRegion = {
       tag: 'Referência Regional',
       color: { bg: '#154360', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. José Alves de Azevedo, 337 — Parque Rosário, Campos dos Goytacazes',
+      cep: '28025-496',
     },
     {
       name: 'Hospital Ferreira Machado',
@@ -2241,6 +2277,8 @@ const intermunicipal: GeoRegion = {
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
       logo: '/img/hospitais/sus-v2.webp',
+      address: 'R. Rocha Leão, 2 — Parque Leopoldina, Campos dos Goytacazes',
+      cep: '28051-170',
     },
     {
       name: 'Hospital São Lucas Macaé',
@@ -2249,6 +2287,8 @@ const intermunicipal: GeoRegion = {
       detail: 'Macaé · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Teixeira de Gouveia, 789 — Centro, Macaé',
+      cep: '27910-110',
     },
     {
       name: 'Hospital São João Batista',
@@ -2258,8 +2298,8 @@ const intermunicipal: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#17405A', text: '#FFFFFF' },
       emergency24h: true,
-      address: 'R. N. Sra. das Graças, 235 — Colina, Volta Redonda',
-      cep: '27253-610',
+      address: 'Praça Veríssimo de Melo, 391 — Centro, Macaé',
+      cep: '27913-100',
     },
   ],
   services: [
@@ -2429,6 +2469,8 @@ const buzios: GeoRegion = {
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
       logo: '/img/hospitais/rede-dor-v2.webp',
+      address: 'R. Arízio Gomes da Costa, 186 — Jardim Flamboyant, Cabo Frio',
+      cep: '28905-320',
     },
     {
       name: 'Hospital São José Operário',
@@ -2437,6 +2479,8 @@ const buzios: GeoRegion = {
       detail: 'Cabo Frio · Internação e cirurgia',
       tag: 'Cabo Frio',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'R. Governador Valadares, 22 — São Cristóvão, Cabo Frio',
+      cep: '28909-010',
     },
   ],
   services: [
@@ -2612,6 +2656,8 @@ const angraDosReis: GeoRegion = {
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
       logo: '/img/hospitais/rede-dor-v2.webp',
+      address: 'R. Dr. Miguel Couto, 70 — Jardim Amália, Volta Redonda',
+      cep: '27251-260',
     },
   ],
   services: [
@@ -2783,6 +2829,8 @@ const baixadaFluminense: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#17405A', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Voluntários da Pátria, 257 — 25 de Agosto, Duque de Caxias',
+      cep: '25075-030',
     },
     {
       name: 'Hospital Prontonil',
@@ -2792,6 +2840,8 @@ const baixadaFluminense: GeoRegion = {
       tag: 'Pronto-socorro',
       color: { bg: '#154360', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. João Pessoa, 1741 — Centro, Nilópolis',
+      cep: '26525-015',
     },
     {
       name: 'Hospital Terezinha de Jesus',
@@ -2800,6 +2850,8 @@ const baixadaFluminense: GeoRegion = {
       detail: 'São João de Meriti · Maternidade e internação',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
+      address: 'R. Gessyr Gonçalves Fontes, 153 — Centro, São João de Meriti',
+      cep: '25520-570',
     },
     {
       name: 'Hospital Geral de Nova Iguaçu',
@@ -2966,6 +3018,8 @@ const centro: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       logo: '/img/hospitais/rede-dor-v2.webp',
+      address: 'R. Santo Amaro, 80 — Glória',
+      cep: '22211-230',
     },
     {
       name: 'Hospital Espanhol',
@@ -2985,6 +3039,8 @@ const centro: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#17405A', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Riachuelo, 43 — Centro',
+      cep: '20230-010',
     },
     {
       name: 'Real Hospital Português',
