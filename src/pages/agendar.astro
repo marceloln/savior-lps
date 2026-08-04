@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import BookingForm from '../components/booking/BookingForm';
+
+const title = 'Agendar Ambulância | Savior Medical Service';
+const description = 'Solicite ou agende uma ambulância particular no Rio de Janeiro. UTI móvel, básica ou neonatal. Formulário rápido, resposta imediata. (21) 3171-3030.';
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical="https://www.savior.com.br/agendar"
+>
+  <main id="main">
+    <BookingForm client:load />
+  </main>
+</Base>
