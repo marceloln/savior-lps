@@ -9,9 +9,10 @@ import type { GeoNearbyRegion } from '../data/geo-regions';
 
 interface Props {
   regions: GeoNearbyRegion[];
+  basePath?: string;
 }
 
-const { regions } = Astro.props;
+const { regions, basePath = '/ambulancia-rj' } = Astro.props;
 
 if (regions.length === 0) {
   // Nada a renderizar
@@ -30,10 +31,10 @@ if (regions.length === 0) {
         {regions.map((region) => (
           <a
             class="nearby-card"
-            href={`/ambulancia-rj/${region.slug}`}
+            href={`${basePath}/${region.slug}`}
             aria-label={`Ver ambulância em ${region.name}`}
           >
-            <div class="nearby-name">{region.name}</div>
+            <h3 class="nearby-name">{region.name}</h3>
             <div class="nearby-highlight">{region.highlight}</div>
             <span class="nearby-link">Ver página →</span>
           </a>
@@ -103,6 +104,7 @@ if (regions.length === 0) {
     font-weight: 700;
     color: var(--navy);
     line-height: 1.3;
+    margin: 0;
   }
 
   .nearby-highlight {

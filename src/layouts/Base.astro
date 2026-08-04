@@ -294,12 +294,34 @@ const absoluteTwitterImage = twitterImage
         '/eventos-rj':    'M0NPCK6Aj9AZEN_thtMC',
         '/tipos-ambulancia': 'GteUCJO21ccZEN_thtMC',
         '/corporativo':      'GteUCJO21ccZEN_thtMC',
+        // Geo pages — TODO: criar labels individuais no Google Ads e substituir
+        '/ambulancia-rj/copacabana':          'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/zona-sul':            'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/barra-recreio':       'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/niteroi':             'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/zona-norte':          'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/zona-oeste':          'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/centro':              'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/baixada-fluminense':  'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/regiao-serrana':      'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/regiao-oceanica':     'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/buzios':              'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/angra-dos-reis':      'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/intermunicipal':      'GteUCJO21ccZEN_thtMC',
+        '/ambulancia-rj/remocao-interestadual': 'GteUCJO21ccZEN_thtMC',
       };
       var gadsLabel = null;
-      for (var p in GADS_LABELS) {
+      var sortedPaths = Object.keys(GADS_LABELS).sort(function(a,b){ return b.length - a.length; });
+      for (var i = 0; i < sortedPaths.length; i++) {
+        var p = sortedPaths[i];
         if (path.indexOf(p) !== -1) { gadsLabel = GADS_LABELS[p]; break; }
       }
       if (!gadsLabel) gadsLabel = 'GteUCJO21ccZEN_thtMC';
+
+      // Extract geo region from path
+      var geoRegion = '';
+      var geoMatch = path.match(/\/ambulancia-rj\/([^\/]+)/);
+      if (geoMatch) geoRegion = geoMatch[1];
 
       document.addEventListener('click', function (e) {
         var t = e.target;
@@ -311,7 +333,7 @@ const absoluteTwitterImage = twitterImage
           var waLabel = wa.dataset.eventLabel || wa.dataset.location || 'unknown';
           var waValue = LEAD_VALUES[waLabel] || 700;
           var waCamp  = wa.dataset.campaign || 'none';
-          var waParams = { value: waValue, currency: 'BRL', lead_source: waLabel, campaign: waCamp };
+          var waParams = { value: waValue, currency: 'BRL', lead_source: waLabel, campaign: waCamp, geo_region: geoRegion };
 
           dataLayer.push(Object.assign({ event: 'generate_lead',           method: 'whatsapp' }, waParams));
           dataLayer.push(Object.assign({ event: 'whatsapp_click' },                              waParams));
@@ -362,7 +384,7 @@ const absoluteTwitterImage = twitterImage
           var phLabel = ph.dataset.eventLabel || ph.dataset.location || 'unknown';
           var phValue = LEAD_VALUES[phLabel] || 700;
           var phCamp  = ph.dataset.campaign || 'none';
-          var phParams = { value: phValue, currency: 'BRL', lead_source: phLabel, campaign: phCamp };
+          var phParams = { value: phValue, currency: 'BRL', lead_source: phLabel, campaign: phCamp, geo_region: geoRegion };
 
           dataLayer.push(Object.assign({ event: 'generate_lead',          method: 'phone' }, phParams));
           dataLayer.push(Object.assign({ event: 'phone_click' },                             phParams));

@@ -13,6 +13,8 @@ export interface GeoHospital {
   color: { bg: string; text: string };
   emergency24h?: boolean;
   logo?: string;
+  address?: string;
+  cep?: string;
 }
 
 export interface GeoTempo {
@@ -143,7 +145,9 @@ const copacabana: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/copa-dor.png',
+      logo: '/img/hospitais/copa-dor.webp',
+      address: 'R. Figueiredo de Magalhães, 875 — Copacabana',
+      cep: '22031-011',
     },
     {
       name: 'Copa Star',
@@ -152,7 +156,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua Figueiredo de Magalhães, 900 · Cardiologia e hemodinâmica',
       tag: 'Cardiologia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/copa-star.png',
+      logo: '/img/hospitais/copa-star.webp',
+      address: 'R. Figueiredo de Magalhães, 700 — Copacabana',
+      cep: '22031-012',
     },
     {
       name: 'Hospital São Lucas Copacabana',
@@ -161,6 +167,8 @@ const copacabana: GeoRegion = {
       detail: 'Rua Barata Ribeiro, 67 · Fígado, rim e pâncreas',
       tag: 'Transplantes',
       color: { bg: '#0B2540', text: '#1FD29A' },
+      address: 'Trav. Frederico Pamplona, 32 — Copacabana',
+      cep: '22061-080',
     },
     {
       name: 'Casa de Saúde São José',
@@ -169,7 +177,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
-      logo: '/img/hospitais/rede-santa-catarina.png',
+      logo: '/img/hospitais/rede-santa-catarina.webp',
+      address: 'R. Macedo Sobrinho, 21 — Humaitá',
+      cep: '22271-080',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -178,7 +188,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Antônio Parreiras, 67 — Ipanema',
+      cep: '22411-020',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -188,6 +200,8 @@ const copacabana: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Barão da Torre, 145 — Ipanema',
+      cep: '22411-001',
     },
     {
       name: 'Clínica São Vicente da Gávea',
@@ -196,7 +210,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. João Borges, 204 — Gávea',
+      cep: '22451-100',
     },
   ],
   services: [
@@ -346,7 +362,9 @@ const zonaSul: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/hospital-samaritano.png',
+      logo: '/img/hospitais/hospital-samaritano.webp',
+      address: 'R. Bambina, 98 — Botafogo',
+      cep: '22251-050',
     },
     {
       name: 'Pró-Cardíaco',
@@ -356,6 +374,8 @@ const zonaSul: GeoRegion = {
       tag: 'Cardiologia',
       color: { bg: '#7B0000', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. General Polidoro, 192 — Botafogo',
+      cep: '22280-003',
     },
     {
       name: 'Santa Lúcia',
@@ -365,6 +385,8 @@ const zonaSul: GeoRegion = {
       tag: 'Maternidade',
       color: { bg: '#1A5276', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Capitão Salomão, 27 — Botafogo',
+      cep: '22271-040',
     },
     {
       name: 'Adventista Silvestre',
@@ -373,6 +395,8 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Silvestre, 143 · Cosme Velho · Oncologia e cirurgia',
       tag: 'Oncologia',
       color: { bg: '#1E6B3C', text: '#FFFFFF' },
+      address: 'Ladeira do Ascurra, 274 — Cosme Velho',
+      cep: '22241-320',
     },
     {
       name: 'Clínica São Vicente da Gávea',
@@ -381,7 +405,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. João Borges, 204 — Gávea',
+      cep: '22451-100',
     },
     {
       name: 'Casa de Saúde São José',
@@ -390,7 +416,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
-      logo: '/img/hospitais/rede-santa-catarina.png',
+      logo: '/img/hospitais/rede-santa-catarina.webp',
+      address: 'R. Macedo Sobrinho, 21 — Humaitá',
+      cep: '22271-080',
     },
     {
       name: 'Perinatal Laranjeiras',
@@ -399,7 +427,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua das Laranjeiras, 374 · Laranjeiras · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
-      logo: '/img/hospitais/grupo-perinatal.png',
+      logo: '/img/hospitais/grupo-perinatal.webp',
+      address: 'R. das Laranjeiras, 445 — Laranjeiras',
+      cep: '22240-002',
     },
     {
       name: 'Hospital Federal da Lagoa',
@@ -408,7 +438,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Jardim Botânico, 501 · Lagoa · Ortopedia e neurologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Jardim Botânico, 501 — Jardim Botânico',
+      cep: '22470-050',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -417,7 +449,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Ipanema · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Antônio Parreiras, 67 — Ipanema',
+      cep: '22411-020',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -427,6 +461,8 @@ const zonaSul: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Barão da Torre, 145 — Ipanema',
+      cep: '22411-001',
     },
     {
       name: 'Hospital Ipanema Care',
@@ -435,6 +471,8 @@ const zonaSul: GeoRegion = {
       detail: 'Ipanema · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. Canning, 16 — Ipanema',
+      cep: '22411-030',
     },
     {
       name: 'Hospital Rio Laranjeiras',
@@ -443,6 +481,8 @@ const zonaSul: GeoRegion = {
       detail: 'Laranjeiras · Clínica médica geral',
       tag: 'Clínica Médica',
       color: { bg: '#0E3D6E', text: '#FFFFFF' },
+      address: 'R. das Laranjeiras, 72 — Laranjeiras',
+      cep: '22240-000',
     },
     {
       name: 'Hospital Casa Rio Botafogo',
@@ -451,6 +491,8 @@ const zonaSul: GeoRegion = {
       detail: 'Botafogo · Internação e cirurgia ambulatorial',
       tag: 'Cirurgia',
       color: { bg: '#1A3C5E', text: '#FFFFFF' },
+      address: 'R. Barão de Lucena, 95 — Botafogo',
+      cep: '22260-020',
     },
     {
       name: 'Hospital Municipal Rocha Maia',
@@ -460,6 +502,8 @@ const zonaSul: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. General Severiano, 91 — Botafogo',
+      cep: '22290-040',
     },
     {
       name: "Hospital Glória D'Or",
@@ -468,7 +512,9 @@ const zonaSul: GeoRegion = {
       detail: 'Flamengo · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Santo Amaro, 80 — Glória',
+      cep: '22211-230',
     },
     {
       name: 'COT Flamengo',
@@ -477,6 +523,8 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Marques de Abrantes · Flamengo · Ortopedia e traumatologia',
       tag: 'Ortopedia',
       color: { bg: '#1C4E80', text: '#FFFFFF' },
+      address: 'R. Barão do Flamengo, 22 — Flamengo',
+      cep: '22220-080',
     },
   ],
   services: [
@@ -634,7 +682,9 @@ const barraReCreio: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. Ayrton Senna, 3079 — Barra da Tijuca',
+      cep: '22775-002',
     },
     {
       name: 'Americas Medical City',
@@ -644,6 +694,8 @@ const barraReCreio: GeoRegion = {
       tag: 'Oncologia',
       color: { bg: '#B71C1C', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Hospital Vitória',
@@ -653,6 +705,8 @@ const barraReCreio: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#1565C0', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Rio Mar Barra',
@@ -661,6 +715,8 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Augusto Camossa Saldanha, 55 — Barra da Tijuca',
+      cep: '22793-310',
     },
     {
       name: 'Perinatal Barra',
@@ -669,7 +725,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
-      logo: '/img/hospitais/grupo-perinatal.png',
+      logo: '/img/hospitais/grupo-perinatal.webp',
+      address: 'Av. Emb. Abelardo Bueno, 201 — Barra da Tijuca',
+      cep: '22775-040',
     },
     {
       name: 'Samaritano Barra',
@@ -678,7 +736,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/hospital-samaritano.png',
+      logo: '/img/hospitais/hospital-samaritano.webp',
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Hospital Lourenço Jorge',
@@ -688,7 +748,9 @@ const barraReCreio: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Av. Ayrton Senna, 2000 — Barra da Tijuca',
+      cep: '22775-003',
     },
     {
       name: "Oncologia D'Or Barra",
@@ -697,7 +759,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Tratamento oncológico',
       tag: 'Oncologia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. das Américas, 3500 — Barra da Tijuca',
+      cep: '22640-102',
     },
     {
       name: 'Barra Day Hospital',
@@ -706,6 +770,8 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Cirurgia ambulatorial e procedimentos',
       tag: 'Day Hospital',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Av. Armando Lombardi, 1000 — Barra da Tijuca',
+      cep: '22640-020',
     },
   ],
   services: [
@@ -856,6 +922,8 @@ const niteroi: GeoRegion = {
       tag: 'Quaternário',
       color: { bg: '#1A237E', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. La Salle, 12 — Centro, Niterói',
+      cep: '24020-096',
     },
     {
       name: "Niterói D'Or",
@@ -865,7 +933,9 @@ const niteroi: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Mariz e Barros, 550 — Santa Rosa, Niterói',
+      cep: '24220-121',
     },
     {
       name: 'Hospital Icaraí',
@@ -874,6 +944,8 @@ const niteroi: GeoRegion = {
       detail: 'Rua Dr. Celestino, 100 · Icaraí · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Marquês do Paraná, 233 — Icaraí, Niterói',
+      cep: '24030-215',
     },
     {
       name: 'São Lucas Niterói',
@@ -882,6 +954,8 @@ const niteroi: GeoRegion = {
       detail: 'Niterói · Cirurgia geral e especialidades',
       tag: 'Cirurgia',
       color: { bg: '#0B2540', text: '#1FD29A' },
+      address: 'R. Dr. March, 207 — Barreto, Niterói',
+      cep: '24110-650',
     },
     {
       name: 'Hospital do Ingá',
@@ -891,7 +965,9 @@ const niteroi: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Presidente Pedreira, 26 — Ingá, Niterói',
+      cep: '24210-470',
     },
     {
       name: 'Hospital de Clínicas Alameda',
@@ -900,6 +976,8 @@ const niteroi: GeoRegion = {
       detail: 'Niterói · Clínica médica e cirurgia ambulatorial',
       tag: 'Clínica Médica',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Al. São Boaventura, 321 — Fonseca, Niterói',
+      cep: '24130-005',
     },
     {
       name: 'HCSG — Hospital Central de São Gonçalo',
@@ -909,7 +987,9 @@ const niteroi: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Cel. Moreira César, 138 — Centro, São Gonçalo',
+      cep: '24440-410',
     },
     {
       name: 'Intermédica São Gonçalo',
@@ -919,6 +999,8 @@ const niteroi: GeoRegion = {
       tag: 'PA',
       color: { bg: '#1565C0', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Dr. Francisco Portela, 1234 — Centro, São Gonçalo',
+      cep: '24445-000',
     },
     {
       name: 'Hospital Leste Fluminense',
@@ -927,7 +1009,7 @@ const niteroi: GeoRegion = {
       detail: 'São Gonçalo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
     },
     {
       name: 'Hospital do Coração de São Gonçalo',
@@ -1261,7 +1343,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Estr. dos Três Rios, 1366 — Freguesia',
+      cep: '22750-008',
     },
     {
       name: 'Hospital de Jacarepaguá (HCJ)',
@@ -1270,6 +1354,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Jacarepaguá · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Bacairis, 499 — Taquara',
+      cep: '22730-120',
     },
     {
       name: "Hospital Oeste D'Or",
@@ -1279,7 +1365,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Olinda Ellis, 93 — Campo Grande',
+      cep: '23045-160',
     },
     {
       name: 'Hospital Bangu 24h',
@@ -1289,7 +1377,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Francisco Real, 752 — Bangu',
+      cep: '21810-042',
     },
     {
       name: 'Hospital São Lourenço',
@@ -1314,6 +1404,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Santa Cruz · Referência da região',
       tag: 'Internação',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      address: 'R. Felipe Cardoso, 759 — Santa Cruz',
+      cep: '23510-006',
     },
   ],
   services: [
@@ -1472,7 +1564,9 @@ const zonaNorte: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Almirante Baltazar, 383 — São Cristóvão',
+      cep: '20941-150',
     },
     {
       name: 'Hospital Badim',
@@ -1482,6 +1576,8 @@ const zonaNorte: GeoRegion = {
       tag: 'Neurologia',
       color: { bg: '#1A237E', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. São Francisco Xavier, 390 — Maracanã',
+      cep: '20550-013',
     },
     {
       name: 'Hospital São Vicente de Paulo',
@@ -1490,6 +1586,8 @@ const zonaNorte: GeoRegion = {
       detail: 'Tijuca · Oncologia e transplantes',
       tag: 'Oncologia',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      address: 'R. Dr. Satamini, 333 — Tijuca',
+      cep: '20270-233',
     },
     {
       name: 'Hospital Evangélico',
@@ -1506,7 +1604,7 @@ const zonaNorte: GeoRegion = {
       detail: 'Zona Norte · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
-      logo: '/img/hospitais/albert-sabin.png',
+      logo: '/img/hospitais/albert-sabin.webp',
     },
     {
       name: "Hospital Norte D'Or",
@@ -1516,7 +1614,9 @@ const zonaNorte: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Carolina Machado, 38 — Cascadura',
+      cep: '21350-135',
     },
     {
       name: 'Hospital Memorial',
@@ -1534,7 +1634,9 @@ const zonaNorte: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Arquias Cordeiro, 370 — Méier',
+      cep: '20770-000',
     },
     {
       name: 'ProntoBaby Tijuca',
@@ -1544,6 +1646,8 @@ const zonaNorte: GeoRegion = {
       tag: 'Pediatria',
       color: { bg: '#6C3483', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Adolfo Mota, 81 — Tijuca',
+      cep: '20540-100',
     },
   ],
   services: [
@@ -1698,6 +1802,8 @@ const regiaoOceanica: GeoRegion = {
       tag: 'UPA',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Dr. Raul de Oliveira Rodrigues, 382 — Piratininga, Niterói',
+      cep: '24350-630',
     },
     {
       name: 'Hospital Municipal Conde Modesto Leal',
@@ -1715,7 +1821,9 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'São Gonçalo',
+      cep: '',
     },
     {
       name: 'CHN — Centro Hospitalar de Niterói',
@@ -1734,7 +1842,7 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
   ],
   services: [
@@ -1893,7 +2001,9 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Petrópolis · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
+      address: 'R. do Expedicionário, 144 — Bingen, Petrópolis',
+      cep: '25660-290',
     },
     {
       name: 'Clínica Revitalis',
@@ -1919,6 +2029,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Teresópolis · Internação e clínica médica',
       tag: 'Internação',
       color: { bg: '#1A3C5E', text: '#FFFFFF' },
+      address: 'R. José Maria de Araújo Regadas, 300 — Ermitage, Teresópolis',
+      cep: '25953-345',
     },
     {
       name: 'Unimed Nova Friburgo',
@@ -1927,7 +2039,9 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Nova Friburgo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
+      address: 'R. Izelino Maduro, 900 — Chácara do Paraíso, Nova Friburgo',
+      cep: '28605-300',
     },
     {
       name: 'Hospital Serrano',
@@ -1936,6 +2050,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Nova Friburgo · Referência municipal',
       tag: 'Clínica Médica',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. General Osório, 276 — Centro, Nova Friburgo',
+      cep: '28625-630',
     },
   ],
   services: [
@@ -2095,7 +2211,7 @@ const intermunicipal: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital do Retiro',
@@ -2122,7 +2238,7 @@ const intermunicipal: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
     },
     {
       name: 'Hospital São Lucas Macaé',
@@ -2140,6 +2256,8 @@ const intermunicipal: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#17405A', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. N. Sra. das Graças, 235 — Colina, Volta Redonda',
+      cep: '27253-610',
     },
   ],
   services: [
@@ -2287,6 +2405,8 @@ const buzios: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Estr. da Usina, 600 — Centro, Armação dos Búzios',
+      cep: '28950-000',
     },
     {
       name: 'UPA Búzios',
@@ -2295,6 +2415,8 @@ const buzios: GeoRegion = {
       detail: 'Búzios · Urgência e emergência básica',
       tag: 'UPA',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      address: 'Av. José Bento Ribeiro Dantas, 8 — Rasa, Búzios',
+      cep: '28950-000',
     },
     {
       name: 'Hospital Unilagos',
@@ -2304,7 +2426,7 @@ const buzios: GeoRegion = {
       tag: 'Cabo Frio',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital São José Operário',
@@ -2455,6 +2577,8 @@ const angraDosReis: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Japoranga, 1700 — Japuíba, Angra dos Reis',
+      cep: '23934-055',
     },
     {
       name: 'Hospital Hugo Miranda',
@@ -2463,6 +2587,8 @@ const angraDosReis: GeoRegion = {
       detail: 'Angra dos Reis · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Av. São Pedro de Alcântara, 1 — Pontal, Paraty',
+      cep: '23970-000',
     },
     {
       name: 'Hospital Codrato de Vilhena',
@@ -2472,6 +2598,8 @@ const angraDosReis: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Dr. Coutinho, 84 — Centro, Angra dos Reis',
+      cep: '23900-010',
     },
     {
       name: 'Hospital Volta Redonda',
@@ -2481,7 +2609,7 @@ const angraDosReis: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
   ],
   services: [
@@ -2631,7 +2759,9 @@ const baixadaFluminense: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. Brig. Lima e Silva, 821 — Jd. 25 de Agosto, Duque de Caxias',
+      cep: '25071-181',
     },
     {
       name: 'Hospital Mário Lioni',
@@ -2640,6 +2770,8 @@ const baixadaFluminense: GeoRegion = {
       detail: 'Duque de Caxias · Internação e cirurgia geral',
       tag: 'Internação',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      address: 'R. Ana Neri, 190 — Jd. 25 de Agosto, Duque de Caxias',
+      cep: '25070-420',
     },
     {
       name: 'Hospital Santa Branca',
@@ -2675,7 +2807,9 @@ const baixadaFluminense: GeoRegion = {
       tag: 'SUS · Trauma',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Estr. Ambai, 953 — Posse, Nova Iguaçu',
+      cep: '26030-380',
     },
   ],
   services: [
@@ -2820,7 +2954,7 @@ const centro: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: "Glória D'Or",
@@ -2829,7 +2963,7 @@ const centro: GeoRegion = {
       detail: 'Glória · Alta complexidade · Cirurgia e internação',
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital Espanhol',
@@ -2838,6 +2972,8 @@ const centro: GeoRegion = {
       detail: 'Centro · Internação e cirurgia geral',
       tag: 'Internação',
       color: { bg: '#C0392B', text: '#FFFFFF' },
+      address: 'R. Riachuelo, 302 — Centro',
+      cep: '20230-013',
     },
     {
       name: 'Hospital do Carmo',
@@ -2855,6 +2991,8 @@ const centro: GeoRegion = {
       detail: 'Botafogo · Alta complexidade · Cardio e oncologia',
       tag: 'Cardio',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. Florianópolis, 908 — Praça Seca',
+      cep: '21321-052',
     },
     {
       name: 'Hospital Souza Aguiar',
@@ -2864,7 +3002,9 @@ const centro: GeoRegion = {
       tag: 'SUS · Maior Emergência',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Praça da República, 111 — Centro',
+      cep: '20211-350',
     },
   ],
   services: [

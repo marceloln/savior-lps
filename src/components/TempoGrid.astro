@@ -8,9 +8,10 @@ import type { GeoTempo } from '../data/geo-regions';
 
 interface Props {
   tempos: GeoTempo[];
+  baseDescription?: string;
 }
 
-const { tempos } = Astro.props;
+const { tempos, baseDescription = 'Nossa base fica em São Cristóvão, na Zona Norte do Rio. Os tempos abaixo são médias — a central informa a estimativa real ao confirmar o chamado.' } = Astro.props;
 ---
 
 <section class="tempo-grid-section">
@@ -19,7 +20,7 @@ const { tempos } = Astro.props;
       <span class="eyebrow">TEMPO DE CHEGADA</span>
       <h2 class="tempo-h2">De onde saímos e <em>quanto tempo leva</em></h2>
       <p class="tempo-desc">
-        Nossa base fica em São Cristóvão, na Zona Norte do Rio. Os tempos abaixo são médias — a central informa a estimativa real ao confirmar o chamado.
+        {baseDescription}
       </p>
     </div>
 
@@ -147,7 +148,7 @@ const { tempos } = Astro.props;
   }
 
   .tempo-card--highlight .tempo-route {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.78);
   }
 
   /* Disclaimer */

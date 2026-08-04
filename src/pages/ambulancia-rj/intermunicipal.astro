@@ -20,6 +20,7 @@ import FloatingWhatsApp from '../../components/FloatingWhatsApp.astro';
 import Footer from '../../components/Footer.astro';
 import { getRegion } from '../../data/geo-regions';
 import { GOOGLE_BUSINESS } from '../../data/savior';
+import { hospitalSchemas } from '../../utils/hospital-schema';
 import CTAFinalGeo from '../../components/CTAFinalGeo.astro';
 
 const region = getRegion('intermunicipal');
@@ -81,7 +82,8 @@ const schemaBreadcrumb = {
   ],
 };
 
-const schema = JSON.stringify([schemaEmergency, schemaFaq, schemaBreadcrumb]);
+const hospSchemas = hospitalSchemas(region.hospitals);
+const schema = JSON.stringify([schemaEmergency, schemaFaq, schemaBreadcrumb, ...hospSchemas]);
 ---
 
 <Base
