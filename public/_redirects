@@ -18,6 +18,21 @@
 # URL antiga /eventos → /eventos-rj (301 permanente, preserva SEO)
 /eventos /eventos-rj 301
 
+# Geo pages: redirect URLs antigas (sem prefixo ambulancia) → novas
+/ambulancia-rj/copacabana /ambulancia-rj/ambulancia-copacabana 301
+/ambulancia-rj/zona-sul /ambulancia-rj/ambulancia-zona-sul 301
+/ambulancia-rj/barra-recreio /ambulancia-rj/ambulancia-barra-recreio 301
+/ambulancia-rj/zona-oeste /ambulancia-rj/ambulancia-zona-oeste 301
+/ambulancia-rj/zona-norte /ambulancia-rj/ambulancia-zona-norte 301
+/ambulancia-rj/niteroi /ambulancia-rj/ambulancia-niteroi 301
+/ambulancia-rj/regiao-oceanica /ambulancia-rj/ambulancia-regiao-oceanica 301
+/ambulancia-rj/regiao-serrana /ambulancia-rj/ambulancia-regiao-serrana 301
+/ambulancia-rj/baixada-fluminense /ambulancia-rj/ambulancia-baixada-fluminense 301
+/ambulancia-rj/centro /ambulancia-rj/ambulancia-centro 301
+/ambulancia-rj/intermunicipal /ambulancia-rj/ambulancia-intermunicipal 301
+/ambulancia-rj/buzios /ambulancia-rj/ambulancia-buzios 301
+/ambulancia-rj/angra-dos-reis /ambulancia-rj/ambulancia-angra-dos-reis 301
+
 # URLs WordPress antigas → home (evita 404s indexados)
 /wp-admin/* / 301
 /wp-login.php / 301
