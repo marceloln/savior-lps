@@ -41,7 +41,7 @@ function isSus(network: string): boolean {
         <div class={`hosp-card ${getNetworkClass(hospital.network)}`}>
           <div class="hosp-avatar-wrap">
             {hospital.logo ? (
-              <div class="hosp-avatar hosp-avatar-logo" aria-hidden="true">
+              <div class="hosp-avatar hosp-avatar-logo" style={hospital.logoBg ? `background:${hospital.logoBg}` : ''} aria-hidden="true">
                 <img src={hospital.logo} alt={hospital.name} loading="lazy" width="56" height="56" />
               </div>
             ) : (
@@ -68,9 +68,6 @@ function isSus(network: string): boolean {
               )}
             </div>
             <div class="hosp-detail">{hospital.detail}</div>
-            {hospital.address && (
-              <div class="hosp-address">{hospital.address}</div>
-            )}
             <div class="hosp-bottom">
               <span class="hosp-tag">{hospital.tag}</span>
               {hospital.network.includes("Rede D'Or") && (
@@ -135,10 +132,10 @@ function isSus(network: string): boolean {
   .hosp-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2px;
+    gap: 0;
     border-radius: 10px;
     overflow: hidden;
-    background: var(--cream-dark);
+    background: white;
     margin-bottom: 24px;
   }
 
@@ -151,6 +148,8 @@ function isSus(network: string): boolean {
     gap: 16px;
     align-items: flex-start;
     border-left: 3px solid transparent;
+    border-bottom: 1px solid var(--cream-dark, #E8DFCC);
+    border-right: 1px solid var(--cream-dark, #E8DFCC);
     transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default;
   }
@@ -198,14 +197,14 @@ function isSus(network: string): boolean {
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
   }
 
   .hosp-avatar-logo img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 6px;
-    border-radius: 8px;
+    padding: 8px;
   }
 
   /* Initials block */

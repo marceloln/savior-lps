@@ -13,6 +13,7 @@ export interface GeoHospital {
   color: { bg: string; text: string };
   emergency24h?: boolean;
   logo?: string;
+  logoBg?: string;
   address?: string;
   cep?: string;
 }
@@ -157,6 +158,7 @@ const copacabana: GeoRegion = {
       tag: 'Cardiologia',
       color: { bg: '#003B71', text: '#E8A624' },
       logo: '/img/hospitais/copa-star.webp',
+      logoBg: '#0B2540',
       address: 'R. Figueiredo de Magalhães, 700 — Copacabana',
       cep: '22031-012',
     },
