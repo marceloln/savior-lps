@@ -146,6 +146,13 @@ export const GOOGLE_BUSINESS_SP = {
   name: 'SAVIOR Medical Service São Paulo',
 };
 
+export const SAVIOR_STATS = {
+  yearsInBusiness: BRAND.yearsOperating,
+  foundedYear: BRAND.yearsFounded,
+  googleRating: GOOGLE_BUSINESS.rating,
+  googleReviews: GOOGLE_BUSINESS.reviewCount,
+} as const;
+
 // Utilitário para gerar link do WhatsApp com mensagem limpa.
 // A atribuição (UTM, gclid, campaign) é gerenciada pelo wa-enhance.ts (Ref Code v2),
 // que substitui o texto no client-side com "Ref: XXXXX" e armazena os dados no Worker KV.

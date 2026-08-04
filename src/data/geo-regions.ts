@@ -13,6 +13,9 @@ export interface GeoHospital {
   color: { bg: string; text: string };
   emergency24h?: boolean;
   logo?: string;
+  logoBg?: string;
+  address?: string;
+  cep?: string;
 }
 
 export interface GeoTempo {
@@ -90,7 +93,7 @@ export interface GeoRegion {
 const copacabana: GeoRegion = {
   id: 'copacabana',
   name: 'Copacabana',
-  slug: 'ambulancia-copacabana',
+  slug: 'copacabana',
   phase: 1,
   heroImage: '/img/geo/copacabana-aerial.webp',
   seo: {
@@ -98,7 +101,7 @@ const copacabana: GeoRegion = {
     description:
       "Ambulância UTI em Copacabana em 25 a 35 min. Remoções Copa D'Or, Copa Star, São Lucas. 2 ambulâncias nos PAs Unimed do bairro. Prédio sem elevador: equipe preparada. (21) 3171-3030.",
     h1: 'Ambulância em Copacabana em 25 a 35 minutos',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-copacabana',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/copacabana',
     keywords: [
       'ambulância copacabana',
       'ambulância particular copacabana',
@@ -143,7 +146,9 @@ const copacabana: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/copa-dor.png',
+      logo: '/img/hospitais/copa-dor.webp',
+      address: 'R. Figueiredo de Magalhães, 875 — Copacabana',
+      cep: '22031-011',
     },
     {
       name: 'Copa Star',
@@ -152,7 +157,10 @@ const copacabana: GeoRegion = {
       detail: 'Rua Figueiredo de Magalhães, 900 · Cardiologia e hemodinâmica',
       tag: 'Cardiologia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/copa-star.png',
+      logo: '/img/hospitais/copa-star.webp',
+      logoBg: '#0B2540',
+      address: 'R. Figueiredo de Magalhães, 700 — Copacabana',
+      cep: '22031-012',
     },
     {
       name: 'Hospital São Lucas Copacabana',
@@ -161,6 +169,8 @@ const copacabana: GeoRegion = {
       detail: 'Rua Barata Ribeiro, 67 · Fígado, rim e pâncreas',
       tag: 'Transplantes',
       color: { bg: '#0B2540', text: '#1FD29A' },
+      address: 'Trav. Frederico Pamplona, 32 — Copacabana',
+      cep: '22061-080',
     },
     {
       name: 'Casa de Saúde São José',
@@ -169,7 +179,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
-      logo: '/img/hospitais/rede-santa-catarina.png',
+      logo: '/img/hospitais/rede-santa-catarina.webp',
+      address: 'R. Macedo Sobrinho, 21 — Humaitá',
+      cep: '22271-080',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -178,7 +190,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Antônio Parreiras, 67 — Ipanema',
+      cep: '22411-020',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -188,6 +202,8 @@ const copacabana: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Barão da Torre, 145 — Ipanema',
+      cep: '22411-001',
     },
     {
       name: 'Clínica São Vicente da Gávea',
@@ -196,7 +212,9 @@ const copacabana: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. João Borges, 204 — Gávea',
+      cep: '22451-100',
     },
   ],
   services: [
@@ -271,9 +289,9 @@ const copacabana: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Zona Sul', slug: 'ambulancia-zona-sul', highlight: 'Ipanema, Leblon, Botafogo, Flamengo' },
-    { name: 'Barra e Recreio', slug: 'ambulancia-barra-recreio', highlight: '2 ambulâncias nos PAs Unimed' },
-    { name: 'Centro', slug: 'ambulancia-centro', highlight: '10 a 20 minutos da base' },
+    { name: 'Zona Sul', slug: 'zona-sul', highlight: 'Ipanema, Leblon, Botafogo, Flamengo' },
+    { name: 'Barra e Recreio', slug: 'barra-recreio', highlight: '2 ambulâncias nos PAs Unimed' },
+    { name: 'Centro', slug: 'centro', highlight: '10 a 20 minutos da base' },
   ],
   schema: {
     geo: { lat: -22.9711, lng: -43.1822 },
@@ -287,7 +305,7 @@ const copacabana: GeoRegion = {
 const zonaSul: GeoRegion = {
   id: 'zona-sul',
   name: 'Zona Sul',
-  slug: 'ambulancia-zona-sul',
+  slug: 'zona-sul',
   phase: 1,
   heroImage: '/img/geo/zona-sul-aerial.webp',
   seo: {
@@ -295,7 +313,7 @@ const zonaSul: GeoRegion = {
     description:
       'Ambulância UTI 24h na Zona Sul do Rio. Ipanema, Leblon, Botafogo, Flamengo, Laranjeiras, Gávea. Transferências entre hospitais particulares. Médico e enfermeiro a bordo. (21) 3171-3030.',
     h1: 'Ambulância na Zona Sul em 20 a 40 minutos',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-sul',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-sul',
     keywords: [
       'ambulância zona sul rj',
       'ambulância ipanema',
@@ -346,7 +364,9 @@ const zonaSul: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/hospital-samaritano.png',
+      logo: '/img/hospitais/hospital-samaritano.webp',
+      address: 'R. Bambina, 98 — Botafogo',
+      cep: '22251-050',
     },
     {
       name: 'Pró-Cardíaco',
@@ -356,6 +376,8 @@ const zonaSul: GeoRegion = {
       tag: 'Cardiologia',
       color: { bg: '#7B0000', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. General Polidoro, 192 — Botafogo',
+      cep: '22280-003',
     },
     {
       name: 'Santa Lúcia',
@@ -365,6 +387,8 @@ const zonaSul: GeoRegion = {
       tag: 'Maternidade',
       color: { bg: '#1A5276', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Capitão Salomão, 27 — Botafogo',
+      cep: '22271-040',
     },
     {
       name: 'Adventista Silvestre',
@@ -373,6 +397,8 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Silvestre, 143 · Cosme Velho · Oncologia e cirurgia',
       tag: 'Oncologia',
       color: { bg: '#1E6B3C', text: '#FFFFFF' },
+      address: 'Ladeira do Ascurra, 274 — Cosme Velho',
+      cep: '22241-320',
     },
     {
       name: 'Clínica São Vicente da Gávea',
@@ -381,7 +407,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua João Borges, 204 · Gávea · Referência cirúrgica',
       tag: 'Cirurgia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. João Borges, 204 — Gávea',
+      cep: '22451-100',
     },
     {
       name: 'Casa de Saúde São José',
@@ -390,7 +418,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Macedo Sobrinho, 21 · Humaitá · Desde 1923',
       tag: 'Tradicional',
       color: { bg: '#1A5632', text: '#FFFFFF' },
-      logo: '/img/hospitais/rede-santa-catarina.png',
+      logo: '/img/hospitais/rede-santa-catarina.webp',
+      address: 'R. Macedo Sobrinho, 21 — Humaitá',
+      cep: '22271-080',
     },
     {
       name: 'Perinatal Laranjeiras',
@@ -399,7 +429,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua das Laranjeiras, 374 · Laranjeiras · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
-      logo: '/img/hospitais/grupo-perinatal.png',
+      logo: '/img/hospitais/grupo-perinatal.webp',
+      address: 'R. das Laranjeiras, 445 — Laranjeiras',
+      cep: '22240-002',
     },
     {
       name: 'Hospital Federal da Lagoa',
@@ -408,7 +440,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Jardim Botânico, 501 · Lagoa · Ortopedia e neurologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Jardim Botânico, 501 — Jardim Botânico',
+      cep: '22470-050',
     },
     {
       name: 'Hospital Federal de Ipanema',
@@ -417,7 +451,9 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Antônio Parreiras, 67 · Ipanema · Cirurgia bariátrica e urologia',
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Antônio Parreiras, 67 — Ipanema',
+      cep: '22411-020',
     },
     {
       name: 'Hospital Quali Ipanema',
@@ -427,6 +463,8 @@ const zonaSul: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Barão da Torre, 145 — Ipanema',
+      cep: '22411-001',
     },
     {
       name: 'Hospital Ipanema Care',
@@ -435,6 +473,8 @@ const zonaSul: GeoRegion = {
       detail: 'Ipanema · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. Canning, 16 — Ipanema',
+      cep: '22411-030',
     },
     {
       name: 'Hospital Rio Laranjeiras',
@@ -443,6 +483,8 @@ const zonaSul: GeoRegion = {
       detail: 'Laranjeiras · Clínica médica geral',
       tag: 'Clínica Médica',
       color: { bg: '#0E3D6E', text: '#FFFFFF' },
+      address: 'R. das Laranjeiras, 72 — Laranjeiras',
+      cep: '22240-000',
     },
     {
       name: 'Hospital Casa Rio Botafogo',
@@ -451,6 +493,8 @@ const zonaSul: GeoRegion = {
       detail: 'Botafogo · Internação e cirurgia ambulatorial',
       tag: 'Cirurgia',
       color: { bg: '#1A3C5E', text: '#FFFFFF' },
+      address: 'R. Barão de Lucena, 95 — Botafogo',
+      cep: '22260-020',
     },
     {
       name: 'Hospital Municipal Rocha Maia',
@@ -460,6 +504,8 @@ const zonaSul: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. General Severiano, 91 — Botafogo',
+      cep: '22290-040',
     },
     {
       name: "Hospital Glória D'Or",
@@ -468,7 +514,9 @@ const zonaSul: GeoRegion = {
       detail: 'Flamengo · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Santo Amaro, 80 — Glória',
+      cep: '22211-230',
     },
     {
       name: 'COT Flamengo',
@@ -477,6 +525,8 @@ const zonaSul: GeoRegion = {
       detail: 'Rua Marques de Abrantes · Flamengo · Ortopedia e traumatologia',
       tag: 'Ortopedia',
       color: { bg: '#1C4E80', text: '#FFFFFF' },
+      address: 'R. Barão do Flamengo, 22 — Flamengo',
+      cep: '22220-080',
     },
   ],
   services: [
@@ -551,9 +601,9 @@ const zonaSul: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Copacabana', slug: 'ambulancia-copacabana', highlight: 'Leme e bairros históricos da orla' },
-    { name: 'Barra e Recreio', slug: 'ambulancia-barra-recreio', highlight: 'Condomínios e hospitais da Barra' },
-    { name: 'Centro', slug: 'ambulancia-centro', highlight: '10 a 20 minutos da base' },
+    { name: 'Copacabana', slug: 'copacabana', highlight: 'Leme e bairros históricos da orla' },
+    { name: 'Barra e Recreio', slug: 'barra-recreio', highlight: 'Condomínios e hospitais da Barra' },
+    { name: 'Centro', slug: 'centro', highlight: '10 a 20 minutos da base' },
   ],
   schema: {
     geo: { lat: -22.9519, lng: -43.1857 },
@@ -576,7 +626,7 @@ const zonaSul: GeoRegion = {
 const barraReCreio: GeoRegion = {
   id: 'barra-recreio',
   name: 'Barra e Recreio',
-  slug: 'ambulancia-barra-recreio',
+  slug: 'barra-recreio',
   phase: 1,
   heroImage: '/img/geo/barra-recreio-aerial.webp',
   seo: {
@@ -584,7 +634,7 @@ const barraReCreio: GeoRegion = {
     description:
       'Ambulância UTI 24h na Barra da Tijuca e Recreio dos Bandeirantes. 2 ambulâncias nos PAs Unimed. Condomínios com portaria: ligamos durante o deslocamento. (21) 3171-3030.',
     h1: 'Ambulância na Barra e Recreio. Com 2 ambulâncias nos PAs Unimed.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-barra-recreio',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/barra-recreio',
     keywords: [
       'ambulância barra da tijuca',
       'ambulância recreio dos bandeirantes',
@@ -634,7 +684,9 @@ const barraReCreio: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. Ayrton Senna, 3079 — Barra da Tijuca',
+      cep: '22775-002',
     },
     {
       name: 'Americas Medical City',
@@ -644,6 +696,8 @@ const barraReCreio: GeoRegion = {
       tag: 'Oncologia',
       color: { bg: '#B71C1C', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Hospital Vitória',
@@ -653,6 +707,8 @@ const barraReCreio: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#1565C0', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Rio Mar Barra',
@@ -661,6 +717,8 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Augusto Camossa Saldanha, 55 — Barra da Tijuca',
+      cep: '22793-310',
     },
     {
       name: 'Perinatal Barra',
@@ -669,7 +727,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Maternidade de referência',
       tag: 'Maternidade',
       color: { bg: '#6C3483', text: '#FFFFFF' },
-      logo: '/img/hospitais/grupo-perinatal.png',
+      logo: '/img/hospitais/grupo-perinatal.webp',
+      address: 'Av. Emb. Abelardo Bueno, 201 — Barra da Tijuca',
+      cep: '22775-040',
     },
     {
       name: 'Samaritano Barra',
@@ -678,7 +738,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/hospital-samaritano.png',
+      logo: '/img/hospitais/hospital-samaritano.webp',
+      address: 'Av. Jorge Curi, 550 — Barra da Tijuca',
+      cep: '22775-001',
     },
     {
       name: 'Hospital Lourenço Jorge',
@@ -688,7 +750,9 @@ const barraReCreio: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Av. Ayrton Senna, 2000 — Barra da Tijuca',
+      cep: '22775-003',
     },
     {
       name: "Oncologia D'Or Barra",
@@ -697,7 +761,9 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Tratamento oncológico',
       tag: 'Oncologia',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. das Américas, 3500 — Barra da Tijuca',
+      cep: '22640-102',
     },
     {
       name: 'Barra Day Hospital',
@@ -706,6 +772,8 @@ const barraReCreio: GeoRegion = {
       detail: 'Barra da Tijuca · Cirurgia ambulatorial e procedimentos',
       tag: 'Day Hospital',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Av. Armando Lombardi, 1000 — Barra da Tijuca',
+      cep: '22640-020',
     },
   ],
   services: [
@@ -780,9 +848,9 @@ const barraReCreio: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Zona Oeste', slug: 'ambulancia-zona-oeste', highlight: 'Campo Grande, Bangu, Santa Cruz' },
-    { name: 'Zona Sul', slug: 'ambulancia-zona-sul', highlight: 'Ipanema, Leblon, Botafogo, Flamengo' },
-    { name: 'Copacabana', slug: 'ambulancia-copacabana', highlight: 'Leme e orla histórica' },
+    { name: 'Zona Oeste', slug: 'zona-oeste', highlight: 'Campo Grande, Bangu, Santa Cruz' },
+    { name: 'Zona Sul', slug: 'zona-sul', highlight: 'Ipanema, Leblon, Botafogo, Flamengo' },
+    { name: 'Copacabana', slug: 'copacabana', highlight: 'Leme e orla histórica' },
   ],
   schema: {
     geo: { lat: -23.0003, lng: -43.3651 },
@@ -803,7 +871,7 @@ const barraReCreio: GeoRegion = {
 const niteroi: GeoRegion = {
   id: 'niteroi',
   name: 'Niterói e São Gonçalo',
-  slug: 'ambulancia-niteroi',
+  slug: 'niteroi',
   phase: 1,
   heroImage: '/img/geo/niteroi-aerial.webp',
   seo: {
@@ -811,7 +879,7 @@ const niteroi: GeoRegion = {
     description:
       'Ambulância UTI 24h em Niterói e São Gonçalo. Monitoramento da Ponte Rio-Niterói em tempo real. CHN, Niterói D\'Or, Hospital Icaraí. Médico e enfermeiro a bordo. (21) 3171-3030.',
     h1: 'Ambulância em Niterói e São Gonçalo. UTI completa, 24 horas.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-niteroi',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/niteroi',
     keywords: [
       'ambulância niterói',
       'ambulância são gonçalo',
@@ -856,6 +924,8 @@ const niteroi: GeoRegion = {
       tag: 'Quaternário',
       color: { bg: '#1A237E', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. La Salle, 12 — Centro, Niterói',
+      cep: '24020-096',
     },
     {
       name: "Niterói D'Or",
@@ -865,7 +935,9 @@ const niteroi: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Mariz e Barros, 550 — Santa Rosa, Niterói',
+      cep: '24220-121',
     },
     {
       name: 'Hospital Icaraí',
@@ -874,6 +946,8 @@ const niteroi: GeoRegion = {
       detail: 'Rua Dr. Celestino, 100 · Icaraí · Clínica médica e internação',
       tag: 'Internação',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Marquês do Paraná, 233 — Icaraí, Niterói',
+      cep: '24030-215',
     },
     {
       name: 'São Lucas Niterói',
@@ -882,6 +956,8 @@ const niteroi: GeoRegion = {
       detail: 'Niterói · Cirurgia geral e especialidades',
       tag: 'Cirurgia',
       color: { bg: '#0B2540', text: '#1FD29A' },
+      address: 'R. Dr. March, 207 — Barreto, Niterói',
+      cep: '24110-650',
     },
     {
       name: 'Hospital do Ingá',
@@ -891,7 +967,9 @@ const niteroi: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Presidente Pedreira, 26 — Ingá, Niterói',
+      cep: '24210-470',
     },
     {
       name: 'Hospital de Clínicas Alameda',
@@ -900,6 +978,8 @@ const niteroi: GeoRegion = {
       detail: 'Niterói · Clínica médica e cirurgia ambulatorial',
       tag: 'Clínica Médica',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Al. São Boaventura, 321 — Fonseca, Niterói',
+      cep: '24130-005',
     },
     {
       name: 'HCSG — Hospital Central de São Gonçalo',
@@ -909,7 +989,9 @@ const niteroi: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Cel. Moreira César, 138 — Centro, São Gonçalo',
+      cep: '24440-410',
     },
     {
       name: 'Intermédica São Gonçalo',
@@ -919,6 +1001,8 @@ const niteroi: GeoRegion = {
       tag: 'PA',
       color: { bg: '#1565C0', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Dr. Francisco Portela, 1234 — Centro, São Gonçalo',
+      cep: '24445-000',
     },
     {
       name: 'Hospital Leste Fluminense',
@@ -927,7 +1011,7 @@ const niteroi: GeoRegion = {
       detail: 'São Gonçalo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
     },
     {
       name: 'Hospital do Coração de São Gonçalo',
@@ -1010,9 +1094,9 @@ const niteroi: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Região Oceânica', slug: 'ambulancia-regiao-oceanica', highlight: 'Piratininga, Itaipu, Itacoatiara' },
-    { name: 'Zona Norte', slug: 'ambulancia-zona-norte', highlight: 'Tijuca, Méier, Ilha do Governador' },
-    { name: 'Centro', slug: 'ambulancia-centro', highlight: '10 a 20 minutos da base' },
+    { name: 'Região Oceânica', slug: 'regiao-oceanica', highlight: 'Piratininga, Itaipu, Itacoatiara' },
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Tijuca, Méier, Ilha do Governador' },
+    { name: 'Centro', slug: 'centro', highlight: '10 a 20 minutos da base' },
   ],
   schema: {
     geo: { lat: -22.8833, lng: -43.1036 },
@@ -1203,7 +1287,7 @@ const interestadual: GeoRegion = {
 const zonaOeste: GeoRegion = {
   id: 'zona-oeste',
   name: 'Zona Oeste',
-  slug: 'ambulancia-zona-oeste',
+  slug: 'zona-oeste',
   phase: 2,
   heroImage: '/img/geo/zona-oeste-aerial.webp',
   seo: {
@@ -1211,7 +1295,7 @@ const zonaOeste: GeoRegion = {
     description:
       "Ambulância UTI na Zona Oeste: Jacarepaguá, Taquara, Bangu, Campo Grande. Remoções Rios D'Or, Oeste D'Or, Hospital de Jacarepaguá. Pix e cartão. (21) 3171-3030.",
     h1: 'Ambulância na Zona Oeste. Jacarepaguá, Campo Grande, Bangu e toda a região.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-oeste',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-oeste',
     keywords: [
       'ambulância zona oeste rj',
       'ambulância jacarepaguá',
@@ -1261,7 +1345,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Estr. dos Três Rios, 1366 — Freguesia',
+      cep: '22750-008',
     },
     {
       name: 'Hospital de Jacarepaguá (HCJ)',
@@ -1270,6 +1356,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Jacarepaguá · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
+      address: 'R. Bacairis, 499 — Taquara',
+      cep: '22730-120',
     },
     {
       name: "Hospital Oeste D'Or",
@@ -1279,7 +1367,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Olinda Ellis, 93 — Campo Grande',
+      cep: '23045-160',
     },
     {
       name: 'Hospital Bangu 24h',
@@ -1289,7 +1379,9 @@ const zonaOeste: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Francisco Real, 752 — Bangu',
+      cep: '21810-042',
     },
     {
       name: 'Hospital São Lourenço',
@@ -1314,6 +1406,8 @@ const zonaOeste: GeoRegion = {
       detail: 'Santa Cruz · Referência da região',
       tag: 'Internação',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      address: 'R. Felipe Cardoso, 759 — Santa Cruz',
+      cep: '23510-006',
     },
   ],
   services: [
@@ -1389,9 +1483,9 @@ const zonaOeste: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Barra e Recreio', slug: 'ambulancia-barra-recreio', highlight: 'Condomínios e hospitais da Barra' },
-    { name: 'Zona Norte', slug: 'ambulancia-zona-norte', highlight: 'Tijuca, Méier, São Cristóvão' },
-    { name: 'Centro', slug: 'ambulancia-centro', highlight: '10 a 20 minutos da base' },
+    { name: 'Barra e Recreio', slug: 'barra-recreio', highlight: 'Condomínios e hospitais da Barra' },
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Tijuca, Méier, São Cristóvão' },
+    { name: 'Centro', slug: 'centro', highlight: '10 a 20 minutos da base' },
   ],
   schema: {
     geo: { lat: -22.9133, lng: -43.4017 },
@@ -1414,7 +1508,7 @@ const zonaOeste: GeoRegion = {
 const zonaNorte: GeoRegion = {
   id: 'zona-norte',
   name: 'Zona Norte',
-  slug: 'ambulancia-zona-norte',
+  slug: 'zona-norte',
   phase: 2,
   heroImage: '/img/geo/zona-norte-aerial.webp',
   seo: {
@@ -1422,7 +1516,7 @@ const zonaNorte: GeoRegion = {
     description:
       'Base própria em São Cristóvão: ambulância mais rápida da Zona Norte. Tijuca, Méier, Vila Isabel. Remoções Quinta D\'Or e Badim. (21) 3171-3030.',
     h1: 'Ambulância na Zona Norte em 10 a 25 minutos. Nossa base fica em São Cristóvão.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-norte',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-norte',
     keywords: [
       'ambulância zona norte rj',
       'ambulância tijuca',
@@ -1472,7 +1566,9 @@ const zonaNorte: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Almirante Baltazar, 383 — São Cristóvão',
+      cep: '20941-150',
     },
     {
       name: 'Hospital Badim',
@@ -1482,6 +1578,8 @@ const zonaNorte: GeoRegion = {
       tag: 'Neurologia',
       color: { bg: '#1A237E', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. São Francisco Xavier, 390 — Maracanã',
+      cep: '20550-013',
     },
     {
       name: 'Hospital São Vicente de Paulo',
@@ -1490,6 +1588,8 @@ const zonaNorte: GeoRegion = {
       detail: 'Tijuca · Oncologia e transplantes',
       tag: 'Oncologia',
       color: { bg: '#1A5632', text: '#FFFFFF' },
+      address: 'R. Dr. Satamini, 333 — Tijuca',
+      cep: '20270-233',
     },
     {
       name: 'Hospital Evangélico',
@@ -1506,7 +1606,7 @@ const zonaNorte: GeoRegion = {
       detail: 'Zona Norte · Clínica médica e cirurgia',
       tag: 'Cirurgia',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
-      logo: '/img/hospitais/albert-sabin.png',
+      logo: '/img/hospitais/albert-sabin.webp',
     },
     {
       name: "Hospital Norte D'Or",
@@ -1516,7 +1616,9 @@ const zonaNorte: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'R. Carolina Machado, 38 — Cascadura',
+      cep: '21350-135',
     },
     {
       name: 'Hospital Memorial',
@@ -1534,7 +1636,9 @@ const zonaNorte: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'R. Arquias Cordeiro, 370 — Méier',
+      cep: '20770-000',
     },
     {
       name: 'ProntoBaby Tijuca',
@@ -1544,6 +1648,8 @@ const zonaNorte: GeoRegion = {
       tag: 'Pediatria',
       color: { bg: '#6C3483', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Adolfo Mota, 81 — Tijuca',
+      cep: '20540-100',
     },
   ],
   services: [
@@ -1618,9 +1724,9 @@ const zonaNorte: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Centro', slug: 'ambulancia-centro', highlight: '10 a 20 minutos da base' },
-    { name: 'Copacabana', slug: 'ambulancia-copacabana', highlight: 'Orla histórica e hospitais' },
-    { name: 'Zona Oeste', slug: 'ambulancia-zona-oeste', highlight: 'Jacarepaguá, Bangu, Campo Grande' },
+    { name: 'Centro', slug: 'centro', highlight: '10 a 20 minutos da base' },
+    { name: 'Copacabana', slug: 'copacabana', highlight: 'Orla histórica e hospitais' },
+    { name: 'Zona Oeste', slug: 'zona-oeste', highlight: 'Jacarepaguá, Bangu, Campo Grande' },
   ],
   schema: {
     geo: { lat: -22.8967, lng: -43.2256 },
@@ -1645,7 +1751,7 @@ const zonaNorte: GeoRegion = {
 const regiaoOceanica: GeoRegion = {
   id: 'regiao-oceanica',
   name: 'Região Oceânica',
-  slug: 'ambulancia-regiao-oceanica',
+  slug: 'regiao-oceanica',
   phase: 2,
   heroImage: '/img/geo/regiao-oceanica-aerial.webp',
   seo: {
@@ -1653,7 +1759,7 @@ const regiaoOceanica: GeoRegion = {
     description:
       'Ambulância UTI na Região Oceânica de Niterói e Maricá. Piratininga, Itaipu, Itacoatiara, Engenho do Mato. Remoções para CHN e Rio. (21) 3171-3030.',
     h1: 'Ambulância na Região Oceânica e Maricá. Onde o hospital fica longe, nós chegamos.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-regiao-oceanica',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/regiao-oceanica',
     keywords: [
       'ambulância região oceânica niterói',
       'ambulância maricá',
@@ -1698,6 +1804,8 @@ const regiaoOceanica: GeoRegion = {
       tag: 'UPA',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Av. Dr. Raul de Oliveira Rodrigues, 382 — Piratininga, Niterói',
+      cep: '24350-630',
     },
     {
       name: 'Hospital Municipal Conde Modesto Leal',
@@ -1715,7 +1823,9 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'São Gonçalo',
+      cep: '',
     },
     {
       name: 'CHN — Centro Hospitalar de Niterói',
@@ -1734,7 +1844,7 @@ const regiaoOceanica: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
   ],
   services: [
@@ -1810,9 +1920,9 @@ const regiaoOceanica: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Niterói e São Gonçalo', slug: 'ambulancia-niteroi', highlight: 'CHN, Niterói D\'Or, Hospital Icaraí' },
-    { name: 'Búzios', slug: 'ambulancia-buzios', highlight: 'Atendimento turístico e emergência' },
-    { name: 'Intermunicipal', slug: 'ambulancia-intermunicipal', highlight: 'Cobertura no estado inteiro' },
+    { name: 'Niterói e São Gonçalo', slug: 'niteroi', highlight: 'CHN, Niterói D\'Or, Hospital Icaraí' },
+    { name: 'Búzios', slug: 'buzios', highlight: 'Atendimento turístico e emergência' },
+    { name: 'Intermunicipal', slug: 'intermunicipal', highlight: 'Cobertura no estado inteiro' },
   ],
   schema: {
     geo: { lat: -22.9414, lng: -43.0492 },
@@ -1832,7 +1942,7 @@ const regiaoOceanica: GeoRegion = {
 const regiaoSerrana: GeoRegion = {
   id: 'regiao-serrana',
   name: 'Região Serrana',
-  slug: 'ambulancia-regiao-serrana',
+  slug: 'regiao-serrana',
   phase: 2,
   heroImage: '/img/geo/regiao-serrana-aerial.webp',
   seo: {
@@ -1840,7 +1950,7 @@ const regiaoSerrana: GeoRegion = {
     description:
       'Ambulância UTI da serra para o Rio. Petrópolis, Teresópolis, Nova Friburgo. Equipe treinada para estradas de montanha, neblina e percurso longo. (21) 3171-3030.',
     h1: 'Da serra para o Rio com UTI móvel. Petrópolis, Teresópolis e Friburgo.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-regiao-serrana',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/regiao-serrana',
     keywords: [
       'ambulância petrópolis',
       'ambulância teresópolis',
@@ -1893,7 +2003,9 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Petrópolis · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
+      address: 'R. do Expedicionário, 144 — Bingen, Petrópolis',
+      cep: '25660-290',
     },
     {
       name: 'Clínica Revitalis',
@@ -1919,6 +2031,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Teresópolis · Internação e clínica médica',
       tag: 'Internação',
       color: { bg: '#1A3C5E', text: '#FFFFFF' },
+      address: 'R. José Maria de Araújo Regadas, 300 — Ermitage, Teresópolis',
+      cep: '25953-345',
     },
     {
       name: 'Unimed Nova Friburgo',
@@ -1927,7 +2041,9 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Nova Friburgo · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#1B5E20', text: '#FFFFFF' },
-      logo: '/img/hospitais/unimed.png',
+      logo: '/img/hospitais/unimed.webp',
+      address: 'R. Izelino Maduro, 900 — Chácara do Paraíso, Nova Friburgo',
+      cep: '28605-300',
     },
     {
       name: 'Hospital Serrano',
@@ -1936,6 +2052,8 @@ const regiaoSerrana: GeoRegion = {
       detail: 'Nova Friburgo · Referência municipal',
       tag: 'Clínica Médica',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. General Osório, 276 — Centro, Nova Friburgo',
+      cep: '28625-630',
     },
   ],
   services: [
@@ -2011,9 +2129,9 @@ const regiaoSerrana: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Intermunicipal', slug: 'ambulancia-intermunicipal', highlight: 'Cobertura em todo o estado' },
-    { name: 'Angra dos Reis', slug: 'ambulancia-angra-dos-reis', highlight: 'Costa Verde e Ilha Grande' },
-    { name: 'Zona Norte', slug: 'ambulancia-zona-norte', highlight: 'Base em São Cristóvão' },
+    { name: 'Intermunicipal', slug: 'intermunicipal', highlight: 'Cobertura em todo o estado' },
+    { name: 'Angra dos Reis', slug: 'angra-dos-reis', highlight: 'Costa Verde e Ilha Grande' },
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Base em São Cristóvão' },
   ],
   schema: {
     geo: { lat: -22.5047, lng: -43.1788 },
@@ -2032,7 +2150,7 @@ const regiaoSerrana: GeoRegion = {
 const intermunicipal: GeoRegion = {
   id: 'intermunicipal',
   name: 'Intermunicipal',
-  slug: 'ambulancia-intermunicipal',
+  slug: 'intermunicipal',
   phase: 2,
   heroImage: '/img/geo/intermunicipal-aerial.webp',
   seo: {
@@ -2040,7 +2158,7 @@ const intermunicipal: GeoRegion = {
     description:
       'Remoção intermunicipal no estado do Rio. Paraty, Angra, Campos, Macaé, Volta Redonda, Região dos Lagos. Base no Rio. (21) 3171-3030.',
     h1: 'Remoção intermunicipal no Rio de Janeiro. Base no Rio, equipe que conhece o estado inteiro.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-intermunicipal',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/intermunicipal',
     keywords: [
       'ambulância intermunicipal rio de janeiro',
       'remoção volta redonda rio',
@@ -2095,7 +2213,7 @@ const intermunicipal: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital do Retiro',
@@ -2122,7 +2240,7 @@ const intermunicipal: GeoRegion = {
       tag: 'SUS',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
     },
     {
       name: 'Hospital São Lucas Macaé',
@@ -2140,6 +2258,8 @@ const intermunicipal: GeoRegion = {
       tag: 'Emergência',
       color: { bg: '#17405A', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. N. Sra. das Graças, 235 — Colina, Volta Redonda',
+      cep: '27253-610',
     },
   ],
   services: [
@@ -2215,9 +2335,9 @@ const intermunicipal: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Região Serrana', slug: 'ambulancia-regiao-serrana', highlight: 'Petrópolis, Teresópolis, Friburgo' },
-    { name: 'Angra dos Reis', slug: 'ambulancia-angra-dos-reis', highlight: 'Costa Verde e Ilha Grande' },
-    { name: 'Búzios', slug: 'ambulancia-buzios', highlight: 'Atendimento turístico e emergência' },
+    { name: 'Região Serrana', slug: 'regiao-serrana', highlight: 'Petrópolis, Teresópolis, Friburgo' },
+    { name: 'Angra dos Reis', slug: 'angra-dos-reis', highlight: 'Costa Verde e Ilha Grande' },
+    { name: 'Búzios', slug: 'buzios', highlight: 'Atendimento turístico e emergência' },
   ],
   schema: {
     geo: { lat: -22.9068, lng: -43.1729 },
@@ -2239,7 +2359,7 @@ const intermunicipal: GeoRegion = {
 const buzios: GeoRegion = {
   id: 'buzios',
   name: 'Búzios',
-  slug: 'ambulancia-buzios',
+  slug: 'buzios',
   phase: 2,
   heroImage: '/img/geo/buzios-aerial.webp',
   seo: {
@@ -2247,7 +2367,7 @@ const buzios: GeoRegion = {
     description:
       'Ambulância UTI em Búzios. Emergência turística e remoção para hospitais do Rio. Cobertura de eventos e casamentos. (21) 3171-3030.',
     h1: 'Ambulância em Búzios: emergência e remoção para o Rio',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-buzios',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/buzios',
     keywords: [
       'ambulância búzios',
       'ambulância armação dos búzios',
@@ -2287,6 +2407,8 @@ const buzios: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'Estr. da Usina, 600 — Centro, Armação dos Búzios',
+      cep: '28950-000',
     },
     {
       name: 'UPA Búzios',
@@ -2295,6 +2417,8 @@ const buzios: GeoRegion = {
       detail: 'Búzios · Urgência e emergência básica',
       tag: 'UPA',
       color: { bg: '#2C5F8A', text: '#FFFFFF' },
+      address: 'Av. José Bento Ribeiro Dantas, 8 — Rasa, Búzios',
+      cep: '28950-000',
     },
     {
       name: 'Hospital Unilagos',
@@ -2304,7 +2428,7 @@ const buzios: GeoRegion = {
       tag: 'Cabo Frio',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital São José Operário',
@@ -2382,8 +2506,8 @@ const buzios: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Região Oceânica', slug: 'ambulancia-regiao-oceanica', highlight: 'Itaipu, Piratininga, Maricá' },
-    { name: 'Intermunicipal', slug: 'ambulancia-intermunicipal', highlight: 'Cobertura em todo o estado' },
+    { name: 'Região Oceânica', slug: 'regiao-oceanica', highlight: 'Itaipu, Piratininga, Maricá' },
+    { name: 'Intermunicipal', slug: 'intermunicipal', highlight: 'Cobertura em todo o estado' },
   ],
   schema: {
     geo: { lat: -22.7469, lng: -41.8817 },
@@ -2402,7 +2526,7 @@ const buzios: GeoRegion = {
 const angraDosReis: GeoRegion = {
   id: 'angra-dos-reis',
   name: 'Angra dos Reis',
-  slug: 'ambulancia-angra-dos-reis',
+  slug: 'angra-dos-reis',
   phase: 2,
   heroImage: '/img/geo/angra-aerial.webp',
   seo: {
@@ -2410,7 +2534,7 @@ const angraDosReis: GeoRegion = {
     description:
       'Ambulância UTI em Angra dos Reis e acesso marítimo à Ilha Grande. Remoção para hospitais do Rio pela BR-101. (21) 3171-3030.',
     h1: 'Ambulância em Angra dos Reis e Ilha Grande: remoção com UTI móvel',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-angra-dos-reis',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/angra-dos-reis',
     keywords: [
       'ambulância angra dos reis',
       'ambulância ilha grande',
@@ -2455,6 +2579,8 @@ const angraDosReis: GeoRegion = {
       tag: 'Emergência 24h',
       color: { bg: '#0D47A1', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Japoranga, 1700 — Japuíba, Angra dos Reis',
+      cep: '23934-055',
     },
     {
       name: 'Hospital Hugo Miranda',
@@ -2463,6 +2589,8 @@ const angraDosReis: GeoRegion = {
       detail: 'Angra dos Reis · Internação e cirurgia',
       tag: 'Internação',
       color: { bg: '#17405A', text: '#FFFFFF' },
+      address: 'Av. São Pedro de Alcântara, 1 — Pontal, Paraty',
+      cep: '23970-000',
     },
     {
       name: 'Hospital Codrato de Vilhena',
@@ -2472,6 +2600,8 @@ const angraDosReis: GeoRegion = {
       tag: 'Municipal',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
+      address: 'R. Dr. Coutinho, 84 — Centro, Angra dos Reis',
+      cep: '23900-010',
     },
     {
       name: 'Hospital Volta Redonda',
@@ -2481,7 +2611,7 @@ const angraDosReis: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
   ],
   services: [
@@ -2557,8 +2687,8 @@ const angraDosReis: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Intermunicipal', slug: 'ambulancia-intermunicipal', highlight: 'Cobertura em todo o estado do Rio' },
-    { name: 'Região Serrana', slug: 'ambulancia-regiao-serrana', highlight: 'Petrópolis, Teresópolis, Friburgo' },
+    { name: 'Intermunicipal', slug: 'intermunicipal', highlight: 'Cobertura em todo o estado do Rio' },
+    { name: 'Região Serrana', slug: 'regiao-serrana', highlight: 'Petrópolis, Teresópolis, Friburgo' },
   ],
   schema: {
     geo: { lat: -23.0067, lng: -44.3181 },
@@ -2578,7 +2708,7 @@ const angraDosReis: GeoRegion = {
 const baixadaFluminense: GeoRegion = {
   id: 'baixada-fluminense',
   name: 'Baixada Fluminense',
-  slug: 'ambulancia-baixada-fluminense',
+  slug: 'baixada-fluminense',
   phase: 3,
   heroImage: '/img/geo/baixada-aerial.webp',
   seo: {
@@ -2586,7 +2716,7 @@ const baixadaFluminense: GeoRegion = {
     description:
       'Ambulância UTI em Duque de Caxias, Nova Iguaçu, São João de Meriti e Nilópolis. Remoções para hospitais do Rio. Pix e cartão. (21) 3171-3030.',
     h1: 'Ambulância na Baixada. Da sua casa ao hospital certo, no Rio ou na região.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-baixada-fluminense',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/baixada-fluminense',
     keywords: [
       'ambulância baixada fluminense',
       'ambulância duque de caxias',
@@ -2631,7 +2761,9 @@ const baixadaFluminense: GeoRegion = {
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
+      address: 'Av. Brig. Lima e Silva, 821 — Jd. 25 de Agosto, Duque de Caxias',
+      cep: '25071-181',
     },
     {
       name: 'Hospital Mário Lioni',
@@ -2640,6 +2772,8 @@ const baixadaFluminense: GeoRegion = {
       detail: 'Duque de Caxias · Internação e cirurgia geral',
       tag: 'Internação',
       color: { bg: '#1B4F72', text: '#FFFFFF' },
+      address: 'R. Ana Neri, 190 — Jd. 25 de Agosto, Duque de Caxias',
+      cep: '25070-420',
     },
     {
       name: 'Hospital Santa Branca',
@@ -2675,7 +2809,9 @@ const baixadaFluminense: GeoRegion = {
       tag: 'SUS · Trauma',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Estr. Ambai, 953 — Posse, Nova Iguaçu',
+      cep: '26030-380',
     },
   ],
   services: [
@@ -2750,9 +2886,9 @@ const baixadaFluminense: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Zona Norte', slug: 'ambulancia-zona-norte', highlight: 'Tijuca, Méier, base em São Cristóvão' },
-    { name: 'Zona Oeste', slug: 'ambulancia-zona-oeste', highlight: 'Jacarepaguá, Bangu, Campo Grande' },
-    { name: 'Niterói', slug: 'ambulancia-niteroi', highlight: 'Hospital Icaraí, CHN, Vita' },
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Tijuca, Méier, base em São Cristóvão' },
+    { name: 'Zona Oeste', slug: 'zona-oeste', highlight: 'Jacarepaguá, Bangu, Campo Grande' },
+    { name: 'Niterói', slug: 'niteroi', highlight: 'Hospital Icaraí, CHN, Vita' },
   ],
   schema: {
     geo: { lat: -22.7856, lng: -43.3111 },
@@ -2772,7 +2908,7 @@ const baixadaFluminense: GeoRegion = {
 const centro: GeoRegion = {
   id: 'centro',
   name: 'Centro',
-  slug: 'ambulancia-centro',
+  slug: 'centro',
   phase: 3,
   heroImage: '/img/geo/centro-aerial.webp',
   seo: {
@@ -2780,7 +2916,7 @@ const centro: GeoRegion = {
     description:
       'Ambulância no Centro do Rio em 10 a 20 minutos. Empresas, eventos, remoções. Segundo menor tempo de chegada. (21) 3171-3030.',
     h1: 'Ambulância no Centro do Rio em 10 a 20 minutos.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-centro',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/centro',
     keywords: [
       'ambulância centro rio de janeiro',
       'ambulância corporativa rio',
@@ -2820,7 +2956,7 @@ const centro: GeoRegion = {
       tag: 'Vizinho da Base',
       color: { bg: '#003B71', text: '#E8A624' },
       emergency24h: true,
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: "Glória D'Or",
@@ -2829,7 +2965,7 @@ const centro: GeoRegion = {
       detail: 'Glória · Alta complexidade · Cirurgia e internação',
       tag: 'Alta Complexidade',
       color: { bg: '#003B71', text: '#E8A624' },
-      logo: '/img/hospitais/rede-dor.png',
+      logo: '/img/hospitais/rede-dor.webp',
     },
     {
       name: 'Hospital Espanhol',
@@ -2838,6 +2974,8 @@ const centro: GeoRegion = {
       detail: 'Centro · Internação e cirurgia geral',
       tag: 'Internação',
       color: { bg: '#C0392B', text: '#FFFFFF' },
+      address: 'R. Riachuelo, 302 — Centro',
+      cep: '20230-013',
     },
     {
       name: 'Hospital do Carmo',
@@ -2855,6 +2993,8 @@ const centro: GeoRegion = {
       detail: 'Botafogo · Alta complexidade · Cardio e oncologia',
       tag: 'Cardio',
       color: { bg: '#154360', text: '#FFFFFF' },
+      address: 'R. Florianópolis, 908 — Praça Seca',
+      cep: '21321-052',
     },
     {
       name: 'Hospital Souza Aguiar',
@@ -2864,7 +3004,9 @@ const centro: GeoRegion = {
       tag: 'SUS · Maior Emergência',
       color: { bg: '#2E7D32', text: '#FFFFFF' },
       emergency24h: true,
-      logo: '/img/hospitais/sus.png',
+      logo: '/img/hospitais/sus.webp',
+      address: 'Praça da República, 111 — Centro',
+      cep: '20211-350',
     },
   ],
   services: [
@@ -2933,9 +3075,9 @@ const centro: GeoRegion = {
     },
   ],
   nearbyRegions: [
-    { name: 'Zona Norte', slug: 'ambulancia-zona-norte', highlight: 'Base em São Cristóvão, menores tempos' },
-    { name: 'Copacabana', slug: 'ambulancia-copacabana', highlight: 'Orla histórica e hospitais' },
-    { name: 'Zona Sul', slug: 'ambulancia-zona-sul', highlight: 'Ipanema, Leblon, Botafogo' },
+    { name: 'Zona Norte', slug: 'zona-norte', highlight: 'Base em São Cristóvão, menores tempos' },
+    { name: 'Copacabana', slug: 'copacabana', highlight: 'Orla histórica e hospitais' },
+    { name: 'Zona Sul', slug: 'zona-sul', highlight: 'Ipanema, Leblon, Botafogo' },
   ],
   schema: {
     geo: { lat: -22.9068, lng: -43.1729 },

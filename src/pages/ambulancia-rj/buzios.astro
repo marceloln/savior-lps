@@ -1,0 +1,140 @@
+---
+// ============================================================
+// Geo Z13 — /ambulancia-rj/buzios
+// Landing page regional: Búzios, Fase 2
+// ============================================================
+
+import Base from '../../layouts/Base.astro';
+import StickyHeader from '../../components/StickyHeader.astro';
+import GeoHero from '../../components/GeoHero.astro';
+import TempoGrid from '../../components/TempoGrid.astro';
+import HospitalGrid from '../../components/HospitalGrid.astro';
+import ServicesGeo from '../../components/ServicesGeo.astro';
+import FeatureBlock from '../../components/FeatureBlock.astro';
+import SocialProofGeo from '../../components/SocialProofGeo.astro';
+import FleetBand from '../../components/FleetBand.astro';
+import FAQ from '../../components/FAQ.astro';
+import NearbyRegions from '../../components/NearbyRegions.astro';
+import CTAInline from '../../components/CTAInline.astro';
+import FloatingWhatsApp from '../../components/FloatingWhatsApp.astro';
+import Footer from '../../components/Footer.astro';
+import { getRegion } from '../../data/geo-regions';
+import { GOOGLE_BUSINESS } from '../../data/savior';
+import { hospitalSchemas } from '../../utils/hospital-schema';
+import CTAFinalGeo from '../../components/CTAFinalGeo.astro';
+
+const region = getRegion('buzios');
+
+const schemaEmergency = {
+  '@context': 'https://schema.org',
+  '@type': 'EmergencyService',
+  'name': `Savior Medical Service — ${region.name}`,
+  'description': region.seo.description,
+  'url': region.seo.canonical,
+  'telephone': '+552131713030',
+  'address': {
+    '@type': 'PostalAddress',
+    'streetAddress': 'R. Gen. Padilha, 73',
+    'addressLocality': 'Rio de Janeiro',
+    'addressRegion': 'RJ',
+    'postalCode': '20920-390',
+    'addressCountry': 'BR',
+  },
+  'geo': {
+    '@type': 'GeoCoordinates',
+    'latitude': region.schema.geo.lat,
+    'longitude': region.schema.geo.lng,
+  },
+  'areaServed': region.schema.areaServed.map(a => ({ '@type': 'Place', 'name': a.name })),
+  'openingHoursSpecification': {
+    '@type': 'OpeningHoursSpecification',
+    'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    'opens': '00:00',
+    'closes': '23:59',
+  },
+  'aggregateRating': {
+    '@type': 'AggregateRating',
+    'ratingValue': String(GOOGLE_BUSINESS.rating),
+    'reviewCount': String(GOOGLE_BUSINESS.reviewCount),
+  },
+};
+
+const schemaFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': region.faq.map(f => ({
+    '@type': 'Question',
+    'name': f.q,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': f.a,
+    },
+  })),
+};
+
+const schemaBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  'itemListElement': [
+    { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.savior.com.br/' },
+    { '@type': 'ListItem', 'position': 2, 'name': 'Ambulância RJ', 'item': 'https://www.savior.com.br/ambulancia-rj' },
+    { '@type': 'ListItem', 'position': 3, 'name': region.name, 'item': region.seo.canonical },
+  ],
+};
+
+const hospSchemas = hospitalSchemas(region.hospitals);
+const schema = JSON.stringify([schemaEmergency, schemaFaq, schemaBreadcrumb, ...hospSchemas]);
+---
+
+<Base
+  title={region.seo.title}
+  description={region.seo.description}
+  canonical={region.seo.canonical}
+  schema={schema}
+  geoRegion="BR-RJ"
+  geoPlacename={region.name}
+  geoPosition={`${region.schema.geo.lat};${region.schema.geo.lng}`}
+  icbm={`${region.schema.geo.lat}, ${region.schema.geo.lng}`}
+>
+  <StickyHeader waCampaign={region.hero.waCampaign} />
+
+  <main id="main">
+    <GeoHero region={region} />
+
+    <TempoGrid tempos={region.tempos} />
+
+    <HospitalGrid hospitals={region.hospitals} regionName={region.name} />
+
+    <ServicesGeo services={region.services} regionName={region.name} />
+
+    <FeatureBlock feature={region.feature} image="/img/gallery/frota-lateral-1600.webp" />
+
+
+    <FleetBand />
+
+    <SocialProofGeo reviews={region.socialProof.reviews} regionName={region.name} />
+
+    <CTAInline
+      variant="medium"
+      text="Precisa de ambulância em Búzios?"
+      cta="Pedir orçamento no WhatsApp"
+      waCampaign={region.hero.waCampaign}
+      waMessage={region.hero.waMessage}
+      location="geo-mid"
+    />
+
+    <FAQ
+      items={region.faq}
+      titleHtml={`Dúvidas sobre ambulância <em>em ${region.name}</em>`}
+      eyebrow="Perguntas frequentes"
+    />
+
+    <NearbyRegions regions={region.nearbyRegions} />
+
+    <CTAFinalGeo waCampaign={region.hero.waCampaign} waMessage={region.hero.waMessage} ctaLabel="Pedir orçamento no WhatsApp" titleHtml="Peça um orçamento. <em>Explicamos tudo antes de sair.</em>" subtitle="Central 24 horas. Atendemos emergências e planejamos cobertura de eventos em Búzios." />
+  </main>
+
+  <FloatingWhatsApp waCampaign={region.hero.waCampaign} />
+  <Footer coverage="Búzios · Armação dos Búzios · Geribá · Ferradura · Cabo Frio · Região dos Lagos" />
+</Base>
+

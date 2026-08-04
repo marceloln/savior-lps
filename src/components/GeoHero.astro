@@ -5,7 +5,7 @@
 // ============================================================
 
 import type { GeoRegion } from '../data/geo-regions';
-import { CONTACT_RJ, GOOGLE_BUSINESS, whatsappUrl } from '../data/savior';
+import { CONTACT_RJ, GOOGLE_BUSINESS, SAVIOR_STATS, whatsappUrl } from '../data/savior';
 
 interface Props {
   region: GeoRegion;
@@ -31,7 +31,9 @@ const hasHighlight = h1Parts.length === 2;
   <div class="geo-hero-bg" aria-hidden="true">
     <img
       src={region.heroImage || '/img/gallery/frota-copacabana-1920.webp'}
-      alt={`Vista aérea de ${region.name}`}
+      srcset={region.heroImage ? `${region.heroImage.replace('/img/geo/', '/img/geo/640/')} 640w, ${region.heroImage.replace('/img/geo/', '/img/geo/1280/')} 1280w, ${region.heroImage} 1920w` : undefined}
+      sizes="100vw"
+      alt=""
       width="1920"
       height="1080"
       loading="eager"
@@ -63,7 +65,7 @@ const hasHighlight = h1Parts.length === 2;
           <meta itemprop="position" content="2" />
         </li>
         <li class="geo-breadcrumb-sep" aria-hidden="true">›</li>
-        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="geo-breadcrumb-item geo-breadcrumb-current">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" class="geo-breadcrumb-item geo-breadcrumb-current" aria-current="page">
           <span itemprop="name">{region.name}</span>
           <meta itemprop="position" content="3" />
         </li>
@@ -122,12 +124,12 @@ const hasHighlight = h1Parts.length === 2;
     <!-- Stats bar -->
     <div class="geo-stats" role="list" aria-label="Diferenciais Savior">
       <div class="geo-stat" role="listitem">
-        <div class="geo-stat-value">{GOOGLE_BUSINESS.rating.toFixed(1).replace('.', ',')} ★</div>
-        <div class="geo-stat-label">{GOOGLE_BUSINESS.reviewCount} avaliações no Google</div>
+        <div class="geo-stat-value">{SAVIOR_STATS.googleRating.toFixed(1).replace('.', ',')} ★</div>
+        <div class="geo-stat-label">{SAVIOR_STATS.googleReviews} avaliações no Google</div>
       </div>
       <div class="geo-stat" role="listitem">
-        <div class="geo-stat-value">46 anos</div>
-        <div class="geo-stat-label">Operando sem interrupção desde 1979</div>
+        <div class="geo-stat-value">{SAVIOR_STATS.yearsInBusiness} anos</div>
+        <div class="geo-stat-label">Operando sem interrupção desde {SAVIOR_STATS.foundedYear}</div>
       </div>
       <div class="geo-stat" role="listitem">
         <div class="geo-stat-value">24h</div>

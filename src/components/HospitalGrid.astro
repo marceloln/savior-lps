@@ -41,8 +41,8 @@ function isSus(network: string): boolean {
         <div class={`hosp-card ${getNetworkClass(hospital.network)}`}>
           <div class="hosp-avatar-wrap">
             {hospital.logo ? (
-              <div class="hosp-avatar hosp-avatar-logo" aria-hidden="true">
-                <img src={hospital.logo} alt={hospital.network} loading="lazy" width="56" height="56" />
+              <div class="hosp-avatar hosp-avatar-logo" style={hospital.logoBg ? `background:${hospital.logoBg}` : ''} aria-hidden="true">
+                <img src={hospital.logo} alt={hospital.name} loading="lazy" width="56" height="56" />
               </div>
             ) : (
               <div
@@ -59,7 +59,7 @@ function isSus(network: string): boolean {
           </div>
           <div class="hosp-info">
             <div class="hosp-name-row">
-              <div class="hosp-name">{hospital.name}</div>
+              <h3 class="hosp-name">{hospital.name}</h3>
               {hospital.emergency24h && (
                 <span class="badge-24h" aria-label="Emergência 24 horas">
                   <span class="dot-24h" aria-hidden="true"></span>
@@ -132,7 +132,7 @@ function isSus(network: string): boolean {
   .hosp-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2px;
+    gap: 0;
     border-radius: 10px;
     overflow: hidden;
     background: white;
@@ -148,6 +148,8 @@ function isSus(network: string): boolean {
     gap: 16px;
     align-items: flex-start;
     border-left: 3px solid transparent;
+    border-bottom: 1px solid var(--cream-dark, #E8DFCC);
+    border-right: 1px solid var(--cream-dark, #E8DFCC);
     transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default;
   }
@@ -195,14 +197,14 @@ function isSus(network: string): boolean {
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
   }
 
   .hosp-avatar-logo img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 6px;
-    border-radius: 8px;
+    padding: 8px;
   }
 
   /* Initials block */
@@ -215,12 +217,19 @@ function isSus(network: string): boolean {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--bg) 90%, white 10%), var(--bg));
+    /* Fallback for browsers without color-mix */
+    background: linear-gradient(145deg, var(--bg), var(--bg));
     color: var(--fg);
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     position: relative;
     overflow: hidden;
+  }
+
+  @supports (background: color-mix(in srgb, red, blue)) {
+    .hosp-initials {
+      background: linear-gradient(145deg, color-mix(in srgb, var(--bg) 90%, white 10%), var(--bg));
+    }
   }
 
   /* D'Or gold accent stripe at bottom */
@@ -288,6 +297,7 @@ function isSus(network: string): boolean {
     line-height: 1.3;
     flex: 1;
     min-width: 0;
+    margin: 0;
   }
 
   /* 24h emergency badge */
@@ -325,6 +335,13 @@ function isSus(network: string): boolean {
     font-size: 12px;
     color: var(--gray);
     line-height: 1.5;
+  }
+
+  .hosp-address {
+    font-size: 0.75rem;
+    color: var(--gray, #6B7785);
+    margin-top: 2px;
+    line-height: 1.3;
   }
 
   /* Bottom row: tag + network badge */

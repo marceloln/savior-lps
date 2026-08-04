@@ -37,7 +37,7 @@ const icons = [
       {services.map((service, i) => (
         <div class={`services-geo-card${service.emphasis ? ' services-geo-card--emphasis' : ''}`}>
           <div class="services-geo-icon" set:html={icons[i % icons.length]} />
-          <div class="services-geo-title">{service.title}</div>
+          <h3 class="services-geo-title">{service.title}</h3>
           <p class="services-geo-desc">{service.desc}</p>
         </div>
       ))}
@@ -118,7 +118,7 @@ const icons = [
     font-size: 14px;
     font-weight: 700;
     color: var(--navy);
-    margin-bottom: 8px;
+    margin: 0 0 8px;
     line-height: 1.3;
   }
 
