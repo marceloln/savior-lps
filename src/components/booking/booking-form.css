@@ -129,7 +129,7 @@
   justify-content: center;
   padding: 14px 28px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   font-size: 14px;
@@ -151,7 +151,7 @@
   border: 1px solid rgba(0, 184, 124, 0.15);
   border-radius: 8px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
 }
 
@@ -210,6 +210,12 @@
   background: rgba(0, 0, 0, 0.35);
 }
 
+.bf-emergency-compact {
+  padding: 6px 20px;
+  font-size: 12px;
+  gap: 4px;
+}
+
 /* ============ Topbar ============ */
 .bf-topbar {
   position: sticky;
@@ -250,7 +256,7 @@
 
 .bf-topbar-phone {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
 }
 
@@ -348,7 +354,7 @@
 .bf-textarea {
   min-height: 56px;
   resize: vertical;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .bf-input:focus,
@@ -374,6 +380,11 @@
   .bf-grid-2 {
     grid-template-columns: 1fr;
   }
+  .bf-quick-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bf-hosp-search, .bf-hosp-region { flex: 1 1 100%; }
 }
 
 /* ============ Quick button ============ */
@@ -422,7 +433,7 @@
 }
 
 .bf-stepbar-label {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--fs-xs);
   font-weight: 500;
   color: var(--navy);
@@ -493,6 +504,25 @@
   opacity: 0.7;
 }
 
+.bf-btn-confirm {
+  min-height: 56px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* ============ Focus-visible ============ */
+.bf-btn-next:focus-visible,
+.bf-btn-back:focus-visible,
+.bf-quick-btn:focus-visible,
+.bf-hosp-item:focus-visible,
+.bf-amb-option:focus-visible,
+.bf-amb-toggle:focus-visible,
+.bf-hosp-clear:focus-visible,
+.bf-hosp-more:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
 /* ============ Ambulance suggestion ============ */
 .bf-amb {
   margin-top: 20px;
@@ -534,7 +564,7 @@
 
 .bf-amb-desc {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.7);
   margin-top: 2px;
 }
 
@@ -550,7 +580,7 @@
   font-size: 12px;
   font-family: var(--sans);
   font-weight: 600;
-  min-height: 36px;
+  min-height: 44px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.6);
@@ -653,7 +683,7 @@
   font-size: 12px;
   font-family: var(--sans);
   font-weight: 600;
-  min-height: 32px;
+  min-height: 44px;
   background: transparent;
   border: 1px solid rgba(217, 83, 79, 0.25);
   color: var(--alert);
@@ -669,6 +699,8 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 4px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .bf-hosp-item {
@@ -716,7 +748,7 @@
 
 .bf-hosp-network {
   font-size: 9px;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-weight: 500;
   color: var(--green-dark);
   background: rgba(0, 184, 124, 0.06);
@@ -874,7 +906,7 @@
 
 .bf-bottom-text {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.7);
   margin-right: 4px;
 }
 
@@ -885,7 +917,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   text-decoration: none;
-  min-height: 36px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   transition: border-color 0.15s;

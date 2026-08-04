@@ -84,18 +84,25 @@ function StepBar({ current, total }: { current: number; total: number }) {
         ))}
       </div>
       <div className="bf-stepbar-label">
-        Etapa {current + 1} de {total} — {STEP_NAMES[current]}
+        Etapa {current + 1} de {total} · {STEP_NAMES[current]}
       </div>
     </div>
   );
 }
 
-function NavBtns({ onBack, onNext, canNext, nextLabel, loading }: { onBack?: () => void; onNext?: () => void; canNext?: boolean; nextLabel?: string; loading?: boolean }) {
+function NavBtns({ onBack, onNext, canNext, nextLabel, loading, confirmStyle, onInvalid }: { onBack?: () => void; onNext?: () => void; canNext?: boolean; nextLabel?: string; loading?: boolean; confirmStyle?: boolean; onInvalid?: () => void }) {
+  const handleClick = () => {
+    if (!canNext && onInvalid) {
+      onInvalid();
+      return;
+    }
+    if (canNext && onNext) onNext();
+  };
   return (
     <div className="bf-nav">
       {onBack && <button type="button" onClick={onBack} className="bf-btn-back">Voltar</button>}
-      {onNext && <button type="button" onClick={onNext} disabled={!canNext || loading}
-        className={`bf-btn-next ${loading ? "is-loading" : ""}`}>
+      {onNext && <button type="button" onClick={handleClick} disabled={loading}
+        className={`bf-btn-next ${loading ? "is-loading" : ""} ${confirmStyle ? "bf-btn-confirm" : ""}`}>
         {loading ? "Enviando..." : (nextLabel || "Continuar")}
       </button>}
     </div>
@@ -419,11 +426,18 @@ export default function SaviorBooking() {
       </a>
 
       {/* EMERGENCY HEADER */}
-      <div className="bf-emergency">
-        <span>Emergência? Não preencha formulário.</span>
-        <a href="tel:+552131713030" className="bf-emergency-link">(21) 3171-3030</a>
-        <a href="https://wa.me/5521980358200?text=EMERGÊNCIA" className="bf-emergency-link">WhatsApp</a>
-      </div>
+      {step === 0 ? (
+        <div className="bf-emergency">
+          <span>Emergência? Não preencha formulário.</span>
+          <a href="tel:+552131713030" className="bf-emergency-link">(21) 3171-3030</a>
+          <a href="https://wa.me/5521980358200?text=EMERGÊNCIA" className="bf-emergency-link">WhatsApp</a>
+        </div>
+      ) : (
+        <div className="bf-emergency bf-emergency-compact">
+          <span>&#9888; Emergência? Ligue </span>
+          <a href="tel:+552131713030" className="bf-emergency-link">(21) 3171-3030</a>
+        </div>
+      )}
 
       {/* TOPBAR */}
       <div className="bf-topbar">
@@ -455,7 +469,7 @@ export default function SaviorBooking() {
         {/* ===== STEP 1: PACIENTE ===== */}
         {step === 0 && (
           <div>
-            <h2 className="bf-section-title">Dados do paciente</h2>
+            <h2 className="bf-section-title">Sobre o paciente</h2>
 
             <Field id="patient_name" label="Nome do paciente" required error={touched.patient_name && !form.patient_name ? "Informe o nome" : null}>
               <TextInput id="patient_name" value={form.patient_name} placeholder="Nome completo"
@@ -502,23 +516,26 @@ export default function SaviorBooking() {
 
             {form.diagnosis_select && <AmbSuggestion type={ambType} onChangeType={v => set("ambulance_type", v)} showPicker={showAmbPicker} setShowPicker={setShowAmbPicker} />}
 
-            <NavBtns onNext={() => setStep(1)} canNext={v1ok} />
+            <NavBtns onNext={() => setStep(1)} canNext={v1ok}
+              onInvalid={() => setTouched(t => ({ ...t, patient_name: true, diagnosis: true }))} />
           </div>
         )}
 
         {/* ===== STEP 2: TRAJETO ===== */}
         {step === 1 && (
           <div>
-            <h2 className="bf-section-title">Trajeto</h2>
+            <h2 className="bf-section-title">De onde para onde?</h2>
 
             <Field id="origin" label="Endereço de origem (onde buscar o paciente)" required>
               <TextInput id="origin" value={form.origin_address} placeholder="Rua, número, bairro"
                 onChange={e => set("origin_address", e.target.value)} />
             </Field>
 
-            <Field label="Destino (hospital ou endereço)" required>
-              <HospitalPicker hospitals={hospitals} regions={regions}
-                value={form.destination_hospital_id} onChange={v => { set("destination_hospital_id", v); if (v) set("destination_address", ""); }} />
+            <Field id="destination" label="Destino (hospital ou endereço)" required>
+              <div id="destination" role="group" aria-labelledby="destination-label">
+                <HospitalPicker hospitals={hospitals} regions={regions}
+                  value={form.destination_hospital_id} onChange={v => { set("destination_hospital_id", v); if (v) set("destination_address", ""); }} />
+              </div>
               <div className="bf-dest-alt">
                 <TextInput id="dest-address" value={form.destination_address}
                   placeholder="Ou digite o endereço se não for hospital da lista"
@@ -550,14 +567,15 @@ export default function SaviorBooking() {
               )}
             </Field>
 
-            <NavBtns onBack={() => setStep(0)} onNext={() => setStep(2)} canNext={v2ok} />
+            <NavBtns onBack={() => setStep(0)} onNext={() => setStep(2)} canNext={v2ok}
+              onInvalid={() => setTouched(t => ({ ...t, origin_address: true, destination: true }))} />
           </div>
         )}
 
         {/* ===== STEP 3: CONTATO ===== */}
         {step === 2 && (
           <div>
-            <h2 className="bf-section-title">Contato e pagamento</h2>
+            <h2 className="bf-section-title">Como falar com você</h2>
 
             <Field id="contact_name" label="Nome do responsável (quem vamos ligar)" required>
               <TextInput id="contact_name" value={form.contact_name} placeholder="Seu nome ou de quem acompanha"
@@ -604,14 +622,15 @@ export default function SaviorBooking() {
               />
             </Field>
 
-            <NavBtns onBack={() => setStep(1)} onNext={() => setStep(3)} canNext={v3ok} />
+            <NavBtns onBack={() => setStep(1)} onNext={() => setStep(3)} canNext={v3ok}
+              onInvalid={() => setTouched(t => ({ ...t, contact_name: true, contact_phone: true }))} />
           </div>
         )}
 
         {/* ===== STEP 4: CONFIRMAR ===== */}
         {step === 3 && (
           <div>
-            <h2 className="bf-section-title">Confirmar pedido</h2>
+            <h2 className="bf-section-title">Está tudo certo?</h2>
             <div className="bf-confirm-table">
               {[
                 ["Paciente", form.patient_name],
@@ -644,7 +663,7 @@ export default function SaviorBooking() {
               Ao confirmar, nossa central recebe os dados e entra em contato para confirmar agendamento e valor. Nenhuma cobrança agora.
             </div>
 
-            <NavBtns onBack={() => setStep(2)} onNext={handleSubmit} canNext={true} nextLabel="Confirmar pedido" loading={submitting} />
+            <NavBtns onBack={() => setStep(2)} onNext={handleSubmit} canNext={true} nextLabel="Confirmar pedido" loading={submitting} confirmStyle />
           </div>
         )}
       </div>
