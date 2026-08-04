@@ -95,7 +95,7 @@ const copacabana: GeoRegion = {
   name: 'Copacabana',
   slug: 'ambulancia-copacabana',
   phase: 1,
-  heroImage: '/img/geo/copacabana-aerial.webp',
+  heroImage: '/img/geo/copacabana-aerial-v2.webp',
   seo: {
     title: "Ambulância Particular Copacabana | UTI 24h | Remoções Copa D'Or | Savior",
     description:
@@ -307,7 +307,7 @@ const zonaSul: GeoRegion = {
   name: 'Zona Sul',
   slug: 'ambulancia-zona-sul',
   phase: 1,
-  heroImage: '/img/geo/zona-sul-aerial.webp',
+  heroImage: '/img/geo/zona-sul-aerial-v2.webp',
   seo: {
     title: 'Ambulância Zona Sul RJ | Ipanema, Leblon, Botafogo, Flamengo | Savior',
     description:
@@ -628,7 +628,7 @@ const barraReCreio: GeoRegion = {
   name: 'Barra e Recreio',
   slug: 'ambulancia-barra-recreio',
   phase: 1,
-  heroImage: '/img/geo/barra-recreio-aerial.webp',
+  heroImage: '/img/geo/barra-recreio-aerial-v2.webp',
   seo: {
     title: 'Ambulância Barra da Tijuca e Recreio | UTI 24h | Unimed PA | Savior',
     description:
@@ -873,7 +873,7 @@ const niteroi: GeoRegion = {
   name: 'Niterói e São Gonçalo',
   slug: 'ambulancia-niteroi',
   phase: 1,
-  heroImage: '/img/geo/niteroi-aerial.webp',
+  heroImage: '/img/geo/niteroi-aerial-v2.webp',
   seo: {
     title: 'Ambulância Particular Niterói e São Gonçalo | UTI 24h | Savior',
     description:
@@ -1119,7 +1119,7 @@ const interestadual: GeoRegion = {
   name: 'Remoção Interestadual',
   slug: 'ambulancia-interestadual',
   phase: 1,
-  heroImage: '/img/geo/interestadual-aerial.webp',
+  heroImage: '/img/geo/interestadual-aerial-v2.webp',
   seo: {
     title: 'Remoção Interestadual | Ambulância Rio e São Paulo | Base Própria | Savior',
     description:
@@ -1289,7 +1289,7 @@ const zonaOeste: GeoRegion = {
   name: 'Zona Oeste',
   slug: 'ambulancia-zona-oeste',
   phase: 2,
-  heroImage: '/img/geo/zona-oeste-aerial.webp',
+  heroImage: '/img/geo/zona-oeste-aerial-v2.webp',
   seo: {
     title: "Ambulância Zona Oeste RJ | Jacarepaguá, Campo Grande, Bangu | Savior",
     description:
@@ -1510,7 +1510,7 @@ const zonaNorte: GeoRegion = {
   name: 'Zona Norte',
   slug: 'ambulancia-zona-norte',
   phase: 2,
-  heroImage: '/img/geo/zona-norte-aerial.webp',
+  heroImage: '/img/geo/zona-norte-aerial-v2.webp',
   seo: {
     title: 'Ambulância Zona Norte RJ | Tijuca, Méier, Vila Isabel | Base Aqui | Savior',
     description:
@@ -1753,7 +1753,7 @@ const regiaoOceanica: GeoRegion = {
   name: 'Região Oceânica',
   slug: 'ambulancia-regiao-oceanica',
   phase: 2,
-  heroImage: '/img/geo/regiao-oceanica-aerial.webp',
+  heroImage: '/img/geo/regiao-oceanica-aerial-v2.webp',
   seo: {
     title: 'Ambulância Região Oceânica e Maricá | Itaipu, Piratininga | Savior',
     description:
@@ -1944,7 +1944,7 @@ const regiaoSerrana: GeoRegion = {
   name: 'Região Serrana',
   slug: 'ambulancia-regiao-serrana',
   phase: 2,
-  heroImage: '/img/geo/regiao-serrana-aerial.webp',
+  heroImage: '/img/geo/regiao-serrana-aerial-v2.webp',
   seo: {
     title: 'Ambulância Petrópolis, Teresópolis, Friburgo | Remoção Serra Rio | Savior',
     description:
@@ -2152,7 +2152,7 @@ const intermunicipal: GeoRegion = {
   name: 'Intermunicipal',
   slug: 'ambulancia-intermunicipal',
   phase: 2,
-  heroImage: '/img/geo/intermunicipal-aerial.webp',
+  heroImage: '/img/geo/intermunicipal-aerial-v2.webp',
   seo: {
     title: 'Ambulância Intermunicipal RJ | Paraty, Campos, Volta Redonda, Macaé | Savior',
     description:
@@ -2361,7 +2361,7 @@ const buzios: GeoRegion = {
   name: 'Búzios',
   slug: 'ambulancia-buzios',
   phase: 2,
-  heroImage: '/img/geo/buzios-aerial.webp',
+  heroImage: '/img/geo/buzios-aerial-v2.webp',
   seo: {
     title: 'Ambulância Búzios | Emergência e Remoção para o Rio | Savior',
     description:
@@ -2528,7 +2528,7 @@ const angraDosReis: GeoRegion = {
   name: 'Angra dos Reis',
   slug: 'ambulancia-angra-dos-reis',
   phase: 2,
-  heroImage: '/img/geo/angra-aerial.webp',
+  heroImage: '/img/geo/angra-aerial-v2.webp',
   seo: {
     title: 'Ambulância Angra dos Reis e Ilha Grande | UTI Remoção | Savior',
     description:
@@ -2710,7 +2710,7 @@ const baixadaFluminense: GeoRegion = {
   name: 'Baixada Fluminense',
   slug: 'ambulancia-baixada-fluminense',
   phase: 3,
-  heroImage: '/img/geo/baixada-aerial.webp',
+  heroImage: '/img/geo/baixada-aerial-v2.webp',
   seo: {
     title: 'Ambulância Baixada Fluminense | Caxias, Nova Iguaçu, Meriti | Savior',
     description:
@@ -2910,7 +2910,7 @@ const centro: GeoRegion = {
   name: 'Centro',
   slug: 'ambulancia-centro',
   phase: 3,
-  heroImage: '/img/geo/centro-aerial.webp',
+  heroImage: '/img/geo/centro-aerial-v2.webp',
   seo: {
     title: 'Ambulância Centro do Rio | Empresas e Eventos | APH Corporativo | Savior',
     description:
