@@ -19,6 +19,7 @@ export default defineConfig({
     filter: (page) =>
       !page.includes('/preview') &&
       !page.includes('/estatisticas') &&
+      !page.includes('/admin') &&
       !page.endsWith('/eventos/') &&
       !page.endsWith('/eventos'),
     changefreq: 'weekly',
