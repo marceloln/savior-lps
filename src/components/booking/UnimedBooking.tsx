@@ -455,14 +455,21 @@ export default function UnimedBooking() {
       </a>
 
       {/* TOPBAR — Unimed green header */}
-      <div className="bf-topbar" style={{ background: '#00995D', borderBottom: 'none' }}>
-        <div className="bf-topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontWeight: 900, fontSize: 22, color: 'white', letterSpacing: '-0.01em' }}>Unimed</span>
-          <span style={{ fontWeight: 400, fontSize: 14, color: 'rgba(255,255,255,0.85)' }}>Rio</span>
-          <span style={{ color: 'rgba(255,255,255,0.4)', margin: '0 8px', fontSize: 18 }}>|</span>
-          <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 500 }}>Transporte de Pacientes</span>
+      <div style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        background: '#00995D',
+        padding: '0 24px', height: 56,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        boxShadow: '0 2px 12px rgba(0,153,93,0.25)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+          <span style={{ fontWeight: 900, fontSize: 24, color: 'white' }}>Unimed</span>
+          <span style={{ fontWeight: 400, fontSize: 15, color: 'rgba(255,255,255,0.9)' }}>Rio</span>
         </div>
-        <a href="tel:+552131713030" className="bf-topbar-phone" style={{ color: 'white' }}>(21) 3171-3030</a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>Transporte de Pacientes</span>
+          <a href="tel:+552131713030" style={{ color: 'white', textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>(21) 3171-3030</a>
+        </div>
       </div>
 
       {/* FORM */}
