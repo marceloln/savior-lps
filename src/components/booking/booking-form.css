@@ -376,6 +376,16 @@
   gap: 12px;
 }
 
+.bf-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .bf-grid-3 { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 480px) {
   .bf-grid-2 {
     grid-template-columns: 1fr;

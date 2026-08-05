@@ -34,6 +34,14 @@ const OBS_CHECKS = [
   "Paciente com doença infecciosa",
 ];
 
+const ACCESS_LABELS: Record<string, string> = {
+  casa_terreo: "Casa/térreo",
+  apto_elevador: "Apartamento com elevador",
+  apto_escada: "Apartamento só com escada",
+  comercial: "Prédio comercial",
+  hospital: "Hospital/clínica",
+};
+
 const STEP_NAMES = ["Paciente", "Trajeto", "Contato", "Confirmar"];
 
 // ===== MICRO COMPONENTS =====
@@ -233,13 +241,15 @@ export default function SaviorBooking() {
   const [submittedMsg, setSubmittedMsg] = useState("");
   const [waUrl, setWaUrl] = useState("");
   const [showAmbPicker, setShowAmbPicker] = useState(false);
+  const [showHospitalSearch, setShowHospitalSearch] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const formRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
-    service_type: "scheduled", ambulance_type: "", patient_name: "", patient_dob: "",
-    patient_weight: "", diagnosis_select: "", diagnosis_other: "", equipment_needs: "", mobility: "",
+    service_type: "scheduled", ambulance_type: "", patient_name: "", patient_gender: "", patient_dob: "",
+    patient_weight: "", patient_height: "", diagnosis_select: "", diagnosis_other: "", equipment_needs: "", mobility: "",
     origin_address: "", destination_hospital_id: null as string | null, destination_address: "",
+    access_type: "", floor_number: "",
     scheduled_date: "", scheduled_time: "", date_quick: "", time_quick: "",
     contact_name: "", contact_phone: "", contact_alt_phone: "",
     payment_method: "", notes: "", obs_checks: [] as string[],
@@ -328,7 +338,8 @@ export default function SaviorBooking() {
     const mobLabel = MOBILITY.find(m => m.value === form.mobility)?.label || "";
     const payLabel = { pix: "Pix (5% desc.)", card: "Cartão até 3x", billing: "Faturamento" }[form.payment_method] || "";
     const svcLabel = form.service_type === "recurring" ? "RECORRENTE" : "PROGRAMADA";
-    const obsAll = [...form.obs_checks, form.notes].filter(Boolean).join("; ");
+    const accessInfo = form.access_type ? `Acesso: ${ACCESS_LABELS[form.access_type] || form.access_type}${form.floor_number ? ` (${form.floor_number}º andar)` : ''}` : '';
+    const obsAll = [accessInfo, ...form.obs_checks, form.notes].filter(Boolean).join("; ");
 
     await supabase.from("savior_bookings").insert({
       service_type: form.service_type,
@@ -349,6 +360,10 @@ export default function SaviorBooking() {
       contact_phone: form.contact_phone,
       contact_alt_phone: form.contact_alt_phone,
       payment_method: form.payment_method,
+      patient_gender: form.patient_gender || null,
+      patient_height: form.patient_height || null,
+      access_type: form.access_type || null,
+      floor_number: form.floor_number || null,
       notes: obsAll,
       source: "web",
     });
@@ -358,12 +373,15 @@ export default function SaviorBooking() {
       `*Paciente:* ${form.patient_name}`,
       form.patient_dob ? `*Nasc:* ${form.patient_dob.split("-").reverse().join("/")}` : null,
       form.patient_weight ? `*Peso:* ${form.patient_weight}kg` : null,
+      form.patient_height ? `*Altura:* ${form.patient_height}cm` : null,
+      form.patient_gender && form.patient_gender !== 'prefiro_nao_informar' ? `*Gênero:* ${form.patient_gender === 'masculino' ? 'Masculino' : 'Feminino'}` : null,
       `*Diagnóstico:* ${diagText}`,
       mobLabel ? `*Mobilidade:* ${mobLabel}` : null,
       form.equipment_needs ? `*Equipamentos:* ${form.equipment_needs}` : null,
       "", `*Ambulância:* ${ambLabel}`,
       `*Origem:* ${form.origin_address}`,
       `*Destino:* ${destHospital ? destHospital.name + " (" + (destHospital.neighborhood || "") + ")" : form.destination_address}`,
+      form.access_type ? `*Acesso:* ${ACCESS_LABELS[form.access_type] || form.access_type}${form.floor_number ? ` (${form.floor_number}º andar)` : ''}` : null,
       form.scheduled_date ? `*Data:* ${form.scheduled_date.split("-").reverse().join("/")}${form.scheduled_time ? " às " + form.scheduled_time : ""}` : null,
       "", `*Contato:* ${form.contact_name}`, `*Tel:* ${form.contact_phone}`,
       form.contact_alt_phone ? `*Tel alt:* ${form.contact_alt_phone}` : null,
@@ -379,7 +397,7 @@ export default function SaviorBooking() {
   }
 
   // Validations
-  const v1ok = !!form.patient_name && !!form.diagnosis_select && (form.diagnosis_select !== "outro" || !!form.diagnosis_other);
+  const v1ok = !!form.patient_name && !!form.patient_gender && !!form.diagnosis_select && (form.diagnosis_select !== "outro" || !!form.diagnosis_other);
   const v2ok = !!form.origin_address && (!!form.destination_hospital_id || !!form.destination_address);
   const v3ok = !!form.contact_phone && !!form.contact_name;
 
@@ -476,6 +494,15 @@ export default function SaviorBooking() {
                 onChange={e => set("patient_name", e.target.value)} onBlur={() => touch("patient_name")} />
             </Field>
 
+            <Field id="patient_gender" label="Gênero" required>
+              <Select id="patient_gender" value={form.patient_gender} onChange={e => set("patient_gender", e.target.value)}>
+                <option value="">Selecione</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="prefiro_nao_informar">Prefiro não informar</option>
+              </Select>
+            </Field>
+
             <Field id="patient_dob" label="Data de nascimento">
               <TextInput id="patient_dob" type="date" value={form.patient_dob} onChange={e => set("patient_dob", e.target.value)} />
             </Field>
@@ -503,10 +530,14 @@ export default function SaviorBooking() {
               </Select>
             </Field>
 
-            <div className="bf-grid-2">
+            <div className="bf-grid-3">
               <Field id="weight" label="Peso aproximado (kg)">
                 <TextInput id="weight" type="number" value={form.patient_weight} placeholder="Ex: 70"
                   onChange={e => set("patient_weight", e.target.value)} />
+              </Field>
+              <Field id="height" label="Altura aproximada (cm)">
+                <TextInput id="height" type="number" value={form.patient_height} placeholder="Ex: 178"
+                  onChange={e => set("patient_height", e.target.value)} />
               </Field>
               <Field id="equipment" label="Usa equipamento?">
                 <TextInput id="equipment" value={form.equipment_needs} placeholder="Oxigênio, monitor..."
@@ -531,18 +562,63 @@ export default function SaviorBooking() {
                 onChange={e => set("origin_address", e.target.value)} />
             </Field>
 
-            <Field id="destination" label="Destino (hospital ou endereço)" required>
-              <div id="destination" role="group" aria-labelledby="destination-label">
-                <HospitalPicker hospitals={hospitals} regions={regions}
-                  value={form.destination_hospital_id} onChange={v => { set("destination_hospital_id", v); if (v) set("destination_address", ""); }} />
+            <Field id="destination" label="Destino" required>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <TextInput id="dest-address"
+                    value={form.destination_hospital_id
+                      ? (hospitals.find(h => h.id === form.destination_hospital_id)?.name || '') + ' — ' + (hospitals.find(h => h.id === form.destination_hospital_id)?.neighborhood || '')
+                      : form.destination_address}
+                    placeholder="Digite o endereço de destino"
+                    onChange={e => {
+                      set("destination_address", e.target.value);
+                      set("destination_hospital_id", null);
+                    }}
+                    readOnly={!!form.destination_hospital_id}
+                  />
+                </div>
+                <button type="button"
+                  onClick={() => setShowHospitalSearch(true)}
+                  className="bf-btn-hospital-search"
+                  style={{
+                    padding: '10px 16px',
+                    background: 'var(--navy-mid, #143458)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: 6,
+                    color: '#F4EFE6',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 500,
+                    whiteSpace: 'nowrap',
+                    fontFamily: 'inherit'
+                  }}>
+                  {form.destination_hospital_id ? '✕ Trocar' : '🏥 Buscar hospital'}
+                </button>
               </div>
-              <div className="bf-dest-alt">
-                <TextInput id="dest-address" value={form.destination_address}
-                  placeholder="Ou digite o endereço se não for hospital da lista"
-                  onChange={e => { set("destination_address", e.target.value); if (e.target.value) set("destination_hospital_id", null); }}
-                  aria-label="Endereço de destino alternativo" />
-              </div>
+              {form.destination_hospital_id && (
+                <div style={{ marginTop: 6, fontSize: 12, color: 'var(--green, #00B87C)' }}>
+                  ✓ Hospital selecionado da lista
+                </div>
+              )}
             </Field>
+
+            <Field id="access_type" label="Tipo de acesso no local de busca">
+              <Select id="access_type" value={form.access_type} onChange={e => set("access_type", e.target.value)}>
+                <option value="">Selecione se necessário</option>
+                <option value="casa_terreo">Casa/térreo (sem escadas)</option>
+                <option value="apto_elevador">Apartamento com elevador</option>
+                <option value="apto_escada">Apartamento só com escada</option>
+                <option value="comercial">Prédio comercial</option>
+                <option value="hospital">Hospital/clínica</option>
+              </Select>
+            </Field>
+
+            {form.access_type === "apto_escada" && (
+              <Field id="floor_number" label="Qual andar?">
+                <TextInput id="floor_number" type="number" value={form.floor_number} placeholder="Ex: 3"
+                  onChange={e => set("floor_number", e.target.value)} />
+              </Field>
+            )}
 
             <Field label="Quando precisa da ambulância?">
               <div className="bf-quick-row">
@@ -569,6 +645,27 @@ export default function SaviorBooking() {
 
             <NavBtns onBack={() => setStep(0)} onNext={() => setStep(2)} canNext={v2ok}
               onInvalid={() => setTouched(t => ({ ...t, origin_address: true, destination: true }))} />
+
+            {showHospitalSearch && (
+              <div className="admin-modal-overlay" onClick={() => setShowHospitalSearch(false)}
+                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
+                <div onClick={e => e.stopPropagation()}
+                  style={{ background: '#F4EFE6', borderRadius: 12, padding: 24, maxWidth: 560, width: '100%', maxHeight: '80vh', overflow: 'auto' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0B2540', margin: 0 }}>Buscar hospital</h3>
+                    <button type="button" onClick={() => setShowHospitalSearch(false)}
+                      style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6B7785' }}>×</button>
+                  </div>
+                  <HospitalPicker hospitals={hospitals} regions={regions}
+                    value={form.destination_hospital_id}
+                    onChange={v => {
+                      set("destination_hospital_id", v);
+                      if (v) set("destination_address", "");
+                      setShowHospitalSearch(false);
+                    }} />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -634,11 +731,14 @@ export default function SaviorBooking() {
             <div className="bf-confirm-table">
               {[
                 ["Paciente", form.patient_name],
+                ["Gênero", form.patient_gender === 'masculino' ? 'Masculino' : form.patient_gender === 'feminino' ? 'Feminino' : form.patient_gender === 'prefiro_nao_informar' ? 'Prefiro não informar' : null],
                 ["Situação", diagText],
                 ["Ambulância", ambType === "uti" ? "UTI Móvel" : ambType === "neonatal" ? "UTI Neonatal" : "Básica"],
                 ["Mobilidade", MOBILITY.find(m => m.value === form.mobility)?.label],
+                ["Altura", form.patient_height ? `${form.patient_height} cm` : null],
                 ["Origem", form.origin_address],
                 ["Destino", hospitals.find(h => h.id === form.destination_hospital_id)?.name || form.destination_address],
+                ["Acesso", form.access_type ? ACCESS_LABELS[form.access_type] + (form.floor_number ? ` (${form.floor_number}º andar)` : '') : null],
                 ["Data/Hora", [form.scheduled_date?.split("-").reverse().join("/"), form.scheduled_time].filter(Boolean).join(" às ") || "A definir com a central"],
                 ["Contato", `${form.contact_name} · ${form.contact_phone}`],
                 ["Pagamento", { pix: "Pix (5% desc.)", card: "Cartão até 3x", billing: "Faturamento" }[form.payment_method]],
