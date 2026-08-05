@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 
 interface LoginScreenProps {
@@ -10,11 +10,36 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
+  const [success, setSuccess] = useState('');
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
+
+    if (isSignup) {
+      const { data, error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      setLoading(false);
+
+      if (signupError) {
+        setError(signupError.message);
+        return;
+      }
+
+      if (data.user && data.session) {
+        onLogin({ email: data.user.email ?? email, id: data.user.id });
+      } else {
+        setSuccess('Conta criada! Verifique seu email para confirmar, ou faça login diretamente.');
+        setIsSignup(false);
+      }
+      return;
+    }
 
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
@@ -45,6 +70,19 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         </div>
 
         {error && <div className="admin-login-error">{error}</div>}
+        {success && (
+          <div style={{
+            background: 'rgba(0,184,124,0.12)',
+            border: '1px solid rgba(0,184,124,0.3)',
+            color: '#00B87C',
+            padding: '10px 14px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            marginBottom: '16px'
+          }}>
+            {success}
+          </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="login-email">Email</label>
@@ -66,11 +104,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             id="login-password"
             type="password"
             className="admin-input"
-            placeholder="Sua senha"
+            placeholder={isSignup ? 'Mínimo 6 caracteres' : 'Sua senha'}
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            autoComplete="current-password"
+            minLength={6}
+            autoComplete={isSignup ? 'new-password' : 'current-password'}
           />
         </div>
 
@@ -80,7 +119,27 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           disabled={loading}
           style={{ width: '100%', justifyContent: 'center', marginTop: 8 }}
         >
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading
+            ? (isSignup ? 'Criando...' : 'Entrando...')
+            : (isSignup ? 'Criar conta' : 'Entrar')
+          }
+        </button>
+
+        <button
+          type="button"
+          onClick={() => { setIsSignup(!isSignup); setError(''); setSuccess(''); }}
+          style={{
+            width: '100%',
+            marginTop: 16,
+            background: 'none',
+            border: 'none',
+            color: '#6B7785',
+            fontSize: '13px',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          {isSignup ? 'Já tem conta? Fazer login' : 'Primeiro acesso? Criar conta'}
         </button>
       </form>
     </div>
