@@ -288,17 +288,22 @@ export default function RedeDorBooking() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
 
-  // Load data
+  // Load data with timeout fallback
   useEffect(() => {
+    const timeout = setTimeout(() => setLoading(false), 5000);
     (async () => {
-      const [h, r] = await Promise.all([
-        supabase.from("savior_hospitals").select("*, savior_hospital_networks(*)").eq("active", true).order("name"),
-        supabase.from("savior_regions").select("*").eq("active", true).order("name")
-      ]);
-      setHospitals(h.data || []);
-      setRegions(r.data || []);
+      try {
+        const [h, r] = await Promise.all([
+          supabase.from("savior_hospitals").select("*, savior_hospital_networks(*)").eq("active", true).order("name"),
+          supabase.from("savior_regions").select("*").eq("active", true).order("name")
+        ]);
+        setHospitals(h.data || []);
+        setRegions(r.data || []);
+      } catch {}
+      clearTimeout(timeout);
       setLoading(false);
     })();
+    return () => clearTimeout(timeout);
   }, []);
 
   // Smart suggestion
