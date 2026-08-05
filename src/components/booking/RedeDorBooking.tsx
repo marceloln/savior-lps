@@ -468,7 +468,7 @@ export default function RedeDorBooking() {
         boxShadow: '0 2px 12px rgba(0,59,113,0.25)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/img/rededor-mark-sm.png" alt="Rede D'Or" style={{ height: 32 }} />
+          <img src="/img/rededor-mark-sm.png" alt="Rede D'Or" style={{ height: 22 }} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>Transporte de Pacientes</span>
