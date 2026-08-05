@@ -33,6 +33,10 @@ interface Booking {
   diagnosis: string | null;
   mobility: string | null;
   equipment_needs: string | null;
+  patient_gender: string | null;
+  patient_height: string | null;
+  access_type: string | null;
+  floor_number: string | null;
   status_history: StatusHistoryEntry[];
   destination_hospital_id: string | null;
   savior_hospitals: Hospital | null;
@@ -423,6 +427,26 @@ export default function AgendamentosTab({ userEmail }: { userEmail: string }) {
                 <div className="detail-row">
                   <div className="detail-label">Equipamentos</div>
                   <div className="detail-value">{selectedBooking.equipment_needs}</div>
+                </div>
+              )}
+              {selectedBooking.patient_gender && (
+                <div className="detail-row">
+                  <div className="detail-label">Gênero</div>
+                  <div className="detail-value">{selectedBooking.patient_gender === 'masculino' ? 'Masculino' : selectedBooking.patient_gender === 'feminino' ? 'Feminino' : 'Prefere não informar'}</div>
+                </div>
+              )}
+              {selectedBooking.patient_height && (
+                <div className="detail-row">
+                  <div className="detail-label">Altura</div>
+                  <div className="detail-value">{selectedBooking.patient_height} cm</div>
+                </div>
+              )}
+              {selectedBooking.access_type && (
+                <div className="detail-row">
+                  <div className="detail-label">Acesso</div>
+                  <div className="detail-value">
+                    {selectedBooking.access_type === 'casa_terreo' ? 'Casa/térreo' : selectedBooking.access_type === 'apto_elevador' ? 'Apto com elevador' : selectedBooking.access_type === 'apto_escada' ? `Apto só escada${selectedBooking.floor_number ? ` (${selectedBooking.floor_number}º andar)` : ''}` : selectedBooking.access_type === 'comercial' ? 'Prédio comercial' : 'Hospital/clínica'}
+                  </div>
                 </div>
               )}
               {selectedBooking.savior_hospitals && (
