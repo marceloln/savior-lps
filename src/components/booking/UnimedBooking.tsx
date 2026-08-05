@@ -454,27 +454,13 @@ export default function UnimedBooking() {
         Ir para o formulário
       </a>
 
-      {/* EMERGENCY HEADER */}
-      {step === 0 ? (
-        <div className="bf-emergency">
-          <span>Emergência? Não preencha formulário.</span>
-          <a href="tel:+552131713030" className="bf-emergency-link">(21) 3171-3030</a>
-          <a href="https://wa.me/5521980358200?text=EMERGÊNCIA" className="bf-emergency-link">WhatsApp</a>
+      {/* TOPBAR — Unimed green header */}
+      <div className="bf-topbar" style={{ background: '#00995D', borderBottom: 'none' }}>
+        <div className="bf-topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img src="/img/unimed-rio-logo.png" alt="Unimed Rio" style={{ height: 36, borderRadius: 4 }} />
+          <span className="bf-topbar-service" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>Transporte de Pacientes</span>
         </div>
-      ) : (
-        <div className="bf-emergency bf-emergency-compact">
-          <span>&#9888; Emergência? Ligue </span>
-          <a href="tel:+552131713030" className="bf-emergency-link">(21) 3171-3030</a>
-        </div>
-      )}
-
-      {/* TOPBAR */}
-      <div className="bf-topbar">
-        <div className="bf-topbar-brand">
-          <span className="bf-topbar-wordmark">UNIMED</span>
-          <span className="bf-topbar-service">Transporte de Pacientes</span>
-        </div>
-        <a href="tel:+552131713030" className="bf-topbar-phone">(21) 3171-3030</a>
+        <a href="tel:+552131713030" className="bf-topbar-phone" style={{ color: 'white' }}>(21) 3171-3030</a>
       </div>
 
       {/* FORM */}

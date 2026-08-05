@@ -158,7 +158,7 @@
 /* ============ Main form shell ============ */
 .bf-shell {
   min-height: 100vh;
-  background: #FFFFFF;
+  background: linear-gradient(180deg, #e8f5ef 0%, #FFFFFF 300px);
   font-family: var(--sans);
 }
 
@@ -181,39 +181,14 @@
   top: 0;
 }
 
-/* ============ Emergency header ============ */
-.bf-emergency {
-  background: var(--alert);
-  color: #FFFFFF;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  text-align: center;
+/* ============ Emergency header — hidden for Unimed ============ */
+.bf-emergency,
+.bf-emergency-compact {
+  display: none;
 }
 
 .bf-emergency-link {
-  color: #FFFFFF;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 6px 14px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.bf-emergency-link:hover {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.bf-emergency-compact {
-  padding: 6px 20px;
-  font-size: 12px;
-  gap: 4px;
+  display: none;
 }
 
 /* ============ Topbar ============ */
@@ -221,13 +196,14 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #007A4A;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0 20px;
+  background: #00995D;
+  border-bottom: none;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 52px;
+  height: 60px;
+  box-shadow: 0 2px 12px rgba(0, 153, 93, 0.25);
 }
 
 .bf-topbar-brand {
@@ -276,6 +252,7 @@
   font-size: var(--fs-xs);
   font-weight: 500;
   letter-spacing: 0.25em;
+  color: #00995D;
   text-transform: uppercase;
   color: #00995D;
   margin-bottom: 4px;
