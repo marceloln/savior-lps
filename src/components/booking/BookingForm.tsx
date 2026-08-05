@@ -242,13 +242,15 @@ export default function SaviorBooking() {
   const [waUrl, setWaUrl] = useState("");
   const [showAmbPicker, setShowAmbPicker] = useState(false);
   const [showHospitalSearch, setShowHospitalSearch] = useState(false);
+  const [showOriginHospitalSearch, setShowOriginHospitalSearch] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const formRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     service_type: "scheduled", ambulance_type: "", patient_name: "", patient_gender: "", patient_dob: "",
     patient_weight: "", patient_height: "", diagnosis_select: "", diagnosis_other: "", equipment_needs: "", mobility: "",
-    origin_address: "", destination_hospital_id: null as string | null, destination_address: "",
+    origin_address: "", origin_hospital_id: null as string | null,
+    destination_hospital_id: null as string | null, destination_address: "",
     access_type: "", floor_number: "",
     scheduled_date: "", scheduled_time: "", date_quick: "", time_quick: "",
     contact_name: "", contact_phone: "", contact_alt_phone: "",
@@ -351,7 +353,9 @@ export default function SaviorBooking() {
       diagnosis: diagText,
       equipment_needs: form.equipment_needs,
       mobility: form.mobility,
-      origin_address: form.origin_address,
+      origin_address: form.origin_hospital_id
+        ? (hospitals.find(h => h.id === form.origin_hospital_id)?.name || '') + ' — ' + (hospitals.find(h => h.id === form.origin_hospital_id)?.neighborhood || '')
+        : form.origin_address,
       destination_hospital_id: form.destination_hospital_id,
       destination_address: form.destination_address,
       scheduled_date: form.scheduled_date || null,
@@ -379,7 +383,7 @@ export default function SaviorBooking() {
       mobLabel ? `*Mobilidade:* ${mobLabel}` : null,
       form.equipment_needs ? `*Equipamentos:* ${form.equipment_needs}` : null,
       "", `*Ambulância:* ${ambLabel}`,
-      `*Origem:* ${form.origin_address}`,
+      `*Origem:* ${form.origin_hospital_id ? (hospitals.find(h => h.id === form.origin_hospital_id)?.name || '') + ' (' + (hospitals.find(h => h.id === form.origin_hospital_id)?.neighborhood || '') + ')' : form.origin_address}`,
       `*Destino:* ${destHospital ? destHospital.name + " (" + (destHospital.neighborhood || "") + ")" : form.destination_address}`,
       form.access_type ? `*Acesso:* ${ACCESS_LABELS[form.access_type] || form.access_type}${form.floor_number ? ` (${form.floor_number}º andar)` : ''}` : null,
       form.scheduled_date ? `*Data:* ${form.scheduled_date.split("-").reverse().join("/")}${form.scheduled_time ? " às " + form.scheduled_time : ""}` : null,
@@ -398,7 +402,7 @@ export default function SaviorBooking() {
 
   // Validations
   const v1ok = !!form.patient_name && !!form.patient_gender && !!form.diagnosis_select && (form.diagnosis_select !== "outro" || !!form.diagnosis_other);
-  const v2ok = !!form.origin_address && (!!form.destination_hospital_id || !!form.destination_address);
+  const v2ok = (!!form.origin_address || !!form.origin_hospital_id) && (!!form.destination_hospital_id || !!form.destination_address);
   const v3ok = !!form.contact_phone && !!form.contact_name;
 
   // ===== RENDER =====
@@ -558,8 +562,43 @@ export default function SaviorBooking() {
             <h2 className="bf-section-title">De onde para onde?</h2>
 
             <Field id="origin" label="Endereço de origem (onde buscar o paciente)" required>
-              <TextInput id="origin" value={form.origin_address} placeholder="Rua, número, bairro"
-                onChange={e => set("origin_address", e.target.value)} />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <TextInput id="origin-address"
+                    value={form.origin_hospital_id
+                      ? (hospitals.find(h => h.id === form.origin_hospital_id)?.name || '') + ' — ' + (hospitals.find(h => h.id === form.origin_hospital_id)?.neighborhood || '')
+                      : form.origin_address}
+                    placeholder="Rua, número, bairro"
+                    onChange={e => {
+                      set("origin_address", e.target.value);
+                      set("origin_hospital_id", null);
+                    }}
+                    readOnly={!!form.origin_hospital_id}
+                  />
+                </div>
+                <button type="button"
+                  onClick={() => setShowOriginHospitalSearch(true)}
+                  className="bf-btn-hospital-search"
+                  style={{
+                    padding: '10px 16px',
+                    background: 'var(--navy-mid, #143458)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: 6,
+                    color: '#F4EFE6',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 500,
+                    whiteSpace: 'nowrap',
+                    fontFamily: 'inherit'
+                  }}>
+                  {form.origin_hospital_id ? '✕ Trocar' : '🏥 Buscar hospital'}
+                </button>
+              </div>
+              {form.origin_hospital_id && (
+                <div style={{ marginTop: 6, fontSize: 12, color: 'var(--green, #00B87C)' }}>
+                  ✓ Hospital selecionado da lista
+                </div>
+              )}
             </Field>
 
             <Field id="destination" label="Destino" required>
@@ -652,7 +691,7 @@ export default function SaviorBooking() {
                 <div onClick={e => e.stopPropagation()}
                   style={{ background: '#F4EFE6', borderRadius: 12, padding: 24, maxWidth: 560, width: '100%', maxHeight: '80vh', overflow: 'auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0B2540', margin: 0 }}>Buscar hospital</h3>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0B2540', margin: 0 }}>Buscar hospital de destino</h3>
                     <button type="button" onClick={() => setShowHospitalSearch(false)}
                       style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6B7785' }}>×</button>
                   </div>
@@ -662,6 +701,27 @@ export default function SaviorBooking() {
                       set("destination_hospital_id", v);
                       if (v) set("destination_address", "");
                       setShowHospitalSearch(false);
+                    }} />
+                </div>
+              </div>
+            )}
+
+            {showOriginHospitalSearch && (
+              <div className="admin-modal-overlay" onClick={() => setShowOriginHospitalSearch(false)}
+                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
+                <div onClick={e => e.stopPropagation()}
+                  style={{ background: '#F4EFE6', borderRadius: 12, padding: 24, maxWidth: 560, width: '100%', maxHeight: '80vh', overflow: 'auto' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0B2540', margin: 0 }}>Buscar hospital de origem</h3>
+                    <button type="button" onClick={() => setShowOriginHospitalSearch(false)}
+                      style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6B7785' }}>×</button>
+                  </div>
+                  <HospitalPicker hospitals={hospitals} regions={regions}
+                    value={form.origin_hospital_id}
+                    onChange={v => {
+                      set("origin_hospital_id", v);
+                      if (v) set("origin_address", "");
+                      setShowOriginHospitalSearch(false);
                     }} />
                 </div>
               </div>
@@ -736,7 +796,7 @@ export default function SaviorBooking() {
                 ["Ambulância", ambType === "uti" ? "UTI Móvel" : ambType === "neonatal" ? "UTI Neonatal" : "Básica"],
                 ["Mobilidade", MOBILITY.find(m => m.value === form.mobility)?.label],
                 ["Altura", form.patient_height ? `${form.patient_height} cm` : null],
-                ["Origem", form.origin_address],
+                ["Origem", form.origin_hospital_id ? hospitals.find(h => h.id === form.origin_hospital_id)?.name || form.origin_address : form.origin_address],
                 ["Destino", hospitals.find(h => h.id === form.destination_hospital_id)?.name || form.destination_address],
                 ["Acesso", form.access_type ? ACCESS_LABELS[form.access_type] + (form.floor_number ? ` (${form.floor_number}º andar)` : '') : null],
                 ["Data/Hora", [form.scheduled_date?.split("-").reverse().join("/"), form.scheduled_time].filter(Boolean).join(" às ") || "A definir com a central"],
