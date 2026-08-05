@@ -20,6 +20,7 @@ export default defineConfig({
       !page.includes('/preview') &&
       !page.includes('/estatisticas') &&
       !page.includes('/admin') &&
+      !page.includes('/agendar-unimed') &&
       !page.endsWith('/eventos/') &&
       !page.endsWith('/eventos'),
     changefreq: 'weekly',

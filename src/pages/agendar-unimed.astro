@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import UnimedBooking from '../components/booking/UnimedBooking';
+
+const title = 'Agendar Ambulância | Unimed + Savior';
+const description = 'Solicite ou agende uma ambulância particular pelo convênio Unimed. UTI móvel, básica ou neonatal. Formulário rápido, resposta imediata. (21) 3171-3030.';
+---
+
+<Base
+  title={title}
+  description={description}
+  canonical="https://www.savior.com.br/agendar-unimed"
+  noindex
+>
+  <main id="main">
+    <UnimedBooking client:load />
+  </main>
+</Base>
