@@ -283,6 +283,7 @@ export default function AgendamentosTab({ userEmail }: { userEmail: string }) {
                 <tr>
                   <th>Data</th>
                   <th>Paciente</th>
+                  <th>Contato</th>
                   <th>Origem</th>
                   <th>Destino</th>
                   <th>Tipo</th>
@@ -296,6 +297,10 @@ export default function AgendamentosTab({ userEmail }: { userEmail: string }) {
                   <tr key={b.id} className="clickable" onClick={() => openModal(b)}>
                     <td>{formatScheduled(b.scheduled_date, b.scheduled_time) !== '--' ? formatScheduled(b.scheduled_date, b.scheduled_time) : formatDateTime(b.created_at)}</td>
                     <td>{b.patient_name}</td>
+                    <td style={{ fontSize: 12 }}>
+                      <div>{b.contact_name || b.patient_name}</div>
+                      <div style={{ color: 'var(--admin-gray)' }}>{b.contact_phone}</div>
+                    </td>
                     <td>{b.origin_address}</td>
                     <td>{b.destination_address}</td>
                     <td>{b.service_type}</td>
