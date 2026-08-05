@@ -136,7 +136,7 @@ export default function CandidaturasTab() {
         <div className="admin-card admin-empty">
           <div className="admin-empty-icon">{'\u{1F4CB}'}</div>
           <h3>Nenhuma candidatura registrada ainda</h3>
-          <p>As candidaturas do site serao sincronizadas aqui.</p>
+          <p>As candidaturas do site serão sincronizadas aqui.</p>
         </div>
       </div>
     );
@@ -191,7 +191,7 @@ export default function CandidaturasTab() {
                   <th>Estado</th>
                   <th>Email</th>
                   <th>Status</th>
-                  <th>Acoes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,10 +238,10 @@ export default function CandidaturasTab() {
 
       {selectedCandidate && (
         <div className="admin-modal-overlay" onClick={() => setSelectedCandidate(null)}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()}>
+          <div className="admin-modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
             <div className="admin-modal-header">
               <h2>Detalhes da candidatura</h2>
-              <button className="admin-modal-close" onClick={() => setSelectedCandidate(null)}>
+              <button className="admin-modal-close" aria-label="Fechar modal" onClick={() => setSelectedCandidate(null)}>
                 {'\u00D7'}
               </button>
             </div>
@@ -281,7 +281,7 @@ export default function CandidaturasTab() {
               </div>
               {selectedCandidate.experience && (
                 <div className="detail-row">
-                  <div className="detail-label">Experiencia</div>
+                  <div className="detail-label">Experiência</div>
                   <div className="detail-value">{selectedCandidate.experience}</div>
                 </div>
               )}

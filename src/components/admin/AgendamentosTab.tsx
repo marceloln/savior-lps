@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 interface Hospital {
   id: string;
   name: string;
-  city: string;
+  neighborhood: string;
 }
 
 interface StatusHistoryEntry {
@@ -17,16 +17,24 @@ interface Booking {
   id: string;
   created_at: string;
   patient_name: string;
-  patient_phone: string;
-  origin: string;
-  destination: string;
-  booking_type: string;
+  contact_phone: string;
+  contact_name: string | null;
+  origin_address: string;
+  destination_address: string;
+  service_type: string;
+  ambulance_type: string | null;
   status: string;
   payment_method: string;
   notes: string | null;
-  scheduled_at: string | null;
+  admin_notes: string | null;
+  assigned_team: string | null;
+  scheduled_date: string | null;
+  scheduled_time: string | null;
+  diagnosis: string | null;
+  mobility: string | null;
+  equipment_needs: string | null;
   status_history: StatusHistoryEntry[];
-  hospital_id: string | null;
+  destination_hospital_id: string | null;
   savior_hospitals: Hospital | null;
 }
 
@@ -54,8 +62,12 @@ function formatDateTime(dt: string | null): string {
   });
 }
 
-function formatDate(dt: string): string {
-  return new Date(dt).toLocaleDateString('pt-BR');
+function formatScheduled(date: string | null, time: string | null): string {
+  if (!date) return '--';
+  const d = new Date(date + 'T00:00:00');
+  const dateStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  if (time) return `${dateStr} ${time}`;
+  return dateStr;
 }
 
 export default function AgendamentosTab() {
@@ -77,22 +89,24 @@ export default function AgendamentosTab() {
 
   const fetchBookings = useCallback(async () => {
     setError('');
-    let query = supabase
+    const query = supabase
       .from('savior_bookings')
-      .select('*, savior_hospitals(id, name, city)')
+      .select('id, created_at, status, service_type, ambulance_type, patient_name, origin_address, destination_address, contact_phone, contact_name, scheduled_date, scheduled_time, payment_method, notes, status_history, admin_notes, assigned_team, destination_hospital_id, diagnosis, mobility, equipment_needs, savior_hospitals!destination_hospital_id(id, name, neighborhood)')
       .order('created_at', { ascending: false });
 
+    let filteredQuery = query;
+
     if (filterStatus !== 'todos') {
-      query = query.eq('status', filterStatus);
+      filteredQuery = filteredQuery.eq('status', filterStatus);
     }
     if (dateFrom) {
-      query = query.gte('created_at', dateFrom + 'T00:00:00');
+      filteredQuery = filteredQuery.gte('created_at', dateFrom + 'T00:00:00');
     }
     if (dateTo) {
-      query = query.lte('created_at', dateTo + 'T23:59:59');
+      filteredQuery = filteredQuery.lte('created_at', dateTo + 'T23:59:59');
     }
 
-    const { data, error: fetchError } = await query;
+    const { data, error: fetchError } = await filteredQuery;
 
     if (fetchError) {
       setError(fetchError.message);
@@ -100,13 +114,29 @@ export default function AgendamentosTab() {
       return;
     }
 
-    setBookings((data as Booking[]) ?? []);
+    const normalized = (data ?? []).map((row: Record<string, unknown>) => ({
+      ...row,
+      savior_hospitals: Array.isArray(row.savior_hospitals)
+        ? (row.savior_hospitals[0] ?? null)
+        : (row.savior_hospitals ?? null),
+    }));
+    setBookings(normalized as Booking[]);
     setLoading(false);
   }, [filterStatus, dateFrom, dateTo]);
 
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && selectedBooking) {
+        setSelectedBooking(null);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedBooking]);
 
   async function handleStatusChange(booking: Booking, newStatus: BookingStatus, userEmail: string) {
     setSaving(true);
@@ -212,8 +242,8 @@ export default function AgendamentosTab() {
           className="admin-input"
           value={dateFrom}
           onChange={e => setDateFrom(e.target.value)}
-          placeholder="Data inicio"
-          title="Data inicio"
+          placeholder="Data início"
+          title="Data início"
         />
         <input
           type="date"
@@ -244,17 +274,17 @@ export default function AgendamentosTab() {
                   <th>Tipo</th>
                   <th>Status</th>
                   <th>Pagamento</th>
-                  <th>Acoes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map(b => (
                   <tr key={b.id} className="clickable" onClick={() => openModal(b)}>
-                    <td>{formatDateTime(b.scheduled_at ?? b.created_at)}</td>
+                    <td>{formatScheduled(b.scheduled_date, b.scheduled_time) !== '--' ? formatScheduled(b.scheduled_date, b.scheduled_time) : formatDateTime(b.created_at)}</td>
                     <td>{b.patient_name}</td>
-                    <td>{b.origin}</td>
-                    <td>{b.destination}</td>
-                    <td>{b.booking_type}</td>
+                    <td>{b.origin_address}</td>
+                    <td>{b.destination_address}</td>
+                    <td>{b.service_type}</td>
                     <td>
                       <span className={`admin-badge badge-${b.status}`}>
                         {b.status.replace('_', ' ')}
@@ -292,10 +322,10 @@ export default function AgendamentosTab() {
 
       {selectedBooking && (
         <div className="admin-modal-overlay" onClick={() => setSelectedBooking(null)}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()}>
+          <div className="admin-modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
             <div className="admin-modal-header">
               <h2>Detalhes do agendamento</h2>
-              <button className="admin-modal-close" onClick={() => setSelectedBooking(null)}>
+              <button className="admin-modal-close" aria-label="Fechar modal" onClick={() => setSelectedBooking(null)}>
                 {'\u00D7'}
               </button>
             </div>
@@ -308,10 +338,10 @@ export default function AgendamentosTab() {
               <div className="detail-row">
                 <div className="detail-label">Telefone</div>
                 <div className="detail-value">
-                  {selectedBooking.patient_phone}
-                  {selectedBooking.patient_phone && (
+                  {selectedBooking.contact_phone}
+                  {selectedBooking.contact_phone && (
                     <a
-                      href={`https://wa.me/55${selectedBooking.patient_phone.replace(/\D/g, '')}`}
+                      href={`https://wa.me/55${selectedBooking.contact_phone.replace(/\D/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="admin-btn admin-btn-sm"
@@ -322,18 +352,30 @@ export default function AgendamentosTab() {
                   )}
                 </div>
               </div>
+              {selectedBooking.contact_name && (
+                <div className="detail-row">
+                  <div className="detail-label">Contato</div>
+                  <div className="detail-value">{selectedBooking.contact_name}</div>
+                </div>
+              )}
               <div className="detail-row">
                 <div className="detail-label">Origem</div>
-                <div className="detail-value">{selectedBooking.origin}</div>
+                <div className="detail-value">{selectedBooking.origin_address}</div>
               </div>
               <div className="detail-row">
                 <div className="detail-label">Destino</div>
-                <div className="detail-value">{selectedBooking.destination}</div>
+                <div className="detail-value">{selectedBooking.destination_address}</div>
               </div>
               <div className="detail-row">
-                <div className="detail-label">Tipo</div>
-                <div className="detail-value">{selectedBooking.booking_type}</div>
+                <div className="detail-label">Tipo de serviço</div>
+                <div className="detail-value">{selectedBooking.service_type}</div>
               </div>
+              {selectedBooking.ambulance_type && (
+                <div className="detail-row">
+                  <div className="detail-label">Tipo de ambulância</div>
+                  <div className="detail-value">{selectedBooking.ambulance_type}</div>
+                </div>
+              )}
               <div className="detail-row">
                 <div className="detail-label">Status</div>
                 <div className="detail-value">
@@ -348,24 +390,42 @@ export default function AgendamentosTab() {
               </div>
               <div className="detail-row">
                 <div className="detail-label">Agendado para</div>
-                <div className="detail-value">{formatDateTime(selectedBooking.scheduled_at)}</div>
+                <div className="detail-value">{formatScheduled(selectedBooking.scheduled_date, selectedBooking.scheduled_time)}</div>
               </div>
               <div className="detail-row">
                 <div className="detail-label">Criado em</div>
                 <div className="detail-value">{formatDateTime(selectedBooking.created_at)}</div>
               </div>
+              {selectedBooking.diagnosis && (
+                <div className="detail-row">
+                  <div className="detail-label">Diagnóstico</div>
+                  <div className="detail-value">{selectedBooking.diagnosis}</div>
+                </div>
+              )}
+              {selectedBooking.mobility && (
+                <div className="detail-row">
+                  <div className="detail-label">Mobilidade</div>
+                  <div className="detail-value">{selectedBooking.mobility}</div>
+                </div>
+              )}
+              {selectedBooking.equipment_needs && (
+                <div className="detail-row">
+                  <div className="detail-label">Equipamentos</div>
+                  <div className="detail-value">{selectedBooking.equipment_needs}</div>
+                </div>
+              )}
               {selectedBooking.savior_hospitals && (
                 <div className="detail-row">
                   <div className="detail-label">Hospital</div>
                   <div className="detail-value">
-                    {selectedBooking.savior_hospitals.name} ({selectedBooking.savior_hospitals.city})
+                    {selectedBooking.savior_hospitals.name} ({selectedBooking.savior_hospitals.neighborhood})
                   </div>
                 </div>
               )}
 
               {(selectedBooking.status_history ?? []).length > 0 && (
                 <div style={{ marginTop: 16 }}>
-                  <div className="detail-label" style={{ marginBottom: 8 }}>Historico de status</div>
+                  <div className="detail-label" style={{ marginBottom: 8 }}>Histórico de status</div>
                   {selectedBooking.status_history.map((entry, i) => (
                     <div key={i} style={{ fontSize: 13, color: 'var(--admin-gray)', marginBottom: 4 }}>
                       <span className={`admin-badge badge-${entry.status}`} style={{ marginRight: 8 }}>
@@ -379,13 +439,13 @@ export default function AgendamentosTab() {
 
               <div style={{ marginTop: 20 }}>
                 <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--admin-gray)', display: 'block', marginBottom: 6 }}>
-                  Observacoes
+                  Observações
                 </label>
                 <textarea
                   className="admin-textarea"
                   value={modalNote}
                   onChange={e => setModalNote(e.target.value)}
-                  placeholder="Adicionar observacao..."
+                  placeholder="Adicionar observação..."
                 />
               </div>
             </div>

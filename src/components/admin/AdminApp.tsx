@@ -47,16 +47,7 @@ export default function AdminApp() {
 
   if (checkingAuth) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: '#07182B',
-        color: '#6B7785',
-        fontFamily: "'Inter', sans-serif",
-        fontSize: 14,
-      }}>
+      <div className="admin-loading-screen" aria-busy="true">
         Carregando...
       </div>
     );

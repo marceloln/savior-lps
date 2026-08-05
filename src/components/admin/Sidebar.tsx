@@ -20,13 +20,15 @@ export default function Sidebar({ activeTab, onTabChange, userEmail, onLogout }:
         <span>ADMIN</span>
       </div>
 
-      <nav className="admin-sidebar-nav">
+      <nav className="admin-sidebar-nav" role="navigation" aria-label="Menu principal">
         {NAV_ITEMS.map(item => (
           <button
             key={item.id}
             className={`nav-item${activeTab === item.id ? ' active' : ''}`}
             onClick={() => onTabChange(item.id)}
             type="button"
+            aria-label={item.label}
+            aria-current={activeTab === item.id ? 'page' : undefined}
           >
             <span className="nav-item-icon">{item.icon}</span>
             {item.label}
@@ -36,7 +38,7 @@ export default function Sidebar({ activeTab, onTabChange, userEmail, onLogout }:
 
       <div className="admin-sidebar-footer">
         <div className="user-email" title={userEmail}>{userEmail}</div>
-        <button className="logout-btn" onClick={onLogout} type="button">
+        <button className="logout-btn" onClick={onLogout} type="button" aria-label="Sair do painel">
           Sair
         </button>
       </div>

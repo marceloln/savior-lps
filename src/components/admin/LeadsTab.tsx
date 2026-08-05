@@ -110,8 +110,8 @@ export default function LeadsTab() {
         <div className="admin-header"><h1>Leads</h1></div>
         <div className="admin-card admin-empty">
           <div className="admin-empty-icon">{'\u{1F465}'}</div>
-          <h3>Sincronizacao de leads ainda nao configurada</h3>
-          <p>Os leads estao no Pipedrive. Quando a sincronizacao estiver ativa, eles aparecerao aqui.</p>
+          <h3>Sincronização de leads ainda não configurada</h3>
+          <p>Os leads estão no Pipedrive. Quando a sincronização estiver ativa, eles aparecerão aqui.</p>
         </div>
       </div>
     );
@@ -142,7 +142,7 @@ export default function LeadsTab() {
           className="admin-input"
           value={dateFrom}
           onChange={e => setDateFrom(e.target.value)}
-          title="Data inicio"
+          title="Data início"
         />
         <input
           type="date"
@@ -177,7 +177,7 @@ export default function LeadsTab() {
                   <th>Data</th>
                   <th>Nome</th>
                   <th>Telefone</th>
-                  <th>Pagina de origem</th>
+                  <th>Página de origem</th>
                   <th>Pipeline</th>
                   <th>Campanha</th>
                   <th>Status</th>

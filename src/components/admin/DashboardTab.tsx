@@ -45,7 +45,7 @@ function formatNumber(value: number): string {
 }
 
 function formatPercent(value: number): string {
-  return (value * 100).toFixed(2) + '%';
+  return (value * 100).toFixed(1) + '%';
 }
 
 function formatDate(dateStr: string): string {
@@ -159,12 +159,14 @@ export default function DashboardTab() {
 
       <div className="admin-kpi-grid">
         <div className="admin-kpi">
-          <div className="kpi-label">Conversoes (total)</div>
+          <div className="kpi-label">Conversões (total)</div>
           <div className="kpi-value">{formatNumber(ads.conversions)}</div>
-          <div className="kpi-change positive">CPA: {formatCurrency(cpa)}</div>
+          <div className="kpi-change positive" style={{ color: cpa > 45 ? 'var(--admin-alert)' : 'var(--admin-green)' }}>
+            CPA: {formatCurrency(cpa)}
+          </div>
         </div>
         <div className="admin-kpi">
-          <div className="kpi-label">Sessoes GA4</div>
+          <div className="kpi-label">Sessões GA4</div>
           <div className="kpi-value">{formatNumber(ga4.sessions)}</div>
           <div className="kpi-change positive">
             WA: {formatNumber(ga4.events.whatsapp_click)} | Tel: {formatNumber(ga4.events.phone_click)}
@@ -181,14 +183,14 @@ export default function DashboardTab() {
           <div className="kpi-label">Agendamentos pendentes</div>
           <div className="kpi-value">{formatNumber(pendingBookings)}</div>
           <div className="kpi-change" style={{ color: 'var(--admin-amber)' }}>
-            Aguardando confirmacao
+            Aguardando confirmação
           </div>
         </div>
       </div>
 
       {last7.length > 0 && (
         <div className="admin-card admin-chart-container">
-          <div className="admin-chart-title">Desempenho diario (ultimos 7 dias)</div>
+          <div className="admin-chart-title">Desempenho diário (últimos 7 dias)</div>
           <div className="admin-chart">
             {last7.map(day => {
               const impH = Math.max((day.impressions / chartMax) * 100, 1);
@@ -200,7 +202,7 @@ export default function DashboardTab() {
                     <div
                       className="admin-chart-bar impressions"
                       style={{ height: `${impH}%` }}
-                      title={`Impressoes: ${formatNumber(day.impressions)}`}
+                      title={`Impressões: ${formatNumber(day.impressions)}`}
                     />
                     <div
                       className="admin-chart-bar clicks"
@@ -210,7 +212,7 @@ export default function DashboardTab() {
                     <div
                       className="admin-chart-bar conversions"
                       style={{ height: `${convH}%` }}
-                      title={`Conversoes: ${formatNumber(day.conversions)}`}
+                      title={`Conversões: ${formatNumber(day.conversions)}`}
                     />
                   </div>
                   <div className="admin-chart-date">{formatDate(day.date)}</div>
@@ -221,7 +223,7 @@ export default function DashboardTab() {
           <div className="admin-chart-legend">
             <div className="admin-chart-legend-item">
               <div className="admin-chart-legend-dot" style={{ background: 'rgba(59,130,246,0.5)' }} />
-              Impressoes
+              Impressões
             </div>
             <div className="admin-chart-legend-item">
               <div className="admin-chart-legend-dot" style={{ background: 'var(--admin-green)' }} />
@@ -229,7 +231,7 @@ export default function DashboardTab() {
             </div>
             <div className="admin-chart-legend-item">
               <div className="admin-chart-legend-dot" style={{ background: 'var(--admin-amber)' }} />
-              Conversoes
+              Conversões
             </div>
           </div>
         </div>
@@ -242,9 +244,9 @@ export default function DashboardTab() {
             <thead>
               <tr>
                 <th>Campanha</th>
-                <th className="text-right">Impressoes</th>
+                <th className="text-right">Impressões</th>
                 <th className="text-right">Cliques</th>
-                <th className="text-right">Conversoes</th>
+                <th className="text-right">Conversões</th>
                 <th className="text-right">Custo</th>
                 <th className="text-right">CPA</th>
                 <th className="text-right">CTR</th>
@@ -268,7 +270,9 @@ export default function DashboardTab() {
                       <td className="text-right">{formatNumber(camp.clicks)}</td>
                       <td className="text-right">{formatNumber(camp.conversions)}</td>
                       <td className="text-right">{formatCurrency(camp.cost)}</td>
-                      <td className="text-right">{camp.conversions > 0 ? formatCurrency(campCpa) : '--'}</td>
+                      <td className="text-right" style={{ color: camp.conversions > 0 ? (campCpa > 45 ? 'var(--admin-alert)' : 'var(--admin-green)') : undefined }}>
+                        {camp.conversions > 0 ? formatCurrency(campCpa) : '--'}
+                      </td>
                       <td className="text-right">{formatPercent(campCtr)}</td>
                     </tr>
                   );
@@ -288,7 +292,9 @@ export default function DashboardTab() {
                   <td className="text-right">{formatNumber(ads.clicks)}</td>
                   <td className="text-right">{formatNumber(ads.conversions)}</td>
                   <td className="text-right">{formatCurrency(ads.cost)}</td>
-                  <td className="text-right">{ads.conversions > 0 ? formatCurrency(cpa) : '--'}</td>
+                  <td className="text-right" style={{ color: ads.conversions > 0 ? (cpa > 45 ? 'var(--admin-alert)' : 'var(--admin-green)') : undefined }}>
+                    {ads.conversions > 0 ? formatCurrency(cpa) : '--'}
+                  </td>
                   <td className="text-right">{formatPercent(ctr)}</td>
                 </tr>
               </tbody>

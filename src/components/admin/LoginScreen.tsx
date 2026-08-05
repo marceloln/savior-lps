@@ -69,9 +69,9 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           <span>ADMIN PANEL</span>
         </div>
 
-        {error && <div className="admin-login-error">{error}</div>}
+        {error && <div className="admin-login-error" aria-live="polite">{error}</div>}
         {success && (
-          <div style={{
+          <div aria-live="polite" style={{
             background: 'rgba(0,184,124,0.12)',
             border: '1px solid rgba(0,184,124,0.3)',
             color: '#00B87C',

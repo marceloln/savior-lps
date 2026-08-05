@@ -977,3 +977,43 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Focus visible for keyboard navigation */
+.admin-btn:focus-visible,
+.admin-input:focus-visible,
+.admin-select:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid var(--admin-green);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling for dark theme */
+.admin-content::-webkit-scrollbar,
+.admin-modal::-webkit-scrollbar {
+  width: 8px;
+}
+.admin-content::-webkit-scrollbar-track,
+.admin-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-content::-webkit-scrollbar-thumb,
+.admin-modal::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 4px;
+}
+.admin-content::-webkit-scrollbar-thumb:hover,
+.admin-modal::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Admin loading full screen */
+.admin-loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--admin-gray);
+  font-family: var(--admin-font);
+  font-size: 14px;
+}
