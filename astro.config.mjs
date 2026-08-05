@@ -21,6 +21,7 @@ export default defineConfig({
       !page.includes('/estatisticas') &&
       !page.includes('/admin') &&
       !page.includes('/agendar-unimed') &&
+      !page.includes('/agendar-rededor') &&
       !page.endsWith('/eventos/') &&
       !page.endsWith('/eventos'),
     changefreq: 'weekly',
