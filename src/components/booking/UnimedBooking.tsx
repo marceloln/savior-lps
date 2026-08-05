@@ -457,10 +457,7 @@ export default function UnimedBooking() {
       {/* TOPBAR — Unimed green header */}
       <div className="bf-topbar" style={{ background: '#00995D', borderBottom: 'none' }}>
         <div className="bf-topbar-brand" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ background: 'white', borderRadius: 6, padding: '4px 12px', display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontWeight: 900, fontSize: 20, color: '#00995D', letterSpacing: '-0.02em', fontFamily: 'inherit' }}>Unimed</span>
-            <span style={{ fontWeight: 400, fontSize: 12, color: '#00995D', marginLeft: 4 }}>Rio</span>
-          </div>
+          <img src="/img/unimed-rio-mark-sm.png" alt="Unimed Rio" style={{ height: 40, borderRadius: 4 }} />
           <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>Transporte de Pacientes</span>
         </div>
         <a href="tel:+552131713030" className="bf-topbar-phone" style={{ color: 'white' }}>(21) 3171-3030</a>
