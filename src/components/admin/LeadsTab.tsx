@@ -97,7 +97,7 @@ export default function LeadsTab() {
       <div>
         <div className="admin-header"><h1>Leads</h1></div>
         <div className="admin-card admin-error">
-          <p>Erro: {error}</p>
+          <p>Não foi possível carregar os leads.</p>
           <button className="admin-btn" onClick={fetchLeads}>Tentar novamente</button>
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function LeadsTab() {
         <div className="admin-card admin-empty">
           <div className="admin-empty-icon">{'\u{1F50D}'}</div>
           <h3>Nenhum lead encontrado</h3>
-          <p>Tente alterar os filtros de busca.</p>
+          <p>Experimente alterar o pipeline, as datas ou o termo de busca.</p>
         </div>
       ) : (
         <div className="admin-card">
@@ -207,7 +207,7 @@ export default function LeadsTab() {
                           className="admin-btn admin-btn-sm admin-btn-secondary"
                           style={{ textDecoration: 'none', fontSize: 11 }}
                         >
-                          Ver deal
+                          Ver no Pipedrive
                         </a>
                       ) : '--'}
                     </td>

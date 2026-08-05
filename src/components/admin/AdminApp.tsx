@@ -67,9 +67,9 @@ export default function AdminApp() {
       />
       <main className="admin-content">
         {activeTab === 'dashboard' && <DashboardTab />}
-        {activeTab === 'agendamentos' && <AgendamentosTab />}
+        {activeTab === 'agendamentos' && <AgendamentosTab userEmail={user.email} />}
         {activeTab === 'leads' && <LeadsTab />}
-        {activeTab === 'candidaturas' && <CandidaturasTab />}
+        {activeTab === 'candidaturas' && <CandidaturasTab userEmail={user.email} />}
       </main>
     </div>
   );

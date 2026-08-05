@@ -54,6 +54,13 @@ const STATUS_FLOW: Record<string, BookingStatus[]> = {
   cancelado:  [],
 };
 
+const STATUS_VERB_LABELS: Record<string, string> = {
+  confirmado: 'Confirmar',
+  em_rota: 'Iniciar rota',
+  realizado: 'Finalizar',
+  cancelado: 'Cancelar',
+};
+
 function formatDateTime(dt: string | null): string {
   if (!dt) return '--';
   return new Date(dt).toLocaleString('pt-BR', {
@@ -70,7 +77,7 @@ function formatScheduled(date: string | null, time: string | null): string {
   return dateStr;
 }
 
-export default function AgendamentosTab() {
+export default function AgendamentosTab({ userEmail }: { userEmail: string }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -92,7 +99,8 @@ export default function AgendamentosTab() {
     const query = supabase
       .from('savior_bookings')
       .select('id, created_at, status, service_type, ambulance_type, patient_name, origin_address, destination_address, contact_phone, contact_name, scheduled_date, scheduled_time, payment_method, notes, status_history, admin_notes, assigned_team, destination_hospital_id, diagnosis, mobility, equipment_needs, savior_hospitals!destination_hospital_id(id, name, neighborhood)')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     let filteredQuery = query;
 
@@ -138,7 +146,9 @@ export default function AgendamentosTab() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedBooking]);
 
-  async function handleStatusChange(booking: Booking, newStatus: BookingStatus, userEmail: string) {
+  async function handleStatusChange(booking: Booking, newStatus: BookingStatus) {
+    if (newStatus === 'cancelado' && !window.confirm('Tem certeza que deseja cancelar este agendamento? Esta ação não pode ser desfeita.')) return;
+
     setSaving(true);
     const updatedHistory: StatusHistoryEntry[] = [
       ...(booking.status_history ?? []),
@@ -153,7 +163,7 @@ export default function AgendamentosTab() {
     setSaving(false);
 
     if (updateError) {
-      showToast('Erro ao atualizar status: ' + updateError.message, 'error');
+      showToast('Não foi possível atualizar o status.', 'error');
       return;
     }
 
@@ -176,11 +186,11 @@ export default function AgendamentosTab() {
     setSaving(false);
 
     if (updateError) {
-      showToast('Erro ao salvar nota: ' + updateError.message, 'error');
+      showToast('Não foi possível salvar a observação.', 'error');
       return;
     }
 
-    showToast('Nota salva');
+    showToast('Observação salva');
     setSelectedBooking(prev =>
       prev?.id === booking.id ? { ...prev, notes: modalNote } : prev
     );
@@ -210,7 +220,7 @@ export default function AgendamentosTab() {
       <div>
         <div className="admin-header"><h1>Agendamentos</h1></div>
         <div className="admin-card admin-error">
-          <p>Erro: {error}</p>
+          <p>Não foi possível carregar os agendamentos.</p>
           <button className="admin-btn" onClick={fetchBookings}>Tentar novamente</button>
         </div>
       </div>
@@ -297,16 +307,17 @@ export default function AgendamentosTab() {
                           className="admin-select"
                           style={{ minWidth: 120, padding: '6px 28px 6px 10px', fontSize: 12 }}
                           value=""
+                          aria-label={`Alterar status de ${b.patient_name}`}
                           onChange={e => {
                             if (e.target.value) {
-                              handleStatusChange(b, e.target.value as BookingStatus, 'admin');
+                              handleStatusChange(b, e.target.value as BookingStatus);
                             }
                           }}
                         >
-                          <option value="">Alterar...</option>
+                          <option value="">Alterar status...</option>
                           {STATUS_FLOW[b.status].map(s => (
                             <option key={s} value={s}>
-                              {s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' ')}
+                              {STATUS_VERB_LABELS[s] ?? s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' ')}
                             </option>
                           ))}
                         </select>
@@ -347,7 +358,7 @@ export default function AgendamentosTab() {
                       className="admin-btn admin-btn-sm"
                       style={{ marginLeft: 12, textDecoration: 'none', fontSize: 11 }}
                     >
-                      WhatsApp
+                      Abrir WhatsApp
                     </a>
                   )}
                 </div>
@@ -456,9 +467,9 @@ export default function AgendamentosTab() {
                   key={nextStatus}
                   className={`admin-btn ${nextStatus === 'cancelado' ? 'admin-btn-danger' : ''}`}
                   disabled={saving}
-                  onClick={() => handleStatusChange(selectedBooking, nextStatus, 'admin')}
+                  onClick={() => handleStatusChange(selectedBooking, nextStatus)}
                 >
-                  {nextStatus === 'cancelado' ? 'Cancelar' : nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1).replace('_', ' ')}
+                  {STATUS_VERB_LABELS[nextStatus] ?? nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1).replace('_', ' ')}
                 </button>
               ))}
               <button
@@ -466,7 +477,7 @@ export default function AgendamentosTab() {
                 disabled={saving}
                 onClick={() => handleSaveNote(selectedBooking)}
               >
-                {saving ? 'Salvando...' : 'Salvar nota'}
+                {saving ? 'Salvando...' : 'Salvar observação'}
               </button>
             </div>
           </div>

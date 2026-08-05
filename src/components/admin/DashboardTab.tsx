@@ -58,6 +58,7 @@ export default function DashboardTab() {
   const [pendingBookings, setPendingBookings] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -76,6 +77,7 @@ export default function DashboardTab() {
       const data: StatsData = await statsRes.json();
       setStats(data);
       setPendingBookings(bookingsRes.count ?? 0);
+      setLastUpdated(new Date());
       setLoading(false);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro desconhecido';
@@ -149,7 +151,9 @@ export default function DashboardTab() {
         <div>
           <h1>Dashboard</h1>
           <div className="admin-header-sub">
-            Atualizado a cada 5 minutos
+            {lastUpdated
+              ? `Atualizado às ${lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+              : 'Atualizado a cada 5 minutos'}
           </div>
         </div>
         <button className="admin-btn-secondary admin-btn" onClick={fetchData}>
@@ -169,7 +173,7 @@ export default function DashboardTab() {
           <div className="kpi-label">Sessões GA4</div>
           <div className="kpi-value">{formatNumber(ga4.sessions)}</div>
           <div className="kpi-change positive">
-            WA: {formatNumber(ga4.events.whatsapp_click)} | Tel: {formatNumber(ga4.events.phone_click)}
+            WhatsApp: {formatNumber(ga4.events.whatsapp_click)} | Telefone: {formatNumber(ga4.events.phone_click)}
           </div>
         </div>
         <div className="admin-kpi">

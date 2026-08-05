@@ -31,6 +31,13 @@ const STATUS_FLOW: Record<string, CandidateStatus[]> = {
   rejeitado:  [],
 };
 
+const STATUS_VERB_LABELS: Record<string, string> = {
+  analisado: 'Analisar',
+  entrevista: 'Agendar entrevista',
+  aprovado: 'Aprovar',
+  rejeitado: 'Rejeitar',
+};
+
 function formatDate(dt: string): string {
   return new Date(dt).toLocaleDateString('pt-BR', {
     day: '2-digit', month: '2-digit', year: '2-digit',
@@ -38,7 +45,7 @@ function formatDate(dt: string): string {
   });
 }
 
-export default function CandidaturasTab() {
+export default function CandidaturasTab({ userEmail }: { userEmail: string }) {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,7 +65,8 @@ export default function CandidaturasTab() {
     let query = supabase
       .from('savior_candidates')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     if (filterStatus !== 'todos') {
       query = query.eq('status', filterStatus);
@@ -84,6 +92,8 @@ export default function CandidaturasTab() {
   }, [fetchCandidates]);
 
   async function handleStatusChange(candidate: Candidate, newStatus: CandidateStatus) {
+    if (newStatus === 'rejeitado' && !window.confirm('Tem certeza que deseja rejeitar esta candidatura?')) return;
+
     setSaving(true);
     const { error: updateError } = await supabase
       .from('savior_candidates')
@@ -93,7 +103,7 @@ export default function CandidaturasTab() {
     setSaving(false);
 
     if (updateError) {
-      showToast('Erro ao atualizar status: ' + updateError.message, 'error');
+      showToast('Não foi possível atualizar o status.', 'error');
       return;
     }
 
@@ -122,7 +132,7 @@ export default function CandidaturasTab() {
       <div>
         <div className="admin-header"><h1>Candidaturas</h1></div>
         <div className="admin-card admin-error">
-          <p>Erro: {error}</p>
+          <p>Não foi possível carregar as candidaturas.</p>
           <button className="admin-btn" onClick={fetchCandidates}>Tentar novamente</button>
         </div>
       </div>
@@ -213,16 +223,17 @@ export default function CandidaturasTab() {
                           className="admin-select"
                           style={{ minWidth: 120, padding: '6px 28px 6px 10px', fontSize: 12 }}
                           value=""
+                          aria-label={`Alterar status de ${c.name}`}
                           onChange={e => {
                             if (e.target.value) {
                               handleStatusChange(c, e.target.value as CandidateStatus);
                             }
                           }}
                         >
-                          <option value="">Alterar...</option>
+                          <option value="">Alterar status...</option>
                           {STATUS_FLOW[c.status].map(s => (
                             <option key={s} value={s}>
-                              {s.charAt(0).toUpperCase() + s.slice(1)}
+                              {STATUS_VERB_LABELS[s] ?? s.charAt(0).toUpperCase() + s.slice(1)}
                             </option>
                           ))}
                         </select>
@@ -276,7 +287,7 @@ export default function CandidaturasTab() {
                 </div>
               </div>
               <div className="detail-row">
-                <div className="detail-label">Data</div>
+                <div className="detail-label">Data de envio</div>
                 <div className="detail-value">{formatDate(selectedCandidate.created_at)}</div>
               </div>
               {selectedCandidate.experience && (
@@ -303,7 +314,7 @@ export default function CandidaturasTab() {
                   disabled={saving}
                   onClick={() => handleStatusChange(selectedCandidate, nextStatus)}
                 >
-                  {nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1)}
+                  {STATUS_VERB_LABELS[nextStatus] ?? nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1)}
                 </button>
               ))}
               {selectedCandidate.cv_url && (
@@ -314,7 +325,7 @@ export default function CandidaturasTab() {
                   className="admin-btn admin-btn-secondary"
                   style={{ textDecoration: 'none' }}
                 >
-                  Baixar CV
+                  Ver currículo
                 </a>
               )}
             </div>

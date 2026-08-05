@@ -17,7 +17,7 @@ export default function Sidebar({ activeTab, onTabChange, userEmail, onLogout }:
     <aside className="admin-sidebar">
       <div className="admin-sidebar-logo">
         <h2>SAVIOR</h2>
-        <span>ADMIN</span>
+        <span>PAINEL</span>
       </div>
 
       <nav className="admin-sidebar-nav" role="navigation" aria-label="Menu principal">
