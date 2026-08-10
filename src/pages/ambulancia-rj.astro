@@ -398,7 +398,84 @@ const waCampaign = 'rj-emergencia';
       location="after-faq"
     />
 
-    <!-- Bloco 12 — CTA final -->
+    <!-- Bloco 12 — Links para sub-páginas regionais -->
+    <section class="geo-links" aria-labelledby="geo-links-title">
+      <div class="geo-links__inner">
+        <p class="geo-links__eyebrow">Cobertura completa</p>
+        <h2 id="geo-links-title" class="geo-links__title">
+          Atendemos em todas as regiões do Rio de Janeiro
+        </h2>
+        <ul class="geo-links__grid" role="list">
+          <li>
+            <a href="/ambulancia-rj/ambulancia-copacabana" class="geo-links__card">
+              Copacabana
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-zona-sul" class="geo-links__card">
+              Zona Sul
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-barra-recreio" class="geo-links__card">
+              Barra da Tijuca e Recreio
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-zona-oeste" class="geo-links__card">
+              Zona Oeste
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-zona-norte" class="geo-links__card">
+              Zona Norte
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-niteroi" class="geo-links__card">
+              Niterói
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-regiao-oceanica" class="geo-links__card">
+              Região Oceânica
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-regiao-serrana" class="geo-links__card">
+              Região Serrana
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-baixada-fluminense" class="geo-links__card">
+              Baixada Fluminense
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-centro" class="geo-links__card">
+              Centro
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-intermunicipal" class="geo-links__card">
+              Intermunicipal
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-buzios" class="geo-links__card">
+              Búzios
+            </a>
+          </li>
+          <li>
+            <a href="/ambulancia-rj/ambulancia-angra-dos-reis" class="geo-links__card">
+              Angra dos Reis
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bloco 13 — CTA final -->
     <FinalCTA waCampaign={waCampaign} photo={1} />
   </main>
 
@@ -445,6 +522,88 @@ const waCampaign = 'rj-emergencia';
   </script>
 
   <style>
+    /* ── Geo Links Section ── */
+    .geo-links {
+      background: var(--navy-deep);
+      padding: 64px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .geo-links__inner {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .geo-links__eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin: 0 0 16px;
+    }
+
+    .geo-links__title {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 40px;
+      line-height: 1.3;
+    }
+
+    .geo-links__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .geo-links__card {
+      display: block;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+
+    .geo-links__card:hover,
+    .geo-links__card:focus-visible {
+      background: rgba(0, 184, 124, 0.12);
+      border-color: var(--green);
+      color: #fff;
+      outline: none;
+    }
+
+    .geo-links__card:focus-visible {
+      outline: 2px solid var(--green-bright);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 480px) {
+      .geo-links {
+        padding: 48px 20px;
+      }
+
+      .geo-links__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .geo-links__card {
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+    }
+
+    /* ── Mob Sticky Nav ── */
     .mob-sticky-nav {
       display: none;
     }

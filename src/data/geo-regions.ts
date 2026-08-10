@@ -101,7 +101,7 @@ const copacabana: GeoRegion = {
     description:
       "Ambulância UTI em Copacabana em 25 a 35 min. Remoções Copa D'Or, Copa Star, São Lucas. 2 ambulâncias nos PAs Unimed do bairro. Prédio sem elevador: equipe preparada. (21) 3171-3030.",
     h1: 'Ambulância em Copacabana em 25 a 35 minutos',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/copacabana',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-copacabana',
     keywords: [
       'ambulância copacabana',
       'ambulância particular copacabana',
@@ -313,7 +313,7 @@ const zonaSul: GeoRegion = {
     description:
       'Ambulância UTI 24h na Zona Sul do Rio. Ipanema, Leblon, Botafogo, Flamengo, Laranjeiras, Gávea. Transferências entre hospitais particulares. Médico e enfermeiro a bordo. (21) 3171-3030.',
     h1: 'Ambulância na Zona Sul em 20 a 40 minutos',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-sul',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-sul',
     keywords: [
       'ambulância zona sul rj',
       'ambulância ipanema',
@@ -634,7 +634,7 @@ const barraReCreio: GeoRegion = {
     description:
       'Ambulância UTI 24h na Barra da Tijuca e Recreio dos Bandeirantes. 2 ambulâncias nos PAs Unimed. Condomínios com portaria: ligamos durante o deslocamento. (21) 3171-3030.',
     h1: 'Ambulância na Barra e Recreio. Com 2 ambulâncias nos PAs Unimed.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/barra-recreio',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-barra-recreio',
     keywords: [
       'ambulância barra da tijuca',
       'ambulância recreio dos bandeirantes',
@@ -879,7 +879,7 @@ const niteroi: GeoRegion = {
     description:
       'Ambulância UTI 24h em Niterói e São Gonçalo. Monitoramento da Ponte Rio-Niterói em tempo real. CHN, Niterói D\'Or, Hospital Icaraí. Médico e enfermeiro a bordo. (21) 3171-3030.',
     h1: 'Ambulância em Niterói e São Gonçalo. UTI completa, 24 horas.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/niteroi',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-niteroi',
     keywords: [
       'ambulância niterói',
       'ambulância são gonçalo',
@@ -1307,7 +1307,7 @@ const zonaOeste: GeoRegion = {
     description:
       "Ambulância UTI na Zona Oeste: Jacarepaguá, Taquara, Bangu, Campo Grande. Remoções Rios D'Or, Oeste D'Or, Hospital de Jacarepaguá. Pix e cartão. (21) 3171-3030.",
     h1: 'Ambulância na Zona Oeste. Jacarepaguá, Campo Grande, Bangu e toda a região.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-oeste',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-oeste',
     keywords: [
       'ambulância zona oeste rj',
       'ambulância jacarepaguá',
@@ -1532,7 +1532,7 @@ const zonaNorte: GeoRegion = {
     description:
       'Base própria em São Cristóvão: ambulância mais rápida da Zona Norte. Tijuca, Méier, Vila Isabel. Remoções Quinta D\'Or e Badim. (21) 3171-3030.',
     h1: 'Ambulância na Zona Norte em 10 a 25 minutos. Nossa base fica em São Cristóvão.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/zona-norte',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-zona-norte',
     keywords: [
       'ambulância zona norte rj',
       'ambulância tijuca',
@@ -1781,7 +1781,7 @@ const regiaoOceanica: GeoRegion = {
     description:
       'Ambulância UTI na Região Oceânica de Niterói e Maricá. Piratininga, Itaipu, Itacoatiara, Engenho do Mato. Remoções para CHN e Rio. (21) 3171-3030.',
     h1: 'Ambulância na Região Oceânica e Maricá. Onde o hospital fica longe, nós chegamos.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/regiao-oceanica',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-regiao-oceanica',
     keywords: [
       'ambulância região oceânica niterói',
       'ambulância maricá',
@@ -1974,7 +1974,7 @@ const regiaoSerrana: GeoRegion = {
     description:
       'Ambulância UTI da serra para o Rio. Petrópolis, Teresópolis, Nova Friburgo. Equipe treinada para estradas de montanha, neblina e percurso longo. (21) 3171-3030.',
     h1: 'Da serra para o Rio com UTI móvel. Petrópolis, Teresópolis e Friburgo.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/regiao-serrana',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-regiao-serrana',
     keywords: [
       'ambulância petrópolis',
       'ambulância teresópolis',
@@ -2188,7 +2188,7 @@ const intermunicipal: GeoRegion = {
     description:
       'Remoção intermunicipal no estado do Rio. Paraty, Angra, Campos, Macaé, Volta Redonda, Região dos Lagos. Base no Rio. (21) 3171-3030.',
     h1: 'Remoção intermunicipal no Rio de Janeiro. Base no Rio, equipe que conhece o estado inteiro.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/intermunicipal',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-intermunicipal',
     keywords: [
       'ambulância intermunicipal rio de janeiro',
       'remoção volta redonda rio',
@@ -2407,7 +2407,7 @@ const buzios: GeoRegion = {
     description:
       'Ambulância UTI em Búzios. Emergência turística e remoção para hospitais do Rio. Cobertura de eventos e casamentos. (21) 3171-3030.',
     h1: 'Ambulância em Búzios: emergência e remoção para o Rio',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/buzios',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-buzios',
     keywords: [
       'ambulância búzios',
       'ambulância armação dos búzios',
@@ -2578,7 +2578,7 @@ const angraDosReis: GeoRegion = {
     description:
       'Ambulância UTI em Angra dos Reis e acesso marítimo à Ilha Grande. Remoção para hospitais do Rio pela BR-101. (21) 3171-3030.',
     h1: 'Ambulância em Angra dos Reis e Ilha Grande: remoção com UTI móvel',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/angra-dos-reis',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-angra-dos-reis',
     keywords: [
       'ambulância angra dos reis',
       'ambulância ilha grande',
@@ -2762,7 +2762,7 @@ const baixadaFluminense: GeoRegion = {
     description:
       'Ambulância UTI em Duque de Caxias, Nova Iguaçu, São João de Meriti e Nilópolis. Remoções para hospitais do Rio. Pix e cartão. (21) 3171-3030.',
     h1: 'Ambulância na Baixada. Da sua casa ao hospital certo, no Rio ou na região.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/baixada-fluminense',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-baixada-fluminense',
     keywords: [
       'ambulância baixada fluminense',
       'ambulância duque de caxias',
@@ -2968,7 +2968,7 @@ const centro: GeoRegion = {
     description:
       'Ambulância no Centro do Rio em 10 a 20 minutos. Empresas, eventos, remoções. Segundo menor tempo de chegada. (21) 3171-3030.',
     h1: 'Ambulância no Centro do Rio em 10 a 20 minutos.',
-    canonical: 'https://www.savior.com.br/ambulancia-rj/centro',
+    canonical: 'https://www.savior.com.br/ambulancia-rj/ambulancia-centro',
     keywords: [
       'ambulância centro rio de janeiro',
       'ambulância corporativa rio',
