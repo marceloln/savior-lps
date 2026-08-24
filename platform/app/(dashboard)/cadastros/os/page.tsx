@@ -6,24 +6,26 @@ import { ChevronLeft, Plus } from 'lucide-react';
 import { mockOrdensServico, mockFornecedores, type OrdemServico, type OSStatus, type OSPrioridade } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 const columns: { status: OSStatus; label: string; color: string }[] = [
   { status: 'agendada', label: 'Agendada', color: 'var(--blue)' },
   { status: 'em_andamento', label: 'Em andamento', color: 'var(--amber)' },
-  { status: 'aguardando_peca', label: 'Aguardando peca', color: 'var(--violet)' },
-  { status: 'concluida', label: 'Concluida', color: 'var(--green)' },
+  { status: 'aguardando_peca', label: 'Aguardando peça', color: 'var(--violet)' },
+  { status: 'concluida', label: 'Concluída', color: 'var(--green)' },
 ];
 
 const prioridadePill: Record<OSPrioridade, { label: string; cls: string }> = {
   baixa: { label: 'BAIXA', cls: 'pill-slate' },
-  media: { label: 'MEDIA', cls: 'pill-blue' },
+  media: { label: 'MÉDIA', cls: 'pill-blue' },
   alta: { label: 'ALTA', cls: 'pill-amber' },
-  critica: { label: 'CRITICA', cls: 'pill-red' },
+  critica: { label: 'CRÍTICA', cls: 'pill-red' },
 };
 
 const vtrOptions = [...new Set(mockOrdensServico.map((os) => os.vtr_nome))].sort();
 
 export default function OrdensServicoPage() {
+  const { showToast } = useToast();
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<OrdemServico | null>(null);
 
@@ -38,7 +40,7 @@ export default function OrdensServicoPage() {
         </Link>
         <div style={{ flex: 1 }}>
           <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
-          <h1 className="page-title">Ordens de Servico</h1>
+          <h1 className="page-title">Ordens de Serviço</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setEditing(null); }}>
           <span className="flex items-center gap-2"><Plus size={14} strokeWidth={2} /> Nova OS</span>
@@ -93,7 +95,7 @@ export default function OrdensServicoPage() {
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
-              <button className="btn btn-green" onClick={closePanel}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { closePanel(); showToast('Ordem de serviço salva com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
@@ -116,23 +118,23 @@ export default function OrdensServicoPage() {
             <option value="corretiva">Corretiva</option>
           </select>
         </FormField>
-        <FormField label="Descricao">
+        <FormField label="Descrição">
           <textarea className="form-textarea" defaultValue={editing?.descricao || ''} />
         </FormField>
         <FormField label="Prioridade">
           <select className="form-select" defaultValue={editing?.prioridade || 'media'}>
             <option value="baixa">Baixa</option>
-            <option value="media">Media</option>
+            <option value="media">Média</option>
             <option value="alta">Alta</option>
-            <option value="critica">Critica</option>
+            <option value="critica">Crítica</option>
           </select>
         </FormField>
         <FormField label="Status">
           <select className="form-select" defaultValue={editing?.status || 'agendada'}>
             <option value="agendada">Agendada</option>
             <option value="em_andamento">Em andamento</option>
-            <option value="aguardando_peca">Aguardando peca</option>
-            <option value="concluida">Concluida</option>
+            <option value="aguardando_peca">Aguardando peça</option>
+            <option value="concluida">Concluída</option>
           </select>
         </FormField>
         <FormField label="Valor (R$)">

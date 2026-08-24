@@ -7,6 +7,7 @@ import { mockFuncionariosDetail } from '@/lib/mock-data';
 import type { FuncionarioDetail, FuncionarioStatus } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 /* ── Status pill config ──────────────────────────────────────────── */
 
@@ -50,6 +51,7 @@ function emptyForm(): Partial<FuncionarioDetail> {
 }
 
 export default function EquipePage() {
+  const { showToast } = useToast();
   const [search, setSearch] = useState('');
   const [filterFuncao, setFilterFuncao] = useState('Todos');
   const [filterRegiao, setFilterRegiao] = useState('Todos');
@@ -152,30 +154,19 @@ export default function EquipePage() {
       </div>
 
       {/* Search */}
-      <div className="mb-3" style={{ maxWidth: 320 }}>
-        <div className="flex items-center gap-2" style={{
-          background: 'var(--card)',
-          borderRadius: 10,
-          padding: '8px 14px',
-          border: '1px solid var(--line)',
-        }}>
-          <Search size={14} style={{ color: 'var(--muted2)', flexShrink: 0 }} />
-          <input
-            type="text"
-            placeholder="Buscar por nome..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              fontSize: '12.5px',
-              color: 'var(--ink)',
-              width: '100%',
-              fontFamily: 'var(--sans)',
-            }}
-          />
-        </div>
+      <div className="mb-3" style={{ position: 'relative', maxWidth: 320 }}>
+        <Search
+          size={14}
+          strokeWidth={1.8}
+          style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }}
+        />
+        <input
+          type="text"
+          className="table-search"
+          placeholder="Buscar por nome..."
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+        />
       </div>
 
       {/* Filter chips: função */}
@@ -336,7 +327,7 @@ export default function EquipePage() {
             </div>
             <div className="flex items-center gap-2">
               <button className="btn btn-outline" onClick={() => setSlideOpen(false)}>Cancelar</button>
-              <button className="btn btn-green" onClick={() => setSlideOpen(false)}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { setSlideOpen(false); showToast('Funcionário salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }

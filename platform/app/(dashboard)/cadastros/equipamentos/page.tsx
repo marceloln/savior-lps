@@ -6,10 +6,11 @@ import { ChevronLeft, Plus } from 'lucide-react';
 import { mockEquipamentos, mockVtrs, type Equipamento, type EquipamentoCategoria, type EquipamentoStatus } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 const statusPill: Record<EquipamentoStatus, { label: string; cls: string }> = {
   operacional: { label: 'OPERACIONAL', cls: 'pill-green' },
-  manutencao: { label: 'MANUTENCAO', cls: 'pill-amber' },
+  manutencao: { label: 'MANUTENÇÃO', cls: 'pill-amber' },
   vencido: { label: 'VENCIDO', cls: 'pill-red' },
   ausente: { label: 'AUSENTE', cls: 'pill-slate' },
 };
@@ -19,6 +20,7 @@ const categorias: EquipamentoCategoria[] = ['Monitorizacao', 'Ventilacao', 'Imob
 const vtrOptions = [...new Set(mockEquipamentos.map((e) => e.vtr_nome))].sort();
 
 export default function EquipamentosPage() {
+  const { showToast } = useToast();
   const [vtrFilter, setVtrFilter] = useState('');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Equipamento | null>(null);
@@ -81,8 +83,8 @@ export default function EquipamentosPage() {
                   <th className="th">VTR</th>
                   <th className="th">N. Serie</th>
                   <th className="th">Status</th>
-                  <th className="th">Calibracao</th>
-                  <th className="th">Proxima</th>
+                  <th className="th">Calibração</th>
+                  <th className="th">Próxima</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,7 +116,7 @@ export default function EquipamentosPage() {
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
-              <button className="btn btn-green" onClick={closePanel}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { closePanel(); showToast('Equipamento salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
@@ -135,18 +137,18 @@ export default function EquipamentosPage() {
         <FormField label="Status">
           <select className="form-select" defaultValue={editing?.status || 'operacional'}>
             <option value="operacional">Operacional</option>
-            <option value="manutencao">Manutencao</option>
+            <option value="manutencao">Manutenção</option>
             <option value="vencido">Vencido</option>
             <option value="ausente">Ausente</option>
           </select>
         </FormField>
-        <FormField label="Numero de serie">
+        <FormField label="Número de série">
           <input className="form-input" defaultValue={editing?.numero_serie || ''} />
         </FormField>
-        <FormField label="Data calibracao">
+        <FormField label="Data calibração">
           <input className="form-input" type="date" defaultValue={editing?.data_calibracao || ''} />
         </FormField>
-        <FormField label="Proxima calibracao">
+        <FormField label="Próxima calibração">
           <input className="form-input" type="date" defaultValue={editing?.proxima_calibracao || ''} />
         </FormField>
       </SlideOver>

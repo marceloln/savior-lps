@@ -6,10 +6,12 @@ import { Search, Plus, ChevronLeft } from 'lucide-react';
 import { mockFornecedores, type Fornecedor } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 const emptyForm: { nome: string; cnpj: string; telefone: string; email: string; tipo: string; uf: 'RJ' | 'SP' } = { nome: '', cnpj: '', telefone: '', email: '', tipo: 'Oficina', uf: 'RJ' };
 
 export default function FornecedoresPage() {
+  const { showToast } = useToast();
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Fornecedor | null>(null);
   const [creating, setCreating] = useState(false);
@@ -107,7 +109,7 @@ export default function FornecedoresPage() {
             </div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
-              <button className="btn btn-green" onClick={closePanel}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { closePanel(); showToast('Fornecedor salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
@@ -127,9 +129,9 @@ export default function FornecedoresPage() {
         <FormField label="Tipo">
           <select className="form-select" value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}>
             <option>Oficina</option>
-            <option>Posto de combustivel</option>
+            <option>Posto de combustível</option>
             <option>Reformador de pneus</option>
-            <option>Autopecas</option>
+            <option>Autopeças</option>
           </select>
         </FormField>
         <FormField label="UF">

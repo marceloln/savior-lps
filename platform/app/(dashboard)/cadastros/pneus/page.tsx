@@ -6,6 +6,7 @@ import { ChevronLeft, Plus } from 'lucide-react';
 import { mockPneusBackoffice, type PneuBackoffice, type PneuStatusBO } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 const statusPill: Record<PneuStatusBO, { label: string; cls: string }> = {
   em_uso: { label: 'EM USO', cls: 'pill-green' },
@@ -17,6 +18,7 @@ const statusPill: Record<PneuStatusBO, { label: string; cls: string }> = {
 const vtrOptions = [...new Set(mockPneusBackoffice.filter((p) => p.vtr_nome).map((p) => p.vtr_nome!))].sort();
 
 export default function PneusPage() {
+  const { showToast } = useToast();
   const [vtrFilter, setVtrFilter] = useState('');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<PneuBackoffice | null>(null);
@@ -57,7 +59,7 @@ export default function PneusPage() {
       {/* Tire position diagram when filtered to a specific VTR */}
       {vtrFilter && (
         <div className="panel" style={{ marginBottom: 20, padding: 20 }}>
-          <div className="label" style={{ marginBottom: 12 }}>POSICOES AM {vtrFilter}</div>
+          <div className="label" style={{ marginBottom: 12 }}>POSIÇÕES AM {vtrFilter}</div>
           <div className="flex items-center justify-center gap-12">
             {/* Front axle */}
             <div className="flex flex-col items-center gap-2">
@@ -152,11 +154,11 @@ export default function PneusPage() {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ textAlign: 'left' }}>
-              <th className="th">Codigo</th>
-              <th className="th">Dimensao</th>
+              <th className="th">Código</th>
+              <th className="th">Dimensão</th>
               <th className="th">Marca</th>
               <th className="th">VTR</th>
-              <th className="th">Posicao</th>
+              <th className="th">Posição</th>
               <th className="th">Status</th>
               <th className="th">Vida</th>
             </tr>
@@ -189,15 +191,15 @@ export default function PneusPage() {
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
-              <button className="btn btn-green" onClick={closePanel}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { closePanel(); showToast('Pneu salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
       >
-        <FormField label="Codigo">
+        <FormField label="Código">
           <input className="form-input" defaultValue={editing?.codigo || ''} />
         </FormField>
-        <FormField label="Dimensao">
+        <FormField label="Dimensão">
           <input className="form-input" defaultValue={editing?.dimensao || '225/75 R16'} />
         </FormField>
         <FormField label="Marca">
@@ -209,7 +211,7 @@ export default function PneusPage() {
             {vtrOptions.map((v) => <option key={v} value={v}>AM {v}</option>)}
           </select>
         </FormField>
-        <FormField label="Posicao">
+        <FormField label="Posição">
           <select className="form-select" defaultValue={editing?.posicao || ''}>
             <option value="">Nenhuma</option>
             {['DE', 'DD', 'TIE', 'TII', 'TDE', 'TDI', 'STEP'].map((p) => (
@@ -225,7 +227,7 @@ export default function PneusPage() {
             <option value="descartado">Descartado</option>
           </select>
         </FormField>
-        <FormField label="Vida (numero de recapagens)">
+        <FormField label="Vida (número de recapagens)">
           <input className="form-input" type="number" defaultValue={editing?.vida ?? 0} />
         </FormField>
       </SlideOver>

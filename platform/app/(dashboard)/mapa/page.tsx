@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Search, X, Ambulance, MapPin } from 'lucide-react';
-import { mockVtrs, mockChamados, vtrStats, tipoVtrPill, statusLabel, statusPill } from '@/lib/mock-data';
+import { Search, X } from 'lucide-react';
+import { mockVtrs, mockChamados, tipoVtrPill, statusLabel, statusPill } from '@/lib/mock-data';
 import type { Vtr, Chamado, VtrStatus, VtrTipo } from '@/lib/mock-data';
+import { useToast } from '@/components/ui/toast';
 
 const MapaLeaflet = dynamic(() => import('@/components/mapa/mapa-leaflet'), {
   ssr: false,
@@ -34,11 +35,11 @@ const tipoButtons: { label: string; value: FilterTipo }[] = [
 ];
 
 const canalIcons: Record<string, string> = {
-  whatsapp: '🤖',
-  telefone: '📞',
-  site: '🌐',
-  email: '📧',
-  manual: '✏️',
+  whatsapp: '\uD83E\uDD16',
+  telefone: '\uD83D\uDCDE',
+  site: '\uD83C\uDF10',
+  email: '\uD83D\uDCE7',
+  manual: '\u270F\uFE0F',
 };
 
 /* ── Helpers ── */
@@ -95,6 +96,8 @@ export default function MapaPage() {
   const [selectedChamadoId, setSelectedChamadoId] = useState<string | null>(null);
   const [selectedVtrId, setSelectedVtrId] = useState<string | null>(null);
   const [panToVtr, setPanToVtr] = useState<string | null>(null);
+
+  const { showToast } = useToast();
 
   // Filter VTRs
   const filtered = useMemo(() => {
@@ -155,6 +158,11 @@ export default function MapaPage() {
     setSelectedChamadoId(null);
   }
 
+  function handleDespachar(vtr: typeof nearbyVtrs[0]) {
+    if (!selectedChamado) return;
+    showToast(`VTR ${vtr.nome} despachada para chamado #${selectedChamado.numero}`, 'success');
+  }
+
   return (
     <div style={{ position: 'relative', height: '100vh', width: '100%' }}>
       {/* Map fills everything */}
@@ -197,27 +205,16 @@ export default function MapaPage() {
         </span>
       </div>
 
-      {/* ── Top-right VTR type filter chips ── */}
+      {/* ── Top-right VTR type filter chips (dark variant) ── */}
       <div style={{ position: 'absolute', top: 14, right: selectedChamadoId ? 376 : 14, zIndex: 1000, display: 'flex', gap: 5, transition: 'right 0.2s ease' }}>
         {tipoButtons.map((f) => {
           const count = f.value === 'todas' ? mockVtrs.length : countByTipo(f.value);
+          const isActive = tipoFilter === f.value;
           return (
             <button
               key={f.value}
               onClick={() => setTipoFilter(f.value)}
-              style={{
-                fontSize: '10px',
-                fontWeight: 700,
-                padding: '5px 10px',
-                borderRadius: 8,
-                cursor: 'pointer',
-                border: 'none',
-                fontFamily: 'var(--sans)',
-                background: tipoFilter === f.value ? 'oklch(0.68 0.14 168)' : 'oklch(0.16 0.03 256 / 0.85)',
-                color: tipoFilter === f.value ? 'oklch(0.18 0.05 168)' : 'oklch(1 0 0 / 0.7)',
-                backdropFilter: 'blur(8px)',
-                transition: 'all 0.15s',
-              }}
+              className={`chip-dark${isActive ? ' on' : ''}`}
             >
               {f.label}
               <span style={{ marginLeft: 4, opacity: 0.7, fontFamily: 'var(--mono)', fontSize: '8px' }}>
@@ -288,17 +285,16 @@ export default function MapaPage() {
                 <Search size={12} style={{ color: 'var(--muted2)', flexShrink: 0 }} />
                 <input
                   type="text"
+                  className="inbox-search"
                   placeholder="Buscar placa ou VTR..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    outline: 'none',
+                    padding: 0,
                     fontSize: '11px',
-                    color: 'var(--ink)',
                     width: '100%',
-                    fontFamily: 'var(--sans)',
                   }}
                 />
               </div>
@@ -334,6 +330,7 @@ export default function MapaPage() {
                   <div
                     key={vtr.id}
                     onClick={() => handleVtrClick(vtr.id)}
+                    className={isSelected ? '' : 'table-row-click'}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -341,11 +338,8 @@ export default function MapaPage() {
                       padding: '7px 12px',
                       borderBottom: '1px solid var(--line)',
                       cursor: 'pointer',
-                      transition: 'background 0.1s',
-                      background: isSelected ? 'var(--green-l)' : 'transparent',
+                      background: isSelected ? 'var(--green-l)' : undefined,
                     }}
-                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = 'var(--card2)'; }}
-                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
                   >
                     {/* Status dot */}
                     <span style={{
@@ -388,22 +382,19 @@ export default function MapaPage() {
             {activeChamados.map((chamado) => {
               const isSelected = chamado.id === selectedChamadoId;
               const pillClass = statusPill[chamado.status] ?? 'pill-slate';
-              const slaOk = chamado.sla_minutos > 15;
-              const slaWarn = chamado.sla_minutos <= 15 && chamado.sla_minutos > 5;
               const slaCrit = chamado.sla_minutos <= 5;
+              const slaWarn = chamado.sla_minutos <= 15 && chamado.sla_minutos > 5;
               return (
                 <div
                   key={chamado.id}
                   onClick={() => handleChamadoClick(chamado.id)}
+                  className={isSelected ? '' : 'table-row-click'}
                   style={{
                     padding: '9px 12px',
                     borderBottom: '1px solid var(--line)',
                     cursor: 'pointer',
-                    transition: 'background 0.1s',
-                    background: isSelected ? 'var(--green-l)' : 'transparent',
+                    background: isSelected ? 'var(--green-l)' : undefined,
                   }}
-                  onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = 'var(--card2)'; }}
-                  onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
                 >
                   {/* Top row: number + status + SLA + channel */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
@@ -437,7 +428,7 @@ export default function MapaPage() {
                   {/* Origin → Destination */}
                   <div style={{ fontSize: '10px', color: 'var(--muted)', lineHeight: 1.3 }}>
                     {truncate(chamado.origem.split(' — ')[0] ?? chamado.origem, 30)}
-                    <span style={{ margin: '0 3px', color: 'var(--muted2)' }}>→</span>
+                    <span style={{ margin: '0 3px', color: 'var(--muted2)' }}>&rarr;</span>
                     {truncate(chamado.destino.split(' — ')[0] ?? chamado.destino, 30)}
                   </div>
                 </div>
@@ -524,6 +515,7 @@ export default function MapaPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {nearbyVtrs.map((vtr) => {
                   const tp = tipoVtrPill[vtr.tipo];
+                  const etaMin = Math.ceil(vtr.dist * 3);
                   return (
                     <div
                       key={vtr.id}
@@ -547,14 +539,14 @@ export default function MapaPage() {
                             {vtr.placa}
                           </span>
                           <span style={{ fontSize: '9px', color: 'var(--muted2)' }}>
-                            ~{vtr.dist.toFixed(1)} km
+                            ~{vtr.dist.toFixed(1)} km &middot; ~{etaMin} min
                           </span>
                         </div>
                       </div>
                       <button
                         className="btn-sm btn-sm-green"
                         style={{ fontSize: '10px', padding: '5px 10px' }}
-                        onClick={() => handleVtrClick(vtr.id)}
+                        onClick={() => handleDespachar(vtr)}
                       >
                         Despachar
                       </button>

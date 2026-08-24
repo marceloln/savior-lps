@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   MessageCircle, Phone, Globe, Mail, PenLine, MapPin, DollarSign, Truck, Send,
   User, Bot, AlertTriangle, CheckCircle2, Clock, Plus, Search, ChevronDown,
-  X, Activity,
+  X, Activity, CreditCard, ArrowRight,
 } from 'lucide-react';
 import {
   mockChamados, mockBotEvents, mockBotActionSteps, mockBotChatMessages,
   statusPill, statusLabel, servicoPill, prioridadePill, canalConfig, mockVtrs, vtrStats,
 } from '@/lib/mock-data';
 import type { BotEvent, Chamado, ChatMessage } from '@/lib/mock-data';
+import { SlideOver } from '@/components/ui/slide-over';
+import { useToast } from '@/components/ui/toast';
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -88,6 +90,60 @@ const emAndamento = mockChamados.filter(c => !['concluido', 'cancelado'].include
 const tempoMedio = 17; // minutes mock
 const botAutoRate = Math.round((mockChamados.filter(c => c.bot_managed).length / chamadosHoje) * 100);
 
+// ── Urgent timer hook ────────────────────────────────────────────────
+
+function useUrgentTimer(chamado: Chamado | null) {
+  const [elapsed, setElapsed] = useState('');
+
+  useEffect(() => {
+    if (!chamado || chamado.prioridade !== 'urgente' || chamado.status !== 'aberto') {
+      setElapsed('');
+      return;
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const created = new Date(chamado!.created_at).getTime();
+      const diffSec = Math.floor((now - created) / 1000);
+      const min = Math.floor(diffSec / 60);
+      const sec = diffSec % 60;
+      setElapsed(`${min}m ${sec.toString().padStart(2, '0')}s`);
+    }
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [chamado?.id, chamado?.prioridade, chamado?.status]);
+
+  return elapsed;
+}
+
+// ── Inbox timer component ────────────────────────────────────────────
+
+function InboxUrgentTimer({ chamado }: { chamado: Chamado }) {
+  const [elapsed, setElapsed] = useState('');
+
+  useEffect(() => {
+    if (chamado.prioridade !== 'urgente' || chamado.status !== 'aberto') return;
+
+    function update() {
+      const now = Date.now();
+      const created = new Date(chamado.created_at).getTime();
+      const diffSec = Math.floor((now - created) / 1000);
+      const min = Math.floor(diffSec / 60);
+      const sec = diffSec % 60;
+      setElapsed(`${min}m ${sec.toString().padStart(2, '0')}s`);
+    }
+
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [chamado.id, chamado.prioridade, chamado.status]);
+
+  if (!elapsed) return null;
+  return <span className="urgent-timer">{elapsed}</span>;
+}
+
 // ── Component ────────────────────────────────────────────────────────
 
 export default function CentralPage() {
@@ -99,6 +155,9 @@ export default function CentralPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [collapsedGroups, setCollapsedGroups] = useState<Set<PriorityGroup>>(new Set(['concluido']));
   const [showSlideOver, setShowSlideOver] = useState(false);
+  const [showVtrPicker, setShowVtrPicker] = useState(false);
+
+  const { showToast } = useToast();
 
   const selected = selectedId ? mockChamados.find(c => c.id === selectedId) ?? null : null;
   const selectedSteps = selected ? (mockBotActionSteps[selected.id] ?? []) : [];
@@ -124,6 +183,14 @@ export default function CentralPage() {
     return groups;
   }, [filteredChamados]);
 
+  // Urgent/open chamados awaiting assignment
+  const urgentUnassigned = useMemo(() => {
+    return mockChamados.filter(c =>
+      (c.prioridade === 'urgente' || c.status === 'aberto') &&
+      c.status !== 'concluido' && c.status !== 'cancelado' && !c.atendente
+    );
+  }, []);
+
   const toggleGroup = (g: PriorityGroup) => {
     const next = new Set(collapsedGroups);
     if (next.has(g)) next.delete(g); else next.add(g);
@@ -134,6 +201,7 @@ export default function CentralPage() {
     setSelectedId(id);
     setInterventionMode(false);
     setWsTab('atendimento');
+    setShowVtrPicker(false);
   };
 
   const handleEventClick = (event: BotEvent) => {
@@ -142,48 +210,83 @@ export default function CentralPage() {
     setSegment('chamados');
   };
 
-  // Available VTRs for dashboard
+  // Available VTRs for dashboard and VTR picker
   const availableVtrs = mockVtrs.filter(v => v.status === 'disponivel').slice(0, 6);
+  const pickerVtrs = mockVtrs.filter(v => v.status === 'disponivel').slice(0, 5);
+
+  // Action handlers with toast
+  const handleAssumir = () => {
+    setInterventionMode(true);
+    showToast('Conversa assumida. Você está no controle.', 'success');
+  };
+
+  const handleDevolver = () => {
+    setInterventionMode(false);
+    showToast('Conversa devolvida ao bot.', 'info');
+  };
+
+  const handleDespachar = () => {
+    showToast('VTR despachada com sucesso.', 'success');
+  };
+
+  const handleEnviarCotacao = () => {
+    showToast('Cotação enviada ao solicitante.', 'success');
+  };
+
+  const handleCancelar = () => {
+    showToast('Chamado cancelado.', 'error');
+  };
+
+  const handleCriarChamado = () => {
+    const nextNum = Math.max(...mockChamados.map(c => c.numero)) + 1;
+    setShowSlideOver(false);
+    showToast(`Chamado #${nextNum} criado.`, 'success');
+  };
+
+  const handleSelectVtr = (vtr: typeof mockVtrs[0]) => {
+    setShowVtrPicker(false);
+    showToast(`VTR ${vtr.nome} (${vtr.placa}) atribuída.`, 'success');
+  };
 
   return (
     <div className="central-grid">
       {/* ════════ LEFT: Inbox ════════ */}
       <div className="central-inbox">
-        {/* Header */}
+        {/* Header — Line 1: Title + live dot + count */}
         <div style={{ padding: '16px 18px 0', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
             <h2 className="font-display" style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em' }}>
               Central
             </h2>
-            <span className="count-badge">{chamadosHoje}</span>
             <span className="live-dot" />
-            <div style={{ marginLeft: 'auto' }}>
-              <button className="btn-sm btn-sm-green" onClick={() => setShowSlideOver(true)}>
-                <Plus size={12} /> Novo
-              </button>
+            <span className="count-badge">{chamadosHoje}</span>
+          </div>
+
+          {/* Line 2: Search + Novo button */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
+              <input
+                className="inbox-search"
+                style={{ paddingLeft: 30 }}
+                placeholder="/ Buscar paciente, número, origem..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
             </div>
+            <button className="btn-sm btn-sm-green" onClick={() => setShowSlideOver(true)}>
+              <Plus size={12} /> Novo
+            </button>
           </div>
 
           {/* Segment toggle */}
-          <div className="segment-toggle" style={{ marginTop: 12 }}>
+          <div className="segment-toggle" style={{ marginBottom: 10 }}>
             <button className={segment === 'chamados' ? 'seg-active' : ''} onClick={() => setSegment('chamados')}>
               Chamados
             </button>
             <button className={segment === 'bot_feed' ? 'seg-active' : ''} onClick={() => setSegment('bot_feed')}>
               Bot feed
             </button>
-          </div>
-
-          {/* Search */}
-          <div style={{ marginTop: 10, marginBottom: 10, position: 'relative' }}>
-            <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
-            <input
-              className="inbox-search"
-              style={{ paddingLeft: 30 }}
-              placeholder="Buscar paciente, n\u00FAmero, origem..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
           </div>
         </div>
 
@@ -224,6 +327,7 @@ export default function CentralPage() {
                                 {canalIcon(c.canal)}
                               </span>
                               <span className="qi-name">{c.paciente_nome}</span>
+                              {needsIntervention && <InboxUrgentTimer chamado={c} />}
                               {sla.text && (
                                 <span className={`sla-badge ${sla.cls}`}>
                                   {sla.cls === 'sla-route' && <span className="live-dot" style={{ width: 5, height: 5 }} />}
@@ -255,7 +359,7 @@ export default function CentralPage() {
                               <button
                                 className="assume-btn"
                                 style={{ marginTop: 4, alignSelf: 'flex-start' }}
-                                onClick={e => { e.stopPropagation(); handleSelectChamado(c.id); setInterventionMode(true); }}
+                                onClick={e => { e.stopPropagation(); handleSelectChamado(c.id); handleAssumir(); }}
                               >
                                 Assumir
                               </button>
@@ -294,7 +398,7 @@ export default function CentralPage() {
                           onClick={e => {
                             e.stopPropagation();
                             setSelectedId(event.chamado_id);
-                            setInterventionMode(true);
+                            handleAssumir();
                           }}
                         >
                           Assumir
@@ -365,7 +469,7 @@ export default function CentralPage() {
                     className={`tab ${wsTab === t ? 'tab-active' : ''}`}
                     onClick={() => setWsTab(t)}
                   >
-                    {t === 'atendimento' ? 'Atendimento' : t === 'historico' ? 'Hist\u00F3rico' : 'Financeiro'}
+                    {t === 'atendimento' ? 'Atendimento' : t === 'historico' ? 'Histórico' : 'Financeiro'}
                   </button>
                 ))}
               </div>
@@ -434,7 +538,7 @@ export default function CentralPage() {
 
                       {/* Serviço */}
                       <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>SERVI\u00C7O</p>
+                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>SERVIÇO</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                           <div className="ws-info-row">
                             <span className="ws-key">Tipo</span>
@@ -462,7 +566,7 @@ export default function CentralPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                       {/* VTR */}
                       <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>VTR ATRIBU\u00CDDA</p>
+                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>VTR ATRIBUÍDA</p>
                         {selected.vtr_placa ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -480,31 +584,54 @@ export default function CentralPage() {
                           </div>
                         ) : (
                           <div>
-                            <p style={{ fontSize: 12, color: 'var(--muted2)', marginBottom: 10 }}>Nenhuma VTR atribu\u00EDda</p>
-                            <button className="btn btn-outline" style={{ fontSize: 11, padding: '8px 14px' }}>
+                            <p style={{ fontSize: 12, color: 'var(--muted2)', marginBottom: 10 }}>Nenhuma VTR atribuída</p>
+                            <button
+                              className="btn btn-outline"
+                              style={{ fontSize: 11, padding: '8px 14px' }}
+                              onClick={() => setShowVtrPicker(!showVtrPicker)}
+                            >
                               <MapPin size={12} /> Selecionar VTR
                             </button>
+                            {/* VTR picker dropdown */}
+                            {showVtrPicker && (
+                              <div style={{ marginTop: 8, border: '1px solid var(--line)', borderRadius: 'var(--r)', overflow: 'hidden' }}>
+                                {pickerVtrs.map(v => (
+                                  <div
+                                    key={v.id}
+                                    className="table-row-click"
+                                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderBottom: '1px solid var(--line)' }}
+                                    onClick={() => handleSelectVtr(v)}
+                                  >
+                                    <span className="mono" style={{ fontSize: 11, fontWeight: 700 }}>{v.nome}</span>
+                                    <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>{v.placa}</span>
+                                    <span className={`pill ${v.tipo === 'uti' ? 'pill-red' : v.tipo === 'moto' ? 'pill-amber' : 'pill-green'}`} style={{ fontSize: 7, marginLeft: 'auto' }}>
+                                      {v.tipo.toUpperCase()}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
 
                       {/* Ações */}
                       <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>A\u00C7\u00D5ES</p>
+                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>AÇÕES</p>
                         <div className="action-panel">
                           {selected.bot_managed ? (
                             <>
                               {interventionMode ? (
-                                <button className="btn btn-outline" onClick={() => setInterventionMode(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-outline" onClick={handleDevolver} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
                                   <Bot size={14} /> Devolver ao bot
                                 </button>
                               ) : (
-                                <button className="btn btn-outline" onClick={() => setInterventionMode(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-outline" onClick={handleAssumir} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
                                   <AlertTriangle size={14} /> Assumir conversa
                                 </button>
                               )}
                               {selected.status === 'aprovado' && (
-                                <button className="btn btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-green" onClick={handleDespachar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
                                   <CheckCircle2 size={14} /> Aprovar despacho
                                 </button>
                               )}
@@ -512,16 +639,16 @@ export default function CentralPage() {
                           ) : (
                             <>
                               {!selected.valor_cotado && (
-                                <button className="btn btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-                                  <DollarSign size={14} /> Enviar cota\u00E7\u00E3o
+                                <button className="btn btn-green" onClick={handleEnviarCotacao} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                  <DollarSign size={14} /> Enviar cotação
                                 </button>
                               )}
                               {selected.vtr_placa && selected.status !== 'em_transito' && selected.status !== 'concluido' && (
-                                <button className="btn btn-green" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-green" onClick={handleDespachar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
                                   <Truck size={14} /> Despachar
                                 </button>
                               )}
-                              <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, color: 'var(--red)', borderColor: 'var(--red-l)' }}>
+                              <button className="btn btn-outline" onClick={handleCancelar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, color: 'var(--red)', borderColor: 'var(--red-l)' }}>
                                 <X size={14} /> Cancelar
                               </button>
                             </>
@@ -595,7 +722,7 @@ export default function CentralPage() {
                         <div className="composer" style={{ padding: '0 16px 14px' }}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                             <button className="quick-reply">Confirmar chegada</button>
-                            <button className="quick-reply">Enviar cota\u00E7\u00E3o</button>
+                            <button className="quick-reply">Enviar cotação</button>
                             <button className="quick-reply">Atualizar ETA</button>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -616,7 +743,7 @@ export default function CentralPage() {
 
               {wsTab === 'historico' && (
                 <div className="panel" style={{ padding: 18 }}>
-                  <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>HIST\u00D3RICO DE EVENTOS</p>
+                  <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>HISTÓRICO DE EVENTOS</p>
                   {selectedSteps.length > 0 ? (
                     <div className="bot-timeline">
                       {selectedSteps.map((step, i) => {
@@ -673,10 +800,10 @@ export default function CentralPage() {
                     </div>
                     {selected.pagamento_status === 'pendente' && (
                       <div style={{ marginTop: 14, padding: 20, background: 'var(--bg)', borderRadius: 'var(--r)', border: '1px dashed var(--line2)', textAlign: 'center' }}>
-                        <p className="label" style={{ color: 'var(--muted2)' }}>PIX QR CODE</p>
-                        <div style={{ width: 120, height: 120, margin: '12px auto', background: 'var(--line)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <span className="mono" style={{ fontSize: 10, color: 'var(--muted2)' }}>Placeholder</span>
-                        </div>
+                        <CreditCard size={20} style={{ color: 'var(--muted2)', marginBottom: 8 }} />
+                        <p style={{ fontSize: 11, color: 'var(--muted2)', lineHeight: 1.4 }}>
+                          QR code será gerado após integração com gateway de pagamento
+                        </p>
                       </div>
                     )}
                   </div>
@@ -687,6 +814,29 @@ export default function CentralPage() {
         ) : (
           /* ── Operational dashboard (empty state) ── */
           <div style={{ flex: 1, padding: 26 }}>
+            {/* Actionable hint */}
+            <div style={{ marginBottom: 16 }}>
+              {urgentUnassigned.length > 0 ? (
+                <div
+                  className="actionable-hint"
+                  onClick={() => handleSelectChamado(urgentUnassigned[0].id)}
+                >
+                  <AlertTriangle size={14} />
+                  <span>
+                    {urgentUnassigned.length} chamado{urgentUnassigned.length > 1 ? 's' : ''} aguardando atribuição.
+                  </span>
+                  <span style={{ fontWeight: 700, marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    Ver fila <ArrowRight size={12} />
+                  </span>
+                </div>
+              ) : (
+                <div className="actionable-hint all-clear">
+                  <CheckCircle2 size={14} />
+                  <span>Todos os chamados estão sendo atendidos.</span>
+                </div>
+              )}
+            </div>
+
             {/* KPI cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 22 }}>
               <div className="kpi-card">
@@ -698,11 +848,11 @@ export default function CentralPage() {
                 <p className="kpi-value" style={{ color: 'var(--amber)' }}>{emAndamento}</p>
               </div>
               <div className="kpi-card">
-                <p className="kpi-label">TEMPO M\u00C9DIO</p>
+                <p className="kpi-label">TEMPO MÉDIO</p>
                 <p className="kpi-value">{tempoMedio}<span style={{ fontSize: 12, fontWeight: 400, color: 'var(--muted)' }}> min</span></p>
               </div>
               <div className="kpi-card">
-                <p className="kpi-label">BOT AUTOM\u00C1TICO</p>
+                <p className="kpi-label">BOT AUTOMÁTICO</p>
                 <p className="kpi-value" style={{ color: 'var(--green)' }}>{botAutoRate}%</p>
               </div>
             </div>
@@ -721,7 +871,8 @@ export default function CentralPage() {
                     return (
                       <div
                         key={c.id}
-                        style={{ padding: '10px 16px', borderBottom: '1px solid var(--line)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}
+                        className="table-row-click"
+                        style={{ padding: '10px 16px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10 }}
                         onClick={() => handleSelectChamado(c.id)}
                       >
                         <span className={`channel-icon ${canalClass(c.canal)}`} style={{ width: 18, height: 18, fontSize: 9 }}>
@@ -740,14 +891,14 @@ export default function CentralPage() {
               <div className="panel">
                 <div className="panel-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Truck size={14} style={{ color: 'var(--muted2)' }} />
-                  <span className="panel-title">Frota dispon\u00EDvel</span>
+                  <span className="panel-title">Frota disponível</span>
                   <span className="grp-count" style={{ marginLeft: 'auto' }}>{vtrStats.disponivel}</span>
                 </div>
                 <div className="panel-body" style={{ padding: '8px 16px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
                     <div style={{ textAlign: 'center', padding: 8, background: 'var(--green-l)', borderRadius: 8 }}>
                       <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--green-d)' }}>{vtrStats.disponivel}</p>
-                      <p className="label" style={{ fontSize: 7 }}>DISPON\u00CDVEL</p>
+                      <p className="label" style={{ fontSize: 7 }}>DISPONÍVEL</p>
                     </div>
                     <div style={{ textAlign: 'center', padding: 8, background: 'var(--amber-l)', borderRadius: 8 }}>
                       <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--amber)' }}>{vtrStats.em_atendimento}</p>
@@ -755,7 +906,7 @@ export default function CentralPage() {
                     </div>
                     <div style={{ textAlign: 'center', padding: 8, background: 'var(--red-l)', borderRadius: 8 }}>
                       <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--red)' }}>{vtrStats.manutencao}</p>
-                      <p className="label" style={{ fontSize: 7 }}>MANUTEN\u00C7\u00C3O</p>
+                      <p className="label" style={{ fontSize: 7 }}>MANUTENÇÃO</p>
                     </div>
                   </div>
                   {availableVtrs.map(v => (
@@ -775,65 +926,58 @@ export default function CentralPage() {
       </div>
 
       {/* ════════ Slide-over: Novo chamado ════════ */}
-      {showSlideOver && (
-        <>
-          <div className="slide-over-backdrop" onClick={() => setShowSlideOver(false)} />
-          <div className="slide-over">
-            <div className="slide-over-header">
-              <span className="slide-over-title">Novo chamado</span>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }} onClick={() => setShowSlideOver(false)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="slide-over-body">
-              <div>
-                <label className="form-label">CANAL</label>
-                <select className="form-select">
-                  <option value="telefone">Telefone</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="site">Site</option>
-                </select>
-              </div>
-              <div>
-                <label className="form-label">PACIENTE (NOME)</label>
-                <input className="form-input" placeholder="Nome completo do paciente" />
-              </div>
-              <div>
-                <label className="form-label">PACIENTE (TELEFONE)</label>
-                <input className="form-input" placeholder="(21) 99999-9999" />
-              </div>
-              <div>
-                <label className="form-label">SOLICITANTE</label>
-                <input className="form-input" placeholder="Nome do solicitante ou conv\u00EAnio" />
-              </div>
-              <div>
-                <label className="form-label">TIPO DE SERVI\u00C7O</label>
-                <select className="form-select">
-                  <option value="uti">UTI</option>
-                  <option value="basica">B\u00E1sica</option>
-                  <option value="remocao">Remo\u00E7\u00E3o</option>
-                </select>
-              </div>
-              <div>
-                <label className="form-label">ENDERE\u00C7O DE ORIGEM</label>
-                <input className="form-input" placeholder="Hospital, rua, n\u00FAmero, bairro" />
-              </div>
-              <div>
-                <label className="form-label">ENDERE\u00C7O DE DESTINO</label>
-                <input className="form-input" placeholder="Hospital, rua, n\u00FAmero, bairro" />
-              </div>
-              <div>
-                <label className="form-label">OBSERVA\u00C7\u00D5ES</label>
-                <textarea className="form-textarea" placeholder="Quadro cl\u00EDnico, observa\u00E7\u00F5es..." />
-              </div>
-            </div>
-            <div className="slide-over-footer">
-              <button className="btn btn-outline" onClick={() => setShowSlideOver(false)}>Cancelar</button>
-              <button className="btn btn-green" onClick={() => setShowSlideOver(false)}>Criar chamado</button>
-            </div>
-          </div>
-        </>
-      )}
+      <SlideOver
+        open={showSlideOver}
+        onClose={() => setShowSlideOver(false)}
+        title="Novo chamado"
+        footer={
+          <>
+            <button className="btn btn-outline" onClick={() => setShowSlideOver(false)}>Cancelar</button>
+            <button className="btn btn-green" onClick={handleCriarChamado}>Criar chamado</button>
+          </>
+        }
+      >
+        <div>
+          <label className="form-label">CANAL</label>
+          <select className="form-select">
+            <option value="telefone">Telefone</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="site">Site</option>
+          </select>
+        </div>
+        <div>
+          <label className="form-label">PACIENTE (NOME)</label>
+          <input className="form-input" placeholder="Nome completo do paciente" />
+        </div>
+        <div>
+          <label className="form-label">PACIENTE (TELEFONE)</label>
+          <input className="form-input" placeholder="(21) 99999-9999" />
+        </div>
+        <div>
+          <label className="form-label">SOLICITANTE</label>
+          <input className="form-input" placeholder="Nome do solicitante ou convênio" />
+        </div>
+        <div>
+          <label className="form-label">TIPO DE SERVIÇO</label>
+          <select className="form-select">
+            <option value="uti">UTI</option>
+            <option value="basica">Básica</option>
+            <option value="remocao">Remoção</option>
+          </select>
+        </div>
+        <div>
+          <label className="form-label">ENDEREÇO DE ORIGEM</label>
+          <input className="form-input" placeholder="Hospital, rua, número, bairro" />
+        </div>
+        <div>
+          <label className="form-label">ENDEREÇO DE DESTINO</label>
+          <input className="form-input" placeholder="Hospital, rua, número, bairro" />
+        </div>
+        <div>
+          <label className="form-label">OBSERVAÇÕES</label>
+          <textarea className="form-textarea" placeholder="Quadro clínico, observações..." />
+        </div>
+      </SlideOver>
     </div>
   );
 }

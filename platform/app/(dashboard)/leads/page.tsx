@@ -8,6 +8,7 @@ import {
 } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 /* ═══════════════ CONSTANTS ═══════════════ */
 
@@ -114,7 +115,7 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
           <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmtR(pipelineValue)}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-label">Tempo medio (dias)</div>
+          <div className="kpi-label">Tempo médio (dias)</div>
           <div className="kpi-value">{avgDays}</div>
         </div>
       </div>
@@ -152,7 +153,7 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
                   );
                 })}
                 {items.length === 0 && (
-                  <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted2)', fontSize: 11 }}>Nenhum lead</div>
+                  <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted2)', fontSize: 11 }}>Nenhum lead neste estágio</div>
                 )}
               </div>
             </div>
@@ -240,7 +241,7 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
               <th className="th" style={{ textAlign: 'left' }}>Canal</th>
               <th className="th" style={{ textAlign: 'left' }}>Origem</th>
               <th className="th" style={{ textAlign: 'left' }}>Campanha</th>
-              <th className="th" style={{ textAlign: 'left' }}>Servico</th>
+              <th className="th" style={{ textAlign: 'left' }}>Serviço</th>
               <th className="th" style={{ textAlign: 'right' }}>Valor</th>
               <th className="th" style={{ textAlign: 'left' }}>Status</th>
               <th className="th" style={{ textAlign: 'left' }}>Atendente</th>
@@ -282,14 +283,14 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
       {/* Pagination */}
       <div className="flex items-center justify-between" style={{ marginTop: 12, padding: '0 4px' }}>
         <div className="mono" style={{ fontSize: 10, color: 'var(--muted2)' }}>
-          Pagina {page} de {totalPages}
+          Página {page} de {totalPages}
         </div>
         <div className="flex items-center gap-2">
-          <button className="chip" disabled={page <= 1} onClick={() => setPage(p => p - 1)} style={{ opacity: page <= 1 ? 0.4 : 1 }}>
+          <button className="btn btn-outline" style={{ padding: '7px 14px', fontSize: '11px' }} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
             <ChevronLeft size={12} /> Anterior
           </button>
-          <button className="chip" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} style={{ opacity: page >= totalPages ? 0.4 : 1 }}>
-            Proxima <ChevronRight size={12} />
+          <button className="btn btn-outline" style={{ padding: '7px 14px', fontSize: '11px' }} disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
+            Próxima <ChevronRight size={12} />
           </button>
         </div>
       </div>
@@ -357,19 +358,19 @@ function AquisicaoView() {
       {/* KPI strip */}
       <div className="grid grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
         <div className="kpi-card">
-          <div className="kpi-label">Sessoes totais</div>
+          <div className="kpi-label">Sessões totais</div>
           <div className="kpi-value">{fmt(totalSessions)}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-label">Usuarios</div>
+          <div className="kpi-label">Usuários</div>
           <div className="kpi-value">{fmt(totalUsers)}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-label">Conversoes</div>
+          <div className="kpi-label">Conversões</div>
           <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmt(totalConversions)}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-label">Taxa conversao</div>
+          <div className="kpi-label">Taxa conversão</div>
           <div className="kpi-value">{(totalConversions / totalSessions * 100).toFixed(1)}%</div>
         </div>
       </div>
@@ -378,7 +379,7 @@ function AquisicaoView() {
         {/* Source breakdown (bar chart) */}
         <div className="panel">
           <div className="panel-header">
-            <span className="panel-title">Sessoes por fonte</span>
+            <span className="panel-title">Sessões por fonte</span>
           </div>
           <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {sourceEntries.map(([source, v]) => (
@@ -435,7 +436,7 @@ function AquisicaoView() {
       {/* Monthly trend */}
       <div className="panel" style={{ marginTop: 16 }}>
         <div className="panel-header">
-          <span className="panel-title">Tendencia mensal</span>
+          <span className="panel-title">Tendência mensal</span>
         </div>
         <div className="panel-body" style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 140 }}>
           {monthEntries.map(([month, count]) => {
@@ -462,10 +463,10 @@ function AquisicaoView() {
             <tr>
               <th className="th" style={{ textAlign: 'left' }}>Campanha</th>
               <th className="th" style={{ textAlign: 'left' }}>Fonte</th>
-              <th className="th" style={{ textAlign: 'right' }}>Sessoes</th>
-              <th className="th" style={{ textAlign: 'right' }}>Conversoes</th>
+              <th className="th" style={{ textAlign: 'right' }}>Sessões</th>
+              <th className="th" style={{ textAlign: 'right' }}>Conversões</th>
               <th className="th" style={{ textAlign: 'right' }}>Taxa</th>
-              <th className="th" style={{ textAlign: 'right' }}>Usuarios</th>
+              <th className="th" style={{ textAlign: 'right' }}>Usuários</th>
             </tr>
           </thead>
           <tbody>
@@ -508,7 +509,7 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
       ],
     },
     {
-      title: 'ATRIBUICAO',
+      title: 'ATRIBUIÇÃO',
       rows: [
         { k: 'Canal', v: lead.canal },
         { k: 'Fonte', v: lead.utm_source || '\u2014' },
@@ -517,10 +518,10 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
       ],
     },
     {
-      title: 'NEGOCIO',
+      title: 'NEGÓCIO',
       rows: [
-        { k: 'Servico', v: lead.tipo_servico || '\u2014' },
-        { k: 'Regiao', v: lead.regiao || '\u2014' },
+        { k: 'Serviço', v: lead.tipo_servico || '\u2014' },
+        { k: 'Região', v: lead.regiao || '\u2014' },
         { k: 'Valor estimado', v: lead.valor_estimado ? fmtR(lead.valor_estimado) : '\u2014' },
         { k: 'Valor fechado', v: lead.valor_fechado ? fmtR(lead.valor_fechado) : '\u2014' },
         { k: 'Status', v: lead.status },
@@ -528,10 +529,10 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
       ],
     },
     {
-      title: 'HISTORICO',
+      title: 'HISTÓRICO',
       rows: [
         { k: 'Primeiro contato', v: fmtDate(lead.primeiro_contato) },
-        { k: 'Ultimo contato', v: fmtDate(lead.ultimo_contato) },
+        { k: 'Último contato', v: fmtDate(lead.ultimo_contato) },
         { k: 'Notas', v: lead.notas || '\u2014' },
       ],
     },
@@ -540,7 +541,7 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
       rows: [
         { k: 'ID', v: lead.pipedrive_id ? `#${lead.pipedrive_id}` : '\u2014' },
         { k: 'Pipeline', v: lead.pipedrive_pipeline || '\u2014' },
-        { k: 'Estagio', v: lead.pipedrive_stage || '\u2014' },
+        { k: 'Estágio', v: lead.pipedrive_stage || '\u2014' },
       ],
     },
   ];
@@ -573,6 +574,7 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
 /* ═══════════════ MAIN PAGE ═══════════════ */
 
 export default function LeadsPage() {
+  const { showToast } = useToast();
   const [view, setView] = useState<ViewTab>('pipeline');
   const [creating, setCreating] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -587,7 +589,7 @@ export default function LeadsPage() {
     <div>
       <div className="page-hd">
         <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>GESTAO</p>
+          <p className="breadcrumb" style={{ marginBottom: 6 }}>GESTÃO</p>
           <h1 className="page-title">Leads</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setSelectedLead(null); setSelectedEnriched(null); }}>
@@ -604,7 +606,7 @@ export default function LeadsPage() {
           Base completa
         </button>
         <button className={`tab ${view === 'aquisicao' ? 'tab-active' : ''}`} onClick={() => setView('aquisicao')}>
-          Aquisicao
+          Aquisição
         </button>
       </div>
 
@@ -625,7 +627,7 @@ export default function LeadsPage() {
         footer={
           <div className="flex gap-2" style={{ width: '100%', justifyContent: 'flex-end' }}>
             <button className="btn btn-outline" onClick={closePanel}>Fechar</button>
-            {(creating || selectedLead) && <button className="btn btn-green" onClick={closePanel}>Salvar</button>}
+            {(creating || selectedLead) && <button className="btn btn-green" onClick={() => { closePanel(); showToast('Lead salvo com sucesso', 'success'); }}>Salvar</button>}
           </div>
         }
       >
@@ -650,13 +652,13 @@ export default function LeadsPage() {
                 <span className={`pill ${canalPill[selectedLead.canal].cls}`}>{canalPill[selectedLead.canal].label}</span>
               </div>
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>REGIAO</div>
+                <div className="label" style={{ marginBottom: 4 }}>REGIÃO</div>
                 <div style={{ fontSize: 12.5 }}>{selectedLead.regiao}</div>
               </div>
             </div>
             <div className="flex gap-6">
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>SERVICO</div>
+                <div className="label" style={{ marginBottom: 4 }}>SERVIÇO</div>
                 <div style={{ fontSize: 12.5 }}>{selectedLead.tipo_servico}</div>
               </div>
               <div>
@@ -665,7 +667,7 @@ export default function LeadsPage() {
               </div>
             </div>
             <div>
-              <div className="label" style={{ marginBottom: 4 }}>ESTAGIO</div>
+              <div className="label" style={{ marginBottom: 4 }}>ESTÁGIO</div>
               <select className="form-select" defaultValue={selectedLead.estagio}>
                 {[...estagios, { key: 'convertido' as LeadEstagio, label: 'Convertido' }, { key: 'perdido' as LeadEstagio, label: 'Perdido' }].map(e => (
                   <option key={e.key} value={e.key}>{e.label}</option>
@@ -674,15 +676,13 @@ export default function LeadsPage() {
             </div>
             <div>
               <div className="label" style={{ marginBottom: 4 }}>NOTAS</div>
-              <div style={{ fontSize: 12, color: 'var(--ink2)', lineHeight: 1.4, background: 'var(--bg)', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--line)' }}>
-                {selectedLead.notas}
-              </div>
+              <textarea className="form-textarea" readOnly defaultValue={selectedLead.notas} style={{ minHeight: 80 }} />
             </div>
             <div>
               <div className="label" style={{ marginBottom: 4 }}>TIMELINE</div>
               <div style={{ fontSize: 11, color: 'var(--muted)' }}>
                 <div>Criado em {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')} as {new Date(selectedLead.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
-                <div>Ultimo contato {new Date(selectedLead.ultimo_contato).toLocaleDateString('pt-BR')} as {new Date(selectedLead.ultimo_contato).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                <div>Último contato {new Date(selectedLead.ultimo_contato).toLocaleDateString('pt-BR')} as {new Date(selectedLead.ultimo_contato).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
               </div>
             </div>
           </div>
@@ -706,10 +706,10 @@ export default function LeadsPage() {
                 <option value="manual">Manual</option>
               </select>
             </FormField>
-            <FormField label="Tipo de servico">
-              <input className="form-input" placeholder="UTI Movel, Basica, Cobertura..." />
+            <FormField label="Tipo de serviço">
+              <input className="form-input" placeholder="UTI Móvel, Básica, Cobertura..." />
             </FormField>
-            <FormField label="Regiao">
+            <FormField label="Região">
               <input className="form-input" placeholder="Zona Sul RJ" />
             </FormField>
             <FormField label="Empresa (se B2B)">

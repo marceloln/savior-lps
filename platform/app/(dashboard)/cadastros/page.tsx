@@ -34,8 +34,8 @@ const cards = [
   { href: '/cadastros/pneus', label: 'Pneus', count: mockPneusBackoffice.length, desc: 'Controle de vida útil e recapagem', icon: CircleDot, bg: 'var(--slate-l)', color: 'var(--slate)' },
   { href: '/cadastros/almoxarifados', label: 'Almoxarifados', count: mockWarehouses.length, desc: 'Estoques de peças RJ e SP', icon: Warehouse, bg: 'var(--green-l)', color: 'var(--green-d)' },
   { href: '/cadastros/os', label: 'Ordens de Serviço', count: mockOrdensServico.length, desc: 'Manutenções preventivas e corretivas', icon: Wrench, bg: 'var(--blue-l)', color: 'var(--blue)' },
-  { href: '/cadastros/checklists', label: 'Checklists', count: '2 modelos', desc: 'Modelos de checklist e execuções diárias', icon: ClipboardCheck, bg: 'var(--green-l)', color: 'var(--green-d)' },
-  { href: '/cadastros/orcamentos', label: 'Orçamentos', count: `${mockOrcamentosEvento.length} orçamentos`, desc: 'Orçamentos de eventos com calculadora de preços', icon: Calculator, bg: 'var(--green-l)', color: 'var(--green-d)' },
+  { href: '/cadastros/checklists', label: 'Checklists', count: 2, desc: 'Modelos de checklist e execuções diárias', icon: ClipboardCheck, bg: 'var(--green-l)', color: 'var(--green-d)' },
+  { href: '/cadastros/orcamentos', label: 'Orçamentos', count: mockOrcamentosEvento.length, desc: 'Orçamentos de eventos com calculadora de preços', icon: Calculator, bg: 'var(--green-l)', color: 'var(--green-d)' },
 ];
 
 export default function CadastrosPage() {

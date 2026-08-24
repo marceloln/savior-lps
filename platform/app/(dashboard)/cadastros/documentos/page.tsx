@@ -6,6 +6,7 @@ import { ChevronLeft, Plus, AlertTriangle } from 'lucide-react';
 import { mockDocumentos, type Documento, type DocumentoStatus } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 const statusPill: Record<DocumentoStatus, { label: string; cls: string }> = {
   vigente: { label: 'VIGENTE', cls: 'pill-green' },
@@ -23,6 +24,7 @@ function daysUntil(dateStr: string): number {
 }
 
 export default function DocumentosPage() {
+  const { showToast } = useToast();
   const [tab, setTab] = useState<TabFilter>('todos');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Documento | null>(null);
@@ -106,7 +108,7 @@ export default function DocumentosPage() {
               <th className="th">Documento</th>
               <th className="th">Tipo</th>
               <th className="th">Entidade</th>
-              <th className="th">Emissao</th>
+              <th className="th">Emissão</th>
               <th className="th">Vencimento</th>
               <th className="th">Status</th>
             </tr>
@@ -142,7 +144,7 @@ export default function DocumentosPage() {
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
-              <button className="btn btn-green" onClick={closePanel}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { closePanel(); showToast('Documento salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
@@ -150,17 +152,17 @@ export default function DocumentosPage() {
         <FormField label="Tipo de entidade">
           <select className="form-select" defaultValue={editing?.entidade_tipo || 'vtr'}>
             <option value="vtr">VTR</option>
-            <option value="funcionario">Funcionario</option>
+            <option value="funcionario">Funcionário</option>
           </select>
         </FormField>
         <FormField label="Entidade">
-          <input className="form-input" defaultValue={editing?.entidade_nome || ''} placeholder="Nome da VTR ou funcionario" />
+          <input className="form-input" defaultValue={editing?.entidade_nome || ''} placeholder="Nome da VTR ou funcionário" />
         </FormField>
         <FormField label="Tipo do documento">
           <select className="form-select" defaultValue={editing?.tipo || 'CRLV'}>
             <option>CRLV</option>
             <option>CNH</option>
-            <option>Alvara</option>
+            <option>Alvará</option>
             <option>Seguro</option>
             <option>ANVISA</option>
             <option>Contrato</option>
@@ -169,7 +171,7 @@ export default function DocumentosPage() {
         <FormField label="Nome">
           <input className="form-input" defaultValue={editing?.nome || ''} />
         </FormField>
-        <FormField label="Data emissao">
+        <FormField label="Data emissão">
           <input className="form-input" type="date" defaultValue={editing?.data_emissao || ''} />
         </FormField>
         <FormField label="Data vencimento">

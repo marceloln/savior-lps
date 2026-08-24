@@ -10,6 +10,7 @@ import {
 } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 
 // ── helpers ──────────────────────────────────────────────────────
 
@@ -90,6 +91,7 @@ function calcLine(item: ItemForm) {
 // ── page ────────────────────────────────────────────────────────
 
 export default function OrcamentosPage() {
+  const { showToast } = useToast();
   const [search, setSearch] = useState('');
   const [viewing, setViewing] = useState<OrcamentoEvento | null>(null);
   const [creating, setCreating] = useState(false);
@@ -296,7 +298,7 @@ export default function OrcamentosPage() {
         <SlideOver
           open={true}
           onClose={closePanel}
-          title={step === 1 ? 'Novo orçamento — Cliente' : step === 2 ? 'Novo orçamento — Evento' : 'Novo orçamento — Serviços'}
+          title={`Novo orçamento — ${step === 1 ? 'Cliente' : step === 2 ? 'Evento' : 'Serviços'}`}
           footer={
             <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
               <div>
@@ -310,14 +312,38 @@ export default function OrcamentosPage() {
                   <button className="btn btn-green" onClick={() => setStep(step + 1)}>Próximo</button>
                 ) : (
                   <>
-                    <button className="btn btn-outline" onClick={closePanel}>Salvar rascunho</button>
-                    <button className="btn btn-green" onClick={closePanel}>Enviar orçamento</button>
+                    <button className="btn btn-outline" onClick={() => { closePanel(); showToast('Rascunho salvo com sucesso', 'success'); }}>Salvar rascunho</button>
+                    <button className="btn btn-green" onClick={() => { closePanel(); showToast('Orçamento enviado com sucesso', 'success'); }}>Enviar orçamento</button>
                   </>
                 )}
               </div>
             </div>
           }
         >
+          {/* Step indicator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            {[1, 2, 3].map((s) => (
+              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700, fontFamily: 'var(--mono)',
+                  background: s <= step ? 'var(--green)' : 'var(--bg)',
+                  color: s <= step ? 'oklch(0.24 0.05 168)' : 'var(--muted2)',
+                  border: s <= step ? 'none' : '1px solid var(--line2)',
+                }}>
+                  {s}
+                </div>
+                {s < 3 && (
+                  <div style={{ width: 32, height: 2, background: s < step ? 'var(--green)' : 'var(--line2)', borderRadius: 1 }} />
+                )}
+              </div>
+            ))}
+            <span className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginLeft: 8 }}>
+              Passo {step} de 3
+            </span>
+          </div>
+
           {/* Step 1 — Cliente */}
           {step === 1 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>

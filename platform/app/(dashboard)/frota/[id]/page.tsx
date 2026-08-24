@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
   ArrowLeft, ExternalLink, Wrench, Check, X, Minus, Circle,
-  Fuel, AlertTriangle, FileText, Plus, Calendar,
+  Fuel, AlertTriangle, FileText, Plus, Calendar, Pencil,
 } from 'lucide-react';
+import { useToast } from '@/components/ui/toast';
 import {
   mockVtrs, mockVtrDetails, mockMultas, mockPneus, mockManutencoes,
   mockChecklistItems, mockEmployees,
@@ -66,6 +67,7 @@ const prioridadeLabel: Record<string, { label: string; pill: string }> = {
 
 export default function VtrDetailPage() {
   const params = useParams();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('Geral');
 
   const vtr = mockVtrs.find((v) => v.id === params.id);
@@ -118,6 +120,10 @@ export default function VtrDetailPage() {
           </span>
           <span className={`pill ${statusPill[vtr.status]}`}>{statusLabel[vtr.status]}</span>
           <span className={`pill ${tp.pill}`}>{tp.label}</span>
+          <button className="btn btn-outline" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 14px' }} onClick={() => showToast('Edição de veículo em desenvolvimento', 'info')}>
+            <Pencil size={13} strokeWidth={1.8} />
+            Editar
+          </button>
         </div>
         <p style={{ fontSize: '12.5px', color: 'var(--muted)', marginTop: 4 }}>
           {vtr.modelo}{detail?.versao ? ` · ${detail.versao}` : ''}
@@ -149,7 +155,7 @@ export default function VtrDetailPage() {
         </div>
         <div className="kpi-card">
           <div className="kpi-label">ULT. ABASTECIMENTO</div>
-          <div className="kpi-value" style={{ fontSize: 16 }}>
+          <div className="kpi-value" style={{ fontSize: 20 }}>
             {detail?.ultimo_abastecimento ? fmtDate(detail.ultimo_abastecimento) : '--'}
           </div>
         </div>
@@ -253,7 +259,7 @@ export default function VtrDetailPage() {
             <span style={{ fontSize: 13, color: 'var(--muted)' }}>
               {vtrManut.length} {vtrManut.length === 1 ? 'ordem de serviço' : 'ordens de serviço'}
             </span>
-            <button className="btn btn-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+            <button className="btn btn-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }} onClick={() => showToast('Módulo de OS em desenvolvimento', 'info')}>
               <Plus size={14} strokeWidth={2} />
               Nova OS
             </button>
@@ -408,7 +414,7 @@ export default function VtrDetailPage() {
                     <div style={{ width: 60, height: 80, border: '2px solid var(--line2)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span className="mono" style={{ fontSize: 9, color: 'var(--muted2)' }}>{vtr.placa}</span>
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>TRAS</div>
+                    <div style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>TRASEIRA</div>
                   </div>
                   {/* Front right */}
                   <TireSlot pneu={vtrPneus[1]} position="Diant. Dir." />

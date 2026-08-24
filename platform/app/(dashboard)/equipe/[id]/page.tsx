@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { mockFuncionariosDetail, mockAlocacoes, mockOcorrencias } from '@/lib/mock-data';
 import type { FuncionarioDetail, FuncionarioStatus, Alocacao, Ocorrencia } from '@/lib/mock-data';
@@ -42,9 +43,12 @@ function isCnhExpiringSoon(dateStr?: string): boolean {
   return new Date(dateStr) < sixMonths;
 }
 
+function fmtDateBR(d: string): string {
+  return new Date(d).toLocaleDateString('pt-BR');
+}
+
 export default function FuncionarioDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'info' | 'alocacoes' | 'historico'>('info');
 
   const sofitId = Number(params.id);
@@ -53,9 +57,9 @@ export default function FuncionarioDetailPage() {
   if (!emp) {
     return (
       <div>
-        <button onClick={() => router.push('/equipe')} className="btn btn-outline mb-4" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <Link href="/equipe" className="btn btn-outline mb-4" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
           <ArrowLeft size={14} /> Voltar
-        </button>
+        </Link>
         <p className="text-muted" style={{ fontSize: '13px' }}>Funcionário não encontrado.</p>
       </div>
     );
@@ -78,13 +82,14 @@ export default function FuncionarioDetailPage() {
     <div>
       {/* Back + Breadcrumb */}
       <div className="mb-4 flex items-center gap-3">
-        <button onClick={() => router.push('/equipe')} className="btn btn-outline" style={{ padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <ArrowLeft size={14} /> Voltar
-        </button>
-        <p className="breadcrumb" style={{ marginBottom: 0 }}>
-          EQUIPE / {emp.nome.toUpperCase()}
-        </p>
+        <Link href="/equipe" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '12.5px', textDecoration: 'none', color: 'var(--muted)' }}>
+          <ArrowLeft size={14} strokeWidth={1.5} />
+          Voltar para Equipe
+        </Link>
       </div>
+      <p className="breadcrumb" style={{ marginBottom: 8 }}>
+        EQUIPE / {emp.nome.toUpperCase()}
+      </p>
 
       {/* Hero */}
       <div className="mb-5">
@@ -124,7 +129,7 @@ export default function FuncionarioDetailPage() {
             <div className="kpi-value mono" style={{ fontSize: '16px' }}>{emp.cnh ?? '\u2014'}</div>
             {emp.cnh_vencimento && (
               <div className="kpi-sub mono" style={{ color: cnhExpiring ? 'var(--red)' : 'var(--muted)', fontWeight: cnhExpiring ? 700 : 400 }}>
-                Venc. {emp.cnh_vencimento}
+                Venc. {fmtDateBR(emp.cnh_vencimento!)}
               </div>
             )}
           </div>
@@ -193,7 +198,7 @@ function TabInfo({ emp, cnhExpiring }: { emp: FuncionarioDetail; cnhExpiring: bo
         ]
       : [
           { label: 'Matrícula', value: emp.matricula ?? '\u2014', mono: true },
-          { label: 'CNH Vencimento', value: emp.cnh_vencimento ?? '\u2014', mono: true, alert: cnhExpiring },
+          { label: 'CNH Vencimento', value: emp.cnh_vencimento ? fmtDateBR(emp.cnh_vencimento) : '\u2014', mono: true, alert: cnhExpiring },
         ],
     healthPro
       ? [
@@ -277,8 +282,8 @@ function TabAlocacoes({ alocacoes }: { alocacoes: Alocacao[] }) {
                   </div>
                   <div className="mono" style={{ fontSize: '10px', color: 'var(--muted2)' }}>
                     {isCurrent
-                      ? `Desde ${a.data_inicio}`
-                      : `${a.data_inicio} até ${a.data_fim}`}
+                      ? `Desde ${fmtDateBR(a.data_inicio)}`
+                      : `${fmtDateBR(a.data_inicio)} até ${fmtDateBR(a.data_fim!)}`}
                   </div>
                 </div>
               </div>
@@ -320,7 +325,7 @@ function TabHistorico({ ocorrencias }: { ocorrencias: Ocorrencia[] }) {
               }}
             >
               <span className="mono" style={{ fontSize: '11px', color: 'var(--muted2)', flexShrink: 0, minWidth: 80, paddingTop: 2 }}>
-                {o.data}
+                {fmtDateBR(o.data)}
               </span>
               <span className="pill" style={{ background: tp.bg, color: tp.color, flexShrink: 0 }}>
                 {tp.label}

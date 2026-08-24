@@ -63,7 +63,7 @@ export function RailNav() {
         })}
 
         <div className="rail-sep" />
-        <span className="rail-section-label">Gestao</span>
+        <span className="rail-section-label">Gestão</span>
 
         {gestaoNav.map((item) => {
           const active = isActive(item.href);
@@ -87,7 +87,7 @@ export function RailNav() {
           className={`rail-item ${pathname.startsWith('/configuracoes') ? 'rail-item-active' : ''}`}
         >
           <Settings size={19} strokeWidth={1.9} />
-          <span className="rail-tooltip">Configuracoes</span>
+          <span className="rail-tooltip">Configurações</span>
         </Link>
       </div>
 

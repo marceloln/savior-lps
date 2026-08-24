@@ -7,6 +7,7 @@ import { mockVtrs, statusPill, statusLabel, tipoVtrPill, vtrStats } from '@/lib/
 import type { Vtr, VtrStatus, VtrTipo } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
+import { useToast } from '@/components/ui/toast';
 import Link from 'next/link';
 
 type FilterStatus = 'todas' | VtrStatus;
@@ -35,6 +36,7 @@ function getRegiao(lat: number): string {
 
 export default function FrotaPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('todas');
   const [tipoFilter, setTipoFilter] = useState<FilterTipo>('todos');
   const [search, setSearch] = useState('');
@@ -210,7 +212,7 @@ export default function FrotaPage() {
                 <tr
                   key={vtr.id}
                   className="table-row-click"
-                  onClick={() => openEdit(vtr)}
+                  onClick={() => router.push('/frota/' + vtr.id)}
                 >
                   <td className="td">
                     <span className="font-display" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)' }}>
@@ -289,7 +291,7 @@ export default function FrotaPage() {
             )}
             <div style={{ display: 'flex', gap: 10, marginLeft: editingVtr ? 0 : 'auto' }}>
               <button className="btn btn-outline" onClick={() => setSlideOpen(false)}>Cancelar</button>
-              <button className="btn btn-green" onClick={() => setSlideOpen(false)}>Salvar</button>
+              <button className="btn btn-green" onClick={() => { setSlideOpen(false); showToast('Veículo salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }

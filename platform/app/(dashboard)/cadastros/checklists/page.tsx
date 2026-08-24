@@ -49,11 +49,11 @@ const resultadoPill: Record<string, string> = {
   reprovado: 'pill-red',
 };
 
-const tipoBadge: Record<string, string> = {
-  bool: 'pill-slate',
-  foto: 'pill-violet',
-  número: 'pill-blue',
-  texto: 'pill-amber',
+const tipoBadge: Record<string, { cls: string; icon: string }> = {
+  bool: { cls: 'pill-slate', icon: '\u2713' },
+  foto: { cls: 'pill-violet', icon: '\uD83D\uDCF7' },
+  número: { cls: 'pill-blue', icon: '\uD83D\uDD22' },
+  texto: { cls: 'pill-amber', icon: '\uD83D\uDCDD' },
 };
 
 // ── Main ─────────────────────────────────────────────────────────────────
@@ -300,7 +300,7 @@ function ModeloCard({ modelo, expanded, onToggle }: { modelo: ChecklistModelo; e
                     }}
                   >
                     <span style={{ flex: 1, color: 'var(--ink)' }}>{item.nome}</span>
-                    <span className={`pill ${tipoBadge[item.tipo] || 'pill-slate'}`}>{item.tipo}</span>
+                    <span className={`pill ${(tipoBadge[item.tipo] || { cls: 'pill-slate' }).cls}`}>{(tipoBadge[item.tipo] || { icon: '' }).icon} {item.tipo}</span>
                     {item.obrigatorio && (
                       <span className="pill pill-red" style={{ fontSize: 7 }}>obrigatório</span>
                     )}

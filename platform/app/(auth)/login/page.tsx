@@ -69,7 +69,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="panel" style={{ padding: '24px', background: 'var(--bg)' }}>
+        <form onSubmit={handleSubmit} className="panel" style={{ padding: '24px', background: 'var(--card)' }}>
           <div className="flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="form-label">
@@ -150,7 +150,7 @@ export default function LoginPage() {
           marginTop: 24,
           letterSpacing: '0.04em',
         }}>
-          Savior Medical Service · v0.1
+          Savior Medical Service · v0.2
         </p>
       </div>
     </div>
