@@ -56,11 +56,11 @@ function chamadoGroup(c: Chamado): PriorityGroup {
   return 'aguardando';
 }
 
-const groupConfig: Record<PriorityGroup, { label: string; color: string }> = {
-  urgente: { label: 'Urgente', color: 'var(--red)' },
-  em_andamento: { label: 'Em andamento', color: 'var(--amber)' },
-  aguardando: { label: 'Aguardando', color: 'var(--blue)' },
-  concluido: { label: 'Concluídos', color: 'var(--green)' },
+const groupConfig: Record<PriorityGroup, { label: string; sqClass: string; nameClass: string }> = {
+  urgente: { label: 'Urgente', sqClass: 'grp-sq-red', nameClass: 'grp-name-red' },
+  em_andamento: { label: 'Em andamento', sqClass: 'grp-sq-amber', nameClass: 'grp-name-amber' },
+  aguardando: { label: 'Aguardando', sqClass: 'grp-sq-blue', nameClass: 'grp-name-blue' },
+  concluido: { label: 'Concluídos', sqClass: 'grp-sq-green', nameClass: 'grp-name-green' },
 };
 
 const groupOrder: PriorityGroup[] = ['urgente', 'em_andamento', 'aguardando', 'concluido'];
@@ -253,9 +253,9 @@ export default function CentralPage() {
       {/* ════════ LEFT: Inbox ════════ */}
       <div className="central-inbox">
         {/* Header — Line 1: Title + live dot + count */}
-        <div style={{ padding: '16px 18px 0', borderBottom: '1px solid var(--line)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
-            <h2 className="font-display" style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.02em' }}>
+        <div className="inbox-header-top">
+          <div className="flex items-center gap-[9px] mb-[10px]">
+            <h2 className="font-display text-[19px] font-bold tracking-display">
               Central
             </h2>
             <span className="live-dot" />
@@ -263,12 +263,11 @@ export default function CentralPage() {
           </div>
 
           {/* Line 2: Search + Novo button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <div style={{ flex: 1, position: 'relative' }}>
-              <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
+          <div className="flex items-center gap-2 mb-[10px]">
+            <div className="flex-1 relative">
+              <Search size={13} className="inbox-search-icon" />
               <input
-                className="inbox-search"
-                style={{ paddingLeft: 30 }}
+                className="inbox-search pl-[30px]"
                 placeholder="/ Buscar paciente, número, origem..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -280,7 +279,7 @@ export default function CentralPage() {
           </div>
 
           {/* Segment toggle */}
-          <div className="segment-toggle" style={{ marginBottom: 10 }}>
+          <div className="segment-toggle mb-[10px]">
             <button className={segment === 'chamados' ? 'seg-active' : ''} onClick={() => setSegment('chamados')}>
               Chamados
             </button>
@@ -291,7 +290,7 @@ export default function CentralPage() {
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 24px' }}>
+        <div className="flex-1 overflow-y-auto py-[4px_0_24px]" >
           {segment === 'chamados' ? (
             /* ── Chamado inbox ── */
             <>
@@ -304,12 +303,12 @@ export default function CentralPage() {
                 return (
                   <div key={g} className={`grp${isCollapsed ? ' collapsed' : ''}`}>
                     <div className="grp-h" onClick={() => toggleGroup(g)}>
-                      <span className="grp-sq" style={{ background: cfg.color }} />
-                      <span className="grp-name" style={{ color: cfg.color }}>{cfg.label}</span>
+                      <span className={`grp-sq ${cfg.sqClass}`} />
+                      <span className={`grp-name ${cfg.nameClass}`}>{cfg.label}</span>
                       <span className="grp-count">{items.length}</span>
                       <span className="grp-chev"><ChevronDown size={13} /></span>
                     </div>
-                    <div className="grp-items" style={{ padding: '0 8px' }}>
+                    <div className="grp-items px-2">
                       {items.map(c => {
                         const isSel = selectedId === c.id;
                         const needsIntervention = c.status === 'aberto' && c.prioridade === 'urgente';
@@ -330,8 +329,8 @@ export default function CentralPage() {
                               {needsIntervention && <InboxUrgentTimer chamado={c} />}
                               {sla.text && (
                                 <span className={`sla-badge ${sla.cls}`}>
-                                  {sla.cls === 'sla-route' && <span className="live-dot" style={{ width: 5, height: 5 }} />}
-                                  {sla.cls === 'sla-crit' && <span className="crit-dot" style={{ width: 5, height: 5, boxShadow: 'none' }} />}
+                                  {sla.cls === 'sla-route' && <span className="live-dot sla-dot-sm" />}
+                                  {sla.cls === 'sla-crit' && <span className="crit-dot crit-dot-sm" />}
                                   {sla.text}
                                 </span>
                               )}
@@ -340,7 +339,7 @@ export default function CentralPage() {
                               <span className={`pill ${svPill.pill}`}>{svPill.label}</span>
                               <span className="qi-svc">{c.origem.split(' — ')[0]}</span>
                             </div>
-                            <div className="qi-bot" style={{ gap: 5 }}>
+                            <div className="qi-bot gap-[5px]">
                               <span className="qi-id">{canalConfig[c.canal].label}</span>
                               <span className="qi-id">{'\u00B7'}</span>
                               <span className="qi-id">
@@ -352,13 +351,12 @@ export default function CentralPage() {
                                   <span className="qi-value">{formatCurrency(c.valor_cotado)}</span>
                                 </>
                               )}
-                              {c.bot_managed && <span style={{ fontSize: 10 }}>{'\uD83E\uDD16'}</span>}
-                              {!c.bot_managed && <span style={{ fontSize: 10 }}>{'\uD83D\uDCDE'}</span>}
+                              {c.bot_managed && <span className="text-xs">{'\uD83E\uDD16'}</span>}
+                              {!c.bot_managed && <span className="text-xs">{'\uD83D\uDCDE'}</span>}
                             </div>
                             {needsIntervention && !isSel && (
                               <button
-                                className="assume-btn"
-                                style={{ marginTop: 4, alignSelf: 'flex-start' }}
+                                className="assume-btn mt-1 self-start"
                                 onClick={e => { e.stopPropagation(); handleSelectChamado(c.id); handleAssumir(); }}
                               >
                                 Assumir
@@ -383,13 +381,13 @@ export default function CentralPage() {
                     className={`feed-item ${getEventClass(event.type)} ${isSelected ? 'selected' : ''}`}
                     onClick={() => handleEventClick(event)}
                   >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                    <div className="flex items-start gap-2">
                       <span className="feed-time">{event.timestamp}</span>
                       <span className="feed-bot-icon">{getEventIcon(event.type)}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="flex-1 min-w-0">
                         <p className="feed-desc">{event.description}</p>
                         {event.detail && (
-                          <p className="feed-detail" style={{ whiteSpace: 'pre-line' }}>{event.detail}</p>
+                          <p className="feed-detail whitespace-pre-line">{event.detail}</p>
                         )}
                       </div>
                       {event.type === 'intervention' && !isSelected && (
@@ -419,50 +417,49 @@ export default function CentralPage() {
           <>
             {/* ── Workspace header ── */}
             <div className="ws-head">
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 7 }}>
-                    <span className="mono" style={{ fontSize: 14, fontWeight: 600, color: 'var(--muted)' }}>
+              <div className="flex items-start gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-[9px] mb-[7px]">
+                    <span className="mono text-sm fw-600 text-muted">
                       #{selected.numero}
                     </span>
                     {sv && <span className={`pill ${sv.pill}`}>{sv.label}</span>}
                     <span className={`pill ${statusPill[selected.status]}`}>{statusLabel[selected.status]}</span>
                     {selected.bot_managed ? (
-                      <span className="pill pill-green" style={{ marginLeft: 'auto' }}>
+                      <span className="pill pill-green ml-auto">
                         <Bot size={10} /> BOT GERENCIANDO
                       </span>
                     ) : (
-                      <span className="pill pill-blue" style={{ marginLeft: 'auto' }}>
+                      <span className="pill pill-blue ml-auto">
                         <Phone size={10} /> ATENDIMENTO DIRETO
                       </span>
                     )}
                   </div>
-                  <h2 className="font-display" style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1 }}>
+                  <h2 className="font-display text-[22px] font-bold tracking-tight leading-none">
                     {selected.paciente_nome}
                   </h2>
-                  <p style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>
-                    {selected.paciente_idade > 0 && <><b style={{ color: 'var(--ink2)', fontWeight: 600 }}>{selected.paciente_idade} anos</b> {'\u00B7'} </>}
-                    Solicitante: <b style={{ color: 'var(--ink2)', fontWeight: 600 }}>{selected.solicitante_nome}</b>
+                  <p className="ws-patient-meta">
+                    {selected.paciente_idade > 0 && <><b>{selected.paciente_idade} anos</b> {'\u00B7'} </>}
+                    Solicitante: <b>{selected.solicitante_nome}</b>
                     {' '}{'\u00B7'} {canalConfig[selected.canal].label}
-                    {selected.atendente && <> {'\u00B7'} Atendente: <b style={{ color: 'var(--ink2)', fontWeight: 600 }}>{selected.atendente}</b></>}
+                    {selected.atendente && <> {'\u00B7'} Atendente: <b>{selected.atendente}</b></>}
                   </p>
                 </div>
 
                 {selected.eta_minutos && (
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <p className="font-display" style={{
-                      fontSize: 28, fontWeight: 700, lineHeight: 0.9, letterSpacing: '-0.02em',
-                      color: selected.eta_minutos <= 10 ? 'var(--green)' : selected.eta_minutos <= 20 ? 'var(--amber)' : 'var(--red)',
-                    }}>
-                      {selected.eta_minutos}<span style={{ fontSize: 14 }}>min</span>
+                  <div className="text-right shrink-0">
+                    <p className={`font-display text-[28px] font-bold leading-[0.9] tracking-display ${
+                      selected.eta_minutos <= 10 ? 'text-green' : selected.eta_minutos <= 20 ? 'text-amber' : 'text-red'
+                    }`}>
+                      {selected.eta_minutos}<span className="text-sm">min</span>
                     </p>
-                    <p className="label" style={{ marginTop: 5 }}>ETA ESTIMADO</p>
+                    <p className="label mt-[5px]">ETA ESTIMADO</p>
                   </div>
                 )}
               </div>
 
               {/* Functional tabs */}
-              <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+              <div className="flex gap-1 mt-[14px]">
                 {(['atendimento', 'historico', 'financeiro'] as WorkspaceTab[]).map(t => (
                   <button
                     key={t}
@@ -476,23 +473,23 @@ export default function CentralPage() {
             </div>
 
             {/* ── Tab content ── */}
-            <div className="ws-body" style={{ flex: 1 }}>
+            <div className="ws-body flex-1">
               {wsTab === 'atendimento' && (
                 <>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 18 }}>
+                  <div className="grid grid-cols-[1.2fr_1fr] gap-[18px]">
                     {/* LEFT: Paciente + Trajeto + Serviço */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div className="flex flex-col gap-4">
                       {/* Paciente */}
-                      <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>PACIENTE</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <User size={14} style={{ color: 'var(--muted2)' }} />
-                            <span style={{ fontSize: 13, fontWeight: 600 }}>{selected.paciente_nome}</span>
+                      <div className="panel p-[18px]">
+                        <p className="label panel-label">PACIENTE</p>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <User size={14} className="text-muted2" />
+                            <span className="text-md fw-600">{selected.paciente_nome}</span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <Phone size={14} style={{ color: 'var(--muted2)' }} />
-                            <span className="mono" style={{ fontSize: 12 }}>{selected.paciente_telefone}</span>
+                          <div className="flex items-center gap-2">
+                            <Phone size={14} className="text-muted2" />
+                            <span className="mono text-base">{selected.paciente_telefone}</span>
                           </div>
                           {selected.paciente_idade > 0 && (
                             <div className="ws-info-row">
@@ -504,30 +501,30 @@ export default function CentralPage() {
                       </div>
 
                       {/* Trajeto */}
-                      <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>TRAJETO</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <MapPin size={14} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 2 }} />
+                      <div className="panel p-[18px]">
+                        <p className="label panel-label">TRAJETO</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex gap-2">
+                            <MapPin size={14} className="text-green shrink-0 mt-[2px]" />
                             <div>
-                              <p className="label" style={{ color: 'var(--green)', marginBottom: 2 }}>ORIGEM</p>
-                              <p style={{ fontSize: 12, color: 'var(--ink)' }}>{selected.origem}</p>
+                              <p className="label text-green mb-[2px]">ORIGEM</p>
+                              <p className="text-base text-ink">{selected.origem}</p>
                             </div>
                           </div>
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <MapPin size={14} style={{ color: 'var(--red)', flexShrink: 0, marginTop: 2 }} />
+                          <div className="flex gap-2">
+                            <MapPin size={14} className="text-red shrink-0 mt-[2px]" />
                             <div>
-                              <p className="label" style={{ color: 'var(--red)', marginBottom: 2 }}>DESTINO</p>
-                              <p style={{ fontSize: 12, color: 'var(--ink)' }}>{selected.destino}</p>
+                              <p className="label text-red mb-[2px]">DESTINO</p>
+                              <p className="text-base text-ink">{selected.destino}</p>
                             </div>
                           </div>
                           {selected.distancia_km && (
-                            <div style={{ display: 'flex', gap: 16, paddingTop: 6, borderTop: '1px solid var(--line)' }}>
-                              <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
+                            <div className="flex gap-4 pt-[6px] border-t border-[var(--line)]">
+                              <span className="mono text-sm text-muted">
                                 {selected.distancia_km} km
                               </span>
                               {selected.eta_minutos && (
-                                <span className="mono" style={{ fontSize: 11, color: 'var(--green-d)' }}>
+                                <span className="mono text-sm text-green-d">
                                   ETA {selected.eta_minutos} min
                                 </span>
                               )}
@@ -537,9 +534,9 @@ export default function CentralPage() {
                       </div>
 
                       {/* Serviço */}
-                      <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>SERVIÇO</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <div className="panel p-[18px]">
+                        <p className="label panel-label">SERVIÇO</p>
+                        <div className="flex flex-col gap-1">
                           <div className="ws-info-row">
                             <span className="ws-key">Tipo</span>
                             <span className="ws-val">{sv && <span className={`pill ${sv.pill}`}>{sv.label}</span>}</span>
@@ -547,7 +544,7 @@ export default function CentralPage() {
                           {selected.valor_cotado && (
                             <div className="ws-info-row">
                               <span className="ws-key">Valor</span>
-                              <span className="ws-val mono" style={{ fontSize: 14, fontWeight: 700 }}>{formatCurrency(selected.valor_cotado)}</span>
+                              <span className="ws-val mono text-sm font-bold">{formatCurrency(selected.valor_cotado)}</span>
                             </div>
                           )}
                           <div className="ws-info-row">
@@ -563,48 +560,46 @@ export default function CentralPage() {
                     </div>
 
                     {/* RIGHT: VTR + Ações + Bot timeline */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div className="flex flex-col gap-4">
                       {/* VTR */}
-                      <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>VTR ATRIBUÍDA</p>
+                      <div className="panel p-[18px]">
+                        <p className="label panel-label">VTR ATRIBUÍDA</p>
                         {selected.vtr_placa ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <Truck size={14} style={{ color: 'var(--muted2)' }} />
-                              <span className="mono" style={{ fontSize: 14, fontWeight: 700 }}>{selected.vtr_placa}</span>
-                              {selected.vtr_nome && <span className="pill pill-slate" style={{ fontSize: 7 }}>VTR {selected.vtr_nome}</span>}
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                              <Truck size={14} className="text-muted2" />
+                              <span className="mono text-sm font-bold">{selected.vtr_placa}</span>
+                              {selected.vtr_nome && <span className="pill pill-slate text-[7px]">VTR {selected.vtr_nome}</span>}
                             </div>
-                            {selected.equipe && <p style={{ fontSize: 11, color: 'var(--muted)' }}>{selected.equipe}</p>}
+                            {selected.equipe && <p className="text-sm text-muted">{selected.equipe}</p>}
                             {selected.eta_minutos && (
-                              <span className={`sla-badge ${selected.eta_minutos <= 10 ? 'sla-ok' : selected.eta_minutos <= 20 ? 'sla-warn' : 'sla-crit'}`} style={{ alignSelf: 'flex-start' }}>
-                                <span className="live-dot" style={{ width: 5, height: 5 }} />
+                              <span className={`sla-badge ${selected.eta_minutos <= 10 ? 'sla-ok' : selected.eta_minutos <= 20 ? 'sla-warn' : 'sla-crit'} self-start`}>
+                                <span className="live-dot sla-dot-sm" />
                                 ETA {selected.eta_minutos} min
                               </span>
                             )}
                           </div>
                         ) : (
                           <div>
-                            <p style={{ fontSize: 12, color: 'var(--muted2)', marginBottom: 10 }}>Nenhuma VTR atribuída</p>
+                            <p className="text-base text-muted2 mb-[10px]">Nenhuma VTR atribuída</p>
                             <button
-                              className="btn btn-outline"
-                              style={{ fontSize: 11, padding: '8px 14px' }}
+                              className="btn btn-outline btn-outline-sm"
                               onClick={() => setShowVtrPicker(!showVtrPicker)}
                             >
                               <MapPin size={12} /> Selecionar VTR
                             </button>
                             {/* VTR picker dropdown */}
                             {showVtrPicker && (
-                              <div style={{ marginTop: 8, border: '1px solid var(--line)', borderRadius: 'var(--r)', overflow: 'hidden' }}>
+                              <div className="vtr-picker">
                                 {pickerVtrs.map(v => (
                                   <div
                                     key={v.id}
-                                    className="table-row-click"
-                                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderBottom: '1px solid var(--line)' }}
+                                    className="table-row-click vtr-picker-row"
                                     onClick={() => handleSelectVtr(v)}
                                   >
-                                    <span className="mono" style={{ fontSize: 11, fontWeight: 700 }}>{v.nome}</span>
-                                    <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>{v.placa}</span>
-                                    <span className={`pill ${v.tipo === 'uti' ? 'pill-red' : v.tipo === 'moto' ? 'pill-amber' : 'pill-green'}`} style={{ fontSize: 7, marginLeft: 'auto' }}>
+                                    <span className="mono text-sm fw-700">{v.nome}</span>
+                                    <span className="mono text-xs text-muted">{v.placa}</span>
+                                    <span className={`pill ${v.tipo === 'uti' ? 'pill-red' : v.tipo === 'moto' ? 'pill-amber' : 'pill-green'} text-[7px] ml-auto`}>
                                       {v.tipo.toUpperCase()}
                                     </span>
                                   </div>
@@ -616,22 +611,22 @@ export default function CentralPage() {
                       </div>
 
                       {/* Ações */}
-                      <div className="panel" style={{ padding: 18 }}>
-                        <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>AÇÕES</p>
+                      <div className="panel p-[18px]">
+                        <p className="label panel-label">AÇÕES</p>
                         <div className="action-panel">
                           {selected.bot_managed ? (
                             <>
                               {interventionMode ? (
-                                <button className="btn btn-outline" onClick={handleDevolver} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-outline action-btn-inner" onClick={handleDevolver}>
                                   <Bot size={14} /> Devolver ao bot
                                 </button>
                               ) : (
-                                <button className="btn btn-outline" onClick={handleAssumir} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-outline action-btn-inner" onClick={handleAssumir}>
                                   <AlertTriangle size={14} /> Assumir conversa
                                 </button>
                               )}
                               {selected.status === 'aprovado' && (
-                                <button className="btn btn-green" onClick={handleDespachar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-green action-btn-inner" onClick={handleDespachar}>
                                   <CheckCircle2 size={14} /> Aprovar despacho
                                 </button>
                               )}
@@ -639,16 +634,16 @@ export default function CentralPage() {
                           ) : (
                             <>
                               {!selected.valor_cotado && (
-                                <button className="btn btn-green" onClick={handleEnviarCotacao} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-green action-btn-inner" onClick={handleEnviarCotacao}>
                                   <DollarSign size={14} /> Enviar cotação
                                 </button>
                               )}
                               {selected.vtr_placa && selected.status !== 'em_transito' && selected.status !== 'concluido' && (
-                                <button className="btn btn-green" onClick={handleDespachar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                                <button className="btn btn-green action-btn-inner" onClick={handleDespachar}>
                                   <Truck size={14} /> Despachar
                                 </button>
                               )}
-                              <button className="btn btn-outline" onClick={handleCancelar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, color: 'var(--red)', borderColor: 'var(--red-l)' }}>
+                              <button className="btn btn-outline action-btn-inner action-btn-cancel" onClick={handleCancelar}>
                                 <X size={14} /> Cancelar
                               </button>
                             </>
@@ -658,9 +653,9 @@ export default function CentralPage() {
 
                       {/* Bot timeline (only for bot-managed) */}
                       {selected.bot_managed && selectedSteps.length > 0 && (
-                        <div className="panel" style={{ padding: 18 }}>
-                          <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>
-                            <Bot size={11} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+                        <div className="panel p-[18px]">
+                          <p className="label panel-label">
+                            <Bot size={11} className="inline align-middle mr-1" />
                             TIMELINE DO BOT
                           </p>
                           <div className="bot-timeline">
@@ -684,48 +679,45 @@ export default function CentralPage() {
 
                   {/* Chat section below */}
                   {(selected.canal === 'whatsapp' || selected.canal === 'site') && (
-                    <div className="panel" style={{ marginTop: 18, overflow: 'hidden', padding: 0 }}>
-                      <div className="panel-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <MessageCircle size={14} style={{ color: 'var(--green)' }} />
+                    <div className="panel mt-[18px] overflow-hidden p-0">
+                      <div className="panel-header flex items-center gap-2">
+                        <MessageCircle size={14} className="text-green" />
                         <span className="panel-title">WhatsApp</span>
                         {selected.bot_managed && !interventionMode && (
-                          <span className="pill pill-green" style={{ marginLeft: 'auto', fontSize: 7 }}><Bot size={9} /> BOT ATIVO</span>
+                          <span className="pill pill-green ml-auto text-[7px]"><Bot size={9} /> BOT ATIVO</span>
                         )}
                         {interventionMode && (
-                          <span className="pill pill-red" style={{ marginLeft: 'auto', fontSize: 7 }}>SUPERVISORA</span>
+                          <span className="pill pill-red ml-auto text-[7px]">SUPERVISORA</span>
                         )}
                       </div>
-                      <div className="chat" style={{ padding: '14px 16px', maxHeight: 300, overflowY: 'auto' }}>
+                      <div className="chat p-[14px_16px] max-h-[300px] overflow-y-auto">
                         {selectedChat.length > 0 ? (
                           selectedChat.map(msg => (
                             <div key={msg.id} className={msg.sender === 'operator' ? 'chat-bot' : 'chat-client'}>
-                              <p style={{ whiteSpace: 'pre-line' }}>{msg.text}</p>
+                              <p className="whitespace-pre-line">{msg.text}</p>
                               <p className="cmsg-time">{msg.time}</p>
                             </div>
                           ))
                         ) : (
-                          <p style={{ fontSize: 12, color: 'var(--muted2)', textAlign: 'center', padding: '20px 0' }}>
+                          <p className="text-base text-muted2 text-center py-5">
                             Sem conversa vinculada
                           </p>
                         )}
                         {interventionMode && (
-                          <div style={{
-                            padding: '8px 12px', borderRadius: 10, background: 'var(--amber-l)',
-                            fontSize: 11, fontWeight: 600, color: 'var(--amber)', textAlign: 'center', marginTop: 4,
-                          }}>
+                          <div className="intervention-banner">
                             Supervisora assumiu a conversa
                           </div>
                         )}
                       </div>
 
                       {interventionMode && (
-                        <div className="composer" style={{ padding: '0 16px 14px' }}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                        <div className="composer px-4 pb-[14px]">
+                          <div className="flex flex-wrap gap-2 mb-2">
                             <button className="quick-reply">Confirmar chegada</button>
                             <button className="quick-reply">Enviar cotação</button>
                             <button className="quick-reply">Atualizar ETA</button>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div className="flex items-center gap-2">
                             <input
                               className="chat-input"
                               placeholder="Responder como supervisora..."
@@ -742,8 +734,8 @@ export default function CentralPage() {
               )}
 
               {wsTab === 'historico' && (
-                <div className="panel" style={{ padding: 18 }}>
-                  <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>HISTÓRICO DE EVENTOS</p>
+                <div className="panel p-[18px]">
+                  <p className="label panel-label">HISTÓRICO DE EVENTOS</p>
                   {selectedSteps.length > 0 ? (
                     <div className="bot-timeline">
                       {selectedSteps.map((step, i) => {
@@ -756,7 +748,7 @@ export default function CentralPage() {
                             <span className="bot-tl-time">{step.time}</span>
                             <span className={`bot-tl-action ${actionClass}`}>
                               {step.action}
-                              <span style={{ display: 'block', fontSize: 10, color: 'var(--muted2)', marginTop: 2 }}>
+                              <span className="tl-actor">
                                 {selected.bot_managed ? 'Bot' : selected.atendente ?? 'Atendente'}
                               </span>
                             </span>
@@ -765,18 +757,18 @@ export default function CentralPage() {
                       })}
                     </div>
                   ) : (
-                    <p style={{ fontSize: 12, color: 'var(--muted2)' }}>Nenhum evento registrado</p>
+                    <p className="text-base text-muted2">Nenhum evento registrado</p>
                   )}
                 </div>
               )}
 
               {wsTab === 'financeiro' && (
-                <div className="panel" style={{ padding: 18 }}>
-                  <p className="label" style={{ marginBottom: 14, color: 'var(--muted2)' }}>FINANCEIRO</p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div className="panel p-[18px]">
+                  <p className="label panel-label">FINANCEIRO</p>
+                  <div className="flex flex-col gap-1">
                     <div className="ws-info-row">
                       <span className="ws-key">Valor cotado</span>
-                      <span className="ws-val mono" style={{ fontSize: 16, fontWeight: 700 }}>
+                      <span className="ws-val mono ws-val-lg">
                         {selected.valor_cotado ? formatCurrency(selected.valor_cotado) : '\u2014'}
                       </span>
                     </div>
@@ -786,7 +778,7 @@ export default function CentralPage() {
                     </div>
                     <div className="ws-info-row">
                       <span className="ws-key">Valor final</span>
-                      <span className="ws-val mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--green-d)' }}>
+                      <span className="ws-val mono ws-val-green">
                         {selected.valor_cotado ? formatCurrency(selected.valor_cotado) : '\u2014'}
                       </span>
                     </div>
@@ -799,9 +791,9 @@ export default function CentralPage() {
                       </span>
                     </div>
                     {selected.pagamento_status === 'pendente' && (
-                      <div style={{ marginTop: 14, padding: 20, background: 'var(--bg)', borderRadius: 'var(--r)', border: '1px dashed var(--line2)', textAlign: 'center' }}>
-                        <CreditCard size={20} style={{ color: 'var(--muted2)', marginBottom: 8 }} />
-                        <p style={{ fontSize: 11, color: 'var(--muted2)', lineHeight: 1.4 }}>
+                      <div className="payment-placeholder">
+                        <CreditCard size={20} className="payment-placeholder-icon" />
+                        <p className="payment-placeholder-text">
                           QR code será gerado após integração com gateway de pagamento
                         </p>
                       </div>
@@ -813,9 +805,9 @@ export default function CentralPage() {
           </>
         ) : (
           /* ── Operational dashboard (empty state) ── */
-          <div style={{ flex: 1, padding: 26 }}>
+          <div className="flex-1 p-[26px]">
             {/* Actionable hint */}
-            <div style={{ marginBottom: 16 }}>
+            <div className="mb-4">
               {urgentUnassigned.length > 0 ? (
                 <div
                   className="actionable-hint"
@@ -825,7 +817,7 @@ export default function CentralPage() {
                   <span>
                     {urgentUnassigned.length} chamado{urgentUnassigned.length > 1 ? 's' : ''} aguardando atribuição.
                   </span>
-                  <span style={{ fontWeight: 700, marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="dashboard-hint-cta">
                     Ver fila <ArrowRight size={12} />
                   </span>
                 </div>
@@ -838,49 +830,48 @@ export default function CentralPage() {
             </div>
 
             {/* KPI cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 22 }}>
+            <div className="kpi-grid">
               <div className="kpi-card">
                 <p className="kpi-label">CHAMADOS HOJE</p>
                 <p className="kpi-value">{chamadosHoje}</p>
               </div>
               <div className="kpi-card">
                 <p className="kpi-label">EM ANDAMENTO</p>
-                <p className="kpi-value" style={{ color: 'var(--amber)' }}>{emAndamento}</p>
+                <p className="kpi-value text-amber">{emAndamento}</p>
               </div>
               <div className="kpi-card">
                 <p className="kpi-label">TEMPO MÉDIO</p>
-                <p className="kpi-value">{tempoMedio}<span style={{ fontSize: 12, fontWeight: 400, color: 'var(--muted)' }}> min</span></p>
+                <p className="kpi-value">{tempoMedio}<span className="text-base fw-400 text-muted"> min</span></p>
               </div>
               <div className="kpi-card">
                 <p className="kpi-label">BOT AUTOMÁTICO</p>
-                <p className="kpi-value" style={{ color: 'var(--green)' }}>{botAutoRate}%</p>
+                <p className="kpi-value text-green">{botAutoRate}%</p>
               </div>
             </div>
 
             {/* Two columns */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+            <div className="dashboard-cols">
               {/* Chamados recentes */}
               <div className="panel">
-                <div className="panel-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Activity size={14} style={{ color: 'var(--muted2)' }} />
+                <div className="panel-header panel-header-flex">
+                  <Activity size={14} className="text-muted2" />
                   <span className="panel-title">Chamados recentes</span>
                 </div>
-                <div className="panel-body" style={{ padding: 0 }}>
+                <div className="panel-body p-0">
                   {mockChamados.filter(c => c.status !== 'concluido' && c.status !== 'cancelado').slice(0, 5).map(c => {
                     const svP = servicoPill[c.servico];
                     return (
                       <div
                         key={c.id}
-                        className="table-row-click"
-                        style={{ padding: '10px 16px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10 }}
+                        className="table-row-click recent-row"
                         onClick={() => handleSelectChamado(c.id)}
                       >
-                        <span className={`channel-icon ${canalClass(c.canal)}`} style={{ width: 18, height: 18, fontSize: 9 }}>
+                        <span className={`channel-icon ${canalClass(c.canal)} channel-icon-sm`}>
                           {canalIcon(c.canal)}
                         </span>
-                        <span style={{ fontSize: 12.5, fontWeight: 600, flex: 1 }}>{c.paciente_nome}</span>
-                        <span className={`pill ${svP.pill}`} style={{ fontSize: 7 }}>{svP.label}</span>
-                        <span className={`pill ${statusPill[c.status]}`} style={{ fontSize: 7 }}>{statusLabel[c.status]}</span>
+                        <span className="recent-name">{c.paciente_nome}</span>
+                        <span className={`pill ${svP.pill} pill-xs`}>{svP.label}</span>
+                        <span className={`pill ${statusPill[c.status]} pill-xs`}>{statusLabel[c.status]}</span>
                       </div>
                     );
                   })}
@@ -889,31 +880,31 @@ export default function CentralPage() {
 
               {/* Frota disponível */}
               <div className="panel">
-                <div className="panel-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Truck size={14} style={{ color: 'var(--muted2)' }} />
+                <div className="panel-header panel-header-flex">
+                  <Truck size={14} className="text-muted2" />
                   <span className="panel-title">Frota disponível</span>
-                  <span className="grp-count" style={{ marginLeft: 'auto' }}>{vtrStats.disponivel}</span>
+                  <span className="grp-count ml-auto">{vtrStats.disponivel}</span>
                 </div>
-                <div className="panel-body" style={{ padding: '8px 16px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
-                    <div style={{ textAlign: 'center', padding: 8, background: 'var(--green-l)', borderRadius: 8 }}>
-                      <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--green-d)' }}>{vtrStats.disponivel}</p>
-                      <p className="label" style={{ fontSize: 7 }}>DISPONÍVEL</p>
+                <div className="panel-body px-4 py-2">
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <div className="frota-stat-card bg-green-l">
+                      <p className="mono frota-stat-value text-green-d">{vtrStats.disponivel}</p>
+                      <p className="label frota-stat-label">DISPONÍVEL</p>
                     </div>
-                    <div style={{ textAlign: 'center', padding: 8, background: 'var(--amber-l)', borderRadius: 8 }}>
-                      <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--amber)' }}>{vtrStats.em_atendimento}</p>
-                      <p className="label" style={{ fontSize: 7 }}>ATENDIMENTO</p>
+                    <div className="frota-stat-card bg-amber-l">
+                      <p className="mono frota-stat-value text-amber">{vtrStats.em_atendimento}</p>
+                      <p className="label frota-stat-label">ATENDIMENTO</p>
                     </div>
-                    <div style={{ textAlign: 'center', padding: 8, background: 'var(--red-l)', borderRadius: 8 }}>
-                      <p className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--red)' }}>{vtrStats.manutencao}</p>
-                      <p className="label" style={{ fontSize: 7 }}>MANUTENÇÃO</p>
+                    <div className="frota-stat-card bg-red-l">
+                      <p className="mono frota-stat-value text-red">{vtrStats.manutencao}</p>
+                      <p className="label frota-stat-label">MANUTENÇÃO</p>
                     </div>
                   </div>
                   {availableVtrs.map(v => (
-                    <div key={v.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid var(--line)', fontSize: 12 }}>
-                      <span className="mono" style={{ fontWeight: 700, fontSize: 11 }}>{v.placa}</span>
-                      <span style={{ color: 'var(--muted)', flex: 1 }}>VTR {v.nome}</span>
-                      <span className={`pill ${v.tipo === 'uti' ? 'pill-red' : v.tipo === 'moto' ? 'pill-amber' : 'pill-green'}`} style={{ fontSize: 7 }}>
+                    <div key={v.id} className="vtr-list-row">
+                      <span className="mono fw-700 text-sm">{v.placa}</span>
+                      <span className="text-muted flex-1">VTR {v.nome}</span>
+                      <span className={`pill ${v.tipo === 'uti' ? 'pill-red' : v.tipo === 'moto' ? 'pill-amber' : 'pill-green'} pill-xs`}>
                         {v.tipo.toUpperCase()}
                       </span>
                     </div>

@@ -28,8 +28,11 @@ function chamadoDestIcon() {
 }
 
 /* ── Custom VTR marker icon ── */
+/* NOTE: Leaflet renders marker HTML outside React DOM tree.
+   Inline styles in the template string are required — CSS classes
+   defined in globals.css handle what they can, but layout styles
+   inside the tooltip HTML must remain inline. */
 function createVtrIcon(vtr: Vtr, isHighlighted: boolean, isSelected: boolean) {
-  // Display number: shorten MOTO names
   let displayNum = vtr.nome;
   if (vtr.tipo === 'moto') {
     displayNum = vtr.nome.replace('MOTO ', 'M');
@@ -52,20 +55,19 @@ function createVtrIcon(vtr: Vtr, isHighlighted: boolean, isSelected: boolean) {
     <div class="vtr-marker vtr-marker-${vtr.status} ${tipoClass} ${highlightClass} ${selectedClass}">
       <span class="vtr-marker-num">${displayNum}</span>
       <div class="vtr-tooltip">
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px">
-          <span class="font-display" style="font-size:14px; font-weight:700; color:var(--ink)">VTR ${vtr.nome}</span>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span class="font-display" style="font-size:14px;font-weight:700;color:var(--ink)">VTR ${vtr.nome}</span>
           <span class="pill ${pillClass}">${stLabel}</span>
         </div>
-        <div class="mono" style="font-size:11px; font-weight:700; color:var(--ink); letter-spacing:0.02em">${vtr.placa}</div>
-        <div style="font-size:10px; color:var(--muted); margin-top:2px">${vtr.modelo}</div>
-        <div style="display:flex; gap:4px; margin-top:6px; align-items:center">
+        <div class="mono" style="font-size:11px;font-weight:700;color:var(--ink);letter-spacing:0.02em">${vtr.placa}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${vtr.modelo}</div>
+        <div style="display:flex;gap:4px;margin-top:6px;align-items:center">
           <span class="pill ${tp.pill}" style="font-size:6px">${tp.label}</span>
         </div>
       </div>
     </div>
   `;
 
-  // Wider for moto/servico names
   const width = displayNum.length > 3 ? 90 : 80;
 
   return L.divIcon({
@@ -143,7 +145,6 @@ export default function MapaLeaflet({
   onSelectVtr,
   panToVtr,
 }: MapaLeafletProps) {
-  // Compute pan target
   let panTarget: [number, number] | null = null;
   let panBounds: L.LatLngBoundsExpression | null = null;
 
@@ -152,7 +153,6 @@ export default function MapaLeaflet({
     if (vtr) panTarget = [vtr.latitude, vtr.longitude];
   }
 
-  // Active chamados with coords
   const activeChamados = chamados
     .filter((c) => !['concluido', 'cancelado'].includes(c.status))
     .map((c) => ({ ...c, coords: getChamadoCoords(c) }))
@@ -167,7 +167,6 @@ export default function MapaLeaflet({
     panBounds = L.latLngBounds([origin, dest]);
   }
 
-  // Find nearby VTRs for selected chamado
   const nearbyVtrIds = new Set<string>();
   if (selectedChamado?.coords) {
     const { origin } = selectedChamado.coords;
@@ -190,7 +189,6 @@ export default function MapaLeaflet({
       zoom={12}
       className="h-full w-full"
       zoomControl={true}
-      style={{ background: '#1a1a2e' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://carto.com/">CARTO</a>'
@@ -216,7 +214,7 @@ export default function MapaLeaflet({
         );
       })}
 
-      {/* Chamado markers */}
+      {/* Chamado markers — Leaflet popup HTML uses inline styles by necessity */}
       {activeChamados.map((chamado) => {
         if (!chamado.coords) return null;
         const { origin, dest } = chamado.coords;
@@ -224,32 +222,29 @@ export default function MapaLeaflet({
 
         return (
           <span key={`chamado-${chamado.id}`}>
-            {/* Origin marker */}
             <Marker position={origin} icon={chamadoOriginIcon()}>
               <Popup>
                 <div className="map-popup">
                   <div className="map-popup-header">
-                    <span className="mono" style={{ fontSize: '11px', color: 'var(--green-d)', fontWeight: 700 }}>
+                    <span className="mono text-sm text-green-d fw-700">
                       #{chamado.numero}
                     </span>
                     <span className={`pill ${statusPill[chamado.status]}`}>
                       {statusLabel[chamado.status]}
                     </span>
                   </div>
-                  <div style={{ fontSize: '12px', fontWeight: 600, marginTop: 4 }}>
+                  <div className="text-base fw-600 mt-1">
                     {chamado.paciente_nome}
                   </div>
-                  <div style={{ fontSize: '10px', color: 'var(--muted)', marginTop: 2 }}>
+                  <div className="text-xs text-muted mt-0.5">
                     {chamado.origem}
                   </div>
                 </div>
               </Popup>
             </Marker>
 
-            {/* Destination marker */}
             <Marker position={dest} icon={chamadoDestIcon()} />
 
-            {/* Dashed line origin → destination */}
             <Polyline
               positions={[origin, dest]}
               pathOptions={{

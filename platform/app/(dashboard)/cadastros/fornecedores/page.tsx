@@ -38,16 +38,22 @@ export default function FornecedoresPage() {
     setCreating(false);
   };
 
+  const handleDelete = () => {
+    if (!confirm('Tem certeza que deseja excluir?')) return;
+    closePanel();
+    showToast('Item excluído', 'info');
+  };
+
   const isOpen = editing !== null || creating;
 
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Fornecedores</h1>
         </div>
         <button className="btn btn-green" onClick={openCreate}>
@@ -55,8 +61,8 @@ export default function FornecedoresPage() {
         </button>
       </div>
 
-      <div style={{ position: 'relative', display: 'inline-block', marginBottom: 16 }}>
-        <Search size={14} strokeWidth={1.8} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
+      <div className="search-wrapper mb-4">
+        <Search size={14} strokeWidth={1.8} className="search-icon-abs" />
         <input
           className="table-search"
           placeholder="Buscar fornecedor..."
@@ -66,9 +72,9 @@ export default function FornecedoresPage() {
       </div>
 
       <div className="panel">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
-            <tr style={{ textAlign: 'left' }}>
+            <tr className="text-left">
               <th className="th">Nome</th>
               <th className="th">CNPJ</th>
               <th className="th">Telefone</th>
@@ -81,12 +87,12 @@ export default function FornecedoresPage() {
           <tbody>
             {filtered.map((f) => (
               <tr key={f.id} className="table-row-click" onClick={() => openEdit(f)}>
-                <td className="td" style={{ fontWeight: 600 }}>{f.nome}</td>
-                <td className="td mono" style={{ fontSize: 11 }}>{f.cnpj}</td>
-                <td className="td mono" style={{ fontSize: 11 }}>{f.telefone}</td>
-                <td className="td" style={{ fontSize: 11, color: 'var(--muted)' }}>{f.email}</td>
-                <td className="td" style={{ fontSize: 11 }}>{f.tipo}</td>
-                <td className="td mono" style={{ fontSize: 11 }}>{f.uf}</td>
+                <td className="td fw-600">{f.nome}</td>
+                <td className="td mono text-sm">{f.cnpj}</td>
+                <td className="td mono text-sm">{f.telefone}</td>
+                <td className="td text-sm text-muted">{f.email}</td>
+                <td className="td text-sm">{f.tipo}</td>
+                <td className="td mono text-sm">{f.uf}</td>
                 <td className="td">
                   <span className={`pill ${f.ativo ? 'pill-green' : 'pill-slate'}`}>
                     {f.ativo ? 'ATIVO' : 'INATIVO'}
@@ -103,9 +109,9 @@ export default function FornecedoresPage() {
         onClose={closePanel}
         title={editing ? 'Editar fornecedor' : 'Novo fornecedor'}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
+          <div className="slide-footer-between">
             <div>
-              {editing && <button className="btn-red">Excluir</button>}
+              {editing && <button className="btn-red" onClick={handleDelete}>Excluir</button>}
             </div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>

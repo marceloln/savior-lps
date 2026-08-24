@@ -14,11 +14,11 @@ import { useToast } from '@/components/ui/toast';
 
 type ViewTab = 'pipeline' | 'base' | 'aquisicao';
 
-const estagios: { key: LeadEstagio; label: string; color: string }[] = [
-  { key: 'novo', label: 'Novo', color: 'var(--blue)' },
-  { key: 'qualificado', label: 'Qualificado', color: 'var(--violet)' },
-  { key: 'cotado', label: 'Cotado', color: 'var(--amber)' },
-  { key: 'negociando', label: 'Negociando', color: 'var(--green)' },
+const estagios: { key: LeadEstagio; label: string; dotCls: string }[] = [
+  { key: 'novo', label: 'Novo', dotCls: 'bg-blue' },
+  { key: 'qualificado', label: 'Qualificado', dotCls: 'bg-violet' },
+  { key: 'cotado', label: 'Cotado', dotCls: 'bg-amber' },
+  { key: 'negociando', label: 'Negociando', dotCls: 'bg-green' },
 ];
 
 const canalPill: Record<string, { label: string; cls: string }> = {
@@ -96,7 +96,7 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
   return (
     <>
       {/* Date filters */}
-      <div className="flex items-center gap-2" style={{ marginBottom: 16 }}>
+      <div className="flex items-center gap-2 mb-4">
         {([7, 30, 90] as const).map(d => (
           <button key={d} className={`chip ${dateRange === d ? 'chip-active' : ''}`} onClick={() => setDateRange(d)}>
             {d}d
@@ -105,14 +105,14 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
       </div>
 
       {/* KPI strip */}
-      <div className="grid grid-cols-3 gap-4" style={{ marginBottom: 20 }}>
+      <div className="grid grid-cols-3 gap-4 mb-5">
         <div className="kpi-card">
           <div className="kpi-label">Pipeline ativo</div>
           <div className="kpi-value">{totalPipeline}</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Valor pipeline</div>
-          <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmtR(pipelineValue)}</div>
+          <div className="kpi-value text-green">{fmtR(pipelineValue)}</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Tempo médio (dias)</div>
@@ -121,13 +121,13 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
       </div>
 
       {/* Kanban */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+      <div className="grid grid-cols-4 gap-3">
         {estagios.map(est => {
           const items = filtered.filter(l => l.estagio === est.key);
           return (
             <div key={est.key} className="kanban-column">
               <div className="kanban-column-header">
-                <div style={{ width: 8, height: 8, borderRadius: 2, background: est.color, flexShrink: 0 }} />
+                <div className={`kanban-dot ${est.dotCls}`} />
                 <span className="kanban-column-title">{est.label}</span>
                 <span className="kanban-column-count">{items.length}</span>
               </div>
@@ -136,24 +136,24 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
                   const canal = canalPill[lead.canal] || canalPill.outro;
                   return (
                     <div key={lead.id} className="kanban-card" onClick={() => onSelect(lead)}>
-                      <div style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12.5, marginBottom: 3 }}>
+                      <div className="font-display fw-700 text-base-1 mb-0.5">
                         {lead.nome}
                       </div>
                       {lead.empresa && (
-                        <div style={{ fontSize: 10, color: 'var(--muted)', marginBottom: 4 }}>{lead.empresa}</div>
+                        <div className="text-xs text-muted mb-1">{lead.empresa}</div>
                       )}
-                      <div className="flex items-center gap-2" style={{ marginBottom: 6 }}>
+                      <div className="flex items-center gap-2 mb-1.5">
                         <span className={`pill ${canal.cls}`}>{canal.label}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="mono" style={{ fontSize: 11, fontWeight: 700 }}>{fmtR(lead.valor_estimado)}</span>
-                        <span className="mono" style={{ fontSize: 9, color: 'var(--muted2)' }}>{timeAgo(lead.created_at)}</span>
+                        <span className="mono text-sm fw-700">{fmtR(lead.valor_estimado)}</span>
+                        <span className="mono text-[9px] text-muted2">{timeAgo(lead.created_at)}</span>
                       </div>
                     </div>
                   );
                 })}
                 {items.length === 0 && (
-                  <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted2)', fontSize: 11 }}>Nenhum lead neste estágio</div>
+                  <div className="p-4 text-center text-muted2 text-sm">Nenhum lead neste estágio</div>
                 )}
               </div>
             </div>
@@ -195,21 +195,20 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
   return (
     <>
       {/* Filters */}
-      <div className="flex items-center gap-3" style={{ marginBottom: 16, flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, maxWidth: 320 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: 11, color: 'var(--muted2)' }} />
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
+        <div className="search-wrapper flex-1 max-w-80">
+          <Search size={14} className="search-icon-abs" />
           <input
-            className="table-search"
-            style={{ width: '100%' }}
+            className="table-search w-full"
             placeholder="Buscar nome, empresa, telefone..."
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
         <div className="flex items-center gap-1">
-          <Filter size={13} style={{ color: 'var(--muted2)' }} />
+          <Filter size={13} className="text-muted2" />
         </div>
-        <select className="form-select" style={{ width: 140, padding: '6px 28px 6px 10px', fontSize: 11 }} value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
+        <select className="form-select w-[140px] py-1.5 px-2.5 text-sm" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
           <option value="todos">Status: Todos</option>
           <option value="novo">Novo</option>
           <option value="qualificado">Qualificado</option>
@@ -218,33 +217,33 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
           <option value="convertido">Convertido</option>
           <option value="perdido">Perdido</option>
         </select>
-        <select className="form-select" style={{ width: 140, padding: '6px 28px 6px 10px', fontSize: 11 }} value={canalFilter} onChange={e => { setCanalFilter(e.target.value); setPage(1); }}>
+        <select className="form-select w-[140px] py-1.5 px-2.5 text-sm" value={canalFilter} onChange={e => { setCanalFilter(e.target.value); setPage(1); }}>
           <option value="todos">Canal: Todos</option>
           <option value="whatsapp">WhatsApp</option>
           <option value="site">Site</option>
           <option value="telefone">Telefone</option>
           <option value="outro">Outro</option>
         </select>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginLeft: 'auto' }}>
+        <div className="mono text-xs text-muted ml-auto">
           {fmt(filtered.length)} leads
         </div>
       </div>
 
       {/* Table */}
-      <div className="panel" style={{ overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div className="panel overflow-hidden">
+        <table className="table-full">
           <thead>
             <tr>
-              <th className="th" style={{ textAlign: 'left' }}>Data</th>
-              <th className="th" style={{ textAlign: 'left' }}>Nome</th>
-              <th className="th" style={{ textAlign: 'left' }}>Empresa</th>
-              <th className="th" style={{ textAlign: 'left' }}>Canal</th>
-              <th className="th" style={{ textAlign: 'left' }}>Origem</th>
-              <th className="th" style={{ textAlign: 'left' }}>Campanha</th>
-              <th className="th" style={{ textAlign: 'left' }}>Serviço</th>
-              <th className="th" style={{ textAlign: 'right' }}>Valor</th>
-              <th className="th" style={{ textAlign: 'left' }}>Status</th>
-              <th className="th" style={{ textAlign: 'left' }}>Atendente</th>
+              <th className="th text-left">Data</th>
+              <th className="th text-left">Nome</th>
+              <th className="th text-left">Empresa</th>
+              <th className="th text-left">Canal</th>
+              <th className="th text-left">Origem</th>
+              <th className="th text-left">Campanha</th>
+              <th className="th text-left">Serviço</th>
+              <th className="th text-right">Valor</th>
+              <th className="th text-left">Status</th>
+              <th className="th text-left">Atendente</th>
             </tr>
           </thead>
           <tbody>
@@ -255,24 +254,24 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
               const srcCls = sourcePill[sourceKey] || 'pill-slate';
               return (
                 <tr key={lead.id} className="table-row-click" onClick={() => onSelectEnriched(lead)}>
-                  <td className="td mono" style={{ fontSize: 10.5, whiteSpace: 'nowrap' }}>{fmtDate(lead.primeiro_contato)}</td>
-                  <td className="td" style={{ fontWeight: 600, fontSize: 12.5 }}>{lead.nome}</td>
-                  <td className="td" style={{ fontSize: 11, color: 'var(--muted)' }}>{lead.empresa || '\u2014'}</td>
+                  <td className="td mono text-xs-1 whitespace-nowrap">{fmtDate(lead.primeiro_contato)}</td>
+                  <td className="td fw-600 text-base-1">{lead.nome}</td>
+                  <td className="td text-sm text-muted">{lead.empresa || '\u2014'}</td>
                   <td className="td"><span className={`pill ${canal.cls}`}>{canal.label}</span></td>
                   <td className="td">
                     {lead.utm_source && (
                       <span className={`pill ${srcCls}`}>{lead.utm_source?.toUpperCase()}</span>
                     )}
                   </td>
-                  <td className="td" style={{ fontSize: 10.5, color: 'var(--muted)', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <td className="td text-xs-1 text-muted max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
                     {lead.utm_campaign || '\u2014'}
                   </td>
-                  <td className="td" style={{ fontSize: 11, color: 'var(--ink2)' }}>{lead.tipo_servico || '\u2014'}</td>
-                  <td className="td mono" style={{ fontSize: 11, fontWeight: 700, textAlign: 'right' }}>
+                  <td className="td text-sm text-ink2">{lead.tipo_servico || '\u2014'}</td>
+                  <td className="td mono text-sm fw-700 text-right">
                     {lead.valor_estimado ? fmtR(lead.valor_estimado) : '\u2014'}
                   </td>
                   <td className="td"><span className={`pill ${status.cls}`}>{status.label}</span></td>
-                  <td className="td" style={{ fontSize: 11, color: 'var(--muted)' }}>{lead.atendente || '\u2014'}</td>
+                  <td className="td text-sm text-muted">{lead.atendente || '\u2014'}</td>
                 </tr>
               );
             })}
@@ -281,15 +280,15 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between" style={{ marginTop: 12, padding: '0 4px' }}>
-        <div className="mono" style={{ fontSize: 10, color: 'var(--muted2)' }}>
+      <div className="flex items-center justify-between mt-3 px-1">
+        <div className="mono text-xs text-muted2">
           Página {page} de {totalPages}
         </div>
         <div className="flex items-center gap-2">
-          <button className="btn btn-outline" style={{ padding: '7px 14px', fontSize: '11px' }} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
+          <button className="btn btn-outline btn-paginate-md" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
             <ChevronLeft size={12} /> Anterior
           </button>
-          <button className="btn btn-outline" style={{ padding: '7px 14px', fontSize: '11px' }} disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
+          <button className="btn btn-outline btn-paginate-md" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
             Próxima <ChevronRight size={12} />
           </button>
         </div>
@@ -334,29 +333,29 @@ function AquisicaoView() {
   const monthEntries = Object.entries(monthCounts).sort((a, b) => a[0].localeCompare(b[0])).slice(-6);
   const maxMonth = Math.max(...monthEntries.map(e => e[1]), 1);
 
-  // Source colors
-  const srcColors: Record<string, string> = {
-    'google': 'var(--green)',
-    '(direct)': 'var(--slate)',
-    'chatgpt.com': 'var(--violet)',
-    'instagram': 'var(--amber)',
-    'facebook': 'var(--blue)',
-    'bing': 'var(--blue)',
-    'whatsapp': 'var(--green-d)',
-    'linkedin': 'var(--violet)',
+  // Source colors mapped to CSS classes
+  const srcBarCls: Record<string, string> = {
+    'google': 'bg-green',
+    '(direct)': 'bg-slate-l',
+    'chatgpt.com': 'bg-violet-l',
+    'instagram': 'bg-amber-l',
+    'facebook': 'bg-blue-l',
+    'bing': 'bg-blue-l',
+    'whatsapp': 'bg-green',
+    'linkedin': 'bg-violet-l',
   };
 
-  const canalColors: Record<string, string> = {
-    whatsapp: 'var(--green)',
-    site: 'var(--violet)',
-    telefone: 'var(--blue)',
-    outro: 'var(--slate)',
+  const canalBarCls: Record<string, string> = {
+    whatsapp: 'bg-green',
+    site: 'bg-violet-l',
+    telefone: 'bg-blue-l',
+    outro: 'bg-slate-l',
   };
 
   return (
     <>
       {/* KPI strip */}
-      <div className="grid grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
+      <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="kpi-card">
           <div className="kpi-label">Sessões totais</div>
           <div className="kpi-value">{fmt(totalSessions)}</div>
@@ -367,36 +366,33 @@ function AquisicaoView() {
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Conversões</div>
-          <div className="kpi-value" style={{ color: 'var(--green)' }}>{fmt(totalConversions)}</div>
+          <div className="kpi-value text-green">{fmt(totalConversions)}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-label">Taxa conversão</div>
+          <div className="kpi-label">Taxa de conversão</div>
           <div className="kpi-value">{(totalConversions / totalSessions * 100).toFixed(1)}%</div>
         </div>
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
+      <div className="grid grid-cols-2 gap-4">
         {/* Source breakdown (bar chart) */}
         <div className="panel">
           <div className="panel-header">
             <span className="panel-title">Sessões por fonte</span>
           </div>
-          <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="panel-body flex flex-col gap-2.5">
             {sourceEntries.map(([source, v]) => (
-              <div key={source} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div className="mono" style={{ fontSize: 10, width: 80, textAlign: 'right', color: 'var(--muted)', flexShrink: 0 }}>
+              <div key={source} className="flex items-center gap-2.5">
+                <div className="mono text-xs w-20 text-right text-muted shrink-0">
                   {source}
                 </div>
-                <div style={{ flex: 1, height: 18, background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${(v.sessions / maxSessions) * 100}%`,
-                    height: '100%',
-                    background: srcColors[source] || 'var(--muted2)',
-                    borderRadius: 4,
-                    minWidth: 4,
-                  }} />
+                <div className="flex-1 h-4.5 bg-page rounded overflow-hidden">
+                  <div
+                    className={`h-full rounded min-w-1 ${srcBarCls[source] || 'bg-slate-l'}`}
+                    style={{ width: `${(v.sessions / maxSessions) * 100}%` }}
+                  />
                 </div>
-                <div className="mono" style={{ fontSize: 10, fontWeight: 700, width: 50, color: 'var(--ink2)' }}>
+                <div className="mono text-xs fw-700 w-12.5 text-ink2">
                   {fmt(v.sessions)}
                 </div>
               </div>
@@ -409,22 +405,19 @@ function AquisicaoView() {
           <div className="panel-header">
             <span className="panel-title">Leads por canal</span>
           </div>
-          <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="panel-body flex flex-col gap-2.5">
             {canalEntries.map(([canal, count]) => (
-              <div key={canal} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div className="mono" style={{ fontSize: 10, width: 80, textAlign: 'right', color: 'var(--muted)', flexShrink: 0 }}>
+              <div key={canal} className="flex items-center gap-2.5">
+                <div className="mono text-xs w-20 text-right text-muted shrink-0">
                   {canal}
                 </div>
-                <div style={{ flex: 1, height: 18, background: 'var(--bg)', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${(count / maxCanal) * 100}%`,
-                    height: '100%',
-                    background: canalColors[canal] || 'var(--muted2)',
-                    borderRadius: 4,
-                    minWidth: 4,
-                  }} />
+                <div className="flex-1 h-4.5 bg-page rounded overflow-hidden">
+                  <div
+                    className={`h-full rounded min-w-1 ${canalBarCls[canal] || 'bg-slate-l'}`}
+                    style={{ width: `${(count / maxCanal) * 100}%` }}
+                  />
                 </div>
-                <div className="mono" style={{ fontSize: 10, fontWeight: 700, width: 40, color: 'var(--ink2)' }}>
+                <div className="mono text-xs fw-700 w-10 text-ink2">
                   {count}
                 </div>
               </div>
@@ -434,19 +427,19 @@ function AquisicaoView() {
       </div>
 
       {/* Monthly trend */}
-      <div className="panel" style={{ marginTop: 16 }}>
+      <div className="panel mt-4">
         <div className="panel-header">
           <span className="panel-title">Tendência mensal</span>
         </div>
-        <div className="panel-body" style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 140 }}>
+        <div className="panel-body flex items-end gap-2 h-[140px]">
           {monthEntries.map(([month, count]) => {
             const pct = (count / maxMonth) * 100;
             const label = month.split('-');
             return (
-              <div key={month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                <div className="mono" style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink2)' }}>{count}</div>
-                <div style={{ width: '100%', height: `${pct}%`, minHeight: 4, background: 'var(--green)', borderRadius: '4px 4px 0 0' }} />
-                <div className="mono" style={{ fontSize: 8, color: 'var(--muted2)' }}>{label[1]}/{label[0].slice(2)}</div>
+              <div key={month} className="flex-1 flex flex-col items-center gap-1">
+                <div className="mono text-xs fw-700 text-ink2">{count}</div>
+                <div className="w-full bg-green rounded-t min-h-1" style={{ height: `${pct}%` }} />
+                <div className="mono text-2xs text-muted2">{label[1]}/{label[0].slice(2)}</div>
               </div>
             );
           })}
@@ -454,25 +447,25 @@ function AquisicaoView() {
       </div>
 
       {/* Campaign performance table */}
-      <div className="panel" style={{ marginTop: 16, overflow: 'hidden' }}>
+      <div className="panel mt-4 overflow-hidden">
         <div className="panel-header">
           <span className="panel-title">Performance por campanha</span>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
             <tr>
-              <th className="th" style={{ textAlign: 'left' }}>Campanha</th>
-              <th className="th" style={{ textAlign: 'left' }}>Fonte</th>
-              <th className="th" style={{ textAlign: 'right' }}>Sessões</th>
-              <th className="th" style={{ textAlign: 'right' }}>Conversões</th>
-              <th className="th" style={{ textAlign: 'right' }}>Taxa</th>
-              <th className="th" style={{ textAlign: 'right' }}>Usuários</th>
+              <th className="th text-left">Campanha</th>
+              <th className="th text-left">Fonte</th>
+              <th className="th text-right">Sessões</th>
+              <th className="th text-right">Conversões</th>
+              <th className="th text-right">Taxa</th>
+              <th className="th text-right">Usuários</th>
             </tr>
           </thead>
           <tbody>
             {data.sort((a, b) => b.conversions - a.conversions).map((row, i) => (
               <tr key={i}>
-                <td className="td" style={{ fontSize: 11.5, fontWeight: 600, maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <td className="td text-sm-1 fw-600 max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap">
                   {row.campaign}
                 </td>
                 <td className="td">
@@ -480,12 +473,12 @@ function AquisicaoView() {
                     {row.source.toUpperCase()}
                   </span>
                 </td>
-                <td className="td mono" style={{ fontSize: 11, textAlign: 'right' }}>{fmt(row.sessions)}</td>
-                <td className="td mono" style={{ fontSize: 11, textAlign: 'right', fontWeight: 700 }}>{fmt(row.conversions)}</td>
-                <td className="td mono" style={{ fontSize: 11, textAlign: 'right', color: row.conversions / row.sessions > 0.05 ? 'var(--green-d)' : 'var(--muted)' }}>
+                <td className="td mono text-sm text-right">{fmt(row.sessions)}</td>
+                <td className="td mono text-sm text-right fw-700">{fmt(row.conversions)}</td>
+                <td className={`td mono text-sm text-right ${row.conversions / row.sessions > 0.05 ? 'text-green-d' : 'text-muted'}`}>
                   {(row.conversions / row.sessions * 100).toFixed(1)}%
                 </td>
-                <td className="td mono" style={{ fontSize: 11, textAlign: 'right' }}>{fmt(row.users)}</td>
+                <td className="td mono text-sm text-right">{fmt(row.users)}</td>
               </tr>
             ))}
           </tbody>
@@ -546,16 +539,18 @@ function EnrichedLeadDetail({ lead }: { lead: LeadEnriched }) {
     },
   ];
 
+  const monoKeys = new Set(['Valor estimado', 'Valor fechado', 'ID']);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div className="flex flex-col gap-4.5">
       {sections.map(sec => (
         <div key={sec.title}>
-          <div className="label" style={{ marginBottom: 8 }}>{sec.title}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div className="label mb-2">{sec.title}</div>
+          <div className="flex flex-col gap-0.5">
             {sec.rows.map(row => (
               <div key={row.k} className="ws-info-row">
                 <span className="ws-key">{row.k}</span>
-                <span className="ws-val" style={{ fontFamily: row.k === 'Valor estimado' || row.k === 'Valor fechado' || row.k === 'ID' ? 'var(--mono)' : undefined }}>
+                <span className={`ws-val ${monoKeys.has(row.k) ? 'mono' : ''}`}>
                   {row.k === 'Canal' ? (
                     <span className={`pill ${(canalPill[row.v] || canalPill.outro).cls}`}>{(canalPill[row.v] || canalPill.outro).label}</span>
                   ) : row.k === 'Status' ? (
@@ -588,8 +583,8 @@ export default function LeadsPage() {
   return (
     <div>
       <div className="page-hd">
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>GESTÃO</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">GESTÃO</p>
           <h1 className="page-title">Leads</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setSelectedLead(null); setSelectedEnriched(null); }}>
@@ -598,7 +593,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="tab-bar" style={{ marginBottom: 20 }}>
+      <div className="tab-bar mb-5">
         <button className={`tab ${view === 'pipeline' ? 'tab-active' : ''}`} onClick={() => setView('pipeline')}>
           Pipeline
         </button>
@@ -625,49 +620,49 @@ export default function LeadsPage() {
         onClose={closePanel}
         title={slideTitle}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'flex-end' }}>
+          <div className="slide-footer-end">
             <button className="btn btn-outline" onClick={closePanel}>Fechar</button>
-            {(creating || selectedLead) && <button className="btn btn-green" onClick={() => { closePanel(); showToast('Lead salvo com sucesso', 'success'); }}>Salvar</button>}
+            {(creating || selectedLead) && <button className="btn btn-green ml-2" onClick={() => { closePanel(); showToast('Lead salvo com sucesso', 'success'); }}>Salvar</button>}
           </div>
         }
       >
         {selectedEnriched ? (
           <EnrichedLeadDetail lead={selectedEnriched} />
         ) : selectedLead ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="flex flex-col gap-3.5">
             <div>
-              <div className="label" style={{ marginBottom: 4 }}>CONTATO</div>
-              <div style={{ fontSize: 12.5 }}>{selectedLead.telefone}</div>
-              <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>{selectedLead.email}</div>
+              <div className="label mb-1">CONTATO</div>
+              <div className="text-base-1">{selectedLead.telefone}</div>
+              <div className="text-base-1 text-muted">{selectedLead.email}</div>
             </div>
             {selectedLead.empresa && (
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>EMPRESA</div>
-                <div style={{ fontSize: 12.5 }}>{selectedLead.empresa}</div>
+                <div className="label mb-1">EMPRESA</div>
+                <div className="text-base-1">{selectedLead.empresa}</div>
               </div>
             )}
             <div className="flex gap-6">
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>CANAL</div>
+                <div className="label mb-1">CANAL</div>
                 <span className={`pill ${canalPill[selectedLead.canal].cls}`}>{canalPill[selectedLead.canal].label}</span>
               </div>
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>REGIÃO</div>
-                <div style={{ fontSize: 12.5 }}>{selectedLead.regiao}</div>
+                <div className="label mb-1">REGIÃO</div>
+                <div className="text-base-1">{selectedLead.regiao}</div>
               </div>
             </div>
             <div className="flex gap-6">
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>SERVIÇO</div>
-                <div style={{ fontSize: 12.5 }}>{selectedLead.tipo_servico}</div>
+                <div className="label mb-1">SERVIÇO</div>
+                <div className="text-base-1">{selectedLead.tipo_servico}</div>
               </div>
               <div>
-                <div className="label" style={{ marginBottom: 4 }}>VALOR</div>
-                <div className="mono" style={{ fontSize: 14, fontWeight: 700 }}>{fmtR(selectedLead.valor_estimado)}</div>
+                <div className="label mb-1">VALOR</div>
+                <div className="mono text-lg fw-700">{fmtR(selectedLead.valor_estimado)}</div>
               </div>
             </div>
             <div>
-              <div className="label" style={{ marginBottom: 4 }}>ESTÁGIO</div>
+              <div className="label mb-1">ESTÁGIO</div>
               <select className="form-select" defaultValue={selectedLead.estagio}>
                 {[...estagios, { key: 'convertido' as LeadEstagio, label: 'Convertido' }, { key: 'perdido' as LeadEstagio, label: 'Perdido' }].map(e => (
                   <option key={e.key} value={e.key}>{e.label}</option>
@@ -675,12 +670,12 @@ export default function LeadsPage() {
               </select>
             </div>
             <div>
-              <div className="label" style={{ marginBottom: 4 }}>NOTAS</div>
-              <textarea className="form-textarea" readOnly defaultValue={selectedLead.notas} style={{ minHeight: 80 }} />
+              <div className="label mb-1">NOTAS</div>
+              <textarea className="form-textarea" defaultValue={selectedLead.notas} />
             </div>
             <div>
-              <div className="label" style={{ marginBottom: 4 }}>TIMELINE</div>
-              <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+              <div className="label mb-1">TIMELINE</div>
+              <div className="text-sm text-muted">
                 <div>Criado em {new Date(selectedLead.created_at).toLocaleDateString('pt-BR')} as {new Date(selectedLead.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
                 <div>Último contato {new Date(selectedLead.ultimo_contato).toLocaleDateString('pt-BR')} as {new Date(selectedLead.ultimo_contato).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
               </div>

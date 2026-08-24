@@ -1,6 +1,12 @@
 // Real data from SofitView API — 88 vehicles + 45 employees
 // Will be replaced by Supabase queries in production
 
+export function slaLevel(minutes: number): 'ok' | 'warn' | 'crit' {
+  if (minutes <= 15) return 'ok';
+  if (minutes <= 25) return 'warn';
+  return 'crit';
+}
+
 export type VtrTipo = 'uti' | 'basica' | 'moto';
 export type VtrStatus = 'disponivel' | 'em_atendimento' | 'manutencao';
 export type ChamadoStatus = 'aberto' | 'em_cotacao' | 'aprovado' | 'despacho' | 'em_transito' | 'no_local' | 'em_transporte' | 'concluido' | 'cancelado';

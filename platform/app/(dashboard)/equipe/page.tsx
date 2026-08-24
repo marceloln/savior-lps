@@ -11,21 +11,21 @@ import { useToast } from '@/components/ui/toast';
 
 /* ── Status pill config ──────────────────────────────────────────── */
 
-const statusPill: Record<FuncionarioStatus, { bg: string; color: string; label: string }> = {
-  ativo: { bg: 'var(--green-l)', color: 'var(--green-d)', label: 'ATIVO' },
-  ferias: { bg: 'var(--blue-l)', color: 'var(--blue)', label: 'FÉRIAS' },
-  afastado: { bg: 'var(--amber-l)', color: 'var(--amber)', label: 'AFASTADO' },
-  desligado: { bg: 'var(--red-l)', color: 'var(--red)', label: 'DESLIGADO' },
+const statusPillCls: Record<FuncionarioStatus, { cls: string; label: string }> = {
+  ativo: { cls: 'pill-green', label: 'ATIVO' },
+  ferias: { cls: 'pill-blue', label: 'FÉRIAS' },
+  afastado: { cls: 'pill-amber', label: 'AFASTADO' },
+  desligado: { cls: 'pill-red', label: 'DESLIGADO' },
 };
 
-const funcaoPill: Record<string, { bg: string; color: string }> = {
-  Motorista: { bg: 'var(--green-l)', color: 'var(--green-d)' },
-  Compras: { bg: 'var(--blue-l)', color: 'var(--blue)' },
-  'Auxiliar de Frota': { bg: 'var(--amber-l)', color: 'var(--amber)' },
-  Enfermeiro: { bg: 'var(--violet-l)', color: 'var(--violet)' },
-  'Técnico de Enfermagem': { bg: 'var(--violet-l)', color: 'var(--violet)' },
-  Médico: { bg: 'var(--red-l)', color: 'var(--red)' },
-  Administrativo: { bg: 'var(--slate-l)', color: 'var(--slate)' },
+const funcaoPillCls: Record<string, string> = {
+  Motorista: 'pill-green',
+  Compras: 'pill-blue',
+  'Auxiliar de Frota': 'pill-amber',
+  Enfermeiro: 'pill-violet',
+  'Técnico de Enfermagem': 'pill-violet',
+  Médico: 'pill-red',
+  Administrativo: 'pill-slate',
 };
 
 const FUNCOES = ['Motorista', 'Enfermeiro', 'Técnico de Enfermagem', 'Médico', 'Auxiliar de Frota', 'Compras', 'Administrativo'];
@@ -139,10 +139,10 @@ export default function EquipePage() {
       {/* Page header */}
       <div className="mb-5">
         <p className="breadcrumb mb-1">EQUIPE</p>
-        <div className="flex items-center gap-3" style={{ justifyContent: 'space-between' }}>
+        <div className="flex-between">
           <div className="flex items-end gap-3">
             <h1 className="page-title">Equipe</h1>
-            <span className="mono text-muted" style={{ fontSize: '11px', paddingBottom: 2 }}>
+            <span className="mono text-muted text-sm pb-0.5">
               {mockFuncionariosDetail.length} colaboradores
             </span>
           </div>
@@ -154,11 +154,11 @@ export default function EquipePage() {
       </div>
 
       {/* Search */}
-      <div className="mb-3" style={{ position: 'relative', maxWidth: 320 }}>
+      <div className="mb-3 search-wrapper max-w-80">
         <Search
           size={14}
           strokeWidth={1.8}
-          style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }}
+          className="search-icon-abs"
         />
         <input
           type="text"
@@ -171,7 +171,7 @@ export default function EquipePage() {
 
       {/* Filter chips: função */}
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <span className="label" style={{ marginRight: 4 }}>FUNÇÃO</span>
+        <span className="label mr-1">FUNÇÃO</span>
         <button
           className={`chip ${filterFuncao === 'Todos' ? 'chip-active' : ''}`}
           onClick={() => changeFilterFuncao('Todos')}
@@ -184,14 +184,14 @@ export default function EquipePage() {
             className={`chip ${filterFuncao === f ? 'chip-active' : ''}`}
             onClick={() => changeFilterFuncao(f)}
           >
-            {f} <span className="mono" style={{ fontSize: '9px', marginLeft: 3, opacity: 0.7 }}>({funcaoCounts[f]})</span>
+            {f} <span className="mono chip-count">({funcaoCounts[f]})</span>
           </button>
         ))}
       </div>
 
       {/* Filter chips: região */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <span className="label" style={{ marginRight: 4 }}>REGIÃO</span>
+        <span className="label mr-1">REGIÃO</span>
         <button
           className={`chip ${filterRegiao === 'Todos' ? 'chip-active' : ''}`}
           onClick={() => changeFilterRegiao('Todos')}
@@ -204,64 +204,64 @@ export default function EquipePage() {
             className={`chip ${filterRegiao === r ? 'chip-active' : ''}`}
             onClick={() => changeFilterRegiao(r)}
           >
-            {r} <span className="mono" style={{ fontSize: '9px', marginLeft: 3, opacity: 0.7 }}>({regiaoCounts[r] ?? 0})</span>
+            {r} <span className="mono chip-count">({regiaoCounts[r] ?? 0})</span>
           </button>
         ))}
       </div>
 
       {/* Result count */}
       {(search || filterFuncao !== 'Todos' || filterRegiao !== 'Todos') && (
-        <p className="mono text-muted2 mb-2" style={{ fontSize: '10px' }}>
+        <p className="mono text-muted2 mb-2 text-xs">
           {filtered.length} resultado{filtered.length !== 1 ? 's' : ''}
         </p>
       )}
 
       {/* Table */}
       <div className="panel overflow-hidden">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
             <tr>
-              <th className="th" style={{ textAlign: 'left' }}>NOME</th>
-              <th className="th" style={{ textAlign: 'left' }}>FUNÇÃO</th>
-              <th className="th" style={{ textAlign: 'left' }}>CONSELHO</th>
-              <th className="th" style={{ textAlign: 'left' }}>MATRÍCULA</th>
-              <th className="th" style={{ textAlign: 'left' }}>FILIAL</th>
-              <th className="th" style={{ textAlign: 'left' }}>STATUS</th>
+              <th className="th text-left">NOME</th>
+              <th className="th text-left">FUNÇÃO</th>
+              <th className="th text-left">CONSELHO</th>
+              <th className="th text-left">MATRÍCULA</th>
+              <th className="th text-left">FILIAL</th>
+              <th className="th text-left">STATUS</th>
             </tr>
           </thead>
           <tbody>
             {paginated.map((emp) => {
-              const fp = funcaoPill[emp.funcao] ?? { bg: 'var(--slate-l)', color: 'var(--slate)' };
-              const sp = statusPill[emp.status] ?? statusPill.ativo;
+              const fpCls = funcaoPillCls[emp.funcao] ?? 'pill-slate';
+              const sp = statusPillCls[emp.status] ?? statusPillCls.ativo;
               return (
                 <tr
                   key={emp.id}
                   className="table-row-click"
                   onClick={() => openEdit(emp)}
                 >
-                  <td className="td" style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--ink)' }}>
+                  <td className="td text-base-1 fw-500 text-ink">
                     {emp.nome}
                   </td>
                   <td className="td">
-                    <span className="pill" style={{ background: fp.bg, color: fp.color }}>
+                    <span className={`pill ${fpCls}`}>
                       {emp.funcao}
                     </span>
                   </td>
                   <td className="td">
-                    <span className="mono" style={{ fontSize: '11px', color: 'var(--ink2)' }}>
+                    <span className="mono text-sm text-ink2">
                       {emp.conselho_numero ?? '\u2014'}
                     </span>
                   </td>
                   <td className="td">
-                    <span className="mono" style={{ fontSize: '11px', color: 'var(--ink2)' }}>
+                    <span className="mono text-sm text-ink2">
                       {emp.matricula ?? '\u2014'}
                     </span>
                   </td>
-                  <td className="td" style={{ fontSize: '11px', color: 'var(--muted)' }}>
+                  <td className="td text-sm text-muted">
                     {emp.filial ?? '\u2014'}
                   </td>
                   <td className="td">
-                    <span className="pill" style={{ background: sp.bg, color: sp.color }}>
+                    <span className={`pill ${sp.cls}`}>
                       {sp.label}
                     </span>
                   </td>
@@ -273,31 +273,23 @@ export default function EquipePage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '10px 16px',
-            borderTop: '1px solid var(--line)',
-          }}>
-            <span className="mono text-muted2" style={{ fontSize: '10px' }}>
+          <div className="pagination-bar">
+            <span className="mono text-muted2 text-xs">
               {(safePage - 1) * PER_PAGE + 1}\u2013{Math.min(safePage * PER_PAGE, filtered.length)} de {filtered.length}
             </span>
             <div className="flex items-center gap-2">
               <button
-                className="btn btn-outline"
-                style={{ padding: '5px 10px' }}
+                className="btn btn-outline btn-paginate"
                 disabled={safePage <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
                 <ChevronLeft size={14} />
               </button>
-              <span className="mono" style={{ fontSize: '11px', color: 'var(--ink2)' }}>
+              <span className="mono text-sm text-ink2">
                 {safePage} / {totalPages}
               </span>
               <button
-                className="btn btn-outline"
-                style={{ padding: '5px 10px' }}
+                className="btn btn-outline btn-paginate"
                 disabled={safePage >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               >
@@ -314,12 +306,12 @@ export default function EquipePage() {
         onClose={() => setSlideOpen(false)}
         title={slideMode === 'create' ? 'Novo funcionário' : 'Editar funcionário'}
         footer={
-          <div className="flex items-center gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
+          <div className="slide-footer-between">
             <div>
               {slideMode === 'edit' && form.sofit_id && (
                 <Link
                   href={`/equipe/${form.sofit_id}`}
-                  style={{ fontSize: '11px', color: 'var(--green-d)', fontWeight: 600, textDecoration: 'none' }}
+                  className="text-sm fw-600 text-green-d no-underline"
                 >
                   Ver ficha completa
                 </Link>
@@ -345,7 +337,7 @@ export default function EquipePage() {
           <FormField label="Status">
             <select className="form-select" value={form.status ?? 'ativo'} onChange={(e) => setField('status', e.target.value)}>
               {STATUS_OPTIONS.map((s) => (
-                <option key={s} value={s}>{statusPill[s].label}</option>
+                <option key={s} value={s}>{statusPillCls[s].label}</option>
               ))}
             </select>
           </FormField>
@@ -353,7 +345,7 @@ export default function EquipePage() {
 
         <div className="cols2">
           <FormField label="Matrícula">
-            <input className="form-input mono" style={{ fontSize: '12px' }} value={form.matricula ?? ''} onChange={(e) => setField('matricula', e.target.value)} />
+            <input className="form-input mono text-base" value={form.matricula ?? ''} onChange={(e) => setField('matricula', e.target.value)} />
           </FormField>
           <FormField label="CPF">
             <input className="form-input" value={form.cpf ?? ''} onChange={(e) => setField('cpf', e.target.value)} />
@@ -365,7 +357,7 @@ export default function EquipePage() {
           <>
             <div className="cols2">
               <FormField label={form.funcao === 'Médico' ? 'CRM' : 'COREN'}>
-                <input className="form-input mono" style={{ fontSize: '12px' }} value={form.conselho_numero ?? ''} onChange={(e) => setField('conselho_numero', e.target.value)} placeholder={form.funcao === 'Médico' ? 'CRM-RJ 52-12345-6' : 'COREN-RJ 456.789'} />
+                <input className="form-input mono text-base" value={form.conselho_numero ?? ''} onChange={(e) => setField('conselho_numero', e.target.value)} placeholder={form.funcao === 'Médico' ? 'CRM-RJ 52-12345-6' : 'COREN-RJ 456.789'} />
               </FormField>
               <FormField label="UF do Conselho">
                 <select className="form-select" value={form.conselho_uf ?? ''} onChange={(e) => setField('conselho_uf', e.target.value)}>
@@ -384,7 +376,7 @@ export default function EquipePage() {
         {form.funcao === 'Motorista' && (
           <div className="cols2">
             <FormField label="CNH">
-              <input className="form-input mono" style={{ fontSize: '12px' }} value={form.cnh ?? ''} onChange={(e) => setField('cnh', e.target.value)} />
+              <input className="form-input mono text-base" value={form.cnh ?? ''} onChange={(e) => setField('cnh', e.target.value)} />
             </FormField>
             <FormField label="CNH Vencimento">
               <input className="form-input" type="date" value={form.cnh_vencimento ?? ''} onChange={(e) => setField('cnh_vencimento', e.target.value)} />

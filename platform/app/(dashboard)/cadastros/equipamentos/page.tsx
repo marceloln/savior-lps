@@ -43,14 +43,20 @@ export default function EquipamentosPage() {
     setEditing(null);
   };
 
+  const handleDelete = () => {
+    if (!confirm('Tem certeza que deseja excluir?')) return;
+    closePanel();
+    showToast('Item excluído', 'info');
+  };
+
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Equipamentos</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setEditing(null); }}>
@@ -58,27 +64,27 @@ export default function EquipamentosPage() {
         </button>
       </div>
 
-      <div className="flex items-center gap-3" style={{ marginBottom: 16 }}>
+      <div className="flex items-center gap-3 mb-4">
         <span className="label">Filtrar VTR</span>
-        <select className="form-select" style={{ width: 180 }} value={vtrFilter} onChange={(e) => setVtrFilter(e.target.value)}>
+        <select className="form-select w-[180px]" value={vtrFilter} onChange={(e) => setVtrFilter(e.target.value)}>
           <option value="">Todas</option>
           {vtrOptions.map((v) => (
             <option key={v} value={v}>AM {v}</option>
           ))}
         </select>
-        <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{filtered.length} itens</span>
+        <span className="mono text-sm text-muted">{filtered.length} itens</span>
       </div>
 
       {grouped.map((g) => (
-        <div key={g.categoria} style={{ marginBottom: 20 }}>
-          <div style={{ marginBottom: 8 }}>
-            <span className="label" style={{ fontSize: 9 }}>{g.categoria}</span>
-            <span className="mono" style={{ fontSize: 10, color: 'var(--muted2)', marginLeft: 8 }}>{g.items.length}</span>
+        <div key={g.categoria} className="mb-5">
+          <div className="mb-2">
+            <span className="label text-[9px]">{g.categoria}</span>
+            <span className="mono text-xs text-muted2 ml-2">{g.items.length}</span>
           </div>
           <div className="panel">
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="table-full">
               <thead>
-                <tr style={{ textAlign: 'left' }}>
+                <tr className="text-left">
                   <th className="th">Equipamento</th>
                   <th className="th">VTR</th>
                   <th className="th">N. Serie</th>
@@ -92,12 +98,12 @@ export default function EquipamentosPage() {
                   const pill = statusPill[eq.status];
                   return (
                     <tr key={eq.id} className="table-row-click" onClick={() => { setEditing(eq); setCreating(false); }}>
-                      <td className="td" style={{ fontWeight: 600 }}>{eq.nome}</td>
-                      <td className="td mono" style={{ fontSize: 11 }}>AM {eq.vtr_nome}</td>
-                      <td className="td mono" style={{ fontSize: 10, color: 'var(--muted)' }}>{eq.numero_serie}</td>
+                      <td className="td fw-600">{eq.nome}</td>
+                      <td className="td mono text-sm">AM {eq.vtr_nome}</td>
+                      <td className="td mono text-xs text-muted">{eq.numero_serie}</td>
                       <td className="td"><span className={`pill ${pill.cls}`}>{pill.label}</span></td>
-                      <td className="td mono" style={{ fontSize: 11 }}>{eq.data_calibracao}</td>
-                      <td className="td mono" style={{ fontSize: 11 }}>{eq.proxima_calibracao}</td>
+                      <td className="td mono text-sm">{eq.data_calibracao}</td>
+                      <td className="td mono text-sm">{eq.proxima_calibracao}</td>
                     </tr>
                   );
                 })}
@@ -112,8 +118,8 @@ export default function EquipamentosPage() {
         onClose={closePanel}
         title={editing ? 'Editar equipamento' : 'Novo equipamento'}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
-            <div>{editing && <button className="btn-red">Excluir</button>}</div>
+          <div className="slide-footer-between">
+            <div>{editing && <button className="btn-red" onClick={handleDelete}>Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
               <button className="btn btn-green" onClick={() => { closePanel(); showToast('Equipamento salvo com sucesso', 'success'); }}>Salvar</button>

@@ -8,11 +8,11 @@ import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
 import { useToast } from '@/components/ui/toast';
 
-const columns: { status: OSStatus; label: string; color: string }[] = [
-  { status: 'agendada', label: 'Agendada', color: 'var(--blue)' },
-  { status: 'em_andamento', label: 'Em andamento', color: 'var(--amber)' },
-  { status: 'aguardando_peca', label: 'Aguardando peça', color: 'var(--violet)' },
-  { status: 'concluida', label: 'Concluída', color: 'var(--green)' },
+const columns: { status: OSStatus; label: string; dotCls: string }[] = [
+  { status: 'agendada', label: 'Agendada', dotCls: 'bg-blue' },
+  { status: 'em_andamento', label: 'Em andamento', dotCls: 'bg-amber' },
+  { status: 'aguardando_peca', label: 'Aguardando peça', dotCls: 'bg-violet' },
+  { status: 'concluida', label: 'Concluída', dotCls: 'bg-green' },
 ];
 
 const prioridadePill: Record<OSPrioridade, { label: string; cls: string }> = {
@@ -32,14 +32,20 @@ export default function OrdensServicoPage() {
   const isOpen = creating || editing !== null;
   const closePanel = () => { setCreating(false); setEditing(null); };
 
+  const handleDelete = () => {
+    if (!confirm('Tem certeza que deseja excluir?')) return;
+    closePanel();
+    showToast('Item excluído', 'info');
+  };
+
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Ordens de Serviço</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setEditing(null); }}>
@@ -47,13 +53,13 @@ export default function OrdensServicoPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-4 gap-4" style={{ marginTop: 8 }}>
+      <div className="grid grid-cols-4 gap-4 mt-2">
         {columns.map((col) => {
           const items = mockOrdensServico.filter((os) => os.status === col.status);
           return (
             <div key={col.status} className="kanban-column">
               <div className="kanban-column-header">
-                <div style={{ width: 8, height: 8, borderRadius: 2, background: col.color, flexShrink: 0 }} />
+                <div className={`kanban-dot ${col.dotCls}`} />
                 <span className="kanban-column-title">{col.label}</span>
                 <span className="kanban-column-count">{items.length}</span>
               </div>
@@ -62,23 +68,23 @@ export default function OrdensServicoPage() {
                   const prio = prioridadePill[os.prioridade];
                   return (
                     <div key={os.id} className="kanban-card" onClick={() => { setEditing(os); setCreating(false); }}>
-                      <div className="flex items-center gap-2" style={{ marginBottom: 6 }}>
-                        <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13 }}>AM {os.vtr_nome}</span>
-                        <span className="mono" style={{ fontSize: 9, color: 'var(--muted)' }}>{os.vtr_placa}</span>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="font-display fw-700 text-md">AM {os.vtr_nome}</span>
+                        <span className="mono text-[9px] text-muted">{os.vtr_placa}</span>
                       </div>
-                      <p style={{ fontSize: 11.5, color: 'var(--ink2)', lineHeight: 1.35, marginBottom: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      <p className="text-sm-1 text-ink2 leading-snug mb-2 line-clamp-2">
                         {os.descricao}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className={`pill ${prio.cls}`}>{prio.label}</span>
-                        <span className="mono" style={{ fontSize: 11, fontWeight: 600 }}>R$ {os.valor.toLocaleString('pt-BR')}</span>
+                        <span className="mono text-sm fw-600">R$ {os.valor.toLocaleString('pt-BR')}</span>
                       </div>
-                      <div style={{ marginTop: 6, fontSize: 10, color: 'var(--muted)' }}>{os.fornecedor}</div>
+                      <div className="mt-1.5 text-xs text-muted">{os.fornecedor}</div>
                     </div>
                   );
                 })}
                 {items.length === 0 && (
-                  <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted2)', fontSize: 11 }}>Nenhuma OS</div>
+                  <div className="p-4 text-center text-muted2 text-sm">Nenhuma OS</div>
                 )}
               </div>
             </div>
@@ -91,8 +97,8 @@ export default function OrdensServicoPage() {
         onClose={closePanel}
         title={editing ? `OS #${editing.id}` : 'Nova OS'}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
-            <div>{editing && <button className="btn-red">Excluir</button>}</div>
+          <div className="slide-footer-between">
+            <div>{editing && <button className="btn-red" onClick={handleDelete}>Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
               <button className="btn btn-green" onClick={() => { closePanel(); showToast('Ordem de serviço salva com sucesso', 'success'); }}>Salvar</button>

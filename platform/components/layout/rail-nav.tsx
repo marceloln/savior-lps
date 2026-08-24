@@ -35,7 +35,7 @@ export function RailNav() {
   return (
     <nav className="rail">
       {/* Logo */}
-      <div className="rail-logo" style={{ marginBottom: 14 }}>
+      <div className="rail-logo mb-3.5">
         <svg width="28" height="28" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="36" fill="none" stroke="oklch(0.82 0.13 168)" strokeWidth="8" />
           <circle cx="50" cy="50" r="14" fill="oklch(0.82 0.13 168)" />

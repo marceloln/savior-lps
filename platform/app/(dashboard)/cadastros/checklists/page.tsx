@@ -10,8 +10,6 @@ import {
   Search,
   Check,
   X,
-  Camera,
-  Filter,
 } from 'lucide-react';
 import {
   mockChecklistModelos,
@@ -56,6 +54,12 @@ const tipoBadge: Record<string, { cls: string; icon: string }> = {
   texto: { cls: 'pill-amber', icon: '\uD83D\uDCDD' },
 };
 
+const resultadoBgCls: Record<string, string> = {
+  aprovado: 'bg-green-l',
+  reprovado_parcial: 'bg-amber-l',
+  reprovado: 'bg-red-l',
+};
+
 // ── Main ─────────────────────────────────────────────────────────────────
 
 export default function ChecklistsPage() {
@@ -80,17 +84,17 @@ export default function ChecklistsPage() {
     <div>
       {/* Header */}
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Checklists</h1>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="tab-bar" style={{ marginBottom: 20 }}>
+      <div className="tab-bar mb-5">
         <button className={`tab ${tab === 'modelos' ? 'tab-active' : ''}`} onClick={() => setTab('modelos')}>
           Modelos
         </button>
@@ -102,7 +106,7 @@ export default function ChecklistsPage() {
       {/* ════════ Tab Modelos ════════ */}
       {tab === 'modelos' && (
         <div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <div className="flex justify-end mb-4">
             <button className="btn btn-green">
               <span className="flex items-center gap-2"><Plus size={14} strokeWidth={2} /> Novo modelo</span>
             </button>
@@ -125,9 +129,9 @@ export default function ChecklistsPage() {
       {tab === 'execucoes' && (
         <div>
           {/* Filters */}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <Search size={14} strokeWidth={1.8} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
+          <div className="flex gap-2.5 mb-4 items-center flex-wrap">
+            <div className="search-wrapper">
+              <Search size={14} strokeWidth={1.8} className="search-icon-abs" />
               <input
                 className="table-search"
                 placeholder="Buscar motorista ou VTR..."
@@ -137,8 +141,7 @@ export default function ChecklistsPage() {
             </div>
 
             <select
-              className="form-select"
-              style={{ width: 160, padding: '7px 32px 7px 10px', fontSize: 12 }}
+              className="form-select w-[160px] py-1.5 px-2.5 text-base"
               value={filterVtr}
               onChange={(e) => setFilterVtr(e.target.value)}
             >
@@ -149,8 +152,7 @@ export default function ChecklistsPage() {
             </select>
 
             <select
-              className="form-select"
-              style={{ width: 180, padding: '7px 32px 7px 10px', fontSize: 12 }}
+              className="form-select w-[180px] py-1.5 px-2.5 text-base"
               value={filterResultado}
               onChange={(e) => setFilterResultado(e.target.value)}
             >
@@ -163,9 +165,9 @@ export default function ChecklistsPage() {
 
           {/* Table */}
           <div className="panel">
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="table-full">
               <thead>
-                <tr style={{ textAlign: 'left' }}>
+                <tr className="text-left">
                   <th className="th">Data</th>
                   <th className="th">VTR</th>
                   <th className="th">Motorista</th>
@@ -181,32 +183,32 @@ export default function ChecklistsPage() {
                     className="table-row-click"
                     onClick={() => setSelectedExec(exec)}
                   >
-                    <td className="td mono" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <td className="td mono text-base whitespace-nowrap">
                       {formatDate(exec.data)}
                     </td>
                     <td className="td">
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        <span style={{ fontWeight: 600, fontSize: 12.5 }}>VTR {exec.vtr_nome}</span>
-                        <span className="mono" style={{ fontSize: 10, color: 'var(--muted)' }}>{exec.vtr_placa}</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="fw-600 text-base-1">VTR {exec.vtr_nome}</span>
+                        <span className="mono text-xs text-muted">{exec.vtr_placa}</span>
                       </div>
                     </td>
-                    <td className="td" style={{ fontSize: 12.5 }}>{exec.executado_por}</td>
+                    <td className="td text-base-1">{exec.executado_por}</td>
                     <td className="td">
                       <span className={`pill ${resultadoPill[exec.resultado]}`}>
                         {resultadoLabel[exec.resultado]}
                       </span>
                     </td>
-                    <td className="td mono" style={{ fontSize: 12 }}>
+                    <td className="td mono text-base">
                       {exec.itens_aprovados}/{exec.total_itens}
                     </td>
-                    <td className="td mono" style={{ fontSize: 12 }}>
+                    <td className="td mono text-base">
                       {exec.duracao_minutos} min
                     </td>
                   </tr>
                 ))}
                 {filteredExecs.length === 0 && (
                   <tr>
-                    <td className="td" colSpan={6} style={{ textAlign: 'center', color: 'var(--muted)', padding: 32 }}>
+                    <td className="td text-center text-muted p-8" colSpan={6}>
                       Nenhuma execução encontrada
                     </td>
                   </tr>
@@ -236,73 +238,55 @@ function ModeloCard({ modelo, expanded, onToggle }: { modelo: ChecklistModelo; e
   const categories = Object.keys(grouped);
 
   return (
-    <div className="panel" style={{ overflow: 'hidden' }}>
+    <div className="panel overflow-hidden">
       <button
         onClick={onToggle}
-        style={{
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '16px 18px',
-          textAlign: 'left',
-          fontFamily: 'var(--sans)',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 12,
-        }}
+        className="modelo-toggle"
       >
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <span className="font-display" style={{ fontSize: 14, color: 'var(--ink)' }}>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-display text-lg text-ink">
               {modelo.nome}
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-1.5 flex-wrap">
             <span className={`pill ${modelo.tipo_vtr === 'uti' ? 'pill-red' : 'pill-blue'}`}>
               {modelo.tipo_vtr === 'uti' ? 'UTI' : 'Básica'}
             </span>
             <span className="pill pill-slate">{modelo.frequencia}</span>
             <span className="pill pill-green">ativo</span>
-            <span className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginLeft: 4 }}>
+            <span className="mono text-xs text-muted ml-1">
               {modelo.itens.length} itens
             </span>
           </div>
         </div>
-        <div style={{ color: 'var(--muted2)', display: 'flex', alignItems: 'center', marginTop: 4 }}>
+        <div className="text-muted2 flex items-center mt-1">
           {expanded ? <ChevronDown size={16} strokeWidth={1.8} /> : <ChevronRight size={16} strokeWidth={1.8} />}
         </div>
       </button>
 
       {expanded && (
-        <div style={{ borderTop: '1px solid var(--line)', padding: '0 18px 16px' }}>
+        <div className="border-t-line px-4.5 pb-4">
           {categories.map((cat) => (
-            <div key={cat} style={{ marginTop: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ fontWeight: 700, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--ink2)' }}>
+            <div key={cat} className="mt-3.5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="cat-header">
                   {cat}
                 </span>
-                <span className="mono" style={{ fontSize: 9, color: 'var(--muted2)', background: 'var(--bg)', borderRadius: 6, padding: '1px 6px' }}>
+                <span className="mono text-[9px] text-muted2 bg-page rounded-md px-1.5 py-0.5">
                   {grouped[cat].length}
                 </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div className="flex flex-col gap-1">
                 {grouped[cat].map((item, idx) => (
                   <div
                     key={idx}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '5px 0',
-                      borderBottom: idx < grouped[cat].length - 1 ? '1px solid var(--line)' : 'none',
-                      fontSize: 12.5,
-                    }}
+                    className={`checklist-item-row ${idx < grouped[cat].length - 1 ? 'border-b-line' : ''}`}
                   >
-                    <span style={{ flex: 1, color: 'var(--ink)' }}>{item.nome}</span>
+                    <span className="flex-1 text-ink">{item.nome}</span>
                     <span className={`pill ${(tipoBadge[item.tipo] || { cls: 'pill-slate' }).cls}`}>{(tipoBadge[item.tipo] || { icon: '' }).icon} {item.tipo}</span>
                     {item.obrigatorio && (
-                      <span className="pill pill-red" style={{ fontSize: 7 }}>obrigatório</span>
+                      <span className="pill pill-red text-[7px]">obrigatório</span>
                     )}
                   </div>
                 ))}
@@ -310,8 +294,8 @@ function ModeloCard({ modelo, expanded, onToggle }: { modelo: ChecklistModelo; e
             </div>
           ))}
 
-          <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="btn btn-outline" style={{ fontSize: 11, padding: '7px 14px' }}>
+          <div className="mt-4 flex justify-end">
+            <button className="btn btn-outline text-sm py-1.5 px-3.5">
               Editar modelo
             </button>
           </div>
@@ -331,97 +315,73 @@ function ExecDetail({ exec }: { exec: ChecklistExecucao }) {
   return (
     <div>
       {/* Header info */}
-      <div style={{ marginBottom: 18 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <span className="font-display" style={{ fontSize: 16 }}>VTR {exec.vtr_nome}</span>
-          <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{exec.vtr_placa}</span>
+      <div className="mb-4.5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="font-display text-xl">VTR {exec.vtr_nome}</span>
+          <span className="mono text-sm text-muted">{exec.vtr_placa}</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 4 }}>
+        <div className="text-base text-muted mb-1">
           {formatDate(exec.data)} · {exec.executado_por}
         </div>
-        <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 12 }}>
+        <div className="text-sm text-muted mb-3">
           {exec.modelo_nome}
         </div>
       </div>
 
       {/* Result badge (large) */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-        padding: '14px 16px',
-        borderRadius: 'var(--r)',
-        background: exec.resultado === 'aprovado' ? 'var(--green-l)' : exec.resultado === 'reprovado_parcial' ? 'var(--amber-l)' : 'var(--red-l)',
-        marginBottom: 18,
-      }}>
-        <span className={`pill ${resultadoPill[exec.resultado]}`} style={{ fontSize: 10, padding: '4px 10px' }}>
+      <div className={`exec-result-banner ${resultadoBgCls[exec.resultado]}`}>
+        <span className={`pill ${resultadoPill[exec.resultado]} text-xs px-2.5 py-1`}>
           {resultadoLabel[exec.resultado]}
         </span>
-        <div style={{ flex: 1 }} />
-        <div style={{ textAlign: 'right' }}>
-          <div className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>
+        <div className="flex-1" />
+        <div className="text-right">
+          <div className="mono text-2xl fw-700 text-ink">
             {score}%
           </div>
-          <div className="mono" style={{ fontSize: 9, color: 'var(--muted)' }}>
+          <div className="mono text-[9px] text-muted">
             {exec.itens_aprovados}/{exec.total_itens} aprovados
           </div>
         </div>
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-        <div className="kpi-card" style={{ flex: 1, textAlign: 'center' }}>
+      <div className="flex gap-3 mb-5">
+        <div className="kpi-card flex-1 text-center">
           <div className="kpi-label">Aprovados</div>
-          <div className="kpi-value" style={{ fontSize: 18, color: 'var(--green-d)' }}>{exec.itens_aprovados}</div>
+          <div className="kpi-value-md text-green-d">{exec.itens_aprovados}</div>
         </div>
-        <div className="kpi-card" style={{ flex: 1, textAlign: 'center' }}>
+        <div className="kpi-card flex-1 text-center">
           <div className="kpi-label">Reprovados</div>
-          <div className="kpi-value" style={{ fontSize: 18, color: exec.itens_reprovados > 0 ? 'var(--red)' : 'var(--muted2)' }}>{exec.itens_reprovados}</div>
+          <div className={`kpi-value-md ${exec.itens_reprovados > 0 ? 'text-red' : 'text-muted2'}`}>{exec.itens_reprovados}</div>
         </div>
-        <div className="kpi-card" style={{ flex: 1, textAlign: 'center' }}>
+        <div className="kpi-card flex-1 text-center">
           <div className="kpi-label">Duração</div>
-          <div className="kpi-value" style={{ fontSize: 18 }}>{exec.duracao_minutos}<span style={{ fontSize: 11, fontWeight: 400, color: 'var(--muted)' }}> min</span></div>
+          <div className="kpi-value-md">{exec.duracao_minutos}<span className="text-sm fw-400 text-muted"> min</span></div>
         </div>
       </div>
 
       {/* Items by category */}
       {categories.map((cat) => (
-        <div key={cat} style={{ marginBottom: 16 }}>
-          <div style={{
-            fontWeight: 700,
-            fontSize: 11,
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            color: 'var(--ink2)',
-            marginBottom: 6,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-          }}>
+        <div key={cat} className="mb-4">
+          <div className="cat-header mb-1.5">
             {cat}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div className="flex flex-col gap-0.5">
             {grouped[cat].map((item, idx) => (
               <div
                 key={idx}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '7px 10px',
-                  borderRadius: 8,
-                  background: item.aprovado ? 'transparent' : 'var(--red-l)',
-                }}
+                className={`flex flex-col py-1.5 px-2.5 rounded-lg ${item.aprovado ? '' : 'bg-red-l'}`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className="flex items-center gap-2">
                   {item.aprovado ? (
-                    <Check size={14} strokeWidth={2.2} style={{ color: 'var(--green)', flexShrink: 0 }} />
+                    <Check size={14} strokeWidth={2.2} className="text-green shrink-0" />
                   ) : (
-                    <X size={14} strokeWidth={2.2} style={{ color: 'var(--red)', flexShrink: 0 }} />
+                    <X size={14} strokeWidth={2.2} className="text-red shrink-0" />
                   )}
-                  <span style={{ fontSize: 12.5, color: 'var(--ink)', flex: 1 }}>{item.nome}</span>
+                  <span className="text-base-1 text-ink flex-1">{item.nome}</span>
                 </div>
                 {!item.aprovado && item.observacao && (
-                  <div style={{ fontSize: 11, color: 'var(--red)', marginLeft: 22, marginTop: 3, lineHeight: 1.35 }}>
+                  <div className="text-sm text-red ml-5.5 mt-0.5 leading-snug">
                     {item.observacao}
                   </div>
                 )}

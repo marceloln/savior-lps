@@ -31,45 +31,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--bg)',
-    }}>
-      <div style={{ width: '100%', maxWidth: 380, padding: '0 16px' }}>
+    <div className="login-container">
+      <div className="login-box">
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            width: 52,
-            height: 52,
-            borderRadius: '50%',
-            border: '2.5px solid var(--green)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 16px',
-          }}>
+        <div className="text-center mb-8">
+          <div className="login-logo">
             <svg width="30" height="30" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="36" fill="none" stroke="var(--green)" strokeWidth="8" />
               <circle cx="50" cy="50" r="14" fill="var(--green)" />
             </svg>
           </div>
-          <h1 className="font-display" style={{
-            fontSize: '24px',
-            letterSpacing: '-0.025em',
-            color: 'var(--ink)',
-          }}>
+          <h1 className="font-display login-title">
             Savior Platform
           </h1>
-          <p className="text-muted" style={{ fontSize: '13px', marginTop: 6 }}>
+          <p className="text-muted text-md mt-1.5">
             Central de operações
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="panel" style={{ padding: '24px', background: 'var(--card)' }}>
+        <form onSubmit={handleSubmit} className="panel p-6 bg-card">
           <div className="flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="form-label">
@@ -84,7 +65,7 @@ export default function LoginPage() {
                 className="form-input"
               />
               {errors.email && (
-                <p style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{errors.email}</p>
+                <p className="form-error">{errors.email}</p>
               )}
             </div>
 
@@ -101,26 +82,17 @@ export default function LoginPage() {
                 className="form-input"
               />
               {errors.password && (
-                <p style={{ fontSize: 11, color: 'var(--red)', marginTop: 4 }}>{errors.password}</p>
+                <p className="form-error">{errors.password}</p>
               )}
             </div>
 
             <button
               type="submit"
-              className="btn btn-green"
+              className={`btn btn-green btn-full mt-1 ${loading ? 'opacity-70' : ''}`}
               disabled={loading}
-              style={{
-                width: '100%',
-                marginTop: 4,
-                opacity: loading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-              }}
             >
               {loading && (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 0.8s linear infinite' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="animate-spin">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="31.4" strokeDashoffset="10" />
                 </svg>
               )}
@@ -130,13 +102,7 @@ export default function LoginPage() {
             <a
               href="#"
               onClick={(e) => e.preventDefault()}
-              style={{
-                fontSize: 12,
-                color: 'var(--muted)',
-                textAlign: 'center',
-                textDecoration: 'none',
-                marginTop: 2,
-              }}
+              className="login-forgot"
             >
               Esqueci minha senha
             </a>
@@ -144,12 +110,7 @@ export default function LoginPage() {
         </form>
 
         {/* Footer */}
-        <p className="mono text-muted2" style={{
-          fontSize: '9px',
-          textAlign: 'center',
-          marginTop: 24,
-          letterSpacing: '0.04em',
-        }}>
+        <p className="mono text-muted2 login-footer">
           Savior Medical Service · v0.2
         </p>
       </div>

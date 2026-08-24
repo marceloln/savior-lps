@@ -73,9 +73,9 @@ export default function VtrDetailPage() {
   const vtr = mockVtrs.find((v) => v.id === params.id);
   if (!vtr) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
-        <p style={{ color: 'var(--muted)' }}>Veículo não encontrado</p>
-        <Link href="/frota" style={{ marginTop: 16, fontSize: '12.5px', textDecoration: 'none', color: 'var(--green-d)' }}>
+      <div className="not-found">
+        <p className="not-found-text">Veículo não encontrado</p>
+        <Link href="/frota" className="not-found-link">
           Voltar para Frota
         </Link>
       </div>
@@ -100,69 +100,66 @@ export default function VtrDetailPage() {
   return (
     <div>
       {/* Back + breadcrumb */}
-      <Link
-        href="/frota"
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '12.5px', textDecoration: 'none', color: 'var(--muted)', marginBottom: 16 }}
-      >
+      <Link href="/frota" className="back-link-styled">
         <ArrowLeft size={14} strokeWidth={1.5} />
         Voltar para Frota
       </Link>
 
       {/* Hero section */}
-      <div style={{ marginBottom: 20 }}>
-        <p className="breadcrumb" style={{ marginBottom: 4 }}>FROTA / VTR {vtr.nome}</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
-          <h1 className="font-display" style={{ fontSize: 28, letterSpacing: '-0.025em', margin: 0 }}>
+      <div className="detail-hero-section">
+        <p className="breadcrumb mb-1">FROTA / VTR {vtr.nome}</p>
+        <div className="detail-hero-row">
+          <h1 className="font-display detail-hero-title">
             VTR {vtr.nome}
           </h1>
-          <span className="mono" style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink2)' }}>
+          <span className="mono detail-hero-placa">
             {vtr.placa}
           </span>
           <span className={`pill ${statusPill[vtr.status]}`}>{statusLabel[vtr.status]}</span>
           <span className={`pill ${tp.pill}`}>{tp.label}</span>
-          <button className="btn btn-outline" style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 14px' }} onClick={() => showToast('Edição de veículo em desenvolvimento', 'info')}>
+          <button className="btn btn-outline detail-edit-btn" onClick={() => showToast('Edição de veículo em desenvolvimento', 'info')}>
             <Pencil size={13} strokeWidth={1.8} />
             Editar
           </button>
         </div>
-        <p style={{ fontSize: '12.5px', color: 'var(--muted)', marginTop: 4 }}>
+        <p className="detail-hero-sub">
           {vtr.modelo}{detail?.versao ? ` · ${detail.versao}` : ''}
         </p>
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
+      <div className="stats-grid">
         <div className="kpi-card">
           <div className="kpi-label">KM ATUAL</div>
-          <div className="kpi-value mono" style={{ fontSize: 20, letterSpacing: '-0.01em' }}>
+          <div className="kpi-value mono kpi-value-20">
             {detail ? fmtKm(detail.km) : '--'}
           </div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">MULTAS</div>
-          <div className="kpi-value" style={{ fontSize: 20, color: vtrMultas.length > 0 ? 'var(--red)' : 'var(--ink)' }}>
+          <div className={`kpi-value kpi-value-20 ${vtrMultas.length > 0 ? 'text-red' : ''}`}>
             {vtrMultas.length}
           </div>
           {vtrMultas.length > 0 && (
-            <div className="kpi-sub mono" style={{ fontSize: 9 }}>{fmtBrl(multaTotal)} total</div>
+            <div className="kpi-sub mono kpi-sub-9">{fmtBrl(multaTotal)} total</div>
           )}
         </div>
         <div className="kpi-card">
           <div className="kpi-label">MANUTENÇÕES ABERTAS</div>
-          <div className="kpi-value" style={{ fontSize: 20, color: manutAbertas > 0 ? 'var(--amber)' : 'var(--ink)' }}>
+          <div className={`kpi-value kpi-value-20 ${manutAbertas > 0 ? 'text-amber' : ''}`}>
             {manutAbertas}
           </div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">ULT. ABASTECIMENTO</div>
-          <div className="kpi-value" style={{ fontSize: 20 }}>
+          <div className="kpi-value kpi-value-20">
             {detail?.ultimo_abastecimento ? fmtDate(detail.ultimo_abastecimento) : '--'}
           </div>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--line)', marginBottom: 20 }}>
+      <div className="tab-bar-full">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -171,10 +168,10 @@ export default function VtrDetailPage() {
           >
             {tab}
             {tab === 'Multas' && vtrMultas.length > 0 && (
-              <span className="mono" style={{ fontSize: 9, marginLeft: 4, opacity: 0.6 }}>({vtrMultas.length})</span>
+              <span className="mono tab-count">({vtrMultas.length})</span>
             )}
             {tab === 'Checklist' && reprovados > 0 && (
-              <span style={{ marginLeft: 6, width: 6, height: 6, borderRadius: '50%', background: 'var(--red)', display: 'inline-block' }} />
+              <span className="tab-reprovado-dot" />
             )}
           </button>
         ))}
@@ -182,11 +179,11 @@ export default function VtrDetailPage() {
 
       {/* ── Tab: Geral ───────────────────────────────────── */}
       {activeTab === 'Geral' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid grid-cols-2 gap-4">
           {/* Left: Identificacao */}
           <div className="panel">
             <div className="panel-header"><span className="panel-title">Identificação</span></div>
-            <div className="panel-body" style={{ padding: '8px 16px' }}>
+            <div className="panel-body panel-body-compact">
               {([
                 { label: 'Nome', value: `VTR ${vtr.nome}` },
                 { label: 'Placa', value: vtr.placa, mono: true },
@@ -199,19 +196,19 @@ export default function VtrDetailPage() {
                 { label: 'KM Atual', value: detail ? fmtKm(detail.km) : '--', mono: true },
                 { label: 'Status', value: statusLabel[vtr.status] },
               ] as { label: string; value: string; mono?: boolean }[]).map((row) => (
-                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--line)' }}>
-                  <span className="label" style={{ alignSelf: 'center' }}>{row.label}</span>
-                  <span className={row.mono ? 'mono' : ''} style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{row.value}</span>
+                <div key={row.label} className="info-row-styled">
+                  <span className="label self-center">{row.label}</span>
+                  <span className={`${row.mono ? 'mono' : ''} info-val`}>{row.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right: Operacao */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="flex flex-col gap-4">
             <div className="panel">
               <div className="panel-header"><span className="panel-title">Operação</span></div>
-              <div className="panel-body" style={{ padding: '8px 16px' }}>
+              <div className="panel-body panel-body-compact">
                 {([
                   { label: 'Motorista', value: motorista ? motorista.nome : 'Sem motorista atribuído' },
                   { label: 'Ult. abastecimento', value: detail?.ultimo_abastecimento ? fmtDate(detail.ultimo_abastecimento) : '--' },
@@ -219,9 +216,9 @@ export default function VtrDetailPage() {
                   { label: 'Região', value: getRegiao(vtr.latitude) },
                   { label: 'SofitView ID', value: String(vtr.sofit_id), mono: true },
                 ] as { label: string; value: string; mono?: boolean }[]).map((row) => (
-                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--line)' }}>
-                    <span className="label" style={{ alignSelf: 'center' }}>{row.label}</span>
-                    <span className={row.mono ? 'mono' : ''} style={{ fontSize: 13, fontWeight: 600, color: row.value === 'Sem motorista atribuído' ? 'var(--muted)' : 'var(--ink)' }}>{row.value}</span>
+                  <div key={row.label} className="info-row-styled">
+                    <span className="label self-center">{row.label}</span>
+                    <span className={`${row.mono ? 'mono' : ''} ${row.value === 'Sem motorista atribuído' ? 'info-val-muted' : 'info-val'}`}>{row.value}</span>
                   </div>
                 ))}
               </div>
@@ -236,14 +233,14 @@ export default function VtrDetailPage() {
                     href={detail.crlv_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12.5, fontWeight: 600, color: 'var(--green-d)', textDecoration: 'none' }}
+                    className="doc-link"
                   >
                     <FileText size={14} strokeWidth={1.5} />
                     CRLV 2025 (PDF)
-                    <ExternalLink size={11} strokeWidth={1.5} style={{ opacity: 0.5 }} />
+                    <ExternalLink size={11} strokeWidth={1.5} className="doc-link-icon" />
                   </a>
                 ) : (
-                  <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>Nenhum documento disponível</span>
+                  <span className="doc-empty">Nenhum documento disponível</span>
                 )}
               </div>
             </div>
@@ -255,61 +252,56 @@ export default function VtrDetailPage() {
       {activeTab === 'Manutenções' && (
         <div>
           {/* Header with button */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 13, color: 'var(--muted)' }}>
+          <div className="manut-header">
+            <span className="manut-count">
               {vtrManut.length} {vtrManut.length === 1 ? 'ordem de serviço' : 'ordens de serviço'}
             </span>
-            <button className="btn btn-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }} onClick={() => showToast('Módulo de OS em desenvolvimento', 'info')}>
+            <button className="btn btn-green btn-inline-flex text-base" onClick={() => showToast('Módulo de OS em desenvolvimento', 'info')}>
               <Plus size={14} strokeWidth={2} />
               Nova OS
             </button>
           </div>
 
           {vtrManut.length === 0 ? (
-            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-              <Wrench size={32} strokeWidth={1.2} style={{ color: 'var(--muted2)', margin: '0 auto 10px' }} />
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>Nenhuma manutenção registrada</p>
+            <div className="panel panel-empty">
+              <Wrench size={32} strokeWidth={1.2} className="panel-empty-icon" />
+              <p className="panel-empty-text">Nenhuma manutenção registrada</p>
             </div>
           ) : (
-            <div style={{ position: 'relative', paddingLeft: 24 }}>
+            <div className="manut-timeline">
               {/* Vertical line */}
-              <div style={{ position: 'absolute', left: 8, top: 12, bottom: 12, width: 2, background: 'var(--line2)', borderRadius: 1 }} />
+              <div className="manut-timeline-line" />
 
               {vtrManut.map((m, i) => {
                 const st = manutStatusLabel[m.status];
                 const pr = prioridadeLabel[m.prioridade];
                 return (
-                  <div key={m.id} style={{ position: 'relative', marginBottom: i < vtrManut.length - 1 ? 16 : 0 }}>
+                  <div key={m.id} className={`manut-card-wrap ${i < vtrManut.length - 1 ? 'mb-4' : ''}`}>
                     {/* Dot */}
-                    <div style={{
-                      position: 'absolute', left: -20, top: 14,
-                      width: 10, height: 10, borderRadius: '50%',
-                      background: m.status === 'concluida' ? 'var(--green)' : m.status === 'em_andamento' ? 'var(--amber)' : m.status === 'aguardando_peca' ? 'var(--violet)' : 'var(--blue)',
-                      border: '2px solid var(--card)',
-                    }} />
-                    <div className="panel" style={{ padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                    <div className={`manut-dot manut-dot-${m.status}`} />
+                    <div className="panel manut-card-inner">
+                      <div className="manut-pills">
                         <span className={`pill ${st.pill}`}>{st.label}</span>
                         <span className={`pill ${pr.pill}`}>{pr.label}</span>
-                        <span className="mono" style={{ fontSize: 9, color: 'var(--muted)', marginLeft: 'auto' }}>{m.id}</span>
+                        <span className="mono manut-id">{m.id}</span>
                       </div>
-                      <p className="font-display" style={{ fontSize: 15, marginBottom: 6 }}>{m.descricao}</p>
-                      <div style={{ display: 'flex', gap: 20, fontSize: 12, color: 'var(--ink2)', flexWrap: 'wrap' }}>
+                      <p className="font-display manut-desc">{m.descricao}</p>
+                      <div className="manut-meta">
                         <span>{m.fornecedor}</span>
-                        <span className="mono" style={{ fontWeight: 600 }}>{fmtBrl(m.valor)}</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span className="mono fw-600">{fmtBrl(m.valor)}</span>
+                        <span className="manut-date">
                           <Calendar size={11} strokeWidth={1.5} />
                           {fmtDate(m.data)}
                         </span>
-                        <span className="pill pill-slate" style={{ fontSize: 7 }}>{m.tipo.toUpperCase()}</span>
+                        <span className="pill pill-slate pill-xs">{m.tipo.toUpperCase()}</span>
                       </div>
                       {m.itens && m.itens.length > 0 && (
-                        <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--line)' }}>
-                          <span className="label" style={{ marginBottom: 6, display: 'block' }}>ITENS</span>
-                          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                        <div className="manut-items">
+                          <span className="label block mb-[6px]">ITENS</span>
+                          <ul className="list-none p-0 m-0">
                             {m.itens.map((item) => (
-                              <li key={item} style={{ fontSize: 11.5, color: 'var(--ink2)', padding: '2px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--muted2)', flexShrink: 0 }} />
+                              <li key={item} className="manut-item-li">
+                                <span className="manut-item-dot" />
                                 {item}
                               </li>
                             ))}
@@ -329,16 +321,16 @@ export default function VtrDetailPage() {
       {activeTab === 'Checklist' && (
         <div>
           {checklist.length === 0 ? (
-            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-              <Check size={32} strokeWidth={1.2} style={{ color: 'var(--muted2)', margin: '0 auto 10px' }} />
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>Nenhum checklist registrado</p>
+            <div className="panel panel-empty">
+              <Check size={32} strokeWidth={1.2} className="panel-empty-icon" />
+              <p className="panel-empty-text">Nenhum checklist registrado</p>
             </div>
           ) : (
             <>
               {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+              <div className="checklist-header">
                 <div>
-                  <span style={{ fontSize: 13, color: 'var(--ink2)', fontWeight: 600 }}>
+                  <span className="checklist-info">
                     Último checklist: 21/08/2026 · Motorista: Adilson Barbosa
                   </span>
                 </div>
@@ -354,7 +346,7 @@ export default function VtrDetailPage() {
                 const items = checklist.filter((c) => c.categoria === cat);
                 if (items.length === 0) return null;
                 return (
-                  <div key={cat} className="panel" style={{ marginBottom: 12 }}>
+                  <div key={cat} className="panel mb-3">
                     <div className="panel-header">
                       <span className="panel-title">{cat}</span>
                     </div>
@@ -362,21 +354,17 @@ export default function VtrDetailPage() {
                       {items.map((item) => (
                         <div
                           key={item.item}
-                          style={{
-                            display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 16px',
-                            borderBottom: '1px solid var(--line)',
-                            background: item.status === 'reprovado' ? 'var(--red-l)' : 'transparent',
-                          }}
+                          className={`checklist-item-row ${item.status === 'reprovado' ? 'reprovado' : ''}`}
                         >
-                          {item.status === 'aprovado' && <Check size={14} strokeWidth={2} style={{ color: 'var(--green)', flexShrink: 0, marginTop: 1 }} />}
-                          {item.status === 'reprovado' && <X size={14} strokeWidth={2} style={{ color: 'var(--red)', flexShrink: 0, marginTop: 1 }} />}
-                          {item.status === 'nao_verificado' && <Minus size={14} strokeWidth={2} style={{ color: 'var(--muted2)', flexShrink: 0, marginTop: 1 }} />}
-                          <div style={{ flex: 1 }}>
-                            <span style={{ fontSize: 12.5, fontWeight: item.status === 'reprovado' ? 600 : 400, color: item.status === 'reprovado' ? 'var(--red)' : 'var(--ink)' }}>
+                          {item.status === 'aprovado' && <Check size={14} strokeWidth={2} className="checklist-icon checklist-icon-green" />}
+                          {item.status === 'reprovado' && <X size={14} strokeWidth={2} className="checklist-icon checklist-icon-red" />}
+                          {item.status === 'nao_verificado' && <Minus size={14} strokeWidth={2} className="checklist-icon checklist-icon-muted" />}
+                          <div className="flex-1">
+                            <span className={`checklist-item-name ${item.status === 'reprovado' ? 'fail' : ''}`}>
                               {item.item}
                             </span>
                             {item.observacao && (
-                              <p style={{ fontSize: 11, color: 'var(--red)', marginTop: 3, lineHeight: 1.3 }}>
+                              <p className="checklist-obs">
                                 {item.observacao}
                               </p>
                             )}
@@ -396,36 +384,36 @@ export default function VtrDetailPage() {
       {activeTab === 'Pneus' && (
         <div>
           {vtrPneus.length === 0 ? (
-            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-              <Circle size={32} strokeWidth={1.2} style={{ color: 'var(--muted2)', margin: '0 auto 10px' }} />
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>Sem pneus cadastrados</p>
+            <div className="panel panel-empty">
+              <Circle size={32} strokeWidth={1.2} className="panel-empty-icon" />
+              <p className="panel-empty-text">Sem pneus cadastrados</p>
             </div>
           ) : (
             <>
               {/* Visual diagram */}
-              <div className="panel" style={{ padding: 24, marginBottom: 16 }}>
-                <div className="panel-title" style={{ marginBottom: 16 }}>Posições</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 1fr', gap: 12, maxWidth: 500, margin: '0 auto' }}>
+              <div className="panel pneu-diagram">
+                <div className="panel-title panel-title-mb">Posições</div>
+                <div className="pneu-grid">
                   {/* Front left */}
                   <TireSlot pneu={vtrPneus[0]} position="Diant. Esq." />
                   {/* Center: vehicle icon */}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-                    <div style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>FRENTE</div>
-                    <div style={{ width: 60, height: 80, border: '2px solid var(--line2)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span className="mono" style={{ fontSize: 9, color: 'var(--muted2)' }}>{vtr.placa}</span>
+                  <div className="pneu-vehicle-icon">
+                    <div className="pneu-vehicle-label">FRENTE</div>
+                    <div className="pneu-vehicle-box">
+                      <span className="mono pneu-vehicle-placa">{vtr.placa}</span>
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>TRASEIRA</div>
+                    <div className="pneu-vehicle-label">TRASEIRA</div>
                   </div>
                   {/* Front right */}
                   <TireSlot pneu={vtrPneus[1]} position="Diant. Dir." />
                   {/* Rear left */}
                   <TireSlot pneu={vtrPneus[2]} position="Tras. Esq." />
                   {/* Spare */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="pneu-spare-wrap">
                     {vtrPneus[4] ? (
                       <TireSlot pneu={vtrPneus[4]} position="Estepe" />
                     ) : (
-                      <span style={{ fontSize: 10, color: 'var(--muted2)' }}>Sem estepe</span>
+                      <span className="pneu-spare-empty">Sem estepe</span>
                     )}
                   </div>
                   {/* Rear right */}
@@ -435,13 +423,13 @@ export default function VtrDetailPage() {
 
               {/* Table */}
               <div className="panel">
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table className="table-full">
                   <thead>
                     <tr>
-                      <th className="th" style={{ textAlign: 'left' }}>Nome</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Dimensão</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Status</th>
-                      <th className="th" style={{ textAlign: 'right' }}>Vida</th>
+                      <th className="th text-left">Nome</th>
+                      <th className="th text-left">Dimensão</th>
+                      <th className="th text-left">Status</th>
+                      <th className="th text-right">Vida</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -449,10 +437,10 @@ export default function VtrDetailPage() {
                       const ps = pneuStatusLabel[p.status];
                       return (
                         <tr key={p.id}>
-                          <td className="td" style={{ fontSize: 12.5 }}>{p.nome}</td>
-                          <td className="td mono" style={{ fontSize: 12 }}>{p.dimensao}</td>
+                          <td className="td text-base-1">{p.nome}</td>
+                          <td className="td mono text-base">{p.dimensao}</td>
                           <td className="td"><span className={`pill ${ps.pill}`}>{ps.label}</span></td>
-                          <td className="td mono" style={{ textAlign: 'right', fontSize: 12 }}>{p.vida_atual}a vida</td>
+                          <td className="td mono td-vida">{p.vida_atual}a vida</td>
                         </tr>
                       );
                     })}
@@ -468,31 +456,31 @@ export default function VtrDetailPage() {
       {activeTab === 'Multas' && (
         <div>
           {vtrMultas.length === 0 ? (
-            <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-              <AlertTriangle size={32} strokeWidth={1.2} style={{ color: 'var(--muted2)', margin: '0 auto 10px' }} />
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>Nenhuma multa registrada</p>
+            <div className="panel panel-empty">
+              <AlertTriangle size={32} strokeWidth={1.2} className="panel-empty-icon" />
+              <p className="panel-empty-text">Nenhuma multa registrada</p>
             </div>
           ) : (
             <>
-              <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13, color: 'var(--ink2)', fontWeight: 600 }}>
+              <div className="multas-header">
+                <span className="multas-count">
                   {vtrMultas.length} {vtrMultas.length === 1 ? 'multa' : 'multas'}
                 </span>
-                <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
+                <span className="mono multas-total">
                   {fmtBrl(multaTotal)} total
                 </span>
               </div>
 
               <div className="panel">
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table className="table-full">
                   <thead>
                     <tr>
-                      <th className="th" style={{ textAlign: 'left' }}>Data</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Código</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Descrição</th>
-                      <th className="th" style={{ textAlign: 'right' }}>Valor</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Status</th>
-                      <th className="th" style={{ textAlign: 'left' }}>Motorista</th>
+                      <th className="th text-left">Data</th>
+                      <th className="th text-left">Código</th>
+                      <th className="th text-left">Descrição</th>
+                      <th className="th text-right">Valor</th>
+                      <th className="th text-left">Status</th>
+                      <th className="th text-left">Motorista</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -500,12 +488,12 @@ export default function VtrDetailPage() {
                       const ms = multaStatusLabel[m.status];
                       return (
                         <tr key={m.id}>
-                          <td className="td mono" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>{fmtDate(m.data)}</td>
-                          <td className="td mono" style={{ fontSize: 11 }}>{m.codigo}</td>
-                          <td className="td" style={{ fontSize: 12, maxWidth: 300 }}>{m.descricao}</td>
-                          <td className="td mono" style={{ textAlign: 'right', fontSize: 12, fontWeight: 600 }}>{fmtBrl(m.valor)}</td>
+                          <td className="td mono td-date">{fmtDate(m.data)}</td>
+                          <td className="td mono td-code">{m.codigo}</td>
+                          <td className="td td-desc">{m.descricao}</td>
+                          <td className="td mono td-valor">{fmtBrl(m.valor)}</td>
                           <td className="td"><span className={`pill ${ms.pill}`}>{ms.label}</span></td>
-                          <td className="td" style={{ fontSize: 11.5, color: m.motorista ? 'var(--ink2)' : 'var(--muted2)' }}>
+                          <td className={`td td-motorista ${m.motorista ? 'td-motorista-filled' : 'td-motorista-empty'}`}>
                             {m.motorista || '--'}
                           </td>
                         </tr>
@@ -527,20 +515,20 @@ export default function VtrDetailPage() {
 function TireSlot({ pneu, position }: { pneu?: Pneu; position: string }) {
   if (!pneu) {
     return (
-      <div style={{ border: '1px dashed var(--line2)', borderRadius: 10, padding: 12, textAlign: 'center' }}>
-        <span style={{ fontSize: 10, color: 'var(--muted2)' }}>{position}</span>
+      <div className="tire-slot-empty">
+        <span className="tire-slot-empty-text">{position}</span>
         <br />
-        <span style={{ fontSize: 10, color: 'var(--muted2)' }}>Vazio</span>
+        <span className="tire-slot-empty-text">Vazio</span>
       </div>
     );
   }
   const ps = pneuStatusLabel[pneu.status];
   return (
-    <div style={{ border: '1px solid var(--line)', borderRadius: 10, padding: 12, textAlign: 'center', background: 'var(--card)' }}>
-      <span className="label" style={{ marginBottom: 4, display: 'block' }}>{position}</span>
-      <span className="mono" style={{ fontSize: 11, display: 'block', marginBottom: 4 }}>{pneu.dimensao}</span>
-      <span className={`pill ${ps.pill}`} style={{ marginBottom: 4 }}>{ps.label}</span>
-      <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>{pneu.vida_atual}a vida</span>
+    <div className="tire-slot-filled">
+      <span className="label tire-slot-label">{position}</span>
+      <span className="mono tire-slot-dim">{pneu.dimensao}</span>
+      <span className={`pill ${ps.pill} tire-slot-pill`}>{ps.label}</span>
+      <span className="tire-slot-vida">{pneu.vida_atual}a vida</span>
     </div>
   );
 }

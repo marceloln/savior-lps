@@ -159,6 +159,10 @@ body {
 .text-blue { color: var(--blue); }
 .text-violet { color: var(--violet); }
 .text-slate-c { color: var(--slate); }
+.text-green-d { color: var(--green-d); }
+
+.no-underline { text-decoration: none; }
+.accent-green { accent-color: var(--green); }
 
 .bg-page { background: var(--bg); }
 .bg-card { background: var(--card); }
@@ -171,6 +175,10 @@ body {
 .bg-blue-l { background: var(--blue-l); }
 .bg-violet-l { background: var(--violet-l); }
 .bg-slate-l { background: var(--slate-l); }
+.bg-green { background: var(--green); }
+.bg-blue { background: var(--blue); }
+.bg-violet { background: var(--violet); }
+.bg-amber { background: var(--amber); }
 
 .border-line { border-color: var(--line); }
 .border-line2 { border-color: var(--line2); }
@@ -2134,3 +2142,354 @@ body {
   cursor: default;
   font-weight: 600;
 }
+
+/* ========== INLINE-STYLE REPLACEMENTS ========== */
+
+/* Table full-width collapsed */
+.table-full { width: 100%; border-collapse: collapse; }
+
+/* Text align helpers */
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+/* Font size helpers */
+.text-2xs { font-size: 8px; }
+.text-xs { font-size: 10px; }
+.text-xs-1 { font-size: 10.5px; }
+.text-sm { font-size: 11px; }
+.text-sm-1 { font-size: 11.5px; }
+.text-base { font-size: 12px; }
+.text-base-1 { font-size: 12.5px; }
+.text-md { font-size: 13px; }
+.text-lg { font-size: 14px; }
+.text-xl { font-size: 16px; }
+.text-2xl { font-size: 18px; }
+.text-3xl { font-size: 20px; }
+.text-4xl { font-size: 22px; }
+.text-5xl { font-size: 28px; }
+
+/* Font weight helpers */
+.fw-400 { font-weight: 400; }
+.fw-500 { font-weight: 500; }
+.fw-600 { font-weight: 600; }
+.fw-700 { font-weight: 700; }
+
+/* Common border-bottom pattern */
+.border-b-line { border-bottom: 1px solid var(--line); }
+.border-t-line { border-top: 1px solid var(--line); }
+
+/* Chip count inside filter chips */
+.chip-count { font-size: 9px; margin-left: 3px; opacity: 0.7; }
+
+/* Breadcrumb spacing */
+.breadcrumb-spaced { margin-bottom: 6px; }
+
+/* Pagination bar */
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--line); }
+
+/* Pagination button compact */
+.btn-paginate { padding: 5px 10px; }
+.btn-paginate-md { padding: 7px 14px; font-size: 11px; }
+
+/* Search wrapper */
+.search-wrapper { position: relative; display: inline-block; }
+.search-icon-abs { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted2); }
+
+/* Back link styled */
+.back-link-muted { display: flex; align-items: center; color: var(--muted); text-decoration: none; }
+
+/* Kanban color dot */
+.kanban-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* Description truncation (2 lines) */
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Slide-over footer flex patterns */
+.slide-footer-between { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+.slide-footer-end { width: 100%; display: flex; justify-content: flex-end; }
+
+/* Login page */
+.login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.login-box { width: 100%; max-width: 380px; padding: 0 16px; }
+.login-logo { width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid var(--green); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.login-title { font-size: 24px; letter-spacing: -0.025em; color: var(--ink); }
+.login-footer { font-size: 9px; text-align: center; margin-top: 24px; letter-spacing: 0.04em; }
+.login-forgot { font-size: 12px; color: var(--muted); text-align: center; text-decoration: none; margin-top: 2px; display: block; }
+
+/* Validation error text */
+.form-error { font-size: 11px; color: var(--red); margin-top: 4px; }
+
+/* Button full width */
+.btn-full { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* Tire position visual */
+.tire-slot { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 8px; border-width: 2px; border-style: solid; }
+.tire-slot-active { border-color: var(--green); background: var(--green-l); }
+.tire-slot-empty { border-color: var(--line2); background: var(--bg); }
+.tire-front { width: 48px; height: 72px; }
+.tire-rear { width: 42px; height: 72px; }
+
+/* Checklist model toggle button */
+.modelo-toggle { width: 100%; background: none; border: none; cursor: pointer; padding: 16px 18px; text-align: left; font-family: var(--sans); display: flex; align-items: flex-start; gap: 12px; }
+
+/* Checklist item row */
+.checklist-item-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12.5px; }
+
+/* Checklist exec result badge large */
+.exec-result-banner { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--r); margin-bottom: 18px; }
+
+/* Step indicator */
+.step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; font-family: var(--mono); }
+.step-dot-active { background: var(--green); color: oklch(0.24 0.05 168); border: none; }
+.step-dot-inactive { background: var(--bg); color: var(--muted2); border: 1px solid var(--line2); }
+.step-line { width: 32px; height: 2px; border-radius: 1px; }
+.step-line-active { background: var(--green); }
+.step-line-inactive { background: var(--line2); }
+
+/* Summary card (green background) */
+.summary-card { background: var(--green-l); border-radius: var(--r); padding: 16px; }
+.summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.summary-divider { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--green); }
+.summary-divider-lg { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--green); }
+
+/* Remove item button */
+.btn-icon-delete { background: none; border: none; cursor: pointer; color: var(--red); padding: 2px; }
+
+/* Configuracoes info row */
+.config-row { display: flex; justify-content: space-between; font-size: 12.5px; }
+.config-row + .config-row { border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* Integration row */
+.integration-row { padding: 10px 0; border-bottom: 1px solid var(--line); }
+
+/* User row */
+.user-row { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+
+/* Skeleton layout fallback */
+.skeleton-page { padding: 24px; }
+.skeleton-title { height: 24px; width: 200px; margin-bottom: 16px; }
+.skeleton-body { height: 200px; width: 100%; }
+
+/* Map sidebar styles use inline in tooltip HTML — kept via globals */
+
+/* KPI value sizing */
+.kpi-value-sm { font-family: var(--display); font-size: 14px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.kpi-value-md { font-family: var(--display); font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.kpi-value-lg { font-family: var(--display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.kpi-value-xl { font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+
+/* Category header (checklist) */
+.cat-header { font-weight: 700; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink2); display: flex; align-items: center; gap: 6px; }
+
+/* Overflow hidden utility */
+.overflow-hidden { overflow: hidden; }
+
+/* Whitespace no wrap */
+.whitespace-nowrap { white-space: nowrap; }
+
+/* ========== GROUP HEADER COLORS ========== */
+.grp-sq-red { background: var(--red); }
+.grp-sq-amber { background: var(--amber); }
+.grp-sq-blue { background: var(--blue); }
+.grp-sq-green { background: var(--green); }
+.grp-name-red { color: var(--red); }
+.grp-name-amber { color: var(--amber); }
+.grp-name-blue { color: var(--blue); }
+.grp-name-green { color: var(--green); }
+
+/* ========== CENTRAL PAGE CLASSES ========== */
+.inbox-header-top { padding: 16px 18px 0; border-bottom: 1px solid var(--line); }
+.inbox-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted2); }
+.ws-patient-meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.ws-patient-meta b { color: var(--ink2); font-weight: 600; }
+.sla-dot-sm { width: 5px; height: 5px; }
+.crit-dot-sm { width: 5px; height: 5px; box-shadow: none; }
+.panel-label { margin-bottom: 14px; color: var(--muted2); }
+.vtr-picker { margin-top: 8px; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.vtr-picker-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.btn-outline-sm { font-size: 11px; padding: 8px 14px; }
+.action-btn-inner { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.action-btn-cancel { color: var(--red); border-color: var(--red-l); }
+.intervention-banner { padding: 8px 12px; border-radius: 10px; background: var(--amber-l); font-size: 11px; font-weight: 600; color: var(--amber); text-align: center; margin-top: 4px; }
+.tl-actor { display: block; font-size: 10px; color: var(--muted2); margin-top: 2px; }
+.ws-val-lg { font-size: 16px; font-weight: 700; }
+.ws-val-green { font-size: 16px; font-weight: 700; color: var(--green-d); }
+.payment-placeholder { margin-top: 14px; padding: 20px; background: var(--bg); border-radius: var(--r); border: 1px dashed var(--line2); text-align: center; }
+.payment-placeholder-icon { color: var(--muted2); margin-bottom: 8px; }
+.payment-placeholder-text { font-size: 11px; color: var(--muted2); line-height: 1.4; }
+.dashboard-hint-cta { font-weight: 700; margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+.dashboard-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.panel-header-flex { display: flex; align-items: center; gap: 8px; }
+.recent-row { padding: 10px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.recent-name { font-size: 12.5px; font-weight: 600; flex: 1; }
+.channel-icon-sm { width: 18px; height: 18px; font-size: 9px; }
+.pill-xs { font-size: 7px; }
+.pill-6 { font-size: 6px; }
+.frota-stat-card { text-align: center; padding: 8px; border-radius: 8px; }
+.frota-stat-value { font-size: 16px; font-weight: 700; }
+.frota-stat-label { font-size: 7px; }
+.vtr-list-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+
+/* ========== MAPA PAGE CLASSES ========== */
+.map-container { position: relative; height: 100vh; width: 100%; }
+.map-loading { background: #1a1a2e; }
+.map-loading-text { font-size: 12.5px; color: #666; }
+.map-stats-badge { position: absolute; top: 14px; left: 336px; z-index: 1000; background: oklch(0.16 0.03 256 / 0.88); backdrop-filter: blur(8px); border-radius: 10px; padding: 8px 14px; color: #fff; display: flex; align-items: center; gap: 6px; }
+.map-stats-item { font-family: var(--mono); font-size: 11px; font-weight: 700; }
+.map-stats-sep { opacity: 0.35; }
+.map-stats-avail { font-family: var(--mono); font-size: 11px; font-weight: 600; color: #1FD29A; }
+.map-stats-active { font-family: var(--mono); font-size: 11px; font-weight: 600; color: oklch(0.75 0.13 65); }
+.map-type-filters { position: absolute; top: 14px; right: 14px; z-index: 1000; display: flex; gap: 5px; transition: right 0.2s ease; }
+.map-type-filters.dispatch-open { right: 376px; }
+.chip-count { margin-left: 4px; opacity: 0.7; font-family: var(--mono); font-size: 8px; }
+.chip-count-3 { margin-left: 3px; font-family: var(--mono); font-size: 8px; opacity: 0.7; }
+.map-sidebar-title-row { display: flex; align-items: center; gap: 8px; }
+.sidebar-count-badge { margin-left: 5px; font-family: var(--mono); font-size: 8px; background: var(--red-l); color: var(--red); padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+.sidebar-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.sidebar-search-inner { display: flex; align-items: center; gap: 6px; background: var(--bg); border-radius: 8px; padding: 6px 10px; border: 1px solid var(--line); }
+.sidebar-search-input { background: transparent; border: none; padding: 0; font-size: 11px; width: 100%; }
+.sidebar-filter-row { padding: 8px 12px; display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.chip-sm { font-size: 10px; padding: 3px 8px; }
+.vtr-sidebar-row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.vtr-sidebar-row.selected { background: var(--green-l); }
+.vtr-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.vtr-dot-disponivel { background: #1FD29A; }
+.vtr-dot-em_atendimento { background: #F59E0B; }
+.vtr-dot-manutencao { background: #D9534F; }
+.vtr-dot-inativa { background: #666; }
+.chamado-sidebar-row { padding: 9px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.chamado-sidebar-row.selected { background: var(--green-l); }
+.chamado-top-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.chamado-sla-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+.chamado-sla-crit { background: var(--red-l); color: var(--red); }
+.chamado-sla-warn { background: var(--amber-l); color: var(--amber); }
+.chamado-sla-ok { background: transparent; color: var(--muted2); }
+.chamado-route { font-size: 10px; color: var(--muted); line-height: 1.3; }
+.chamado-arrow { margin: 0 3px; color: var(--muted2); }
+.sidebar-empty { padding: 20px 12px; text-align: center; font-size: 11px; color: var(--muted2); }
+.dispatch-header { padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+.dispatch-header-left { display: flex; align-items: center; gap: 8px; }
+.dispatch-close { background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; }
+.dispatch-section { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.dispatch-patient-age { font-size: 11px; color: var(--muted); }
+.dispatch-patient-solic { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.dispatch-route-wrap { display: flex; gap: 10px; }
+.dispatch-route-dots { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 2px; }
+.dispatch-dot-red { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+.dispatch-dot-blue { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+.dispatch-route-line { width: 1px; height: 24px; background: var(--line2); }
+.dispatch-route-label { font-size: 7px; margin-bottom: 2px; }
+.dispatch-route-addr { font-size: 11px; color: var(--ink); line-height: 1.3; }
+.dispatch-nearby { padding: 14px 16px; }
+.nearby-vtr-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r); background: var(--card); }
+.nearby-vtr-info-row { display: flex; align-items: center; gap: 5px; }
+.nearby-vtr-meta { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+.nearby-vtr-dist { font-size: 9px; color: var(--muted2); }
+.btn-sm-dispatch { font-size: 10px; padding: 5px 10px; }
+
+/* ========== FROTA LIST CLASSES ========== */
+.frota-total { font-size: 11px; padding-bottom: 2px; }
+.btn-inline-flex { display: inline-flex; align-items: center; gap: 6px; }
+.filter-sep { width: 1px; height: 20px; background: var(--line2); margin: 0 4px; }
+.filter-result-count { font-size: 10px; }
+.td-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.td-placa { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.td-model { font-size: 12.5px; color: var(--muted); }
+.td-region { font-size: 11px; }
+.pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding: 0 4px; }
+.pagination-info { font-size: 11px; color: var(--muted); }
+.pagination-btns { display: flex; gap: 8px; }
+.btn-page { padding: 7px 14px; font-size: 11px; }
+.slide-footer-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+.slide-detail-link { font-size: 12px; color: var(--green-d); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-right: auto; }
+.slide-btns { display: flex; gap: 10px; }
+.slide-btns-right { margin-left: auto; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ========== FROTA DETAIL CLASSES ========== */
+.back-link-styled { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; text-decoration: none; color: var(--muted); margin-bottom: 16px; }
+.back-link-styled:hover { color: var(--ink); }
+.not-found { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 80px; }
+.not-found-text { color: var(--muted); }
+.not-found-link { margin-top: 16px; font-size: 12.5px; text-decoration: none; color: var(--green-d); }
+.detail-hero-section { margin-bottom: 20px; }
+.detail-hero-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.detail-hero-title { font-size: 28px; letter-spacing: -0.025em; margin: 0; }
+.detail-hero-placa { font-size: 20px; font-weight: 700; color: var(--ink2); }
+.detail-hero-sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.detail-edit-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 14px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.kpi-value-20 { font-size: 20px; letter-spacing: -0.01em; }
+.kpi-sub-9 { font-size: 9px; }
+.tab-bar-full { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.tab-reprovado-dot { margin-left: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--red); display: inline-block; }
+.tab-count { font-size: 9px; margin-left: 4px; opacity: 0.6; }
+.info-row-styled { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.info-val { font-size: 13px; font-weight: 600; color: var(--ink); }
+.info-val-muted { font-size: 13px; font-weight: 600; color: var(--muted); }
+.panel-body-compact { padding: 8px 16px; }
+.manut-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.manut-count { font-size: 13px; color: var(--muted); }
+.manut-timeline { position: relative; padding-left: 24px; }
+.manut-timeline-line { position: absolute; left: 8px; top: 12px; bottom: 12px; width: 2px; background: var(--line2); border-radius: 1px; }
+.manut-card-wrap { position: relative; }
+.manut-dot { position: absolute; left: -20px; top: 14px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--card); }
+.manut-dot-concluida { background: var(--green); }
+.manut-dot-em_andamento { background: var(--amber); }
+.manut-dot-aguardando_peca { background: var(--violet); }
+.manut-dot-agendada { background: var(--blue); }
+.manut-card-inner { padding: 14px 18px; }
+.manut-pills { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.manut-id { font-size: 9px; color: var(--muted); margin-left: auto; }
+.manut-desc { font-size: 15px; margin-bottom: 6px; }
+.manut-meta { display: flex; gap: 20px; font-size: 12px; color: var(--ink2); flex-wrap: wrap; }
+.manut-date { display: flex; align-items: center; gap: 4px; }
+.manut-items { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.manut-item-li { font-size: 11.5px; color: var(--ink2); padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+.manut-item-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted2); flex-shrink: 0; }
+.checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.checklist-info { font-size: 13px; color: var(--ink2); font-weight: 600; }
+.checklist-item-row.reprovado { background: var(--red-l); }
+.checklist-icon { flex-shrink: 0; margin-top: 1px; }
+.checklist-icon-green { color: var(--green); }
+.checklist-icon-red { color: var(--red); }
+.checklist-icon-muted { color: var(--muted2); }
+.checklist-item-name { font-size: 12.5px; }
+.checklist-item-name.fail { font-weight: 600; color: var(--red); }
+.checklist-obs { font-size: 11px; color: var(--red); margin-top: 3px; line-height: 1.3; }
+.panel-empty { padding: 40px; text-align: center; }
+.panel-empty-icon { color: var(--muted2); margin: 0 auto 10px; display: block; }
+.panel-empty-text { font-size: 13px; font-weight: 600; color: var(--muted); }
+.panel-title-mb { margin-bottom: 16px; }
+.pneu-diagram { padding: 24px; margin-bottom: 16px; }
+.pneu-grid { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 12px; max-width: 500px; margin: 0 auto; }
+.pneu-vehicle-icon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.pneu-vehicle-label { font-size: 10px; color: var(--muted); font-weight: 600; }
+.pneu-vehicle-box { width: 60px; height: 80px; border: 2px solid var(--line2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.pneu-vehicle-placa { font-size: 9px; color: var(--muted2); }
+.pneu-spare-wrap { display: flex; align-items: center; justify-content: center; }
+.pneu-spare-empty { font-size: 10px; color: var(--muted2); }
+.tire-slot-empty { border: 1px dashed var(--line2); border-radius: 10px; padding: 12px; text-align: center; }
+.tire-slot-empty-text { font-size: 10px; color: var(--muted2); }
+.tire-slot-filled { border: 1px solid var(--line); border-radius: 10px; padding: 12px; text-align: center; background: var(--card); }
+.tire-slot-label { margin-bottom: 4px; display: block; }
+.tire-slot-dim { font-size: 11px; display: block; margin-bottom: 4px; }
+.tire-slot-pill { margin-bottom: 4px; }
+.tire-slot-vida { font-size: 10px; color: var(--muted); display: block; }
+.multas-header { margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.multas-count { font-size: 13px; color: var(--ink2); font-weight: 600; }
+.multas-total { font-size: 11px; color: var(--muted); }
+.td-date { font-size: 11px; white-space: nowrap; }
+.td-code { font-size: 11px; }
+.td-desc { font-size: 12px; max-width: 300px; }
+.td-valor { text-align: right; font-size: 12px; font-weight: 600; }
+.td-vida { text-align: right; font-size: 12px; }
+.td-motorista { font-size: 11.5px; }
+.td-motorista-empty { color: var(--muted2); }
+.td-motorista-filled { color: var(--ink2); }
+.doc-link { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--green-d); text-decoration: none; }
+.doc-link-icon { opacity: 0.5; }
+.doc-empty { font-size: 12.5px; color: var(--muted); }

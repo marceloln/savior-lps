@@ -56,11 +56,11 @@ export default function DocumentosPage() {
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Documentos</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setEditing(null); }}>
@@ -69,7 +69,7 @@ export default function DocumentosPage() {
       </div>
 
       {/* Alert banners */}
-      <div className="flex flex-col gap-3" style={{ marginBottom: 20 }}>
+      <div className="flex flex-col gap-3 mb-5">
         {vencidos.length > 0 && (
           <div className="alert-banner alert-banner-red">
             <AlertTriangle size={16} strokeWidth={2} />
@@ -89,22 +89,22 @@ export default function DocumentosPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex" style={{ borderBottom: '1px solid var(--line)', marginBottom: 16 }}>
+      <div className="tab-bar mb-4">
         {tabs.map((t) => (
           <button
             key={t.key}
             className={`tab ${tab === t.key ? 'tab-active' : ''}`}
             onClick={() => setTab(t.key)}
           >
-            {t.label} <span className="mono" style={{ fontSize: 10, marginLeft: 4, color: 'var(--muted2)' }}>{t.count}</span>
+            {t.label} <span className="mono text-xs ml-1 text-muted2">{t.count}</span>
           </button>
         ))}
       </div>
 
       <div className="panel">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
-            <tr style={{ textAlign: 'left' }}>
+            <tr className="text-left">
               <th className="th">Documento</th>
               <th className="th">Tipo</th>
               <th className="th">Entidade</th>
@@ -119,13 +119,13 @@ export default function DocumentosPage() {
               const days = daysUntil(doc.data_vencimento);
               return (
                 <tr key={doc.id} className="table-row-click" onClick={() => { setEditing(doc); setCreating(false); }}>
-                  <td className="td" style={{ fontWeight: 600 }}>{doc.nome}</td>
+                  <td className="td fw-600">{doc.nome}</td>
                   <td className="td"><span className="pill pill-slate">{doc.tipo}</span></td>
-                  <td className="td" style={{ fontSize: 11 }}>{doc.entidade_nome}</td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{doc.data_emissao}</td>
-                  <td className="td mono" style={{ fontSize: 11, color: days <= 0 ? 'var(--red)' : days <= 30 ? 'var(--amber)' : 'var(--ink)' }}>
+                  <td className="td text-sm">{doc.entidade_nome}</td>
+                  <td className="td mono text-sm">{doc.data_emissao}</td>
+                  <td className={`td mono text-sm ${days <= 0 ? 'text-red' : days <= 30 ? 'text-amber' : 'text-ink'}`}>
                     {doc.data_vencimento}
-                    {days <= 30 && days > 0 && <span style={{ fontSize: 9, marginLeft: 4 }}>({days}d)</span>}
+                    {days <= 30 && days > 0 && <span className="text-[9px] ml-1">({days}d)</span>}
                   </td>
                   <td className="td"><span className={`pill ${pill.cls}`}>{pill.label}</span></td>
                 </tr>
@@ -140,7 +140,7 @@ export default function DocumentosPage() {
         onClose={closePanel}
         title={editing ? 'Editar documento' : 'Novo documento'}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
+          <div className="slide-footer-between">
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
@@ -178,7 +178,7 @@ export default function DocumentosPage() {
           <input className="form-input" type="date" defaultValue={editing?.data_vencimento || ''} />
         </FormField>
         <FormField label="Arquivo">
-          <input className="form-input" type="file" style={{ padding: '8px 12px' }} />
+          <input className="form-input py-2 px-3" type="file" />
         </FormField>
       </SlideOver>
     </div>

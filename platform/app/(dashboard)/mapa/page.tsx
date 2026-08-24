@@ -10,8 +10,8 @@ import { useToast } from '@/components/ui/toast';
 const MapaLeaflet = dynamic(() => import('@/components/mapa/mapa-leaflet'), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center" style={{ background: '#1a1a2e' }}>
-      <p style={{ fontSize: '12.5px', color: '#666' }}>Carregando mapa...</p>
+    <div className="flex h-full w-full items-center justify-center map-loading">
+      <p className="map-loading-text">Carregando mapa...</p>
     </div>
   ),
 });
@@ -164,7 +164,7 @@ export default function MapaPage() {
   }
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100%' }}>
+    <div className="map-container">
       {/* Map fills everything */}
       <MapaLeaflet
         vtrs={filtered}
@@ -176,37 +176,22 @@ export default function MapaPage() {
       />
 
       {/* ── Top-left stats badge ── */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 14,
-          left: 336,
-          zIndex: 1000,
-          background: 'oklch(0.16 0.03 256 / 0.88)',
-          backdropFilter: 'blur(8px)',
-          borderRadius: 10,
-          padding: '8px 14px',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-        }}
-      >
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 700 }}>
+      <div className="map-stats-badge">
+        <span className="map-stats-item">
           {mockVtrs.length} veículos
         </span>
-        <span style={{ opacity: 0.35 }}>&middot;</span>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 600, color: '#1FD29A' }}>
+        <span className="map-stats-sep">&middot;</span>
+        <span className="map-stats-avail">
           {availableCount} disponíveis
         </span>
-        <span style={{ opacity: 0.35 }}>&middot;</span>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 600, color: 'oklch(0.75 0.13 65)' }}>
+        <span className="map-stats-sep">&middot;</span>
+        <span className="map-stats-active">
           {activeCount} chamados ativos
         </span>
       </div>
 
       {/* ── Top-right VTR type filter chips (dark variant) ── */}
-      <div style={{ position: 'absolute', top: 14, right: selectedChamadoId ? 376 : 14, zIndex: 1000, display: 'flex', gap: 5, transition: 'right 0.2s ease' }}>
+      <div className={`map-type-filters${selectedChamadoId ? ' dispatch-open' : ''}`}>
         {tipoButtons.map((f) => {
           const count = f.value === 'todas' ? mockVtrs.length : countByTipo(f.value);
           const isActive = tipoFilter === f.value;
@@ -217,7 +202,7 @@ export default function MapaPage() {
               className={`chip-dark${isActive ? ' on' : ''}`}
             >
               {f.label}
-              <span style={{ marginLeft: 4, opacity: 0.7, fontFamily: 'var(--mono)', fontSize: '8px' }}>
+              <span className="chip-count">
                 {count}
               </span>
             </button>
@@ -229,10 +214,10 @@ export default function MapaPage() {
       <div className="map-sidebar">
         {/* Header */}
         <div className="map-sidebar-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="font-display" style={{ fontSize: '14px' }}>Mapa Operacional</span>
+          <div className="map-sidebar-title-row">
+            <span className="font-display text-sm">Mapa Operacional</span>
             <div className="live-dot" />
-            <span className="mono" style={{ fontSize: '9px', color: 'var(--muted2)' }}>
+            <span className="mono text-[9px] text-muted2">
               {mockVtrs.length} VTRs
             </span>
           </div>
@@ -252,16 +237,7 @@ export default function MapaPage() {
           >
             Chamados
             {activeCount > 0 && (
-              <span style={{
-                marginLeft: 5,
-                fontFamily: 'var(--mono)',
-                fontSize: '8px',
-                background: 'var(--red-l)',
-                color: 'var(--red)',
-                padding: '1px 5px',
-                borderRadius: 4,
-                fontWeight: 700,
-              }}>
+              <span className="sidebar-count-badge">
                 {activeCount}
               </span>
             )}
@@ -272,48 +248,32 @@ export default function MapaPage() {
         {sidebarTab === 'frota' ? (
           <>
             {/* Search */}
-            <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--line)' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'var(--bg)',
-                borderRadius: 8,
-                padding: '6px 10px',
-                border: '1px solid var(--line)',
-              }}>
-                <Search size={12} style={{ color: 'var(--muted2)', flexShrink: 0 }} />
+            <div className="sidebar-search-wrap">
+              <div className="sidebar-search-inner">
+                <Search size={12} className="text-muted2 shrink-0" />
                 <input
                   type="text"
-                  className="inbox-search"
+                  className="inbox-search sidebar-search-input"
                   placeholder="Buscar placa ou VTR..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    padding: 0,
-                    fontSize: '11px',
-                    width: '100%',
-                  }}
                 />
               </div>
             </div>
 
             {/* Status filter chips */}
-            <div style={{ padding: '8px 12px', display: 'flex', gap: 4, flexWrap: 'wrap', borderBottom: '1px solid var(--line)' }}>
+            <div className="sidebar-filter-row">
               {filterButtons.map((f) => {
                 const count = f.value === 'todas' ? mockVtrs.length : countByStatus(f.value);
                 const isActive = statusFilter === f.value;
                 return (
                   <button
                     key={f.value}
-                    className={`chip ${isActive ? 'chip-active' : ''}`}
+                    className={`chip chip-sm ${isActive ? 'chip-active' : ''}`}
                     onClick={() => setStatusFilter(f.value)}
-                    style={{ fontSize: '10px', padding: '3px 8px' }}
                   >
                     {f.label}
-                    <span style={{ marginLeft: 3, fontFamily: 'var(--mono)', fontSize: '8px', opacity: 0.7 }}>
+                    <span className="chip-count-3">
                       {count}
                     </span>
                   </button>
@@ -326,42 +286,27 @@ export default function MapaPage() {
               {sidebarVtrs.map((vtr) => {
                 const tp = tipoVtrPill[vtr.tipo];
                 const isSelected = vtr.id === selectedVtrId;
+                const dotClass = `vtr-status-dot vtr-dot-${vtr.status}`;
                 return (
                   <div
                     key={vtr.id}
                     onClick={() => handleVtrClick(vtr.id)}
-                    className={isSelected ? '' : 'table-row-click'}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '7px 12px',
-                      borderBottom: '1px solid var(--line)',
-                      cursor: 'pointer',
-                      background: isSelected ? 'var(--green-l)' : undefined,
-                    }}
+                    className={`vtr-sidebar-row${isSelected ? ' selected' : ''} ${isSelected ? '' : 'table-row-click'}`}
                   >
                     {/* Status dot */}
-                    <span style={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: '50%',
-                      flexShrink: 0,
-                      background: vtr.status === 'disponivel' ? '#1FD29A' :
-                                  vtr.status === 'em_atendimento' ? '#F59E0B' : '#D9534F',
-                    }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span className="font-display" style={{ fontSize: '13px' }}>
+                    <span className={dotClass} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-[5px]">
+                        <span className="font-display text-md">
                           VTR {vtr.nome}
                         </span>
-                        <span className={`pill ${tp.pill}`} style={{ fontSize: '6px' }}>{tp.label}</span>
+                        <span className={`pill ${tp.pill} pill-6`}>{tp.label}</span>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span className="mono" style={{ fontSize: '10px', fontWeight: 600, color: 'var(--muted)' }}>
+                      <div className="flex items-center gap-[5px]">
+                        <span className="mono text-xs fw-600 text-muted">
                           {vtr.placa}
                         </span>
-                        <span style={{ fontSize: '10px', color: 'var(--muted2)' }}>
+                        <span className="text-xs text-muted2">
                           {vtr.modelo}
                         </span>
                       </div>
@@ -370,7 +315,7 @@ export default function MapaPage() {
                 );
               })}
               {sidebarVtrs.length === 0 && (
-                <div style={{ padding: '20px 12px', textAlign: 'center', fontSize: '11px', color: 'var(--muted2)' }}>
+                <div className="sidebar-empty">
                   Nenhum veículo encontrado
                 </div>
               )}
@@ -388,54 +333,40 @@ export default function MapaPage() {
                 <div
                   key={chamado.id}
                   onClick={() => handleChamadoClick(chamado.id)}
-                  className={isSelected ? '' : 'table-row-click'}
-                  style={{
-                    padding: '9px 12px',
-                    borderBottom: '1px solid var(--line)',
-                    cursor: 'pointer',
-                    background: isSelected ? 'var(--green-l)' : undefined,
-                  }}
+                  className={`chamado-sidebar-row${isSelected ? ' selected' : ''} ${isSelected ? '' : 'table-row-click'}`}
                 >
                   {/* Top row: number + status + SLA + channel */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <span className="mono" style={{ fontSize: '11px', color: 'var(--green-d)', fontWeight: 700 }}>
+                  <div className="chamado-top-row">
+                    <span className="mono text-sm text-green-d fw-700">
                       #{chamado.numero}
                     </span>
-                    <span className={`pill ${pillClass}`} style={{ fontSize: '6px' }}>{statusLabel[chamado.status]}</span>
+                    <span className={`pill ${pillClass} pill-6`}>{statusLabel[chamado.status]}</span>
                     <span
-                      className="mono"
-                      style={{
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        padding: '1px 5px',
-                        borderRadius: 4,
-                        background: slaCrit ? 'var(--red-l)' : slaWarn ? 'var(--amber-l)' : 'transparent',
-                        color: slaCrit ? 'var(--red)' : slaWarn ? 'var(--amber)' : 'var(--muted2)',
-                      }}
+                      className={`mono chamado-sla-badge ${slaCrit ? 'chamado-sla-crit' : slaWarn ? 'chamado-sla-warn' : 'chamado-sla-ok'}`}
                     >
                       {chamado.sla_minutos}min
                     </span>
-                    <span style={{ marginLeft: 'auto', fontSize: '11px' }}>
+                    <span className="ml-auto text-sm">
                       {canalIcons[chamado.canal] ?? ''}
                     </span>
                   </div>
 
                   {/* Patient name */}
-                  <div className="font-display" style={{ fontSize: '12px', marginBottom: 2 }}>
+                  <div className="font-display text-base mb-[2px]">
                     {chamado.paciente_nome}
                   </div>
 
                   {/* Origin → Destination */}
-                  <div style={{ fontSize: '10px', color: 'var(--muted)', lineHeight: 1.3 }}>
+                  <div className="chamado-route">
                     {truncate(chamado.origem.split(' — ')[0] ?? chamado.origem, 30)}
-                    <span style={{ margin: '0 3px', color: 'var(--muted2)' }}>&rarr;</span>
+                    <span className="chamado-arrow">&rarr;</span>
                     {truncate(chamado.destino.split(' — ')[0] ?? chamado.destino, 30)}
                   </div>
                 </div>
               );
             })}
             {activeChamados.length === 0 && (
-              <div style={{ padding: '20px 12px', textAlign: 'center', fontSize: '11px', color: 'var(--muted2)' }}>
+              <div className="sidebar-empty">
                 Nenhum chamado ativo
               </div>
             )}
@@ -447,9 +378,9 @@ export default function MapaPage() {
       {selectedChamado && (
         <div className="map-dispatch-panel">
           {/* Header */}
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span className="mono" style={{ fontSize: '13px', color: 'var(--green-d)', fontWeight: 700 }}>
+          <div className="dispatch-header">
+            <div className="dispatch-header-left">
+              <span className="mono text-md text-green-d fw-700">
                 #{selectedChamado.numero}
               </span>
               <span className={`pill ${statusPill[selectedChamado.status]}`}>
@@ -458,94 +389,85 @@ export default function MapaPage() {
             </div>
             <button
               onClick={handleCloseDispatch}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', padding: 4 }}
+              className="dispatch-close"
             >
               <X size={16} />
             </button>
           </div>
 
           {/* Patient info */}
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)' }}>
-            <div className="font-display" style={{ fontSize: '15px', marginBottom: 4 }}>
+          <div className="dispatch-section">
+            <div className="font-display text-[15px] mb-1">
               {selectedChamado.paciente_nome}
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
+            <div className="dispatch-patient-age">
               {selectedChamado.paciente_idade} anos &middot; {selectedChamado.paciente_telefone}
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: 2 }}>
+            <div className="dispatch-patient-solic">
               Solicitante: {selectedChamado.solicitante_nome}
             </div>
           </div>
 
           {/* Origin → Destination */}
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)' }}>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingTop: 2 }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--red)' }} />
-                <div style={{ width: 1, height: 24, background: 'var(--line2)' }} />
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--blue)' }} />
+          <div className="dispatch-section">
+            <div className="dispatch-route-wrap">
+              <div className="dispatch-route-dots">
+                <div className="dispatch-dot-red" />
+                <div className="dispatch-route-line" />
+                <div className="dispatch-dot-blue" />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ marginBottom: 2 }}>
-                  <div className="label" style={{ fontSize: '7px', marginBottom: 2 }}>ORIGEM</div>
-                  <div style={{ fontSize: '11px', color: 'var(--ink)', lineHeight: 1.3 }}>
+              <div className="flex-1">
+                <div className="mb-[2px]">
+                  <div className="label dispatch-route-label">ORIGEM</div>
+                  <div className="dispatch-route-addr">
                     {selectedChamado.origem}
                   </div>
                 </div>
-                <div style={{ marginTop: 10 }}>
-                  <div className="label" style={{ fontSize: '7px', marginBottom: 2 }}>DESTINO</div>
-                  <div style={{ fontSize: '11px', color: 'var(--ink)', lineHeight: 1.3 }}>
+                <div className="mt-[10px]">
+                  <div className="label dispatch-route-label">DESTINO</div>
+                  <div className="dispatch-route-addr">
                     {selectedChamado.destino}
                   </div>
                 </div>
               </div>
             </div>
             {selectedChamado.distancia_km && (
-              <div className="mono" style={{ fontSize: '10px', color: 'var(--muted)', marginTop: 8 }}>
+              <div className="mono text-xs text-muted mt-2">
                 {selectedChamado.distancia_km} km estimados
               </div>
             )}
           </div>
 
           {/* Nearby VTRs */}
-          <div style={{ padding: '14px 16px' }}>
-            <div className="label" style={{ marginBottom: 10 }}>VTRs PRÓXIMAS</div>
+          <div className="dispatch-nearby">
+            <div className="label mb-[10px]">VTRs PRÓXIMAS</div>
 
             {nearbyVtrs.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div className="flex flex-col gap-[6px]">
                 {nearbyVtrs.map((vtr) => {
                   const tp = tipoVtrPill[vtr.tipo];
                   const etaMin = Math.ceil(vtr.dist * 3);
                   return (
                     <div
                       key={vtr.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 10,
-                        padding: '8px 10px',
-                        border: '1px solid var(--line)',
-                        borderRadius: 'var(--r)',
-                        background: 'var(--card)',
-                      }}
+                      className="nearby-vtr-card"
                     >
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <span className="font-display" style={{ fontSize: '12px' }}>VTR {vtr.nome}</span>
-                          <span className={`pill ${tp.pill}`} style={{ fontSize: '6px' }}>{tp.label}</span>
+                      <div className="flex-1">
+                        <div className="nearby-vtr-info-row">
+                          <span className="font-display text-base">VTR {vtr.nome}</span>
+                          <span className={`pill ${tp.pill} pill-6`}>{tp.label}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-                          <span className="mono" style={{ fontSize: '9px', fontWeight: 600, color: 'var(--muted)' }}>
+                        <div className="nearby-vtr-meta">
+                          <span className="mono text-[9px] fw-600 text-muted">
                             {vtr.placa}
                           </span>
-                          <span style={{ fontSize: '9px', color: 'var(--muted2)' }}>
+                          <span className="nearby-vtr-dist">
                             ~{vtr.dist.toFixed(1)} km &middot; ~{etaMin} min
                           </span>
                         </div>
                       </div>
                       <button
-                        className="btn-sm btn-sm-green"
-                        style={{ fontSize: '10px', padding: '5px 10px' }}
+                        className="btn-sm btn-sm-green btn-sm-dispatch"
                         onClick={() => handleDespachar(vtr)}
                       >
                         Despachar
@@ -555,7 +477,7 @@ export default function MapaPage() {
                 })}
               </div>
             ) : (
-              <div style={{ fontSize: '11px', color: 'var(--muted2)', textAlign: 'center', padding: '12px 0' }}>
+              <div className="sidebar-empty">
                 Nenhuma VTR disponível próxima
               </div>
             )}

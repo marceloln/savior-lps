@@ -130,10 +130,8 @@ export default function OrcamentosPage() {
     const newItens = form.itens.map((item, i) => {
       if (i !== idx) return item;
       const updated = { ...item, ...patch };
-      // enforce minimum hours
       const preco = tabelaPrecos.find((p) => p.tipo_servico === updated.tipo);
       if (preco && updated.horas < preco.minimo_horas) updated.horas = preco.minimo_horas;
-      // enforce max discount
       if (updated.desconto > 0.20) updated.desconto = 0.20;
       if (updated.desconto < 0) updated.desconto = 0;
       if (updated.quantidade < 1) updated.quantidade = 1;
@@ -169,11 +167,11 @@ export default function OrcamentosPage() {
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Orçamentos de Eventos</h1>
         </div>
         <button className="btn btn-green" onClick={openCreate}>
@@ -181,8 +179,8 @@ export default function OrcamentosPage() {
         </button>
       </div>
 
-      <div style={{ position: 'relative', display: 'inline-block', marginBottom: 16 }}>
-        <Search size={14} strokeWidth={1.8} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }} />
+      <div className="search-wrapper mb-4">
+        <Search size={14} strokeWidth={1.8} className="search-icon-abs" />
         <input
           className="table-search"
           placeholder="Buscar por cliente ou evento..."
@@ -192,14 +190,14 @@ export default function OrcamentosPage() {
       </div>
 
       <div className="panel">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
-            <tr style={{ textAlign: 'left' }}>
+            <tr className="text-left">
               <th className="th">Cliente</th>
               <th className="th">Evento</th>
               <th className="th">Data</th>
               <th className="th">Itens</th>
-              <th className="th" style={{ textAlign: 'right' }}>Valor total</th>
+              <th className="th text-right">Valor total</th>
               <th className="th">Status</th>
               <th className="th">Criado em</th>
             </tr>
@@ -209,22 +207,22 @@ export default function OrcamentosPage() {
               const sc = statusConfig[o.status];
               return (
                 <tr key={o.id} className="table-row-click" onClick={() => openView(o)}>
-                  <td className="td" style={{ fontWeight: 600 }}>
+                  <td className="td fw-600">
                     {o.cliente_nome}
                     {o.cliente_empresa && (
-                      <span style={{ display: 'block', fontSize: 10, color: 'var(--muted)', fontWeight: 400 }}>
+                      <span className="block text-xs text-muted fw-400">
                         {o.cliente_empresa}
                       </span>
                     )}
                   </td>
-                  <td className="td" style={{ fontSize: 12 }}>{o.evento_nome}</td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{fmtDate(o.evento_data)}</td>
-                  <td className="td" style={{ fontSize: 11, color: 'var(--muted)' }}>{itensResumo(o.itens)}</td>
-                  <td className="td mono" style={{ fontSize: 12, textAlign: 'right', fontWeight: 600 }}>{fmt(o.valor_com_desconto)}</td>
+                  <td className="td text-base">{o.evento_nome}</td>
+                  <td className="td mono text-sm">{fmtDate(o.evento_data)}</td>
+                  <td className="td text-sm text-muted">{itensResumo(o.itens)}</td>
+                  <td className="td mono text-base text-right fw-600">{fmt(o.valor_com_desconto)}</td>
                   <td className="td">
                     <span className={`pill ${sc.pill}`}>{sc.label}</span>
                   </td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{fmtDate(o.created_at)}</td>
+                  <td className="td mono text-sm">{fmtDate(o.created_at)}</td>
                 </tr>
               );
             })}
@@ -235,57 +233,57 @@ export default function OrcamentosPage() {
       {/* ── View detail slide-over ── */}
       {viewing && (
         <SlideOver open={true} onClose={closePanel} title="Detalhes do orçamento">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="flex flex-col gap-5">
             <div>
-              <p className="label" style={{ marginBottom: 4 }}>CLIENTE</p>
-              <p style={{ fontWeight: 600, fontSize: 14 }}>{viewing.cliente_nome}</p>
-              {viewing.cliente_empresa && <p style={{ fontSize: 12, color: 'var(--muted)' }}>{viewing.cliente_empresa}</p>}
-              <p className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{viewing.cliente_telefone}</p>
+              <p className="label mb-1">CLIENTE</p>
+              <p className="fw-600 text-lg">{viewing.cliente_nome}</p>
+              {viewing.cliente_empresa && <p className="text-base text-muted">{viewing.cliente_empresa}</p>}
+              <p className="mono text-sm text-muted mt-0.5">{viewing.cliente_telefone}</p>
             </div>
 
             <div>
-              <p className="label" style={{ marginBottom: 4 }}>EVENTO</p>
-              <p style={{ fontWeight: 600, fontSize: 14 }}>{viewing.evento_nome}</p>
-              <p style={{ fontSize: 12, color: 'var(--muted)' }}>{fmtDate(viewing.evento_data)} · {viewing.evento_local}</p>
-              <p style={{ fontSize: 12, color: 'var(--muted)' }}>Público estimado: {viewing.evento_publico_estimado.toLocaleString('pt-BR')}</p>
+              <p className="label mb-1">EVENTO</p>
+              <p className="fw-600 text-lg">{viewing.evento_nome}</p>
+              <p className="text-base text-muted">{fmtDate(viewing.evento_data)} · {viewing.evento_local}</p>
+              <p className="text-base text-muted">Público estimado: {viewing.evento_publico_estimado.toLocaleString('pt-BR')}</p>
             </div>
 
             <div>
-              <p className="label" style={{ marginBottom: 8 }}>SERVIÇOS</p>
+              <p className="label mb-2">SERVIÇOS</p>
               {viewing.itens.map((item, idx) => {
                 const descLabel = item.desconto > 0 ? ` (${(item.desconto * 100).toFixed(0)}% desc.)` : '';
                 return (
-                  <div key={idx} style={{ padding: '8px 0', borderBottom: idx < viewing.itens.length - 1 ? '1px solid var(--line)' : 'none' }}>
-                    <p style={{ fontWeight: 600, fontSize: 12 }}>{item.quantidade}× {tipoLabel[item.tipo]}</p>
-                    <p style={{ fontSize: 11, color: 'var(--muted)' }}>
+                  <div key={idx} className={`py-2 ${idx < viewing.itens.length - 1 ? 'border-b-line' : ''}`}>
+                    <p className="fw-600 text-base">{item.quantidade}× {tipoLabel[item.tipo]}</p>
+                    <p className="text-sm text-muted">
                       {item.horas}h × <span className="mono">{fmt(item.valor_unitario)}</span>/h{descLabel}
                     </p>
-                    <p className="mono" style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>{fmt(item.subtotal)}</p>
+                    <p className="mono text-md fw-600 mt-0.5">{fmt(item.subtotal)}</p>
                   </div>
                 );
               })}
             </div>
 
-            <div style={{ background: 'var(--green-l)', borderRadius: 'var(--r)', padding: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: 12, color: 'var(--muted)' }}>Total sem desconto</span>
-                <span className="mono" style={{ fontSize: 13 }}>{fmt(viewing.valor_total)}</span>
+            <div className="summary-card">
+              <div className="summary-row">
+                <span className="text-base text-muted">Total sem desconto</span>
+                <span className="mono text-md">{fmt(viewing.valor_total)}</span>
               </div>
               {viewing.valor_total !== viewing.valor_com_desconto && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, color: 'var(--green-d)' }}>Desconto aplicado</span>
-                  <span className="mono" style={{ fontSize: 13, color: 'var(--green-d)' }}>-{fmt(viewing.valor_total - viewing.valor_com_desconto)}</span>
+                <div className="summary-row">
+                  <span className="text-base text-green-d">Desconto aplicado</span>
+                  <span className="mono text-md text-green-d">-{fmt(viewing.valor_total - viewing.valor_com_desconto)}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--green)' }}>
-                <span className="font-display" style={{ fontSize: 14, color: 'var(--green-d)' }}>Total final</span>
-                <span className="font-display" style={{ fontSize: 22, color: 'var(--green-d)' }}>{fmt(viewing.valor_com_desconto)}</span>
+              <div className="summary-divider flex justify-between">
+                <span className="font-display text-lg text-green-d">Total final</span>
+                <span className="font-display text-4xl text-green-d">{fmt(viewing.valor_com_desconto)}</span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="flex gap-2 items-center">
               <span className={`pill ${statusConfig[viewing.status].pill}`}>{statusConfig[viewing.status].label}</span>
-              <span style={{ fontSize: 11, color: 'var(--muted)', alignSelf: 'center' }}>
+              <span className="text-sm text-muted">
                 Criado em {fmtDate(viewing.created_at)} · Validade {viewing.validade_dias} dias
               </span>
             </div>
@@ -300,7 +298,7 @@ export default function OrcamentosPage() {
           onClose={closePanel}
           title={`Novo orçamento — ${step === 1 ? 'Cliente' : step === 2 ? 'Evento' : 'Serviços'}`}
           footer={
-            <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
+            <div className="slide-footer-between">
               <div>
                 {step > 1 && (
                   <button className="btn btn-outline" onClick={() => setStep(step - 1)}>Voltar</button>
@@ -321,32 +319,25 @@ export default function OrcamentosPage() {
           }
         >
           {/* Step indicator */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+          <div className="flex items-center gap-2 mb-5">
             {[1, 2, 3].map((s) => (
-              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{
-                  width: 24, height: 24, borderRadius: '50%',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 700, fontFamily: 'var(--mono)',
-                  background: s <= step ? 'var(--green)' : 'var(--bg)',
-                  color: s <= step ? 'oklch(0.24 0.05 168)' : 'var(--muted2)',
-                  border: s <= step ? 'none' : '1px solid var(--line2)',
-                }}>
+              <div key={s} className="flex items-center gap-2">
+                <div className={`step-dot ${s <= step ? 'step-dot-active' : 'step-dot-inactive'}`}>
                   {s}
                 </div>
                 {s < 3 && (
-                  <div style={{ width: 32, height: 2, background: s < step ? 'var(--green)' : 'var(--line2)', borderRadius: 1 }} />
+                  <div className={`step-line ${s < step ? 'step-line-active' : 'step-line-inactive'}`} />
                 )}
               </div>
             ))}
-            <span className="mono" style={{ fontSize: 10, color: 'var(--muted)', marginLeft: 8 }}>
+            <span className="mono text-xs text-muted ml-2">
               Passo {step} de 3
             </span>
           </div>
 
           {/* Step 1 — Cliente */}
           {step === 1 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <div className="flex flex-col">
               <FormField label="Nome do cliente">
                 <input className="form-input" value={form.cliente_nome} onChange={(e) => setForm({ ...form, cliente_nome: e.target.value })} placeholder="Nome completo" />
               </FormField>
@@ -364,7 +355,7 @@ export default function OrcamentosPage() {
 
           {/* Step 2 — Evento */}
           {step === 2 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <div className="flex flex-col">
               <FormField label="Nome do evento">
                 <input className="form-input" value={form.evento_nome} onChange={(e) => setForm({ ...form, evento_nome: e.target.value })} placeholder="Ex: SIPAT Petrobras 2026" />
               </FormField>
@@ -382,17 +373,17 @@ export default function OrcamentosPage() {
 
           {/* Step 3 — Serviços (Calculator) */}
           {step === 3 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="flex flex-col gap-4">
               {form.itens.map((item, idx) => {
                 const line = calcLine(item);
                 return (
-                  <div key={idx} className="panel" style={{ padding: 14 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                      <span style={{ fontWeight: 700, fontSize: 12 }}>Serviço {idx + 1}</span>
+                  <div key={idx} className="panel p-3.5">
+                    <div className="flex-between mb-3">
+                      <span className="fw-700 text-base">Serviço {idx + 1}</span>
                       {form.itens.length > 1 && (
                         <button
                           onClick={() => removeItem(idx)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--red)', padding: 2 }}
+                          className="btn-icon-delete"
                         >
                           <Trash2 size={14} strokeWidth={1.8} />
                         </button>
@@ -411,7 +402,7 @@ export default function OrcamentosPage() {
                       </select>
                     </FormField>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div className="grid grid-cols-2 gap-3">
                       <FormField label="Quantidade">
                         <input
                           className="form-input"
@@ -432,9 +423,9 @@ export default function OrcamentosPage() {
                       </FormField>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                      <span style={{ fontSize: 11, color: 'var(--muted)', whiteSpace: 'nowrap' }}>Valor/hora:</span>
-                      <span className="mono" style={{ fontSize: 12, fontWeight: 600 }}>{fmt(line.valorHora)}</span>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm text-muted whitespace-nowrap">Valor/hora:</span>
+                      <span className="mono text-base fw-600">{fmt(line.valorHora)}</span>
                     </div>
 
                     <FormField label={`Desconto: ${(item.desconto * 100).toFixed(0)}%`}>
@@ -444,45 +435,44 @@ export default function OrcamentosPage() {
                         max={20}
                         value={item.desconto * 100}
                         onChange={(e) => updateItem(idx, { desconto: parseInt(e.target.value) / 100 })}
-                        style={{ width: '100%', accentColor: 'var(--green)' }}
+                        className="w-full accent-green"
                       />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--muted2)' }}>
+                      <div className="flex justify-between text-xs text-muted2">
                         <span>0%</span>
                         <span>20%</span>
                       </div>
                     </FormField>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--line)' }}>
-                      <span style={{ fontSize: 12, color: 'var(--muted)' }}>Subtotal</span>
-                      <span className="mono" style={{ fontSize: 14, fontWeight: 700 }}>{fmt(line.subtotalLiquido)}</span>
+                    <div className="flex justify-between mt-2 pt-2 border-t-line">
+                      <span className="text-base text-muted">Subtotal</span>
+                      <span className="mono text-lg fw-700">{fmt(line.subtotalLiquido)}</span>
                     </div>
                   </div>
                 );
               })}
 
               <button
-                className="btn btn-outline"
+                className="btn btn-outline self-start"
                 onClick={addItem}
-                style={{ alignSelf: 'flex-start' }}
               >
                 <span className="flex items-center gap-2"><Plus size={14} strokeWidth={2} /> Adicionar serviço</span>
               </button>
 
               {/* ── Resumo ── */}
-              <div style={{ background: 'var(--green-l)', borderRadius: 'var(--r)', padding: 16, marginTop: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>Total sem desconto</span>
-                  <span className="mono" style={{ fontSize: 14 }}>{fmt(totals.bruto)}</span>
+              <div className="summary-card mt-2">
+                <div className="summary-row">
+                  <span className="text-base text-muted">Total sem desconto</span>
+                  <span className="mono text-lg">{fmt(totals.bruto)}</span>
                 </div>
                 {totals.desconto > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: 12, color: 'var(--green-d)' }}>Desconto aplicado</span>
-                    <span className="mono" style={{ fontSize: 14, color: 'var(--green-d)' }}>-{fmt(totals.desconto)}</span>
+                  <div className="summary-row">
+                    <span className="text-base text-green-d">Desconto aplicado</span>
+                    <span className="mono text-lg text-green-d">-{fmt(totals.desconto)}</span>
                   </div>
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--green)' }}>
-                  <span className="font-display" style={{ fontSize: 15, color: 'var(--green-d)', alignSelf: 'center' }}>Total final</span>
-                  <span className="font-display" style={{ fontSize: 28, color: 'var(--green-d)' }}>{fmt(totals.liquido)}</span>
+                <div className="summary-divider-lg flex justify-between">
+                  <span className="font-display text-[15px] text-green-d self-center">Total final</span>
+                  <span className="font-display text-5xl text-green-d">{fmt(totals.liquido)}</span>
                 </div>
               </div>
             </div>

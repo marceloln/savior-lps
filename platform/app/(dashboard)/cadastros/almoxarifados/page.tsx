@@ -25,11 +25,11 @@ export default function AlmoxarifadosPage() {
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Almoxarifados</h1>
         </div>
         <button className="btn btn-green" onClick={openCreate}>
@@ -38,9 +38,9 @@ export default function AlmoxarifadosPage() {
       </div>
 
       <div className="panel">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
-            <tr style={{ textAlign: 'left' }}>
+            <tr className="text-left">
               <th className="th">ID</th>
               <th className="th">Nome</th>
               <th className="th">Filial</th>
@@ -50,9 +50,9 @@ export default function AlmoxarifadosPage() {
           <tbody>
             {mockWarehouses.map((w) => (
               <tr key={w.id}>
-                <td className="td mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{w.id}</td>
-                <td className="td" style={{ fontWeight: 600 }}>{w.nome}</td>
-                <td className="td mono" style={{ fontSize: 11 }}>{w.uf}</td>
+                <td className="td mono text-sm text-muted">{w.id}</td>
+                <td className="td fw-600">{w.nome}</td>
+                <td className="td mono text-sm">{w.uf}</td>
                 <td className="td">
                   <span className={`pill ${w.ativo ? 'pill-green' : 'pill-slate'}`}>
                     {w.ativo ? 'ATIVO' : 'INATIVO'}
@@ -62,7 +62,7 @@ export default function AlmoxarifadosPage() {
             ))}
             {mockWarehouses.length === 0 && (
               <tr>
-                <td className="td" colSpan={4} style={{ textAlign: 'center', color: 'var(--muted)', padding: 32 }}>
+                <td className="td text-center text-muted p-8" colSpan={4}>
                   Nenhum almoxarifado cadastrado
                 </td>
               </tr>
@@ -76,9 +76,9 @@ export default function AlmoxarifadosPage() {
         onClose={() => setSlideOpen(false)}
         title="Novo almoxarifado"
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'flex-end' }}>
+          <div className="slide-footer-end">
             <button className="btn btn-outline" onClick={() => setSlideOpen(false)}>Cancelar</button>
-            <button className="btn btn-green" onClick={() => { setSlideOpen(false); showToast('Almoxarifado salvo com sucesso', 'success'); }}>Salvar</button>
+            <button className="btn btn-green ml-2" onClick={() => { setSlideOpen(false); showToast('Almoxarifado salvo com sucesso', 'success'); }}>Salvar</button>
           </div>
         }
       >

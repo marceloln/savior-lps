@@ -20,7 +20,7 @@ export default function ConfiguracoesPage() {
         <h1 className="page-title">Configurações</h1>
       </div>
 
-      <div className="flex flex-col gap-5" style={{ maxWidth: 680 }}>
+      <div className="flex flex-col gap-5 max-w-[680px]">
         {/* Operador */}
         <div className="panel">
           <div className="panel-header">
@@ -28,17 +28,17 @@ export default function ConfiguracoesPage() {
           </div>
           <div className="panel-body">
             <div className="flex flex-col gap-3">
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+              <div className="config-row">
                 <span className="text-muted">Razão Social</span>
-                <span style={{ fontWeight: 600 }}>Savior Medical Service</span>
+                <span className="fw-600">Savior Medical Service</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', borderTop: '1px solid var(--line)', paddingTop: 12 }}>
+              <div className="config-row">
                 <span className="text-muted">CNPJ</span>
-                <span className="mono" style={{ fontWeight: 600, fontSize: '12px' }}>30.299.895/0001-78</span>
+                <span className="mono fw-600 text-base">30.299.895/0001-78</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', borderTop: '1px solid var(--line)', paddingTop: 12 }}>
+              <div className="config-row">
                 <span className="text-muted">Sede</span>
-                <span style={{ fontWeight: 500 }}>R. Gen. Padilha, 73 — São Cristóvão, RJ</span>
+                <span className="fw-500">R. Gen. Padilha, 73 — São Cristóvão, RJ</span>
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@ export default function ConfiguracoesPage() {
 
         {/* Integrações */}
         <div className="panel">
-          <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="panel-header flex-between">
             <p className="panel-title">Integrações</p>
           </div>
           <div className="panel-body">
@@ -54,35 +54,19 @@ export default function ConfiguracoesPage() {
               {integracoes.map((intg) => (
                 <div
                   key={intg.nome}
-                  className="flex items-center gap-3"
-                  style={{
-                    padding: '10px 0',
-                    borderBottom: '1px solid var(--line)',
-                  }}
+                  className="flex items-center gap-3 integration-row"
                 >
                   {/* Status dot */}
-                  <span style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: intg.connected ? 'var(--green)' : 'var(--amber)',
-                    flexShrink: 0,
-                  }} />
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>{intg.nome}</p>
-                    <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{intg.desc}</p>
+                  <span className={`status-dot ${intg.connected ? 'status-dot-green' : 'status-dot-amber'}`} />
+                  <div className="flex-1">
+                    <p className="text-md fw-600 text-ink">{intg.nome}</p>
+                    <p className="text-sm text-muted">{intg.desc}</p>
                   </div>
-                  <span className="pill" style={{
-                    background: intg.connected ? 'var(--green-l)' : 'var(--amber-l)',
-                    color: intg.connected ? 'var(--green-d)' : 'var(--amber)',
-                  }}>
+                  <span className={`pill ${intg.connected ? 'pill-green' : 'pill-amber'}`}>
                     {intg.connected ? 'Conectado' : 'Pendente'}
                   </span>
                   <button
-                    className="btn-sm"
-                    style={{
-                      background: intg.connected ? 'transparent' : 'var(--green)',
-                      color: intg.connected ? 'var(--muted)' : 'oklch(0.24 0.05 168)',
-                      border: intg.connected ? '1px solid var(--line2)' : 'none',
-                    }}
+                    className={`btn-sm ${intg.connected ? 'btn-outline' : 'btn-sm-green'}`}
                   >
                     {intg.connected ? 'Reconectar' : 'Conectar'}
                   </button>
@@ -94,13 +78,9 @@ export default function ConfiguracoesPage() {
 
         {/* Usuários */}
         <div className="panel">
-          <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="panel-header flex-between">
             <p className="panel-title">Usuários</p>
-            <button className="btn-sm" style={{
-              background: 'transparent',
-              border: '1px solid var(--green)',
-              color: 'var(--green-d)',
-            }}>
+            <button className="btn-sm btn-outline">
               Convidar
             </button>
           </div>
@@ -109,14 +89,9 @@ export default function ConfiguracoesPage() {
               {usuarios.map((u) => (
                 <div
                   key={u.nome}
-                  className="flex items-center justify-between"
-                  style={{
-                    padding: '10px 0',
-                    borderBottom: '1px solid var(--line)',
-                    fontSize: '12.5px',
-                  }}
+                  className="flex items-center justify-between user-row"
                 >
-                  <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{u.nome}</span>
+                  <span className="fw-500 text-ink">{u.nome}</span>
                   <span className="pill pill-slate">{u.role}</span>
                 </div>
               ))}

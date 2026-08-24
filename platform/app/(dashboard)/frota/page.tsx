@@ -135,11 +135,11 @@ export default function FrotaPage() {
         <div className="flex items-end justify-between">
           <div className="flex items-end gap-3">
             <h1 className="page-title">Frota</h1>
-            <span className="mono text-muted" style={{ fontSize: '11px', paddingBottom: 2 }}>
+            <span className="mono text-muted frota-total">
               {vtrStats.total} veículos
             </span>
           </div>
-          <button className="btn btn-green" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={openCreate}>
+          <button className="btn btn-green btn-inline-flex" onClick={openCreate}>
             <Plus size={14} strokeWidth={2} />
             Novo veículo
           </button>
@@ -147,11 +147,11 @@ export default function FrotaPage() {
       </div>
 
       {/* Search */}
-      <div className="mb-4" style={{ position: 'relative', width: 260 }}>
+      <div className="mb-4 search-wrapper">
         <Search
           size={14}
           strokeWidth={1.8}
-          style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted2)' }}
+          className="search-icon-abs"
         />
         <input
           type="text"
@@ -171,11 +171,11 @@ export default function FrotaPage() {
             className={`chip ${statusFilter === f.value ? 'chip-active' : ''}`}
           >
             {f.label}
-            <span className="mono" style={{ fontSize: '9px', marginLeft: 4, opacity: 0.7 }}>{f.count}</span>
+            <span className="mono chip-count">{f.count}</span>
           </button>
         ))}
 
-        <span style={{ width: 1, height: 20, background: 'var(--line2)', margin: '0 4px' }} />
+        <span className="filter-sep" />
 
         {tipoFilters.map((f) => (
           <button
@@ -187,22 +187,22 @@ export default function FrotaPage() {
           </button>
         ))}
 
-        <span className="mono text-muted2 ml-3" style={{ fontSize: '10px' }}>
+        <span className="mono text-muted2 ml-3 filter-result-count">
           {filtered.length} resultado{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
 
       {/* Table */}
       <div className="panel overflow-hidden">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
             <tr>
-              <th className="th" style={{ textAlign: 'left' }}>VTR</th>
-              <th className="th" style={{ textAlign: 'left' }}>PLACA</th>
-              <th className="th" style={{ textAlign: 'left' }}>MODELO</th>
-              <th className="th" style={{ textAlign: 'left' }}>TIPO</th>
-              <th className="th" style={{ textAlign: 'left' }}>STATUS</th>
-              <th className="th" style={{ textAlign: 'left' }}>REGIÃO</th>
+              <th className="th text-left">VTR</th>
+              <th className="th text-left">PLACA</th>
+              <th className="th text-left">MODELO</th>
+              <th className="th text-left">TIPO</th>
+              <th className="th text-left">STATUS</th>
+              <th className="th text-left">REGIÃO</th>
             </tr>
           </thead>
           <tbody>
@@ -215,16 +215,16 @@ export default function FrotaPage() {
                   onClick={() => router.push('/frota/' + vtr.id)}
                 >
                   <td className="td">
-                    <span className="font-display" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)' }}>
+                    <span className="font-display td-name">
                       {vtr.nome}
                     </span>
                   </td>
                   <td className="td">
-                    <span className="mono" style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--ink)' }}>
+                    <span className="mono td-placa">
                       {vtr.placa}
                     </span>
                   </td>
-                  <td className="td" style={{ fontSize: '12.5px', color: 'var(--muted)' }}>
+                  <td className="td td-model">
                     {vtr.modelo}
                   </td>
                   <td className="td">
@@ -236,7 +236,7 @@ export default function FrotaPage() {
                     </span>
                   </td>
                   <td className="td">
-                    <span className="mono text-muted" style={{ fontSize: '11px' }}>
+                    <span className="mono text-muted td-region">
                       {getRegiao(vtr.latitude)}
                     </span>
                   </td>
@@ -249,22 +249,20 @@ export default function FrotaPage() {
 
       {/* Pagination */}
       {filtered.length > PAGE_SIZE && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, padding: '0 4px' }}>
-          <span className="mono" style={{ fontSize: '11px', color: 'var(--muted)' }}>
+        <div className="pagination">
+          <span className="mono pagination-info">
             Mostrando {start}–{end} de {filtered.length}
           </span>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="pagination-btns">
             <button
-              className="btn btn-outline"
-              style={{ padding: '7px 14px', fontSize: '11px' }}
+              className="btn btn-outline btn-page"
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               Anterior
             </button>
             <button
-              className="btn btn-outline"
-              style={{ padding: '7px 14px', fontSize: '11px' }}
+              className="btn btn-outline btn-page"
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             >
@@ -280,23 +278,23 @@ export default function FrotaPage() {
         onClose={() => setSlideOpen(false)}
         title={editingVtr ? `Editar VTR ${editingVtr.nome}` : 'Novo veículo'}
         footer={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
+          <div className="slide-footer-row">
             {editingVtr && (
               <Link
                 href={`/frota/${editingVtr.id}`}
-                style={{ fontSize: '12px', color: 'var(--green-d)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4, marginRight: 'auto' }}
+                className="slide-detail-link"
               >
                 Ver detalhe <ArrowRight size={12} strokeWidth={1.8} />
               </Link>
             )}
-            <div style={{ display: 'flex', gap: 10, marginLeft: editingVtr ? 0 : 'auto' }}>
+            <div className={`slide-btns ${editingVtr ? '' : 'slide-btns-right'}`}>
               <button className="btn btn-outline" onClick={() => setSlideOpen(false)}>Cancelar</button>
               <button className="btn btn-green" onClick={() => { setSlideOpen(false); showToast('Veículo salvo com sucesso', 'success'); }}>Salvar</button>
             </div>
           </div>
         }
       >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-grid-2">
           <FormField label="Nome">
             <input className="form-input" value={formNome} onChange={(e) => setFormNome(e.target.value)} placeholder="Ex: 340" />
           </FormField>
@@ -305,7 +303,7 @@ export default function FrotaPage() {
           </FormField>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-grid-2">
           <FormField label="Tipo">
             <select className="form-select" value={formTipo} onChange={(e) => setFormTipo(e.target.value)}>
               <option value="basica">Básica</option>
@@ -328,7 +326,7 @@ export default function FrotaPage() {
           <input className="form-input" value={formModelo} onChange={(e) => setFormModelo(e.target.value)} placeholder="Renault Master 2.3" />
         </FormField>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-grid-2">
           <FormField label="Versão">
             <input className="form-input" value={formVersao} onChange={(e) => setFormVersao(e.target.value)} placeholder="L2H2" />
           </FormField>
@@ -337,7 +335,7 @@ export default function FrotaPage() {
           </FormField>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-grid-2">
           <FormField label="Chassi">
             <input className="form-input mono" value={formChassi} onChange={(e) => setFormChassi(e.target.value)} placeholder="9BM6882..." />
           </FormField>
@@ -346,7 +344,7 @@ export default function FrotaPage() {
           </FormField>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div className="form-grid-3">
           <FormField label="Ano fabricação">
             <input className="form-input" type="number" value={formAnoFab} onChange={(e) => setFormAnoFab(e.target.value)} placeholder="2024" />
           </FormField>

@@ -33,11 +33,11 @@ export default function PneusPage() {
   return (
     <div>
       <div className="page-hd">
-        <Link href="/cadastros" style={{ color: 'var(--muted)', display: 'flex', alignItems: 'center' }}>
+        <Link href="/cadastros" className="back-link-muted">
           <ChevronLeft size={18} strokeWidth={1.8} />
         </Link>
-        <div style={{ flex: 1 }}>
-          <p className="breadcrumb" style={{ marginBottom: 6 }}>CADASTROS</p>
+        <div className="flex-1">
+          <p className="breadcrumb breadcrumb-spaced">CADASTROS</p>
           <h1 className="page-title">Pneus</h1>
         </div>
         <button className="btn btn-green" onClick={() => { setCreating(true); setEditing(null); }}>
@@ -45,46 +45,35 @@ export default function PneusPage() {
         </button>
       </div>
 
-      <div className="flex items-center gap-3" style={{ marginBottom: 16 }}>
+      <div className="flex items-center gap-3 mb-4">
         <span className="label">Filtrar VTR</span>
-        <select className="form-select" style={{ width: 180 }} value={vtrFilter} onChange={(e) => setVtrFilter(e.target.value)}>
+        <select className="form-select w-[180px]" value={vtrFilter} onChange={(e) => setVtrFilter(e.target.value)}>
           <option value="">Todas</option>
           {vtrOptions.map((v) => (
             <option key={v} value={v}>AM {v}</option>
           ))}
         </select>
-        <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{filtered.length} pneus</span>
+        <span className="mono text-sm text-muted">{filtered.length} pneus</span>
       </div>
 
       {/* Tire position diagram when filtered to a specific VTR */}
       {vtrFilter && (
-        <div className="panel" style={{ marginBottom: 20, padding: 20 }}>
-          <div className="label" style={{ marginBottom: 12 }}>POSIÇÕES AM {vtrFilter}</div>
+        <div className="panel mb-5 p-5">
+          <div className="label mb-3">POSIÇÕES AM {vtrFilter}</div>
           <div className="flex items-center justify-center gap-12">
             {/* Front axle */}
             <div className="flex flex-col items-center gap-2">
-              <span className="label" style={{ fontSize: 8 }}>DIANTEIRO</span>
+              <span className="label text-2xs">DIANTEIRO</span>
               <div className="flex gap-8">
                 {['DE', 'DD'].map((pos) => {
                   const tire = filtered.find((p) => p.posicao === pos);
                   return (
                     <div
                       key={pos}
-                      style={{
-                        width: 48,
-                        height: 72,
-                        borderRadius: 8,
-                        border: `2px solid ${tire ? 'var(--green)' : 'var(--line2)'}`,
-                        background: tire ? 'var(--green-l)' : 'var(--bg)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 2,
-                      }}
+                      className={`tire-slot tire-front ${tire ? 'tire-slot-active' : 'tire-slot-empty'}`}
                     >
-                      <span className="mono" style={{ fontSize: 8, fontWeight: 700, color: tire ? 'var(--green-d)' : 'var(--muted2)' }}>{pos}</span>
-                      {tire && <span className="mono" style={{ fontSize: 7, color: 'var(--muted)' }}>V{tire.vida}</span>}
+                      <span className={`mono text-2xs fw-700 ${tire ? 'text-green-d' : 'text-muted2'}`}>{pos}</span>
+                      {tire && <span className="mono text-[7px] text-muted">V{tire.vida}</span>}
                     </div>
                   );
                 })}
@@ -92,7 +81,7 @@ export default function PneusPage() {
             </div>
             {/* Rear axle */}
             <div className="flex flex-col items-center gap-2">
-              <span className="label" style={{ fontSize: 8 }}>TRASEIRO</span>
+              <span className="label text-2xs">TRASEIRO</span>
               <div className="flex gap-4">
                 <div className="flex gap-1">
                   {['TIE', 'TII'].map((pos) => {
@@ -100,21 +89,10 @@ export default function PneusPage() {
                     return (
                       <div
                         key={pos}
-                        style={{
-                          width: 42,
-                          height: 72,
-                          borderRadius: 8,
-                          border: `2px solid ${tire ? 'var(--green)' : 'var(--line2)'}`,
-                          background: tire ? 'var(--green-l)' : 'var(--bg)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: 2,
-                        }}
+                        className={`tire-slot tire-rear ${tire ? 'tire-slot-active' : 'tire-slot-empty'}`}
                       >
-                        <span className="mono" style={{ fontSize: 7, fontWeight: 700, color: tire ? 'var(--green-d)' : 'var(--muted2)' }}>{pos}</span>
-                        {tire && <span className="mono" style={{ fontSize: 7, color: 'var(--muted)' }}>V{tire.vida}</span>}
+                        <span className={`mono text-[7px] fw-700 ${tire ? 'text-green-d' : 'text-muted2'}`}>{pos}</span>
+                        {tire && <span className="mono text-[7px] text-muted">V{tire.vida}</span>}
                       </div>
                     );
                   })}
@@ -125,21 +103,10 @@ export default function PneusPage() {
                     return (
                       <div
                         key={pos}
-                        style={{
-                          width: 42,
-                          height: 72,
-                          borderRadius: 8,
-                          border: `2px solid ${tire ? 'var(--green)' : 'var(--line2)'}`,
-                          background: tire ? 'var(--green-l)' : 'var(--bg)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: 2,
-                        }}
+                        className={`tire-slot tire-rear ${tire ? 'tire-slot-active' : 'tire-slot-empty'}`}
                       >
-                        <span className="mono" style={{ fontSize: 7, fontWeight: 700, color: tire ? 'var(--green-d)' : 'var(--muted2)' }}>{pos}</span>
-                        {tire && <span className="mono" style={{ fontSize: 7, color: 'var(--muted)' }}>V{tire.vida}</span>}
+                        <span className={`mono text-[7px] fw-700 ${tire ? 'text-green-d' : 'text-muted2'}`}>{pos}</span>
+                        {tire && <span className="mono text-[7px] text-muted">V{tire.vida}</span>}
                       </div>
                     );
                   })}
@@ -151,9 +118,9 @@ export default function PneusPage() {
       )}
 
       <div className="panel">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="table-full">
           <thead>
-            <tr style={{ textAlign: 'left' }}>
+            <tr className="text-left">
               <th className="th">Código</th>
               <th className="th">Dimensão</th>
               <th className="th">Marca</th>
@@ -168,13 +135,13 @@ export default function PneusPage() {
               const pill = statusPill[p.status];
               return (
                 <tr key={p.id} className="table-row-click" onClick={() => { setEditing(p); setCreating(false); }}>
-                  <td className="td mono" style={{ fontSize: 11, fontWeight: 600 }}>{p.codigo}</td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{p.dimensao}</td>
-                  <td className="td" style={{ fontSize: 12 }}>{p.marca}</td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{p.vtr_nome ? `AM ${p.vtr_nome}` : '\u2014'}</td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{p.posicao || '\u2014'}</td>
+                  <td className="td mono text-sm fw-600">{p.codigo}</td>
+                  <td className="td mono text-sm">{p.dimensao}</td>
+                  <td className="td text-base">{p.marca}</td>
+                  <td className="td mono text-sm">{p.vtr_nome ? `AM ${p.vtr_nome}` : '\u2014'}</td>
+                  <td className="td mono text-sm">{p.posicao || '\u2014'}</td>
                   <td className="td"><span className={`pill ${pill.cls}`}>{pill.label}</span></td>
-                  <td className="td mono" style={{ fontSize: 11 }}>{p.vida}</td>
+                  <td className="td mono text-sm">{p.vida}</td>
                 </tr>
               );
             })}
@@ -187,7 +154,7 @@ export default function PneusPage() {
         onClose={closePanel}
         title={editing ? 'Editar pneu' : 'Novo pneu'}
         footer={
-          <div className="flex gap-2" style={{ width: '100%', justifyContent: 'space-between' }}>
+          <div className="slide-footer-between">
             <div>{editing && <button className="btn-red">Excluir</button>}</div>
             <div className="flex gap-2">
               <button className="btn btn-outline" onClick={closePanel}>Cancelar</button>
