@@ -2539,3 +2539,81 @@ body {
 .kanban-card[draggable] { cursor: grab; }
 .kanban-card.dragging { opacity: 0.5; transform: rotate(2deg); }
 .kanban-column.drag-over { background: var(--green-l); border-color: var(--green); }
+
+/* ========== FIX 2: LOADING BUTTON STATE ========== */
+
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ========== FIX 3: SLIDE-OVER BUTTON HOVER ========== */
+
+.slide-over .btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  transition: all 0.12s ease;
+}
+.slide-over .btn:active {
+  transform: translateY(0);
+}
+.slide-over .btn-green:hover {
+  box-shadow: 0 2px 8px oklch(0.68 0.14 168 / 0.3);
+}
+.slide-over .btn-outline:hover {
+  border-color: var(--green);
+  color: var(--green-d);
+}
+
+/* ========== FIX 4: CHAT DATE DIVIDERS ========== */
+
+.chat-date-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  margin: 4px 0;
+}
+.chat-date-divider::before,
+.chat-date-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.chat-date-divider span {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+
+/* ========== FIX 5: MINI MAPA ========== */
+
+.mini-mapa-wrap {
+  border-radius: var(--r);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin-top: 12px;
+}
+.mini-mapa {
+  height: 160px;
+  width: 100%;
+  background: #1a1a2e;
+}

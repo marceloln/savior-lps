@@ -8,17 +8,12 @@ import type { Vtr, VtrStatus, VtrTipo } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { FormField } from '@/components/ui/form-field';
 import { useToast } from '@/components/ui/toast';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useVtrs } from '@/lib/supabase/hooks';
 import Link from 'next/link';
 
 type FilterStatus = 'todas' | VtrStatus;
 type FilterTipo = 'todos' | VtrTipo;
-
-const statusFilters: { label: string; value: FilterStatus; count: number }[] = [
-  { label: 'Todas', value: 'todas', count: vtrStats.total },
-  { label: 'Disponível', value: 'disponivel', count: vtrStats.disponivel },
-  { label: 'Em uso', value: 'em_atendimento', count: vtrStats.em_atendimento },
-  { label: 'Manutenção', value: 'manutencao', count: vtrStats.manutencao },
-];
 
 const tipoFilters: { label: string; value: FilterTipo }[] = [
   { label: 'Todos', value: 'todos' },
@@ -37,6 +32,41 @@ function getRegiao(lat: number): string {
 export default function FrotaPage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const { vtrs: supaVtrs, loading } = useVtrs();
+
+  // Map Supabase data to component format, fallback to mock
+  const allVtrs: Vtr[] = useMemo(() => {
+    if (supaVtrs.length > 0) {
+      return supaVtrs.map((v: any) => ({
+        id: String(v.id),
+        nome: v.nome ?? '',
+        placa: v.placa ?? '',
+        tipo: v.tipo as VtrTipo,
+        status: v.status as VtrStatus,
+        modelo: v.modelo ?? '',
+        latitude: Number(v.latitude) || 0,
+        longitude: Number(v.longitude) || 0,
+        sofit_id: v.sofit_id ?? 0,
+      }));
+    }
+    return mockVtrs;
+  }, [supaVtrs]);
+
+  // Dynamic stats from actual data
+  const dynamicStats = useMemo(() => ({
+    total: allVtrs.length,
+    disponivel: allVtrs.filter(v => v.status === 'disponivel').length,
+    em_atendimento: allVtrs.filter(v => v.status === 'em_atendimento').length,
+    manutencao: allVtrs.filter(v => v.status === 'manutencao').length,
+  }), [allVtrs]);
+
+  const statusFilters: { label: string; value: FilterStatus; count: number }[] = [
+    { label: 'Todas', value: 'todas', count: dynamicStats.total },
+    { label: 'Disponivel', value: 'disponivel', count: dynamicStats.disponivel },
+    { label: 'Em uso', value: 'em_atendimento', count: dynamicStats.em_atendimento },
+    { label: 'Manutencao', value: 'manutencao', count: dynamicStats.manutencao },
+  ];
+
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('todas');
   const [tipoFilter, setTipoFilter] = useState<FilterTipo>('todos');
   const [search, setSearch] = useState('');
@@ -74,13 +104,13 @@ export default function FrotaPage() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return mockVtrs.filter((v) => {
+    return allVtrs.filter((v) => {
       if (statusFilter !== 'todas' && v.status !== statusFilter) return false;
       if (tipoFilter !== 'todos' && v.tipo !== tipoFilter) return false;
       if (q && !v.placa.toLowerCase().includes(q) && !v.nome.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [statusFilter, tipoFilter, search]);
+  }, [allVtrs, statusFilter, tipoFilter, search]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -168,6 +198,18 @@ export default function FrotaPage() {
     setPage(0);
   }
 
+  if (loading) {
+    return (
+      <div className="p-6 space-y-4">
+        <Skeleton variant="line" width="200" height={28} />
+        <div className="flex gap-3">
+          <Skeleton variant="card" height={40} />
+        </div>
+        <Skeleton variant="card" height={400} />
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Page header */}
@@ -177,7 +219,7 @@ export default function FrotaPage() {
           <div className="flex items-end gap-3">
             <h1 className="page-title">Frota</h1>
             <span className="mono text-muted frota-total">
-              {vtrStats.total} veículos
+              {dynamicStats.total} veiculos
             </span>
           </div>
           <button className="btn btn-green btn-inline-flex" onClick={openCreate}>

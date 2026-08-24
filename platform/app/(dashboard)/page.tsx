@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import {
   MessageCircle, Phone, Globe, Mail, PenLine, MapPin, DollarSign, Truck, Send,
   User, Bot, AlertTriangle, CheckCircle2, Clock, Plus, Search, ChevronDown,
@@ -14,6 +15,8 @@ import {
 import type { BotEvent, Chamado, ChatMessage } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
 import { useToast } from '@/components/ui/toast';
+
+const MiniMapa = dynamic(() => import('@/components/mapa/mini-mapa'), { ssr: false });
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -156,8 +159,22 @@ export default function CentralPage() {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<PriorityGroup>>(new Set(['concluido']));
   const [showSlideOver, setShowSlideOver] = useState(false);
   const [showVtrPicker, setShowVtrPicker] = useState(false);
+  const [saving, setSaving] = useState(false);
 
+  const searchRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
+
+  // Fix 1: Keyboard shortcut listeners
+  useEffect(() => {
+    const handleNewChamado = () => setShowSlideOver(true);
+    const handleFocusSearch = () => searchRef.current?.focus();
+    window.addEventListener('new-chamado', handleNewChamado);
+    window.addEventListener('focus-search', handleFocusSearch);
+    return () => {
+      window.removeEventListener('new-chamado', handleNewChamado);
+      window.removeEventListener('focus-search', handleFocusSearch);
+    };
+  }, []);
 
   const selected = selectedId ? mockChamados.find(c => c.id === selectedId) ?? null : null;
   const selectedSteps = selected ? (mockBotActionSteps[selected.id] ?? []) : [];
@@ -226,11 +243,19 @@ export default function CentralPage() {
   };
 
   const handleDespachar = () => {
-    showToast('VTR despachada com sucesso.', 'success');
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      showToast('VTR despachada com sucesso.', 'success');
+    }, 600);
   };
 
   const handleEnviarCotacao = () => {
-    showToast('Cotação enviada ao solicitante.', 'success');
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      showToast('Cotação enviada ao solicitante.', 'success');
+    }, 600);
   };
 
   const handleCancelar = () => {
@@ -267,6 +292,7 @@ export default function CentralPage() {
             <div className="flex-1 relative">
               <Search size={13} className="inbox-search-icon" />
               <input
+                ref={searchRef}
                 className="inbox-search pl-[30px]"
                 placeholder="/ Buscar paciente, número, origem..."
                 value={searchQuery}
@@ -533,6 +559,16 @@ export default function CentralPage() {
                         </div>
                       </div>
 
+                      {/* Mini-mapa inline */}
+                      {selected.origem_lat && selected.origem_lng && (
+                        <MiniMapa
+                          lat={selected.origem_lat}
+                          lng={selected.origem_lng}
+                          destLat={selected.destino_lat}
+                          destLng={selected.destino_lng}
+                        />
+                      )}
+
                       {/* Serviço */}
                       <div className="panel p-[18px]">
                         <p className="label panel-label">SERVIÇO</p>
@@ -621,26 +657,26 @@ export default function CentralPage() {
                                   <Bot size={14} /> Devolver ao bot
                                 </button>
                               ) : (
-                                <button className="btn btn-outline action-btn-inner" onClick={handleAssumir}>
-                                  <AlertTriangle size={14} /> Assumir conversa
+                                <button className={`btn btn-outline action-btn-inner ${saving ? 'btn-loading' : ''}`} onClick={handleAssumir} disabled={saving}>
+                                  <AlertTriangle size={14} /> {saving ? 'Assumindo...' : 'Assumir conversa'}
                                 </button>
                               )}
                               {selected.status === 'aprovado' && (
-                                <button className="btn btn-green action-btn-inner" onClick={handleDespachar}>
-                                  <CheckCircle2 size={14} /> Aprovar despacho
+                                <button className={`btn btn-green action-btn-inner ${saving ? 'btn-loading' : ''}`} onClick={handleDespachar} disabled={saving}>
+                                  <CheckCircle2 size={14} /> {saving ? 'Despachando...' : 'Aprovar despacho'}
                                 </button>
                               )}
                             </>
                           ) : (
                             <>
                               {!selected.valor_cotado && (
-                                <button className="btn btn-green action-btn-inner" onClick={handleEnviarCotacao}>
-                                  <DollarSign size={14} /> Enviar cotação
+                                <button className={`btn btn-green action-btn-inner ${saving ? 'btn-loading' : ''}`} onClick={handleEnviarCotacao} disabled={saving}>
+                                  <DollarSign size={14} /> {saving ? 'Enviando...' : 'Enviar cotação'}
                                 </button>
                               )}
                               {selected.vtr_placa && selected.status !== 'em_transito' && selected.status !== 'concluido' && (
-                                <button className="btn btn-green action-btn-inner" onClick={handleDespachar}>
-                                  <Truck size={14} /> Despachar
+                                <button className={`btn btn-green action-btn-inner ${saving ? 'btn-loading' : ''}`} onClick={handleDespachar} disabled={saving}>
+                                  <Truck size={14} /> {saving ? 'Despachando...' : 'Despachar'}
                                 </button>
                               )}
                               <button className="btn btn-outline action-btn-inner action-btn-cancel" onClick={handleCancelar}>
@@ -692,12 +728,21 @@ export default function CentralPage() {
                       </div>
                       <div className="chat p-[14px_16px] max-h-[300px] overflow-y-auto">
                         {selectedChat.length > 0 ? (
-                          selectedChat.map(msg => (
-                            <div key={msg.id} className={msg.sender === 'operator' ? 'chat-bot' : 'chat-client'}>
-                              <p className="whitespace-pre-line">{msg.text}</p>
-                              <p className="cmsg-time">{msg.time}</p>
+                          <>
+                            <div className="chat-date-divider">
+                              <span>
+                                {new Date(selected.created_at).toLocaleDateString('pt-BR') === new Date().toLocaleDateString('pt-BR')
+                                  ? 'Hoje'
+                                  : new Date(selected.created_at).toLocaleDateString('pt-BR')}
+                              </span>
                             </div>
-                          ))
+                            {selectedChat.map(msg => (
+                              <div key={msg.id} className={msg.sender === 'operator' ? 'chat-bot' : 'chat-client'}>
+                                <p className="whitespace-pre-line">{msg.text}</p>
+                                <p className="cmsg-time">{msg.time}</p>
+                              </div>
+                            ))}
+                          </>
                         ) : (
                           <p className="text-base text-muted2 text-center py-5">
                             Sem conversa vinculada

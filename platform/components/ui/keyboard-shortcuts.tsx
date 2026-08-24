@@ -7,8 +7,10 @@ export function KeyboardShortcuts() {
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
       const target = e.target as HTMLElement;
-      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable;
+      const isInput = target.tagName === 'SELECT' || target.isContentEditable;
 
       if (e.key === 'Escape') {
         if (showHelp) {
@@ -18,9 +20,31 @@ export function KeyboardShortcuts() {
         window.dispatchEvent(new CustomEvent('close-slide-over'));
       }
 
-      if (e.key === '?' && !isInput) {
+      if (isInput) return;
+
+      if (e.key === '?' || (e.shiftKey && e.key === '?')) {
         e.preventDefault();
         setShowHelp((prev) => !prev);
+      }
+
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('new-chamado'));
+      }
+
+      if (e.key === '/') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('focus-search'));
+      }
+
+      if (e.key === 'j' || e.key === 'J') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('nav-next'));
+      }
+
+      if (e.key === 'k' || e.key === 'K') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('nav-prev'));
       }
     }
 
@@ -31,8 +55,12 @@ export function KeyboardShortcuts() {
   if (!showHelp) return null;
 
   const shortcuts = [
-    { keys: 'Esc', desc: 'Fechar painel lateral / modal' },
     { keys: '?', desc: 'Mostrar atalhos' },
+    { keys: 'Esc', desc: 'Fechar painel' },
+    { keys: 'N', desc: 'Novo chamado' },
+    { keys: '/', desc: 'Buscar' },
+    { keys: 'J', desc: 'Próximo item' },
+    { keys: 'K', desc: 'Item anterior' },
   ];
 
   return (

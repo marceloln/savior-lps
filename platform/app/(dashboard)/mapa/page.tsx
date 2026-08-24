@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { Search, X } from 'lucide-react';
 import { mockVtrs, mockChamados, tipoVtrPill, statusLabel, statusPill, slaLevel } from '@/lib/mock-data';
@@ -96,6 +96,7 @@ export default function MapaPage() {
   const [selectedChamadoId, setSelectedChamadoId] = useState<string | null>(null);
   const [selectedVtrId, setSelectedVtrId] = useState<string | null>(null);
   const [panToVtr, setPanToVtr] = useState<string | null>(null);
+  const [dispatching, setDispatching] = useState(false);
 
   const { showToast } = useToast();
 
@@ -160,7 +161,11 @@ export default function MapaPage() {
 
   function handleDespachar(vtr: typeof nearbyVtrs[0]) {
     if (!selectedChamado) return;
-    showToast(`VTR ${vtr.nome} despachada para chamado #${selectedChamado.numero}`, 'success');
+    setDispatching(true);
+    setTimeout(() => {
+      setDispatching(false);
+      showToast(`VTR ${vtr.nome} despachada para chamado #${selectedChamado.numero}`, 'success');
+    }, 600);
   }
 
   return (
@@ -466,10 +471,11 @@ export default function MapaPage() {
                         </div>
                       </div>
                       <button
-                        className="btn-sm btn-sm-green btn-sm-dispatch"
+                        className={`btn-sm btn-sm-green btn-sm-dispatch ${dispatching ? 'btn-loading' : ''}`}
                         onClick={() => handleDespachar(vtr)}
+                        disabled={dispatching}
                       >
-                        Despachar
+                        {dispatching ? 'Despachando...' : 'Despachar'}
                       </button>
                     </div>
                   );

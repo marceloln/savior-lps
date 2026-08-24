@@ -64,6 +64,10 @@ export interface Chamado {
   sla_minutos: number;
   created_at_ts: number;
   atendente?: string;
+  origem_lat?: number;
+  origem_lng?: number;
+  destino_lat?: number;
+  destino_lng?: number;
 }
 
 // ── Real vehicles from SofitView (88 units) ──────────────────────────
@@ -529,6 +533,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'LSG7033', vtr_nome: '340', equipe: 'Dr. Mendes + Enf. Santos + Mot. Gilberto Azevedo',
     valor_cotado: 2800, created_at: '2026-08-20T10:15:00Z', eta_minutos: 8, distancia_km: 4.2, pagamento_status: 'aprovado',
     bot_managed: true, sla_minutos: 12, created_at_ts: new Date('2026-08-20T10:15:00Z').getTime(),
+    origem_lat: -22.9519, origem_lng: -43.1806, destino_lat: -22.9711, destino_lng: -43.1823,
   },
   {
     id: '2', numero: 4520, status: 'aprovado', prioridade: 'urgente', servico: 'uti', canal: 'telefone',
@@ -538,6 +543,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: null, vtr_nome: null, equipe: null,
     valor_cotado: 3200, created_at: '2026-08-20T09:45:00Z', eta_minutos: null, distancia_km: 28.5, pagamento_status: 'pendente',
     bot_managed: false, sla_minutos: 22, created_at_ts: new Date('2026-08-20T09:45:00Z').getTime(), atendente: 'Cláudia Feitoza',
+    origem_lat: -22.8624, origem_lng: -43.2533, destino_lat: -22.9995, destino_lng: -43.3650,
   },
   {
     id: '3', numero: 4519, status: 'em_transporte', prioridade: 'normal', servico: 'basica', canal: 'whatsapp',
@@ -547,6 +553,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'KRK7698', vtr_nome: '350', equipe: 'Enf. Costa + Mot. Anderson de Souza',
     valor_cotado: 950, created_at: '2026-08-20T09:30:00Z', eta_minutos: 14, distancia_km: 8.7, pagamento_status: 'aprovado',
     bot_managed: true, sla_minutos: 18, created_at_ts: new Date('2026-08-20T09:30:00Z').getTime(),
+    origem_lat: -22.9376, origem_lng: -43.1785, destino_lat: -22.9231, destino_lng: -43.2315,
   },
   {
     id: '4', numero: 4518, status: 'aberto', prioridade: 'urgente', servico: 'uti', canal: 'site',
@@ -556,6 +563,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: null, vtr_nome: null, equipe: null,
     valor_cotado: null, created_at: '2026-08-20T10:32:00Z', eta_minutos: null, distancia_km: null, pagamento_status: 'pendente',
     bot_managed: true, sla_minutos: 25, created_at_ts: new Date('2026-08-20T10:32:00Z').getTime(),
+    origem_lat: -22.9519, origem_lng: -43.1806,
   },
   {
     id: '5', numero: 4517, status: 'em_transito', prioridade: 'normal', servico: 'basica', canal: 'whatsapp',
@@ -565,6 +573,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'LSI5434', vtr_nome: '351', equipe: 'Téc. Almeida + Mot. Caetano Bento',
     valor_cotado: 1500, created_at: '2026-08-20T08:20:00Z', eta_minutos: 22, distancia_km: 18.3, pagamento_status: 'aprovado',
     bot_managed: true, sla_minutos: 15, created_at_ts: new Date('2026-08-20T08:20:00Z').getTime(),
+    origem_lat: -22.9022, origem_lng: -43.2819, destino_lat: -22.9995, destino_lng: -43.3650,
   },
   {
     id: '6', numero: 4516, status: 'concluido', prioridade: 'normal', servico: 'basica', canal: 'telefone',
@@ -574,6 +583,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'KQX7957', vtr_nome: '429', equipe: 'Enf. Martins + Mot. Elson Firmino',
     valor_cotado: 750, created_at: '2026-08-20T06:15:00Z', eta_minutos: null, distancia_km: 5.1, pagamento_status: 'pago',
     bot_managed: false, sla_minutos: 20, created_at_ts: new Date('2026-08-20T06:15:00Z').getTime(), atendente: 'Cláudia Feitoza',
+    origem_lat: -22.9519, origem_lng: -43.1806, destino_lat: -22.9422, destino_lng: -43.1862,
   },
   {
     id: '7', numero: 4515, status: 'concluido', prioridade: 'normal', servico: 'uti', canal: 'whatsapp',
@@ -583,6 +593,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'KRI8396', vtr_nome: '437', equipe: 'Dr. Lima + Enf. Rocha + Mot. Denilson Rocha',
     valor_cotado: 2200, created_at: '2026-08-20T04:30:00Z', eta_minutos: null, distancia_km: 6.8, pagamento_status: 'pago',
     bot_managed: true, sla_minutos: 15, created_at_ts: new Date('2026-08-20T04:30:00Z').getTime(),
+    origem_lat: -22.9547, origem_lng: -43.3553, destino_lat: -22.9547, destino_lng: -43.3553,
   },
   {
     id: '8', numero: 4514, status: 'aberto', prioridade: 'normal', servico: 'basica', canal: 'email',
@@ -592,6 +603,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: null, vtr_nome: null, equipe: null,
     valor_cotado: null, created_at: '2026-08-20T10:40:00Z', eta_minutos: null, distancia_km: 2.3, pagamento_status: 'pendente',
     bot_managed: true, sla_minutos: 20, created_at_ts: new Date('2026-08-20T10:40:00Z').getTime(),
+    origem_lat: -22.9068, origem_lng: -43.1729, destino_lat: -22.8989, destino_lng: -43.1876,
   },
   {
     id: '9', numero: 4513, status: 'cancelado', prioridade: 'baixa', servico: 'remocao', canal: 'whatsapp',
@@ -601,6 +613,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: null, vtr_nome: null, equipe: null,
     valor_cotado: 680, created_at: '2026-08-20T07:50:00Z', eta_minutos: null, distancia_km: 4.5, pagamento_status: 'pendente',
     bot_managed: true, sla_minutos: 30, created_at_ts: new Date('2026-08-20T07:50:00Z').getTime(),
+    origem_lat: -22.9068, origem_lng: -43.1729, destino_lat: -22.8981, destino_lng: -43.2211,
   },
   {
     id: '10', numero: 4512, status: 'despacho', prioridade: 'urgente', servico: 'uti', canal: 'telefone',
@@ -610,6 +623,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'LSG7030', vtr_nome: '341', equipe: 'Dr. Ferreira + Enf. Cardoso + Mot. Felipe Amaral',
     valor_cotado: 3500, created_at: '2026-08-20T10:05:00Z', eta_minutos: 18, distancia_km: 12.4, pagamento_status: 'aprovado',
     bot_managed: false, sla_minutos: 15, created_at_ts: new Date('2026-08-20T10:05:00Z').getTime(), atendente: 'Cláudia Feitoza',
+    origem_lat: -22.9121, origem_lng: -43.2302, destino_lat: -22.9711, destino_lng: -43.1823,
   },
   {
     id: '11', numero: 4511, status: 'concluido', prioridade: 'normal', servico: 'basica', canal: 'whatsapp',
@@ -619,6 +633,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: 'LRY6677', vtr_nome: '428', equipe: 'Téc. Souza + Mot. Guilherme Aprodu',
     valor_cotado: 420, created_at: '2026-08-20T02:00:00Z', eta_minutos: null, distancia_km: 1.8, pagamento_status: 'pago',
     bot_managed: true, sla_minutos: 20, created_at_ts: new Date('2026-08-20T02:00:00Z').getTime(),
+    origem_lat: -22.9519, origem_lng: -43.1806, destino_lat: -22.9321, destino_lng: -43.1750,
   },
   {
     id: '12', numero: 4510, status: 'em_cotacao', prioridade: 'normal', servico: 'evento', canal: 'email',
@@ -628,6 +643,7 @@ export const mockChamados: Chamado[] = [
     vtr_placa: null, vtr_nome: null, equipe: null,
     valor_cotado: 4500, created_at: '2026-08-20T09:00:00Z', eta_minutos: null, distancia_km: null, pagamento_status: 'pendente',
     bot_managed: false, sla_minutos: 60, created_at_ts: new Date('2026-08-20T09:00:00Z').getTime(), atendente: 'Cláudia Feitoza',
+    origem_lat: -22.9777, origem_lng: -43.4064,
   },
 ];
 
