@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Plus, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { mockFuncionariosDetail } from '@/lib/mock-data';
 import type { FuncionarioDetail, FuncionarioStatus } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
@@ -56,6 +56,17 @@ export default function EquipePage() {
   const [filterFuncao, setFilterFuncao] = useState('Todos');
   const [filterRegiao, setFilterRegiao] = useState('Todos');
   const [page, setPage] = useState(1);
+  const [sortKey, setSortKey] = useState<string>('nome');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
 
   /* slide-over state */
   const [slideOpen, setSlideOpen] = useState(false);
@@ -102,10 +113,20 @@ export default function EquipePage() {
     return list;
   }, [search, filterFuncao, filterRegiao]);
 
+  /* ── Sort ────────────────────────────────────────────────────── */
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const va = (a as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const vb = (b as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const cmp = typeof va === 'number' && typeof vb === 'number' ? va - vb : String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [filtered, sortKey, sortDir]);
+
   /* ── Pagination ──────────────────────────────────────────────── */
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PER_PAGE));
   const safePage = Math.min(page, totalPages);
-  const paginated = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
+  const paginated = sorted.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
   /* ── Handlers ────────────────────────────────────────────────── */
   function openCreate() {
@@ -134,6 +155,20 @@ export default function EquipePage() {
     setPage(1);
   }
 
+  function exportCSV() {
+    const headers = ['Nome', 'Função', 'Matrícula', 'Status', 'Filial', 'CNH/Conselho'];
+    const rows = sorted.map(d => [d.nome, d.funcao, d.matricula ?? '', d.status, d.filial ?? '', d.conselho_numero || d.cnh || '']);
+    const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'equipe-savior.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exportado com sucesso', 'success');
+  }
+
   return (
     <div>
       {/* Page header */}
@@ -153,20 +188,25 @@ export default function EquipePage() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-3 search-wrapper max-w-80">
-        <Search
-          size={14}
-          strokeWidth={1.8}
-          className="search-icon-abs"
-        />
-        <input
-          type="text"
-          className="table-search"
-          placeholder="Buscar por nome..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-        />
+      {/* Search + Export */}
+      <div className="mb-3 flex items-center gap-3">
+        <div className="search-wrapper flex-1 max-w-80">
+          <Search
+            size={14}
+            strokeWidth={1.8}
+            className="search-icon-abs"
+          />
+          <input
+            type="text"
+            className="table-search"
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          />
+        </div>
+        <button className="btn btn-outline flex items-center gap-2" onClick={exportCSV}>
+          <Download size={14} /> Exportar CSV
+        </button>
       </div>
 
       {/* Filter chips: função */}
@@ -221,12 +261,12 @@ export default function EquipePage() {
         <table className="table-full">
           <thead>
             <tr>
-              <th className="th text-left">NOME</th>
-              <th className="th text-left">FUNÇÃO</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('nome')}>NOME {sortKey === 'nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('funcao')}>FUNÇÃO {sortKey === 'funcao' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th text-left">CONSELHO</th>
-              <th className="th text-left">MATRÍCULA</th>
-              <th className="th text-left">FILIAL</th>
-              <th className="th text-left">STATUS</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('matricula')}>MATRÍCULA {sortKey === 'matricula' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('filial')}>FILIAL {sortKey === 'filial' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('status')}>STATUS {sortKey === 'status' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
             </tr>
           </thead>
           <tbody>
@@ -275,7 +315,7 @@ export default function EquipePage() {
         {totalPages > 1 && (
           <div className="pagination-bar">
             <span className="mono text-muted2 text-xs">
-              {(safePage - 1) * PER_PAGE + 1}\u2013{Math.min(safePage * PER_PAGE, filtered.length)} de {filtered.length}
+              {(safePage - 1) * PER_PAGE + 1}\u2013{Math.min(safePage * PER_PAGE, sorted.length)} de {sorted.length}
             </span>
             <div className="flex items-center gap-2">
               <button

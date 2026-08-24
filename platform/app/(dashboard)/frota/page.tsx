@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Plus, ArrowRight } from 'lucide-react';
+import { Search, Plus, ArrowRight, Download } from 'lucide-react';
 import { mockVtrs, statusPill, statusLabel, tipoVtrPill, vtrStats } from '@/lib/mock-data';
 import type { Vtr, VtrStatus, VtrTipo } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
@@ -41,6 +41,17 @@ export default function FrotaPage() {
   const [tipoFilter, setTipoFilter] = useState<FilterTipo>('todos');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
+  const [sortKey, setSortKey] = useState<string>('nome');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
 
   // Slide-over state
   const [slideOpen, setSlideOpen] = useState(false);
@@ -71,10 +82,40 @@ export default function FrotaPage() {
     });
   }, [statusFilter, tipoFilter, search]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      let va: string | number = '';
+      let vb: string | number = '';
+      if (sortKey === 'regiao') {
+        va = getRegiao(a.latitude);
+        vb = getRegiao(b.latitude);
+      } else {
+        va = (a as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+        vb = (b as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      }
+      const cmp = typeof va === 'number' && typeof vb === 'number' ? va - vb : String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [filtered, sortKey, sortDir]);
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  const paginated = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const start = page * PAGE_SIZE + 1;
-  const end = Math.min((page + 1) * PAGE_SIZE, filtered.length);
+  const end = Math.min((page + 1) * PAGE_SIZE, sorted.length);
+
+  const exportCSV = () => {
+    const headers = ['Nome', 'Placa', 'Modelo', 'Tipo', 'Status', 'Região'];
+    const rows = sorted.map(d => [d.nome, d.placa, d.modelo, d.tipo, d.status, getRegiao(d.latitude)]);
+    const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'frota-savior.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exportado com sucesso', 'success');
+  };
 
   function openCreate() {
     setEditingVtr(null);
@@ -146,20 +187,25 @@ export default function FrotaPage() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-4 search-wrapper">
-        <Search
-          size={14}
-          strokeWidth={1.8}
-          className="search-icon-abs"
-        />
-        <input
-          type="text"
-          className="table-search"
-          placeholder="Buscar placa ou VTR..."
-          value={search}
-          onChange={(e) => handleSearchChange(e.target.value)}
-        />
+      {/* Search + Export */}
+      <div className="mb-4 flex items-center gap-3">
+        <div className="search-wrapper flex-1">
+          <Search
+            size={14}
+            strokeWidth={1.8}
+            className="search-icon-abs"
+          />
+          <input
+            type="text"
+            className="table-search"
+            placeholder="Buscar placa ou VTR..."
+            value={search}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
+        </div>
+        <button className="btn btn-outline flex items-center gap-2" onClick={exportCSV}>
+          <Download size={14} /> Exportar CSV
+        </button>
       </div>
 
       {/* Filter chips */}
@@ -197,12 +243,12 @@ export default function FrotaPage() {
         <table className="table-full">
           <thead>
             <tr>
-              <th className="th text-left">VTR</th>
-              <th className="th text-left">PLACA</th>
-              <th className="th text-left">MODELO</th>
-              <th className="th text-left">TIPO</th>
-              <th className="th text-left">STATUS</th>
-              <th className="th text-left">REGIÃO</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('nome')}>VTR {sortKey === 'nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('placa')}>PLACA {sortKey === 'placa' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('modelo')}>MODELO {sortKey === 'modelo' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('tipo')}>TIPO {sortKey === 'tipo' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('status')}>STATUS {sortKey === 'status' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('regiao')}>REGIÃO {sortKey === 'regiao' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
             </tr>
           </thead>
           <tbody>
@@ -248,10 +294,10 @@ export default function FrotaPage() {
       </div>
 
       {/* Pagination */}
-      {filtered.length > PAGE_SIZE && (
+      {sorted.length > PAGE_SIZE && (
         <div className="pagination">
           <span className="mono pagination-info">
-            Mostrando {start}–{end} de {filtered.length}
+            Mostrando {start}–{end} de {sorted.length}
           </span>
           <div className="pagination-btns">
             <button

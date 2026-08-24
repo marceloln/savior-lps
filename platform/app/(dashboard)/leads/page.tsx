@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Plus, X, Search, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Plus, X, Search, ChevronLeft, ChevronRight, Filter, Download } from 'lucide-react';
 import {
   mockLeads, mockLeadsEnriched, mockGA4Sources,
   type Lead, type LeadEstagio, type LeadEnriched, type GA4Source, type ChamadoCanal,
@@ -78,14 +78,20 @@ function timeAgo(dateStr: string): string {
 
 function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
   const [dateRange, setDateRange] = useState<7 | 30 | 90>(30);
+  const [leadOverrides, setLeadOverrides] = useState<Record<number, LeadEstagio>>({});
 
   const cutoff = new Date('2026-08-20T12:00:00');
   cutoff.setDate(cutoff.getDate() - dateRange);
 
   const filtered = mockLeads.filter(l => {
-    if (l.estagio === 'convertido' || l.estagio === 'perdido') return false;
+    const estagio = leadOverrides[l.id] ?? l.estagio;
+    if (estagio === 'convertido' || estagio === 'perdido') return false;
     return new Date(l.created_at) >= cutoff;
-  });
+  }).map(l => leadOverrides[l.id] ? { ...l, estagio: leadOverrides[l.id] } : l);
+
+  const handleMoveLead = (leadId: string, newEstagio: LeadEstagio) => {
+    setLeadOverrides(prev => ({ ...prev, [Number(leadId)]: newEstagio }));
+  };
 
   const totalPipeline = filtered.length;
   const pipelineValue = filtered.reduce((s, l) => s + l.valor_estimado, 0);
@@ -125,7 +131,23 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
         {estagios.map(est => {
           const items = filtered.filter(l => l.estagio === est.key);
           return (
-            <div key={est.key} className="kanban-column">
+            <div
+              key={est.key}
+              className="kanban-column"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.add('drag-over');
+              }}
+              onDragLeave={(e) => {
+                e.currentTarget.classList.remove('drag-over');
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('drag-over');
+                const leadId = e.dataTransfer.getData('leadId');
+                handleMoveLead(leadId, est.key);
+              }}
+            >
               <div className="kanban-column-header">
                 <div className={`kanban-dot ${est.dotCls}`} />
                 <span className="kanban-column-title">{est.label}</span>
@@ -135,7 +157,19 @@ function PipelineView({ onSelect }: { onSelect: (l: Lead) => void }) {
                 {items.map(lead => {
                   const canal = canalPill[lead.canal] || canalPill.outro;
                   return (
-                    <div key={lead.id} className="kanban-card" onClick={() => onSelect(lead)}>
+                    <div
+                      key={lead.id}
+                      className="kanban-card"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('leadId', String(lead.id));
+                        e.currentTarget.classList.add('dragging');
+                      }}
+                      onDragEnd={(e) => {
+                        e.currentTarget.classList.remove('dragging');
+                      }}
+                      onClick={() => onSelect(lead)}
+                    >
                       <div className="font-display fw-700 text-base-1 mb-0.5">
                         {lead.nome}
                       </div>
@@ -171,6 +205,17 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [canalFilter, setCanalFilter] = useState<string>('todos');
   const [page, setPage] = useState(1);
+  const [sortKey, setSortKey] = useState<string>('primeiro_contato');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
 
   const data = mockLeadsEnriched;
 
@@ -189,8 +234,30 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
     return result;
   }, [data, search, statusFilter, canalFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const va = (a as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const vb = (b as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const cmp = typeof va === 'number' && typeof vb === 'number' ? va - vb : String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [filtered, sortKey, sortDir]);
+
+  const exportCSV = () => {
+    const headers = ['Nome', 'Empresa', 'Canal', 'Status', 'Valor', 'Data'];
+    const rows = sorted.map(d => [d.nome, d.empresa ?? '', d.canal, d.status, d.valor_estimado ?? '', fmtDate(d.primeiro_contato)]);
+    const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads-savior.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PER_PAGE));
+  const paged = sorted.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <>
@@ -224,9 +291,9 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
           <option value="telefone">Telefone</option>
           <option value="outro">Outro</option>
         </select>
-        <div className="mono text-xs text-muted ml-auto">
-          {fmt(filtered.length)} leads
-        </div>
+        <button className="btn btn-outline flex items-center gap-2 ml-auto" onClick={exportCSV}>
+          <Download size={14} /> Exportar CSV
+        </button>
       </div>
 
       {/* Table */}
@@ -234,15 +301,15 @@ function BaseCompletaView({ onSelectEnriched }: { onSelectEnriched: (l: LeadEnri
         <table className="table-full">
           <thead>
             <tr>
-              <th className="th text-left">Data</th>
-              <th className="th text-left">Nome</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('primeiro_contato')}>Data {sortKey === 'primeiro_contato' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('nome')}>Nome {sortKey === 'nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th text-left">Empresa</th>
-              <th className="th text-left">Canal</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('canal')}>Canal {sortKey === 'canal' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th text-left">Origem</th>
               <th className="th text-left">Campanha</th>
               <th className="th text-left">Serviço</th>
-              <th className="th text-right">Valor</th>
-              <th className="th text-left">Status</th>
+              <th className="th text-right sortable-th" onClick={() => handleSort('valor_estimado')}>Valor {sortKey === 'valor_estimado' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th text-left sortable-th" onClick={() => handleSort('status')}>Status {sortKey === 'status' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th text-left">Atendente</th>
             </tr>
           </thead>

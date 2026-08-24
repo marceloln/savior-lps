@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Plus } from 'lucide-react';
 import { mockPneusBackoffice, type PneuBackoffice, type PneuStatusBO } from '@/lib/mock-data';
@@ -22,10 +22,30 @@ export default function PneusPage() {
   const [vtrFilter, setVtrFilter] = useState('');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<PneuBackoffice | null>(null);
+  const [sortKey, setSortKey] = useState<string>('codigo');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
-  const filtered = vtrFilter
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
+
+  const filteredRaw = vtrFilter
     ? mockPneusBackoffice.filter((p) => p.vtr_nome === vtrFilter)
     : mockPneusBackoffice;
+
+  const filtered = useMemo(() => {
+    return [...filteredRaw].sort((a, b) => {
+      const va = (a as unknown as Record<string, unknown>)[sortKey === 'nome' ? 'codigo' : sortKey] as string ?? '';
+      const vb = (b as unknown as Record<string, unknown>)[sortKey === 'nome' ? 'codigo' : sortKey] as string ?? '';
+      const cmp = typeof va === 'number' && typeof vb === 'number' ? va - vb : String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [filteredRaw, sortKey, sortDir]);
 
   const isOpen = creating || editing !== null;
   const closePanel = () => { setCreating(false); setEditing(null); };
@@ -121,12 +141,12 @@ export default function PneusPage() {
         <table className="table-full">
           <thead>
             <tr className="text-left">
-              <th className="th">Código</th>
-              <th className="th">Dimensão</th>
+              <th className="th sortable-th" onClick={() => handleSort('codigo')}>Código {sortKey === 'codigo' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th sortable-th" onClick={() => handleSort('dimensao')}>Dimensão {sortKey === 'dimensao' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th">Marca</th>
-              <th className="th">VTR</th>
+              <th className="th sortable-th" onClick={() => handleSort('vtr_nome')}>VTR {sortKey === 'vtr_nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th">Posição</th>
-              <th className="th">Status</th>
+              <th className="th sortable-th" onClick={() => handleSort('status')}>Status {sortKey === 'status' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th">Vida</th>
             </tr>
           </thead>

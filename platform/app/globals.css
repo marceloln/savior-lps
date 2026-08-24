@@ -43,6 +43,19 @@
 }
 
 :root {
+  /* ── Spacing scale (4px base) ── */
+  --s-0: 0px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 48px;
+  --s-10: 64px;
+
   /* Neutrals — tinted toward navy hue (255) */
   --bg: oklch(0.955 0.010 255);
   --card: oklch(0.992 0.004 255);
@@ -123,7 +136,7 @@ body {
 
 .label {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted2);
@@ -192,7 +205,7 @@ body {
 }
 
 .panel-header {
-  padding: 13px 16px;
+  padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--line);
 }
 
@@ -204,7 +217,7 @@ body {
 }
 
 .panel-body {
-  padding: 16px;
+  padding: var(--s-4);
 }
 
 /* ========== KPI CARD ========== */
@@ -213,12 +226,12 @@ body {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r);
-  padding: 13px 15px;
+  padding: var(--s-3) var(--s-4);
 }
 
 .kpi-label {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
@@ -265,7 +278,7 @@ body {
 
 .btn {
   border-radius: 10px;
-  padding: 10px 15px;
+  padding: var(--s-3) var(--s-4);
   font-weight: 700;
   font-size: 12.5px;
   cursor: pointer;
@@ -292,7 +305,7 @@ body {
 .chip {
   font-size: 11px;
   font-weight: 600;
-  padding: 5px 10px;
+  padding: var(--s-1) var(--s-3);
   border-radius: 8px;
   cursor: pointer;
   border: 1px solid var(--line);
@@ -316,7 +329,7 @@ body {
 /* ========== TABS ========== */
 
 .tab {
-  padding: 11px 15px;
+  padding: var(--s-3) var(--s-4);
   font-weight: 700;
   font-size: 13px;
   color: var(--muted);
@@ -339,17 +352,17 @@ body {
 
 .th {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted2);
   font-weight: 600;
-  padding: 11px 16px;
+  padding: var(--s-3) var(--s-4);
 }
 
 .td {
   font-size: 12.5px;
-  padding: 11px 16px;
+  padding: var(--s-3) var(--s-4);
   border-top: 1px solid var(--line);
   color: var(--ink);
 }
@@ -773,7 +786,7 @@ body {
   background: var(--card2);
   border: 1px solid var(--line);
   border-radius: 11px;
-  padding: 12px 14px;
+  padding: var(--s-3) var(--s-4);
   font-family: var(--sans);
   font-size: 13px;
   color: var(--ink);
@@ -1123,7 +1136,7 @@ body {
 
 .assume-btn-outline {
   border-radius: 10px;
-  padding: 10px 15px;
+  padding: var(--s-3) var(--s-4);
   font-weight: 700;
   font-size: 12.5px;
   cursor: pointer;
@@ -1193,14 +1206,14 @@ body {
 }
 
 .slide-over-body {
-  padding: 24px;
+  padding: var(--s-6);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--s-5);
 }
 
 .slide-over-footer {
-  padding: 16px 24px;
+  padding: var(--s-4) var(--s-6);
   border-top: 1px solid var(--line);
   display: flex;
   gap: 10px;
@@ -1215,7 +1228,7 @@ body {
 .form-label {
   display: block;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1297,7 +1310,7 @@ body {
 }
 
 .kanban-column-header {
-  padding: 12px 14px;
+  padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -1324,7 +1337,7 @@ body {
 }
 
 .kanban-column-body {
-  padding: 8px;
+  padding: var(--s-2);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1458,7 +1471,7 @@ body {
   background: var(--red);
   color: #fff;
   border-radius: 10px;
-  padding: 10px 15px;
+  padding: var(--s-3) var(--s-4);
   font-weight: 700;
   font-size: 12.5px;
   cursor: pointer;
@@ -1473,7 +1486,7 @@ body {
 
 .rail-section-label {
   font-family: var(--mono);
-  font-size: 7px;
+  font-size: 8px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: oklch(1 0 0 / .28);
@@ -1804,6 +1817,7 @@ body {
   z-index: 1001;
   overflow-y: auto;
   box-shadow: -4px 0 16px oklch(0.2 0.05 255 / 0.1);
+  animation: slide-in-right 0.2s ease-out;
 }
 
 /* Chamado origin icon (pulsing red dot) */
@@ -2299,7 +2313,7 @@ body {
 .grp-name-green { color: var(--green); }
 
 /* ========== CENTRAL PAGE CLASSES ========== */
-.inbox-header-top { padding: 16px 18px 0; border-bottom: 1px solid var(--line); }
+.inbox-header-top { padding: var(--s-4) var(--s-5) var(--s-0); border-bottom: 1px solid var(--line); }
 .inbox-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted2); }
 .ws-patient-meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
 .ws-patient-meta b { color: var(--ink2); font-weight: 600; }
@@ -2325,11 +2339,11 @@ body {
 .recent-row { padding: 10px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
 .recent-name { font-size: 12.5px; font-weight: 600; flex: 1; }
 .channel-icon-sm { width: 18px; height: 18px; font-size: 9px; }
-.pill-xs { font-size: 7px; }
-.pill-6 { font-size: 6px; }
+.pill-xs { font-size: 8px; }
+.pill-6 { font-size: 8px; }
 .frota-stat-card { text-align: center; padding: 8px; border-radius: 8px; }
 .frota-stat-value { font-size: 16px; font-weight: 700; }
-.frota-stat-label { font-size: 7px; }
+.frota-stat-label { font-size: 8px; }
 .vtr-list-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
 
 /* ========== MAPA PAGE CLASSES ========== */
@@ -2380,7 +2394,7 @@ body {
 .dispatch-dot-red { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
 .dispatch-dot-blue { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
 .dispatch-route-line { width: 1px; height: 24px; background: var(--line2); }
-.dispatch-route-label { font-size: 7px; margin-bottom: 2px; }
+.dispatch-route-label { font-size: 8px; margin-bottom: 2px; }
 .dispatch-route-addr { font-size: 11px; color: var(--ink); line-height: 1.3; }
 .dispatch-nearby { padding: 14px 16px; }
 .nearby-vtr-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r); background: var(--card); }
@@ -2493,3 +2507,35 @@ body {
 .doc-link { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--green-d); text-decoration: none; }
 .doc-link-icon { opacity: 0.5; }
 .doc-empty { font-size: 12.5px; color: var(--muted); }
+
+/* ========== KEYBOARD SHORTCUTS MODAL ========== */
+.shortcut-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; }
+.shortcut-backdrop { position: absolute; inset: 0; background: oklch(0.2 0.05 255 / 0.5); }
+.shortcut-panel { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 16px 48px oklch(0.2 0.05 255 / 0.2); animation: fade-in 0.15s ease-out; }
+.shortcut-title { font-family: var(--display); font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+.shortcut-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink); }
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-key { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 3px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); }
+.shortcut-close { position: absolute; top: 12px; right: 12px; background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; font-size: 18px; line-height: 1; }
+
+/* ========== SORTABLE TABLE HEADERS ========== */
+
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+.sortable-th:hover {
+  color: var(--ink);
+}
+.sort-indicator {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+/* ========== DRAG-AND-DROP KANBAN ========== */
+
+.kanban-card[draggable] { cursor: grab; }
+.kanban-card.dragging { opacity: 0.5; transform: rotate(2deg); }
+.kanban-column.drag-over { background: var(--green-l); border-color: var(--green); }

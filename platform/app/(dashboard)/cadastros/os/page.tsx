@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Plus } from 'lucide-react';
 import { mockOrdensServico, mockFornecedores, type OrdemServico, type OSStatus, type OSPrioridade } from '@/lib/mock-data';
@@ -28,6 +28,19 @@ export default function OrdensServicoPage() {
   const { showToast } = useToast();
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<OrdemServico | null>(null);
+  const [osOverrides, setOsOverrides] = useState<Record<number, OSStatus>>({});
+
+  const osData = useMemo(() => {
+    return mockOrdensServico.map(os =>
+      osOverrides[os.id] ? { ...os, status: osOverrides[os.id] } : os
+    );
+  }, [osOverrides]);
+
+  const handleMoveOS = (osId: string, newStatus: OSStatus) => {
+    setOsOverrides(prev => ({ ...prev, [Number(osId)]: newStatus }));
+    const col = columns.find(c => c.status === newStatus);
+    showToast(`OS movida para ${col?.label ?? newStatus}`, 'success');
+  };
 
   const isOpen = creating || editing !== null;
   const closePanel = () => { setCreating(false); setEditing(null); };
@@ -55,9 +68,25 @@ export default function OrdensServicoPage() {
 
       <div className="grid grid-cols-4 gap-4 mt-2">
         {columns.map((col) => {
-          const items = mockOrdensServico.filter((os) => os.status === col.status);
+          const items = osData.filter((os) => os.status === col.status);
           return (
-            <div key={col.status} className="kanban-column">
+            <div
+              key={col.status}
+              className="kanban-column"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.add('drag-over');
+              }}
+              onDragLeave={(e) => {
+                e.currentTarget.classList.remove('drag-over');
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('drag-over');
+                const osId = e.dataTransfer.getData('osId');
+                handleMoveOS(osId, col.status);
+              }}
+            >
               <div className="kanban-column-header">
                 <div className={`kanban-dot ${col.dotCls}`} />
                 <span className="kanban-column-title">{col.label}</span>
@@ -67,7 +96,19 @@ export default function OrdensServicoPage() {
                 {items.map((os) => {
                   const prio = prioridadePill[os.prioridade];
                   return (
-                    <div key={os.id} className="kanban-card" onClick={() => { setEditing(os); setCreating(false); }}>
+                    <div
+                      key={os.id}
+                      className="kanban-card"
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('osId', String(os.id));
+                        e.currentTarget.classList.add('dragging');
+                      }}
+                      onDragEnd={(e) => {
+                        e.currentTarget.classList.remove('dragging');
+                      }}
+                      onClick={() => { setEditing(os); setCreating(false); }}
+                    >
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="font-display fw-700 text-md">AM {os.vtr_nome}</span>
                         <span className="mono text-[9px] text-muted">{os.vtr_placa}</span>

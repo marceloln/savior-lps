@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, Plus, ChevronLeft } from 'lucide-react';
 import { mockFornecedores, type Fornecedor } from '@/lib/mock-data';
@@ -16,10 +16,29 @@ export default function FornecedoresPage() {
   const [editing, setEditing] = useState<Fornecedor | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [sortKey, setSortKey] = useState<string>('nome');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
-  const filtered = mockFornecedores.filter((f) =>
-    f.nome.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
+
+  const filtered = useMemo(() => {
+    const list = mockFornecedores.filter((f) =>
+      f.nome.toLowerCase().includes(search.toLowerCase())
+    );
+    return [...list].sort((a, b) => {
+      const va = (a as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const vb = (b as unknown as Record<string, unknown>)[sortKey] as string ?? '';
+      const cmp = String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [search, sortKey, sortDir]);
 
   const openEdit = (f: Fornecedor) => {
     setForm({ nome: f.nome, cnpj: f.cnpj, telefone: f.telefone, email: f.email, tipo: f.tipo, uf: f.uf });
@@ -75,8 +94,8 @@ export default function FornecedoresPage() {
         <table className="table-full">
           <thead>
             <tr className="text-left">
-              <th className="th">Nome</th>
-              <th className="th">CNPJ</th>
+              <th className="th sortable-th" onClick={() => handleSort('nome')}>Nome {sortKey === 'nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th sortable-th" onClick={() => handleSort('cnpj')}>CNPJ {sortKey === 'cnpj' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th">Telefone</th>
               <th className="th">Email</th>
               <th className="th">Tipo</th>

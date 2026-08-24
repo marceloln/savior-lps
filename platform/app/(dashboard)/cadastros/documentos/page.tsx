@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Plus, AlertTriangle } from 'lucide-react';
 import { mockDocumentos, type Documento, type DocumentoStatus } from '@/lib/mock-data';
@@ -28,6 +28,17 @@ export default function DocumentosPage() {
   const [tab, setTab] = useState<TabFilter>('todos');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Documento | null>(null);
+  const [sortKey, setSortKey] = useState<string>('nome');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
 
   const vencidos = mockDocumentos.filter((d) => d.status === 'vencido');
   const vencendo30 = mockDocumentos.filter((d) => {
@@ -39,9 +50,18 @@ export default function DocumentosPage() {
     return days > 30 && days <= 90 && d.status !== 'vencido';
   });
 
-  const filtered = tab === 'todos'
+  const filteredRaw = tab === 'todos'
     ? mockDocumentos
     : mockDocumentos.filter((d) => d.status === tab);
+
+  const filtered = useMemo(() => {
+    return [...filteredRaw].sort((a, b) => {
+      const va = (a as unknown as Record<string, unknown>)[sortKey === 'vencimento' ? 'data_vencimento' : sortKey] as string ?? '';
+      const vb = (b as unknown as Record<string, unknown>)[sortKey === 'vencimento' ? 'data_vencimento' : sortKey] as string ?? '';
+      const cmp = String(va).localeCompare(String(vb));
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [filteredRaw, sortKey, sortDir]);
 
   const isOpen = creating || editing !== null;
   const closePanel = () => { setCreating(false); setEditing(null); };
@@ -105,12 +125,12 @@ export default function DocumentosPage() {
         <table className="table-full">
           <thead>
             <tr className="text-left">
-              <th className="th">Documento</th>
-              <th className="th">Tipo</th>
+              <th className="th sortable-th" onClick={() => handleSort('nome')}>Documento {sortKey === 'nome' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th sortable-th" onClick={() => handleSort('tipo')}>Tipo {sortKey === 'tipo' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
               <th className="th">Entidade</th>
               <th className="th">Emissão</th>
-              <th className="th">Vencimento</th>
-              <th className="th">Status</th>
+              <th className="th sortable-th" onClick={() => handleSort('vencimento')}>Vencimento {sortKey === 'vencimento' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
+              <th className="th sortable-th" onClick={() => handleSort('status')}>Status {sortKey === 'status' && <span className="sort-indicator">{sortDir === 'asc' ? '↑' : '↓'}</span>}</th>
             </tr>
           </thead>
           <tbody>

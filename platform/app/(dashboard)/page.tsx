@@ -9,6 +9,7 @@ import {
 import {
   mockChamados, mockBotEvents, mockBotActionSteps, mockBotChatMessages,
   statusPill, statusLabel, servicoPill, prioridadePill, canalConfig, mockVtrs, vtrStats,
+  slaLevel, slaColors,
 } from '@/lib/mock-data';
 import type { BotEvent, Chamado, ChatMessage } from '@/lib/mock-data';
 import { SlideOver } from '@/components/ui/slide-over';
@@ -41,10 +42,9 @@ function slaDisplay(chamado: Chamado): { text: string; cls: string } {
   if (chamado.eta_minutos && (chamado.status === 'em_transito' || chamado.status === 'despacho')) {
     return { text: `${chamado.eta_minutos} min`, cls: 'sla-route' };
   }
-  const elapsed = chamado.sla_minutos;
-  if (elapsed > 20) return { text: `${elapsed} min`, cls: 'sla-crit' };
-  if (elapsed > 15) return { text: `${elapsed} min`, cls: 'sla-warn' };
-  return { text: `${elapsed} min`, cls: 'sla-ok' };
+  const level = slaLevel(chamado.sla_minutos);
+  const clsMap = { ok: 'sla-ok', warn: 'sla-warn', crit: 'sla-crit' };
+  return { text: `${chamado.sla_minutos} min`, cls: clsMap[level] };
 }
 
 type PriorityGroup = 'urgente' | 'em_andamento' | 'aguardando' | 'concluido';
@@ -449,7 +449,7 @@ export default function CentralPage() {
                 {selected.eta_minutos && (
                   <div className="text-right shrink-0">
                     <p className={`font-display text-[28px] font-bold leading-[0.9] tracking-display ${
-                      selected.eta_minutos <= 10 ? 'text-green' : selected.eta_minutos <= 20 ? 'text-amber' : 'text-red'
+                      slaLevel(selected.eta_minutos) === 'ok' ? 'text-green' : slaLevel(selected.eta_minutos) === 'warn' ? 'text-amber' : 'text-red'
                     }`}>
                       {selected.eta_minutos}<span className="text-sm">min</span>
                     </p>
@@ -573,7 +573,7 @@ export default function CentralPage() {
                             </div>
                             {selected.equipe && <p className="text-sm text-muted">{selected.equipe}</p>}
                             {selected.eta_minutos && (
-                              <span className={`sla-badge ${selected.eta_minutos <= 10 ? 'sla-ok' : selected.eta_minutos <= 20 ? 'sla-warn' : 'sla-crit'} self-start`}>
+                              <span className={`sla-badge ${slaLevel(selected.eta_minutos) === 'ok' ? 'sla-ok' : slaLevel(selected.eta_minutos) === 'warn' ? 'sla-warn' : 'sla-crit'} self-start`}>
                                 <span className="live-dot sla-dot-sm" />
                                 ETA {selected.eta_minutos} min
                               </span>

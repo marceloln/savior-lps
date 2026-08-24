@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { Search, X } from 'lucide-react';
-import { mockVtrs, mockChamados, tipoVtrPill, statusLabel, statusPill } from '@/lib/mock-data';
+import { mockVtrs, mockChamados, tipoVtrPill, statusLabel, statusPill, slaLevel } from '@/lib/mock-data';
 import type { Vtr, Chamado, VtrStatus, VtrTipo } from '@/lib/mock-data';
 import { useToast } from '@/components/ui/toast';
 
@@ -327,8 +327,7 @@ export default function MapaPage() {
             {activeChamados.map((chamado) => {
               const isSelected = chamado.id === selectedChamadoId;
               const pillClass = statusPill[chamado.status] ?? 'pill-slate';
-              const slaCrit = chamado.sla_minutos <= 5;
-              const slaWarn = chamado.sla_minutos <= 15 && chamado.sla_minutos > 5;
+              const level = slaLevel(chamado.sla_minutos);
               return (
                 <div
                   key={chamado.id}
@@ -342,7 +341,7 @@ export default function MapaPage() {
                     </span>
                     <span className={`pill ${pillClass} pill-6`}>{statusLabel[chamado.status]}</span>
                     <span
-                      className={`mono chamado-sla-badge ${slaCrit ? 'chamado-sla-crit' : slaWarn ? 'chamado-sla-warn' : 'chamado-sla-ok'}`}
+                      className={`mono chamado-sla-badge ${level === 'crit' ? 'chamado-sla-crit' : level === 'warn' ? 'chamado-sla-warn' : 'chamado-sla-ok'}`}
                     >
                       {chamado.sla_minutos}min
                     </span>

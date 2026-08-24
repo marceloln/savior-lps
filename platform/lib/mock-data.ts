@@ -2,10 +2,16 @@
 // Will be replaced by Supabase queries in production
 
 export function slaLevel(minutes: number): 'ok' | 'warn' | 'crit' {
-  if (minutes <= 15) return 'ok';
-  if (minutes <= 25) return 'warn';
+  if (minutes <= 10) return 'ok';
+  if (minutes <= 20) return 'warn';
   return 'crit';
 }
+
+export const slaColors = {
+  ok: { bg: 'var(--green-l)', text: 'var(--green-d)', dot: 'var(--green)' },
+  warn: { bg: 'var(--amber-l)', text: 'var(--amber)', dot: 'var(--amber)' },
+  crit: { bg: 'var(--red-l)', text: 'var(--red)', dot: 'var(--red)' },
+};
 
 export type VtrTipo = 'uti' | 'basica' | 'moto';
 export type VtrStatus = 'disponivel' | 'em_atendimento' | 'manutencao';
