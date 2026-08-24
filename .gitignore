@@ -35,3 +35,9 @@ Thumbs.db
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Platform
+platform/.next/
+platform/node_modules/
+platform/.env.local
+platform/.env.*.local
