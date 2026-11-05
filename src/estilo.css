@@ -1,0 +1,14 @@
+:root{--tinta:#20352F;--creme:#F0EAD6;--areia:#C5AA81;--fundo:#E3E2D6;font-family:Roboto,system-ui,sans-serif;color:var(--tinta)}
+*{box-sizing:border-box}html,body,#raiz{height:100%;margin:0;background:var(--fundo);overflow:hidden}
+.lab{position:relative;height:100%}.mapa{position:absolute;inset:0;touch-action:none}.mapa canvas{display:block}
+.vidro{background:rgba(251,249,244,.82);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid rgba(255,255,255,.75);border-radius:16px;box-shadow:0 18px 40px -20px rgba(32,53,47,.45)}
+.topo{position:absolute;top:16px;left:16px;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 8px}
+.topo b{font:700 17px 'Bricolage Grotesque',sans-serif}.topo small{color:#6E7D77}
+.marca{background:var(--tinta);color:var(--creme);font:700 14px 'Bricolage Grotesque';border-radius:10px;padding:8px}
+.dica{position:absolute;pointer-events:none;padding:10px 14px;display:flex;flex-direction:column;gap:2px;max-width:260px}
+.dica b{font:700 16px 'Bricolage Grotesque',sans-serif}.dica small{color:#4A5C55}
+.painel{position:absolute;right:16px;top:16px;width:min(340px,calc(100% - 32px));padding:20px}
+.painel h2{font:700 22px 'Bricolage Grotesque',sans-serif;margin:10px 0}.painel ul{padding:0;list-style:none;display:grid;gap:8px}
+.selo{display:block;width:36px;height:6px;border-radius:9px}
+.painel button{border:0;border-radius:999px;background:var(--tinta);color:var(--creme);padding:9px 16px;font:600 14px Roboto;cursor:pointer}
+.erro{position:absolute;inset:auto 16px 16px;padding:12px;background:#fff;border-radius:12px}
