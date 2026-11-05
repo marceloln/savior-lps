@@ -23,3 +23,15 @@ Arrastar, zoom na roda e no toque, enquadramento inicial no deck.
 
 ## #6 Dica e clique em área
 Passar o mouse mostra área, pessoa ou objeto. Clique numa área abre o painel dela.
+
+## #7 Publicação na Cloudflare com Workers
+Um Worker agencia-v30 serve o build estático e responde as rotas /api. Deploy pelo GitHub Actions a cada push na main, com teste e build antes.
+Pronto quando: push na main publica e /api/saude responde ok.
+
+## #8 Banco D1 com esquema inicial
+Banco agencia-v30 com clientes (setor e situação, nunca nome), missões e mensagens. Migração versionada em migrations/.
+Pronto quando: tabelas criadas e o Worker lê e grava.
+
+## #9 Conversa com especialista pelo Worker
+POST /api/conversa recebe o especialista e as mensagens, chama a API do Claude com a chave guardada como segredo do Worker e grava a troca no D1. A chave nunca vai para o navegador.
+Pronto quando: teste cobre a montagem do pedido e o Worker responde erro claro sem chave.
