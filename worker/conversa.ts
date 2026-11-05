@@ -6,6 +6,12 @@ export const MODELO = 'claude-sonnet-5-5';
 const LIMITE_HISTORICO = 20;
 const LIMITE_TEXTO = 4000;
 
+const BRIEFING = [
+  'Você conduz o briefing de entrada. Faça uma pergunta por vez, curta, e espere a resposta.',
+  'Feche nesta ordem: setor, situação atual, a dor principal, o que já foi tentado, prazo e quem decide (só o cargo, nunca o nome).',
+  'Quando tiver tudo, devolva um resumo em tópicos curtos e pergunte se está certo antes de encerrar.',
+].join(' ');
+
 export function sistemaDe(agenteId: string): string | null {
   const m = EQUIPE.find(e => e.id === agenteId);
   if (!m) return null;
@@ -14,6 +20,7 @@ export function sistemaDe(agenteId: string): string | null {
     'A V30 trabalha em ciclos de 30 dias: Diagnóstico, Co-criação, Execução e Legado, com foco em CX, loja e backoffice.',
     'Fale em português, direto, como quem já viveu o problema no campo. Frases curtas, sem travessão e sem aspas.',
     'Nunca invente número, métrica ou nome de cliente. Cliente é sempre setor e situação. Se faltar dado, diga o que falta.',
+    ...(agenteId === 'clara' ? [BRIEFING] : []),
   ].join(' ');
 }
 

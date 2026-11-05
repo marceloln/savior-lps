@@ -7,8 +7,80 @@
 .marca{background:var(--tinta);color:var(--creme);font:700 14px 'Bricolage Grotesque';border-radius:10px;padding:8px}
 .dica{position:absolute;pointer-events:none;padding:10px 14px;display:flex;flex-direction:column;gap:2px;max-width:260px}
 .dica b{font:700 16px 'Bricolage Grotesque',sans-serif}.dica small{color:#4A5C55}
-.painel{position:absolute;right:16px;top:16px;width:min(340px,calc(100% - 32px));padding:20px}
-.painel h2{font:700 22px 'Bricolage Grotesque',sans-serif;margin:10px 0}.painel ul{padding:0;list-style:none;display:grid;gap:8px}
 .selo{display:block;width:36px;height:6px;border-radius:9px}
-.painel button{border:0;border-radius:999px;background:var(--tinta);color:var(--creme);padding:9px 16px;font:600 14px Roboto;cursor:pointer}
-.erro{position:absolute;inset:auto 16px 16px;padding:12px;background:#fff;border-radius:12px}
+.falha-carga{position:absolute;inset:auto 16px 16px;padding:12px;background:#fff;border-radius:12px}
+
+/* ===== camada de interface ===== */
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid #E9B949;outline-offset:2px}
+.so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.topo .titulo{display:flex;flex-direction:column;line-height:1.15}
+.topo .atalho{margin-left:8px;border:0;border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px}
+.atalho.escuro{background:var(--tinta);color:var(--creme)}
+.atalho.escuro:hover{background:#2C4A41}
+.dica .acao{color:#8C7552;font-size:12px;margin-top:2px}
+.menu{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:2px;padding:6px;border-radius:20px;max-width:calc(100% - 32px);overflow-x:auto;scrollbar-width:none}
+.menu button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:68px;padding:8px 6px 6px;border:0;border-radius:14px;background:transparent;font-size:12px;font-weight:500;transition:background .2s cubic-bezier(.23,1,.32,1)}
+.menu button:hover{background:rgba(32,53,47,.07)}
+.menu button[aria-pressed="true"]{background:var(--tinta);color:var(--creme)}
+.menu button[aria-pressed="true"] svg{color:#E9B949}
+.janela{z-index:5;position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);width:min(560px,calc(100% - 32px));max-height:calc(100% - 180px);display:flex;flex-direction:column;border-radius:22px;outline:none;animation:entra .22s cubic-bezier(.23,1,.32,1)}
+.janela.larga{width:min(860px,calc(100% - 32px));height:min(640px,calc(100% - 180px))}
+@keyframes entra{from{opacity:0;transform:translate(-50%,-49%) scale(.98)}}
+.janela-topo{display:flex;align-items:flex-start;gap:12px;padding:18px 18px 12px;border-bottom:1px solid rgba(32,53,47,.08)}
+.janela-topo .selo{background:var(--c);width:6px;height:34px;flex:none}
+.janela-topo h2{font:700 21px 'Bricolage Grotesque',sans-serif;margin:0;letter-spacing:-.01em}
+.janela-topo p{margin:2px 0 0;color:#5B6B65;font-size:14px}
+.fechar{margin-left:auto;border:0;background:rgba(32,53,47,.06);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;flex:none}
+.fechar:hover{background:rgba(32,53,47,.12)}
+.janela-corpo{padding:16px 18px 18px;overflow:auto;flex:1;min-height:0;display:flex;flex-direction:column}
+.janela-corpo>*{flex:none}
+.janela-corpo>.chat{flex:1}
+.retrato{border-radius:50%;flex:none;display:block;background:#F2EEE4}
+.rotulo{font:600 11px 'Roboto Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#8C7552;margin:0 0 6px}
+.ficha{display:flex;gap:18px;align-items:center}
+.ficha .papel{font:600 17px 'Bricolage Grotesque',sans-serif;margin:0 0 14px}
+.primario{border:0;border-radius:999px;background:var(--tinta);color:var(--creme);padding:10px 18px;font-weight:600}
+.primario:hover{background:#2C4A41}
+.primario:active,.menu button:active,.atalho:active{transform:scale(.97)}
+.time{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}
+.time button,.contatos button{width:100%;display:flex;align-items:center;gap:10px;text-align:left;border:0;background:transparent;border-radius:12px;padding:6px 8px}
+.time button:hover,.contatos button:hover{background:rgba(32,53,47,.06)}
+.time span,.contatos span{display:flex;flex-direction:column;min-width:0}
+.time small,.contatos small{color:#5B6B65;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vazio,.nota{color:#5B6B65;font-size:14px}
+.em-breve p{margin:0 0 10px;line-height:1.5}
+.chat{display:grid;grid-template-columns:220px minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:12px;min-height:0}
+.janela.larga .janela-corpo{overflow:hidden}
+.chat.so{grid-template-columns:1fr;height:min(460px,60vh);flex:none}
+.contatos{overflow:auto;border-right:1px solid rgba(32,53,47,.08);padding-right:8px;min-height:0}
+.contatos button[aria-pressed="true"]{background:var(--tinta);color:var(--creme)}
+.contatos button[aria-pressed="true"] small{color:#C5AA81}
+.conversa{display:flex;flex-direction:column;min-height:0;height:100%}
+.falas{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 10px;min-height:0}
+.fala{display:flex;gap:8px;align-items:flex-end;max-width:85%}
+.fala p{margin:0;padding:10px 13px;border-radius:16px;line-height:1.45;white-space:pre-wrap;font-size:15px}
+.fala.ele p{background:#fff;border-bottom-left-radius:5px}
+.fala.eu{align-self:flex-end}
+.fala.eu p{background:var(--tinta);color:var(--creme);border-bottom-right-radius:5px}
+.fala.erro p{background:#F9ECE7;color:#7A3420}
+.digitando{display:flex;gap:4px}
+.digitando i{width:6px;height:6px;border-radius:50%;background:#8C7552;animation:pisca 1s infinite}
+.digitando i:nth-child(2){animation-delay:.15s}.digitando i:nth-child(3){animation-delay:.3s}
+@keyframes pisca{50%{opacity:.25}}
+.campo{display:flex;gap:8px;align-items:flex-end;border-top:1px solid rgba(32,53,47,.08);padding-top:10px}
+.campo textarea{flex:1;resize:none;border:1px solid rgba(32,53,47,.15);border-radius:14px;padding:10px 12px;font:15px Roboto,sans-serif;background:#fff;color:var(--tinta)}
+.campo button{border:0;border-radius:999px;background:var(--tinta);color:var(--creme);padding:10px 16px;font-weight:600}
+.campo button:disabled{opacity:.4;cursor:default}
+@media (max-width:760px){
+  .topo small{display:none}
+  .menu{left:16px;right:16px;transform:none;justify-content:flex-start}
+  .menu button{min-width:62px}
+  .janela,.janela.larga{left:0;right:0;top:auto;bottom:0;transform:none;width:100%;height:auto;max-height:82%;border-radius:22px 22px 0 0;animation:sobe .25s cubic-bezier(.23,1,.32,1)}
+  @keyframes sobe{from{transform:translateY(30px);opacity:0}}
+  .chat{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:70vh}
+  .contatos{display:flex;gap:4px;overflow-x:auto;border-right:0;border-bottom:1px solid rgba(32,53,47,.08);padding:0 0 8px}
+  .contatos button{flex-direction:column;width:auto;min-width:64px}
+  .contatos small{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
