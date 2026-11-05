@@ -35,3 +35,19 @@ Pronto quando: tabelas criadas e o Worker lê e grava.
 ## #9 Conversa com especialista pelo Worker
 POST /api/conversa recebe o especialista e as mensagens, chama a API do Claude com a chave guardada como segredo do Worker e grava a troca no D1. A chave nunca vai para o navegador.
 Pronto quando: teste cobre a montagem do pedido e o Worker responde erro claro sem chave.
+
+## #10 Moldura da interface
+Barra de cima, menu de baixo e um sistema de janela único (centro no desktop, folha de baixo no celular), fechando com Esc e devolvendo o foco. Itens do menu que ainda não existem abrem um estado vazio honesto dizendo em que etapa chegam.
+Pronto quando: todas as entradas do menu abrem e fecham por mouse, teclado e toque.
+
+## #11 Ficha do especialista e painel de área
+Clique numa pessoa abre a ficha com retrato tirado do atlas, papel, área e botão de conversa. Clique numa área lista quem trabalha nela.
+Pronto quando: dá para ir do mapa à conversa em dois cliques.
+
+## #12 Chat com especialistas
+Lista de contatos e conversa, usando /api/historico e /api/conversa. Sem servidor ou sem chave, mostra aviso claro e não perde o que foi digitado.
+Pronto quando: teste cobre a montagem das mensagens e o tratamento de erro.
+
+## #13 Briefing com a Clara
+Mesma conversa, com a Clara fazendo uma pergunta por vez até fechar setor, situação, dor e prazo.
+Pronto quando: a instrução da Clara está no Worker e o briefing abre pelo menu e pelo balcão.
