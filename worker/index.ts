@@ -1,5 +1,6 @@
 // Worker da Agência V30: serve o build estático e responde as rotas /api.
 import { montaPedido } from './conversa';
+import { contextoDe, rotaDados } from './api';
 
 export interface Env {
   ASSETS: Fetcher;
@@ -15,6 +16,8 @@ async function conversa(req: Request, env: Env): Promise<Response> {
   try { corpo = await req.json(); } catch { return json({ erro: 'Corpo não é JSON.' }, 400); }
   const m = montaPedido(corpo);
   if (!m.ok) return json({ erro: m.erro }, 400);
+  const contexto = await contextoDe(env.DB, m.agente);
+  if (contexto) m.pedido.system += '\n\n' + contexto;
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
@@ -43,7 +46,7 @@ export default {
     if (url.pathname === '/api/conversa' && req.method === 'POST') return conversa(req, env);
     const h = url.pathname.match(/^\/api\/historico\/([a-z]+)$/);
     if (h && req.method === 'GET') return historico(h[1], env);
-    if (url.pathname.startsWith('/api/')) return json({ erro: 'Rota não existe.' }, 404);
+    if (url.pathname.startsWith('/api/')) return (await rotaDados(req, env, url.pathname)) ?? json({ erro: 'Rota não existe.' }, 404);
     return env.ASSETS.fetch(req);
   },
 } satisfies ExportedHandler<Env>;

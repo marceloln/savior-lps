@@ -1,0 +1,116 @@
+// Rotas de dados do lab sobre o D1. Cada rota valida, grava e devolve o registro como ficou.
+import { SEMENTE, type EstadoLab } from '../src/lib/dados';
+import * as V from './validacao';
+
+type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string };
+const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
+const ruim = (erro: string, status = 400) => json({ erro }, status);
+async function corpo(req: Request): Promise<unknown> { try { return await req.json(); } catch { return null; } }
+
+/** Grava os exemplos se o banco estiver vazio. Roda na primeira leitura. */
+export async function semeia(db: D1Database) {
+  const tem = await db.prepare('SELECT COUNT(*) AS n FROM clientes').first<{ n: number }>();
+  if (tem && tem.n > 0) return;
+  const s = SEMENTE, st: D1PreparedStatement[] = [];
+  for (const c of s.clientes) st.push(db.prepare('INSERT INTO clientes (id, setor, situacao, fase) VALUES (?, ?, ?, ?)').bind(c.id, c.setor, c.situacao, c.fase));
+  for (const p of s.projetos) st.push(db.prepare('INSERT INTO projetos (id, cliente_id, nome, fase, dia, mesa) VALUES (?, ?, ?, ?, ?, ?)').bind(p.id, p.cliente_id, p.nome, p.fase, p.dia, p.mesa));
+  for (const t of s.tarefas) st.push(db.prepare('INSERT INTO missoes (agente, titulo, detalhe, estado, projeto_id) VALUES (?, ?, ?, ?, ?)').bind(t.agente, t.titulo, t.detalhe, t.estado, t.projeto_id));
+  for (const r of s.reunioes) st.push(db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(r.titulo, r.pauta, r.dia, r.hora, JSON.stringify(r.participantes), r.projeto_id, r.status, r.ata));
+  for (const d of s.decisoes) st.push(db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id) VALUES (?, ?, ?, ?)').bind(d.titulo, d.contexto, d.projeto_id, d.reuniao_id));
+  for (const m of s.memorias) st.push(db.prepare('INSERT INTO memorias (agente, texto, origem) VALUES (?, ?, ?)').bind(m.agente, m.texto, m.origem));
+  await db.batch(st);
+}
+
+export async function lerEstado(db: D1Database): Promise<EstadoLab> {
+  await semeia(db);
+  const [cl, pr, ta, re, de, ins, me, co] = await db.batch([
+    db.prepare('SELECT id, setor, situacao, fase FROM clientes ORDER BY criado_em'),
+    db.prepare('SELECT id, cliente_id, nome, fase, dia, mesa FROM projetos ORDER BY criado_em'),
+    db.prepare('SELECT id, agente, titulo, detalhe, estado, projeto_id FROM missoes ORDER BY id'),
+    db.prepare('SELECT id, titulo, pauta, dia, hora, participantes, projeto_id, status, ata FROM reunioes ORDER BY dia, hora'),
+    db.prepare('SELECT id, titulo, contexto, projeto_id, reuniao_id, criado_em FROM decisoes ORDER BY id DESC'),
+    db.prepare('SELECT agente, texto FROM instrucoes'),
+    db.prepare('SELECT id, agente, texto, origem, criado_em FROM memorias ORDER BY id DESC'),
+    db.prepare("SELECT COUNT(*) AS n FROM mensagens WHERE papel = 'assistant'"),
+  ]);
+  return {
+    clientes: cl.results as EstadoLab['clientes'],
+    projetos: pr.results as EstadoLab['projetos'],
+    tarefas: ta.results as EstadoLab['tarefas'],
+    reunioes: (re.results as (Omit<EstadoLab['reunioes'][number], 'participantes'> & { participantes: string })[]).map(r => ({ ...r, participantes: JSON.parse(r.participantes) })),
+    decisoes: de.results as EstadoLab['decisoes'],
+    instrucoes: Object.fromEntries((ins.results as { agente: string; texto: string }[]).map(i => [i.agente, i.texto])),
+    memorias: me.results as EstadoLab['memorias'],
+    conversas: (co.results[0] as { n: number }).n,
+  };
+}
+
+/** Contexto que entra na conversa de um especialista: instrução, memória e tarefas abertas. */
+export async function contextoDe(db: D1Database, agente: string): Promise<string> {
+  const [ins, mem, tar] = await db.batch([
+    db.prepare('SELECT texto FROM instrucoes WHERE agente = ?').bind(agente),
+    db.prepare('SELECT texto FROM memorias WHERE agente = ? ORDER BY id DESC LIMIT 12').bind(agente),
+    db.prepare("SELECT m.titulo, m.estado, p.nome AS projeto FROM missoes m LEFT JOIN projetos p ON p.id = m.projeto_id WHERE m.agente = ? AND m.estado != 'feito' ORDER BY m.id LIMIT 12").bind(agente),
+  ]);
+  const partes: string[] = [];
+  const i = (ins.results[0] as { texto?: string } | undefined)?.texto;
+  if (i) partes.push('Instruções da equipe para você: ' + i);
+  const m = mem.results as { texto: string }[];
+  if (m.length) partes.push('O que você já sabe, anotado em conversas anteriores:\n' + m.map(x => '- ' + x.texto).join('\n'));
+  const t = tar.results as { titulo: string; estado: string; projeto: string | null }[];
+  if (t.length) partes.push('Suas tarefas abertas:\n' + t.map(x => `- ${x.titulo} (${x.estado === 'fazendo' ? 'em andamento' : 'na fila'}${x.projeto ? ', ' + x.projeto : ''})`).join('\n'));
+  return partes.join('\n\n');
+}
+
+export async function rotaDados(req: Request, env: Env, caminho: string): Promise<Response | null> {
+  const db = env.DB, m = req.method;
+  if (caminho === '/api/estado' && m === 'GET') return json(await lerEstado(db));
+  if (caminho === '/api/conexoes' && m === 'GET') {
+    const n = await db.prepare('SELECT COUNT(*) AS n FROM mensagens').first<{ n: number }>().catch(() => null);
+    return json({ banco: n !== null, chave: Boolean(env.ANTHROPIC_API_KEY), mensagens: n?.n ?? 0 });
+  }
+  if (caminho === '/api/tarefas' && m === 'POST') {
+    const v = V.novaTarefa(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const r = await db.prepare('INSERT INTO missoes (agente, titulo, detalhe, projeto_id) VALUES (?, ?, ?, ?) RETURNING id, agente, titulo, detalhe, estado, projeto_id').bind(v.v.agente, v.v.titulo, v.v.detalhe, v.v.projeto_id).first();
+    return json(r, 201);
+  }
+  let x = caminho.match(/^\/api\/tarefas\/(\d+)$/);
+  if (x && m === 'PATCH') {
+    const v = V.mudancaTarefa(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const campos = Object.keys(v.v), valores = Object.values(v.v);
+    const r = await db.prepare(`UPDATE missoes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? RETURNING id, agente, titulo, detalhe, estado, projeto_id`).bind(...valores, Number(x[1])).first();
+    return r ? json(r) : ruim('Tarefa não encontrada.', 404);
+  }
+  if (x && m === 'DELETE') { await db.prepare('DELETE FROM missoes WHERE id = ?').bind(Number(x[1])).run(); return json({ ok: true }); }
+  if (caminho === '/api/reunioes' && m === 'POST') {
+    const v = V.novaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const r = await db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(v.v.titulo, v.v.pauta, v.v.dia, v.v.hora, JSON.stringify(v.v.participantes), v.v.projeto_id).first<{ id: number }>();
+    return json({ id: r!.id, ...v.v, status: 'agendada', ata: '' }, 201);
+  }
+  x = caminho.match(/^\/api\/reunioes\/(\d+)\/ata$/);
+  if (x && m === 'PUT') {
+    const v = V.ata(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const r = await db.prepare("UPDATE reunioes SET ata = ?, status = 'feita' WHERE id = ? RETURNING id").bind(v.v.ata, Number(x[1])).first();
+    return r ? json({ ok: true }) : ruim('Reunião não encontrada.', 404);
+  }
+  if (caminho === '/api/decisoes' && m === 'POST') {
+    const v = V.novaDecisao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const r = await db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id) VALUES (?, ?, ?, ?) RETURNING id, titulo, contexto, projeto_id, reuniao_id, criado_em').bind(v.v.titulo, v.v.contexto, v.v.projeto_id, v.v.reuniao_id).first();
+    return json(r, 201);
+  }
+  x = caminho.match(/^\/api\/instrucoes\/([a-z]+)$/);
+  if (x && m === 'PUT') {
+    const v = V.instrucao(x[1], await corpo(req)); if (!v.ok) return ruim(v.erro);
+    if (!v.v.texto) await db.prepare('DELETE FROM instrucoes WHERE agente = ?').bind(v.v.agente).run();
+    else await db.prepare("INSERT INTO instrucoes (agente, texto) VALUES (?, ?) ON CONFLICT(agente) DO UPDATE SET texto = excluded.texto, atualizado_em = datetime('now')").bind(v.v.agente, v.v.texto).run();
+    return json({ ok: true });
+  }
+  if (caminho === '/api/memorias' && m === 'POST') {
+    const v = V.novaMemoria(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const r = await db.prepare('INSERT INTO memorias (agente, texto, origem) VALUES (?, ?, ?) RETURNING id, agente, texto, origem, criado_em').bind(v.v.agente, v.v.texto, v.v.origem).first();
+    return json(r, 201);
+  }
+  x = caminho.match(/^\/api\/memorias\/(\d+)$/);
+  if (x && m === 'DELETE') { await db.prepare('DELETE FROM memorias WHERE id = ?').bind(Number(x[1])).run(); return json({ ok: true }); }
+  return null;
+}

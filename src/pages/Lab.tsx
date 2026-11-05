@@ -3,7 +3,9 @@ import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Janela } from '../components/Janela';
 import { Menu, NOMES, type Entrada } from '../components/Menu';
 import { Chat } from '../components/Chat';
-import { EmBreve, FichaAgente, PainelZona } from '../components/Fichas';
+import { FichaAgente, PainelZona } from '../components/Fichas';
+import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus } from '../components/Paineis';
+import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
 import { ZONAS } from '../lib/lab';
 import { EQUIPE } from '../lib/equipe';
@@ -15,6 +17,8 @@ export function Lab() {
   const [dica, setDica] = useState<{ alvo: Alvo; x: number; y: number }>({ alvo: null, x: 0, y: 0 });
   const [aberta, setAberta] = useState<Aberta>(null);
   const [contato, setContato] = useState('lia');
+  const [projeto, setProjeto] = useState<string | undefined>();
+  const { aviso, limpaAviso } = useEstado();
   const fecha = useCallback(() => setAberta(null), []);
   const onHover = useCallback((alvo: Alvo, x: number, y: number) => setDica({ alvo, x, y }), []);
   const onClique = useCallback((alvo: Alvo) => {
@@ -33,16 +37,18 @@ export function Lab() {
     if (aberta.tipo === 'zona') {
       const z = ZONAS.find(q => q.id === aberta.id)!;
       janela = <Janela titulo={z.nome} sobre="Quem trabalha aqui" cor={z.cor} aoFechar={fecha}>
-        <PainelZona zona={z.id} gente={gente} abreAgente={id => setAberta({ tipo: 'agente', id })} briefing={() => conversaCom('clara')} /></Janela>;
+        <PainelZona zona={z.id} abreAgente={id => setAberta({ tipo: 'agente', id })} briefing={() => conversaCom('clara')} /></Janela>;
     } else if (aberta.tipo === 'agente') {
       const m = EQUIPE.find(q => q.id === aberta.id)!, z = ZONAS.find(q => q.id === m.zona)!;
-      janela = <Janela titulo={m.nome} sobre={m.papel} cor={z.cor} aoFechar={fecha}><FichaAgente m={m} gente={gente} conversa={() => conversaCom(m.id)} /></Janela>;
+      janela = <Janela titulo={m.nome} sobre={m.papel} cor={z.cor} aoFechar={fecha}><FichaAgente m={m} conversa={() => conversaCom(m.id)} /></Janela>;
     } else if (aberta.entrada === 'conversar') {
-      janela = <Janela titulo="Conversar" sobre="Fale com qualquer especialista do lab" largura="larga" aoFechar={fecha}><Chat agente={contato} setAgente={setContato} gente={gente} /></Janela>;
+      janela = <Janela titulo="Conversar" sobre="Fale com qualquer especialista do lab" largura="larga" aoFechar={fecha}><Chat agente={contato} setAgente={setContato} /></Janela>;
     } else if (aberta.entrada === 'briefing') {
-      janela = <Janela titulo="Briefing com a Clara" sobre="Uma pergunta por vez, até fechar o pedido" cor="#6FAE9E" aoFechar={fecha}><Chat agente="clara" setAgente={() => {}} gente={gente} so /></Janela>;
+      janela = <Janela titulo="Briefing com a Clara" sobre="Uma pergunta por vez, até fechar o pedido" cor="#6FAE9E" aoFechar={fecha}><Chat agente="clara" setAgente={() => {}} so /></Janela>;
     } else {
-      janela = <Janela titulo={NOMES[aberta.entrada]} aoFechar={fecha}><EmBreve entrada={aberta.entrada} /></Janela>;
+      const SOBRE: Record<string, string> = { clientes: 'Por setor e situação', projetos: 'A mesa do método e as tarefas de cada projeto', agenda: 'Reuniões com ata e decisão', decisoes: 'O que foi resolvido e por quê', conexoes: 'O que está ligado ao lab agora', trofeus: 'O que a equipe já entregou' };
+      const corpo = { clientes: <Clientes abreProjeto={id => { setProjeto(id); setAberta({ tipo: 'menu', entrada: 'projetos' }); }} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes />, trofeus: <Trofeus /> }[aberta.entrada];
+      janela = <Janela titulo={NOMES[aberta.entrada]} sobre={SOBRE[aberta.entrada]} largura={aberta.entrada === 'projetos' || aberta.entrada === 'agenda' ? 'larga' : 'media'} aoFechar={fecha}>{corpo}</Janela>;
     }
   }
 
@@ -63,6 +69,7 @@ export function Lab() {
         </div>
       )}
       {janela}
+      {aviso && <div className="aviso vidro" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
       <Menu ativo={aberta?.tipo === 'menu' ? aberta.entrada : null} abre={e => setAberta(a => (a?.tipo === 'menu' && a.entrada === e ? null : { tipo: 'menu', entrada: e }))} />
     </div>
   );
