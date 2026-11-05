@@ -51,3 +51,20 @@ Pronto quando: teste cobre a montagem das mensagens e o tratamento de erro.
 ## #13 Briefing com a Clara
 Mesma conversa, com a Clara fazendo uma pergunta por vez até fechar setor, situação, dor e prazo.
 Pronto quando: a instrução da Clara está no Worker e o briefing abre pelo menu e pelo balcão.
+
+## #14 Esquema de memória no D1
+Projetos, tarefas ligadas a projeto, reuniões com ata, decisões, instruções por especialista e memória de notas. Migração 0002.
+Pronto quando: migração aplica em banco limpo e em banco com a 0001.
+
+## #15 API de dados no Worker
+GET /api/estado devolve tudo que a interface precisa. Rotas para criar, mover e apagar tarefa, criar reunião e gravar ata, criar decisão, ler e salvar instrução, criar e apagar memória. Validação pura e testada.
+Pronto quando: testes cobrem a validação e o Worker local responde todas as rotas.
+
+## #16 Dados de exemplo
+Na primeira leitura de um banco vazio o Worker grava os exemplos. A prévia sem servidor usa os mesmos exemplos sem gravar. Cliente só por setor e situação.
+
+## #17 Instruções e memória na conversa
+A conversa inclui a instrução salva do especialista, as notas de memória dele e as tarefas abertas. Resposta pode virar nota de memória com um clique.
+
+## #18 Menus com dados
+Clientes, Projetos com mesa e kanban, Agenda, Decisões, Conexões e Troféus lendo e gravando pela API.
