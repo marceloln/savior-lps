@@ -1,0 +1,11 @@
+{
+  // Um Worker só: o build estático em dist/ e as rotas /api em worker/index.ts
+  "name": "agencia-v30",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-04-25",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "agencia-v30", "database_id": "6e7d1c8c-b8b7-4ff5-abb4-ccef19f668b2", "migrations_dir": "migrations" }
+  ],
+  "observability": { "enabled": true }
+}
