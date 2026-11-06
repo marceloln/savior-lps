@@ -55,8 +55,13 @@ def moldura(d):
     x = (ref - y * ref.dot(y)).normalized(); z = x.cross(y)
     return Matrix((x, y, z)).transposed().to_quaternion()
 
+# Tronco copia só a variação em relação ao repouso. Casar a direção absoluta nesses ossos impunha ao MakeHuman
+# a curva da coluna do esqueleto de referência, que é outra, e deixava todo mundo corcunda.
+TRONCO = {'pelvis', 'spine_01', 'spine_02', 'spine_03'}
+
 def prepara_alvo(alvo):
-    """Calibra cada osso do alvo contra a fonte: casa a direção do osso e a frente do corpo nas duas poses de repouso.
+    """Calibra cada osso do alvo contra a fonte. Braços e pernas casam a direção do osso e a frente do corpo nas duas
+    poses de repouso (o repouso da fonte é em T e o do alvo em A). O tronco mantém a curva do próprio alvo.
     As contas ficam no espaço da armadura do alvo, então girar o objeto gira a pessoa inteira."""
     mf, mi = FONTE.matrix_world, Matrix()
     nomes = {b.name.lower(): b.name for b in FONTE.data.bones}
@@ -67,16 +72,21 @@ def prepara_alvo(alvo):
         bf = FONTE.data.bones[nf]
         rf = (mf @ bf.matrix_local).to_quaternion()
         ra = b.matrix_local.to_quaternion()
-        casa = moldura(direcao(FONTE, bf, mf)) @ moldura(direcao(alvo, b, mi)).inverted()
+        if b.name in TRONCO: casa = Quaternion()
+        else: casa = moldura(direcao(FONTE, bf, mf)) @ moldura(direcao(alvo, b, mi)).inverted()
         cal[b.name] = (nf, rf.inverted() @ casa @ ra)
     pf = (mf @ FONTE.data.bones['pelvis'].head_local).z
     pa = alvo.data.bones['pelvis'].head_local.z
     return {'cal': cal, 'escala': pa / pf, 'ordem': ordem_ossos(alvo)}
 
-ERGUE = {'neck_01': 8, 'head': 12}
+ANDAR = dict(proprios=('neck_01', 'clavicle_l', 'clavicle_r'), nivela=0.85, inclina={'spine_02': -5, 'spine_03': -3})
 
-def aplica(alvo, prep, acao, quadro, desloca=Vector((0, 0, 0))):
-    """Copia a pose da fonte no quadro dado para o alvo, osso a osso."""
+def aplica(alvo, prep, acao, quadro, desloca=Vector((0, 0, 0)), proprios=('neck_01',), nivela=0.7, inclina={}):
+    """Copia a pose da fonte no quadro dado para o alvo, osso a osso.
+    proprios: ossos que só acompanham o pai, com a forma do repouso do alvo (a referência projeta o queixo
+    e encolhe os ombros).
+    nivela: quanto a cabeça volta para a orientação de repouso; a gente anda olhando para a frente, não para o chão.
+    inclina: graus para a frente por osso, aplicados depois da cópia."""
     FONTE.animation_data.action = ACOES[acao]
     bpy.context.scene.frame_set(int(round(quadro)))
     mf = FONTE.matrix_world
@@ -84,26 +94,49 @@ def aplica(alvo, prep, acao, quadro, desloca=Vector((0, 0, 0))):
     for b in prep['ordem']:   # pais antes dos filhos
         pb = alvo.pose.bones[b.name]
         rel = None if b.parent is None else b.parent.matrix_local.inverted() @ b.matrix_local
-        if b.name in prep['cal']:
+        if b.name in prep['cal'] and b.name not in proprios and b.name != 'head':
             nf, off = prep['cal'][b.name]
             rot = (mf @ FONTE.pose.bones[nf].matrix).to_quaternion() @ off
         elif b.parent is None:
             rot = b.matrix_local.to_quaternion()
         else:
             rot = (pose_m[b.parent.name] @ rel).to_quaternion()
+        if b.name == 'head' and nivela:
+            rot = rot.slerp(b.matrix_local.to_quaternion(), nivela)
+        if b.name in inclina:
+            rot = Quaternion((1, 0, 0), math.radians(inclina[b.name])) @ rot
         if b.name == 'pelvis':
             pos = (mf @ FONTE.pose.bones['pelvis'].head) * prep['escala'] + desloca
         elif b.parent is None:
             pos = b.head_local.copy()
         else:
             pos = (pose_m[b.parent.name] @ rel).translation
-        if b.name in ERGUE:   # a animação de referência olha um pouco para baixo; levanta o olhar
-            rot = Quaternion((1, 0, 0), math.radians(-ERGUE[b.name])) @ rot
         m = Matrix.Translation(pos) @ rot.to_matrix().to_4x4()
         pose_m[b.name] = m
         if b.parent is None: pb.matrix_basis = b.matrix_local.inverted() @ m
         else: pb.matrix_basis = rel.inverted() @ pose_m[b.parent.name].inverted() @ m
     bpy.context.view_layer.update()
+
+# ---------------- em pé, parado ----------------
+# O Idle da biblioteca tem peito caído e ombros para trás. Parado parte do repouso do MakeHuman, que é ereto,
+# e só solta os braços ao lado do corpo. O segundo quadro é uma respiração.
+def gira_osso(arm, nome, q):
+    pb = arm.pose.bones[nome]; m = pb.matrix.copy()
+    pb.matrix = Matrix.Translation(m.translation) @ (q @ m.to_quaternion()).to_matrix().to_4x4()
+    bpy.context.view_layer.update()
+
+def mira(arm, nome, filho, alvo_d):
+    pb = arm.pose.bones[nome]; d = arm.pose.bones[filho].head - pb.head
+    gira_osso(arm, nome, d.rotation_difference(Vector(alvo_d).normalized()))
+
+def em_pe(arm, i=0):
+    for pb in arm.pose.bones: pb.matrix_basis.identity()
+    bpy.context.view_layer.update()
+    if i: gira_osso(arm, 'spine_03', Quaternion((1, 0, 0), math.radians(-1.5)))
+    for l, x in (('l', 1), ('r', -1)):
+        mira(arm, 'upperarm_' + l, 'lowerarm_' + l, ((0.13 + 0.01 * i) * x, 0.02, -1))
+        mira(arm, 'lowerarm_' + l, 'hand_' + l, (0.07 * x, -0.16, -1))
+        mira(arm, 'hand_' + l, 'middle_01_' + l, (0.02 * x, -0.1, -1))
 
 def comprimento(acao):
     a, b = ACOES[acao].frame_range
@@ -167,10 +200,12 @@ def remove(objs):
 def senta_digitando(alvo, prep, quadro):
     """Usa o Sitting_Idle como base e leva as mãos ao teclado com IK."""
     a, b = comprimento('Sitting_Idle_Loop')
-    aplica(alvo, prep, 'Sitting_Idle_Loop', a + (b - a) * 0.25, desloca=Vector((0, 0, 0)))
-    # ajusta o quadril para sentar no assento (topo a 0,485 m) e um pouco para trás no encosto
+    # pernas da animação; pelve e coluna ficam no repouso (ereto), com uma leve inclinação para o teclado
+    kw = dict(proprios=TRONCO | {'neck_01', 'clavicle_l', 'clavicle_r'}, nivela=0, inclina={'spine_01': 9, 'neck_01': 4})
+    aplica(alvo, prep, 'Sitting_Idle_Loop', a + (b - a) * 0.25, **kw)
+    # ajusta o quadril para sentar no meio do assento (topo a 0,485 m), perto da mesa
     coxa = alvo.pose.bones['thigh_l'].head
-    aplica(alvo, prep, 'Sitting_Idle_Loop', a + (b - a) * 0.25, desloca=Vector((0, 0.07 - coxa.y, 0.56 - coxa.z)))
+    aplica(alvo, prep, 'Sitting_Idle_Loop', a + (b - a) * 0.25, desloca=Vector((0, 0.0 - coxa.y, 0.56 - coxa.z)), **kw)
 
 def ik_maos(alvo, quadro):
     vazios = []
@@ -179,7 +214,7 @@ def ik_maos(alvo, quadro):
         z = 0.80 + (0.012 if (quadro + (lado == 'l')) % 2 else 0)
         alvo_ik.location = (0.14 * x, -0.42, z)
         polo = bpy.data.objects.new('polo_' + lado, None); cena.collection.objects.link(polo)
-        polo.location = (0.35 * x, 0.25, 0.35)
+        polo.location = (0.3 * x, 0.3, 0.2)   # cotovelo para baixo e para trás, junto do corpo
         c = alvo.pose.bones['lowerarm_' + lado].constraints.new('IK')
         c.target = alvo_ik; c.pole_target = polo; c.chain_count = 2; c.pole_angle = math.radians(-90 if x > 0 else -90)
         vazios += [alvo_ik, polo]
@@ -222,7 +257,8 @@ if MODO in ('teste', 'sprites'):
                 a, b = comprimento(acao)
                 for i in range(n):
                     if MODO == 'teste' and i > 0 and pose == 'parado': continue
-                    aplica(arm, prep, acao, a + (b - a) * i / n)
+                    if pose == 'parado': em_pe(arm, i)
+                    else: aplica(arm, prep, acao, a + (b - a) * i / n, **ANDAR)
                     render(os.path.join(pasta, f'd{k}_{pose}{i}.png'))
         if id in CADEIRA:
             gira(arm, 0)
@@ -245,7 +281,7 @@ if MODO == 'galeria':
     cam.rotation_euler = (-Vector((0.45, -1, 0.25))).to_track_quat('-Z', 'Y').to_euler()
     for id in ids:
         arm, objs = pessoa(id); prep = prepara_alvo(arm)
-        a, b = comprimento('Idle_Loop'); aplica(arm, prep, 'Idle_Loop', a)
+        em_pe(arm)
         render(os.path.join(SAIDA, 'g', id + '.png')); remove(objs); print('PRONTO', id, flush=True)
 
 if MODO == 'retratos':
@@ -258,7 +294,7 @@ if MODO == 'retratos':
     for id in ids:
         arm, objs = pessoa(id); prep = prepara_alvo(arm)
         # rosto
-        a, b = comprimento('Idle_Loop'); aplica(arm, prep, 'Idle_Loop', a)
+        em_pe(arm)
         cabeca = arm.matrix_world @ arm.pose.bones['head'].head
         alvo_c = cabeca + Vector((0, 0, 0.06)); dirc = Vector((0.35, -1, 0.12)).normalized()
         cam_d.ortho_scale = 0.42; cam.location = alvo_c + dirc * 10; cam.rotation_euler = (-dirc).to_track_quat('-Z', 'Y').to_euler()
