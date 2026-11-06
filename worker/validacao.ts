@@ -7,6 +7,14 @@ const falha = (erro: string): Falha => ({ ok: false, erro });
 const ehAgente = (x: unknown): x is string => typeof x === 'string' && EQUIPE.some(e => e.id === x);
 const texto = (x: unknown, max: number) => (typeof x === 'string' ? x.trim().slice(0, max) : '');
 const ESTADOS = ['fila', 'fazendo', 'feito'] as const;
+/** Aceita só datas que existem no calendário, no formato AAAA-MM-DD. */
+export function dataReal(x: unknown): x is string {
+  if (typeof x !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(x)) return false;
+  const d = new Date(x + 'T12:00:00Z');
+  return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === x;
+}
+/** Data de hoje no horário de Brasília, para comparar com o dia das reuniões. */
+export const hojeBrasil = (agora = Date.now()) => new Date(agora - 3 * 3600e3).toISOString().slice(0, 10);
 
 export function novaTarefa(c: unknown): Ok<{ agente: string; titulo: string; detalhe: string; projeto_id: string | null }> | Falha {
   const o = (c ?? {}) as Record<string, unknown>;
@@ -29,7 +37,7 @@ export function novaReuniao(c: unknown): Ok<{ titulo: string; pauta: string; dia
   const o = (c ?? {}) as Record<string, unknown>;
   const titulo = texto(o.titulo, 160);
   if (!titulo) return falha('A reunião precisa de um título.');
-  if (typeof o.dia !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(o.dia)) return falha('Data inválida.');
+  if (!dataReal(o.dia)) return falha('Data inválida.');
   if (typeof o.hora !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(o.hora)) return falha('Hora inválida.');
   const participantes = Array.isArray(o.participantes) ? [...new Set(o.participantes.filter(ehAgente))] : [];
   if (!participantes.length) return falha('Chame ao menos uma pessoa.');

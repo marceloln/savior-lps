@@ -25,4 +25,16 @@ describe('validação da API', () => {
     expect(V.instrucao('lia', { texto: '' })).toEqual({ ok: true, v: { agente: 'lia', texto: '' } });
     expect(V.instrucao('ninguem', { texto: 'x' }).ok).toBe(false);
   });
+  it('data só passa se existir no calendário', () => {
+    expect(V.dataReal('2026-11-30')).toBe(true);
+    expect(V.dataReal('2028-02-29')).toBe(true);
+    expect(V.dataReal('2026-13-45')).toBe(false);
+    expect(V.dataReal('2026-02-30')).toBe(false);
+    expect(V.novaReuniao({ titulo: 'Ritual', dia: '2026-02-30', hora: '10:00', participantes: ['rui'] }).ok).toBe(false);
+  });
+
+  it('hoje no horário de Brasília vira o dia só depois da meia-noite local', () => {
+    expect(V.hojeBrasil(Date.parse('2026-11-07T02:00:00Z'))).toBe('2026-11-06');
+    expect(V.hojeBrasil(Date.parse('2026-11-07T03:30:00Z'))).toBe('2026-11-07');
+  });
 });

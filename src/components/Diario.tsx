@@ -182,7 +182,8 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, ch
   const caixa = useRef<HTMLElement>(null);
   useEffect(() => {
     const antes = document.activeElement as HTMLElement | null;
-    caixa.current?.focus();
+    // quem abriu o livro com um campo em foco mantém o foco ali
+    if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus();
     const tecla = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { aoFechar(); return; }
       if (e.key !== 'Tab' || !caixa.current) return;

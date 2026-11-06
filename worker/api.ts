@@ -71,6 +71,9 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   }
   if (caminho === '/api/tarefas' && m === 'POST') {
     const v = V.novaTarefa(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    if (v.v.projeto_id && !(await db.prepare('SELECT 1 FROM projetos WHERE id = ?').bind(v.v.projeto_id).first())) return ruim('Esse projeto não existe.');
+    const igual = await db.prepare("SELECT 1 FROM missoes WHERE agente = ? AND estado != 'feito' AND lower(trim(titulo)) = lower(?)").bind(v.v.agente, v.v.titulo).first();
+    if (igual) return ruim('Essa missão já está aberta com essa pessoa.', 409);
     const r = await db.prepare('INSERT INTO missoes (agente, titulo, detalhe, projeto_id) VALUES (?, ?, ?, ?) RETURNING id, agente, titulo, detalhe, estado, projeto_id').bind(v.v.agente, v.v.titulo, v.v.detalhe, v.v.projeto_id).first();
     return json(r, 201);
   }
@@ -81,7 +84,10 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
     const r = await db.prepare(`UPDATE missoes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? RETURNING id, agente, titulo, detalhe, estado, projeto_id`).bind(...valores, Number(x[1])).first();
     return r ? json(r) : ruim('Tarefa não encontrada.', 404);
   }
-  if (x && m === 'DELETE') { await db.prepare('DELETE FROM missoes WHERE id = ?').bind(Number(x[1])).run(); return json({ ok: true }); }
+  if (x && m === 'DELETE') {
+    const r = await db.prepare('DELETE FROM missoes WHERE id = ?').bind(Number(x[1])).run();
+    return r.meta.changes ? json({ ok: true }) : ruim('Missão não encontrada.', 404);
+  }
   if (caminho === '/api/reunioes' && m === 'POST') {
     const v = V.novaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
     const r = await db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(v.v.titulo, v.v.pauta, v.v.dia, v.v.hora, JSON.stringify(v.v.participantes), v.v.projeto_id).first<{ id: number }>();
@@ -90,6 +96,9 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   x = caminho.match(/^\/api\/reunioes\/(\d+)\/ata$/);
   if (x && m === 'PUT') {
     const v = V.ata(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const reu = await db.prepare('SELECT dia FROM reunioes WHERE id = ?').bind(Number(x[1])).first<{ dia: string }>();
+    if (!reu) return ruim('Reunião não encontrada.', 404);
+    if (reu.dia > V.hojeBrasil()) return ruim('A ata só abre no dia da reunião.');
     const r = await db.prepare("UPDATE reunioes SET ata = ?, status = 'feita' WHERE id = ? RETURNING id").bind(v.v.ata, Number(x[1])).first();
     return r ? json({ ok: true }) : ruim('Reunião não encontrada.', 404);
   }
@@ -111,6 +120,9 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
     return json(r, 201);
   }
   x = caminho.match(/^\/api\/memorias\/(\d+)$/);
-  if (x && m === 'DELETE') { await db.prepare('DELETE FROM memorias WHERE id = ?').bind(Number(x[1])).run(); return json({ ok: true }); }
+  if (x && m === 'DELETE') {
+    const r = await db.prepare('DELETE FROM memorias WHERE id = ?').bind(Number(x[1])).run();
+    return r.meta.changes ? json({ ok: true }) : ruim('Nota não encontrada.', 404);
+  }
   return null;
 }
