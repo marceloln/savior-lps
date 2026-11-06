@@ -204,3 +204,23 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 9. #35 Publicação: PR para a main, segredo da chave e primeiro deploy.
 10. #36 Pendências visuais.
 11. #37 Editar e apagar reunião e decisão.
+
+## Andamento depois da auditoria
+
+| Issue | Situação | Branch |
+|---|---|---|
+| #26 Defeitos da auditoria | Feito | feature/defeitos-auditoria |
+| #27 Acesso fechado | Código feito; falta ligar o Cloudflare Access no painel, passo a passo em docs/publicar.md | feature/acesso |
+| #28 Cliente e projeto pela interface | Feito | feature/cadastro |
+| #29 Ciclo do projeto | Feito | feature/dados-consistentes |
+| #30 Dados consistentes | Feito | feature/dados-consistentes |
+| #31 Cadeiras e estações | Cena pronta no Blender; entra no mapa junto com as pessoas sentadas | sem branch ainda |
+| #32 Personagens novos | Esperando autorização para instalar o MPFB, extensão do MakeHuman para Blender | sem branch ainda |
+| #33 Ficha na estação | Depende da #32 | sem branch ainda |
+| #34 Vocabulário | Feito | feature/vocabulario |
+| #35 Publicação | Com o sócio: Access, chave e pull request | |
+| #36 Pendências visuais | Planta numerada e próxima reunião feitas; ficha depende da #33 | feature/pendencias-visuais |
+| #37 Corrigir reunião e decisão | Feito | feature/corrige-reuniao |
+
+Defeito achado no caminho: o Worker não sobe quando o módulo principal exporta uma constante solta. Corrigido na própria branch da #27.
+Testes automatizados: 43 passando.
