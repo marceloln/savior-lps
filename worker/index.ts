@@ -12,7 +12,7 @@ export interface Env {
 }
 
 /** Conversa custa dinheiro: no máximo 30 perguntas a cada 10 minutos para o lab inteiro. */
-export const LIMITE_CONVERSA = 30;
+const LIMITE_CONVERSA = 30;
 
 const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 
