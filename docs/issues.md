@@ -100,3 +100,17 @@ Clicar numa sala só mostrava um cartão pequeno no canto. A sala deve abrir o d
 - Missões: o que a equipe da sala tem em aberto e um campo para dar missão a alguém de lá
 - Reuniões: reuniões com gente da sala e um botão para marcar uma nova
 - A câmera vai até a sala ao abrir
+
+## #25 HUD com funções de verdade
+Revisão de UX e UI das telas. Cada painel precisa levar a uma ação.
+- Abas trocam direto mesmo com um livro aberto
+- Console mostra o que a pessoa escolhida está fazendo; sem ninguém escolhido, diz como liberar as ações, e os botões apagados parecem apagados
+- Missão abre a ficha com o campo já em foco; cada missão aberta tem Começar ou Concluir; o console confirma a missão dada
+- Painel de missões mostra também a fila, o rosto leva à pessoa no mapa e o texto leva ao projeto, com atalho para ver todas
+- Sala: Conversar e Missão ao lado de cada pessoa; reunião com a sala inteira
+- Selos com nome e clicáveis; barra explica que soma todos os projetos
+- Lugares: planta na página da esquerda e lista clicável com quantas pessoas trabalham em cada sala
+- Agenda: assunto com pelo menos 3 letras, ata só a partir do dia da reunião, feitas da mais recente para a mais antiga, nome ao passar sobre o rosto
+- Missão repetida para a mesma pessoa é recusada
+- Celular: aba Missões, faixa de abas com fim esmaecido, botões do console mais altos
+- Livro prende o Tab dentro dele; botão de soltar maior; texto secundário mais escuro

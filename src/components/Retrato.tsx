@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { EQUIPE } from '../lib/equipe';
 
 let atlas: HTMLImageElement | null = null;
 let ordem: Promise<string[]> | null = null;
@@ -24,5 +25,5 @@ export function Retrato({ id, tamanho = 44, cor }: { id: string; tamanho?: numbe
     });
     return () => { vivo = false; };
   }, [id]);
-  return <canvas ref={tela} width={tamanho * 2} height={tamanho * 2} className="retrato" style={{ width: tamanho, height: tamanho, background: cor }} aria-hidden="true" />;
+  return <canvas ref={tela} width={tamanho * 2} height={tamanho * 2} className="retrato" style={{ width: tamanho, height: tamanho, background: cor }} title={EQUIPE.find(e => e.id === id)?.nome} aria-hidden="true" />;
 }

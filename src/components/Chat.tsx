@@ -19,7 +19,7 @@ function Conversa({ agente }: { agente: string }) {
   return (
     <div className="conversa">
       <div ref={lista} className="falas" aria-live="polite">
-        {!falas.length && <p className="vazio">Ainda não tem conversa com {m.nome}. Pergunte algo sobre {m.papel.toLowerCase()}.</p>}
+        {!falas.length && <p className="vazio">Vocês ainda não conversaram. Conte o que está travando ou peça a opinião de {m.nome} sobre o projeto da vez.</p>}
         {falas.map((f, i) => (
           <div key={i} className={`fala ${f.papel === 'user' ? 'eu' : 'ele'} ${f.erro ? 'erro' : ''}`}>
             {f.papel === 'assistant' && <Retrato id={agente} tamanho={28} cor={corDe(m.zona) + '40'} />}

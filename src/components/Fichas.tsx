@@ -43,8 +43,10 @@ function Memoria({ m }: { m: Membro }) {
   );
 }
 
-export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: () => void; abaInicial?: 'visao' | 'instrucoes' | 'memoria' }) {
-  const { estado, criaTarefa } = useEstado();
+export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao }: {
+  m: Membro; conversa: () => void; abaInicial?: 'visao' | 'instrucoes' | 'memoria'; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
+}) {
+  const { estado, criaTarefa, mudaTarefa } = useEstado();
   const [aba, setAba] = useState<'visao' | 'instrucoes' | 'memoria'>(abaInicial ?? 'visao');
   const [nova, setNova] = useState(''), [proj, setProj] = useState(estado.projetos[0]?.id ?? '');
   const z = ZONAS.find(q => q.id === m.zona)!;
@@ -54,7 +56,8 @@ export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: 
       <div className="ficha">
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
-          <button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button></div>
+          <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
+            {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}</div></div>
       </div>
       <div className="abas" role="tablist">
         {([['visao', 'Missões'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
@@ -63,11 +66,12 @@ export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: 
       <AvisoPrevia />
       {aba === 'visao' && <>
         {abertas.length
-          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul>
+          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}</span>
+              {t.id > 0 && <button className="leve mini" onClick={() => mudaTarefa(t.id, { estado: t.estado === 'fila' ? 'fazendo' : 'feito' })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}</li>)}</ul>
           : <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
-        <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim()) return; criaTarefa({ agente: m.id, titulo: nova.trim(), projeto_id: proj || null }); setNova(''); }}>
+        <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim()) return; criaTarefa({ agente: m.id, titulo: nova.trim(), projeto_id: proj || null }); aoDar?.(`Missão dada a ${m.nome}: ${nova.trim()}.`); setNova(''); }}>
           <label className="so-leitor" htmlFor="nmis">Nova missão para {m.nome}</label>
-          <input id="nmis" value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
+          <input id="nmis" autoFocus={focaMissao} value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
           <label className="so-leitor" htmlFor="nproj">Projeto</label>
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
@@ -82,8 +86,9 @@ export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: 
 type AbaZona = 'equipe' | 'missoes' | 'reunioes';
 
 /** O que acontece numa sala: quem trabalha ali, o que está em aberto e as reuniões com essa turma. */
-export function PainelZona({ zona, abreAgente, briefing, marcaReuniao }: {
-  zona: string; abreAgente: (id: string) => void; briefing: () => void; marcaReuniao: (com: string) => void;
+export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa, darMissao, aoDar }: {
+  zona: string; abreAgente: (id: string) => void; briefing: () => void; marcaReuniao: (com: string[]) => void;
+  conversa: (id: string) => void; darMissao: (id: string) => void; aoDar?: (texto: string) => void;
 }) {
   const { estado, criaTarefa } = useEstado();
   const [aba, setAba] = useState<AbaZona>('equipe');
@@ -102,9 +107,10 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao }: {
       {aba === 'equipe' && <>
         {time.length
           ? <ul className="elenco">{time.map(m => (
-              <li key={m.id}><button onClick={() => abreAgente(m.id)}>
+              <li key={m.id} className="com-acoes"><button onClick={() => abreAgente(m.id)}>
                 <Retrato id={m.id} tamanho={40} /><span><b>{m.nome}</b><small>{m.papel}</small></span>
-              </button></li>))}</ul>
+              </button>
+              <div className="acoes-pessoa"><button className="leve mini" onClick={() => conversa(m.id)}>Conversar</button><button className="leve mini" onClick={() => darMissao(m.id)}>Missão</button></div></li>))}</ul>
           : <p className="vazio">Ninguém tem mesa fixa aqui. É área de uso comum, cada um passa quando precisa.</p>}
         {zona === 'atendimento' && <button className="primario" onClick={briefing}>Começar briefing com a Clara</button>}
       </>}
@@ -112,7 +118,7 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao }: {
         {abertas.length
           ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo} <small>{nome(t.agente)}</small></li>)}</ul>
           : <p className="vazio">A equipe daqui não tem missão aberta.</p>}
-        {time.length > 0 && <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim() || !quem) return; criaTarefa({ agente: quem, titulo: nova.trim(), projeto_id: null }); setNova(''); }}>
+        {time.length > 0 && <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim() || !quem) return; criaTarefa({ agente: quem, titulo: nova.trim(), projeto_id: null }); aoDar?.(`Missão dada a ${nome(quem)}: ${nova.trim()}.`); setNova(''); }}>
           <label className="so-leitor" htmlFor="zmis">Nova missão</label>
           <input id="zmis" value={nova} onChange={e => setNova(e.target.value)} placeholder="Nova missão para esta sala" maxLength={200} />
           <label className="so-leitor" htmlFor="zquem">Para quem</label>
@@ -124,7 +130,7 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao }: {
         {reunioes.length
           ? <ul className="tarefas-agente">{reunioes.map(r => <li key={r.id}><span className={`estado ${r.status === 'feita' ? 'feito' : 'fila'}`}>{r.status === 'feita' ? 'Feita' : `${r.dia.slice(8, 10)}/${r.dia.slice(5, 7)} ${r.hora}`}</span>{r.titulo} <small>{r.participantes.map(nome).join(', ')}</small></li>)}</ul>
           : <p className="vazio">Nenhuma reunião com a equipe daqui.</p>}
-        {time.length > 0 && <button className="primario" onClick={() => marcaReuniao(time[0].id)}>Marcar reunião com a sala</button>}
+        {time.length > 0 && <button className="primario" onClick={() => marcaReuniao(time.map(m => m.id))}>Marcar reunião com a sala</button>}
       </>}
     </div>
   );

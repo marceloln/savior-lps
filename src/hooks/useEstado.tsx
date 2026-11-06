@@ -48,7 +48,9 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
     const tmp = () => -Math.floor(Math.random() * 1e9);
     return {
       estado, modo, aviso, limpaAviso: () => setAviso(null),
-      criaTarefa: async t => { const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...t, id, detalhe: '', estado: 'fila' }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
+      criaTarefa: async t => {
+        if (estado.tarefas.some(x => x.agente === t.agente && x.estado !== 'feito' && x.titulo.trim().toLowerCase() === t.titulo.trim().toLowerCase())) { setAviso('Essa missão já está aberta com essa pessoa.'); return; }
+        const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...t, id, detalhe: '', estado: 'fila' }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
       mudaTarefa: async (id, m) => { await grava(e => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `tarefas/${id}`, m)); },
       apagaTarefa: async id => { await grava(e => ({ ...e, tarefas: e.tarefas.filter(x => x.id !== id) }), () => chama('DELETE', `tarefas/${id}`)); },
       criaReuniao: async r => { const id = tmp(); return grava(e => ({ ...e, reunioes: [...e.reunioes, { ...r, id, status: 'agendada' as const, ata: '' }].sort((a, b) => (a.dia + a.hora).localeCompare(b.dia + b.hora)) }), () => chama<Reuniao>('POST', 'reunioes', r), (e, n) => ({ ...e, reunioes: e.reunioes.map(x => (x.id === id ? n : x)) })); },

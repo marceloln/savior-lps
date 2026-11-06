@@ -8,8 +8,9 @@ import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
 import { FASES } from '../lib/dados';
 
-export type Aba = 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
-export const ABAS: { id: Aba; nome: string }[] = [
+export type Aba = 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
+export const ABAS: { id: Aba; nome: string; so?: 'celular' }[] = [
+  { id: 'missoes', nome: 'Missões', so: 'celular' },
   { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' },
   { id: 'lugares', nome: 'Lugares' }, { id: 'agenda', nome: 'Agenda' }, { id: 'decisoes', nome: 'Decisões' },
   { id: 'memoria', nome: 'Memória' }, { id: 'conexoes', nome: 'Conexões' }, { id: 'trofeus', nome: 'Troféus' },
@@ -44,8 +45,8 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
-        <button key={a.id} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
-          <Icone nome={a.id as NomeIcone} /><span>{a.nome}</span>
+        <button key={a.id} className={a.so ? 'so-celular' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
+          <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
         </button>
       ))}
     </nav>
@@ -74,44 +75,55 @@ export function CartaoLugar({ zona, lab, abre }: { zona: string | null; lab: Dad
   );
 }
 
-export function Selos() {
+export function Selos({ abre }: { abre: (a: Aba) => void }) {
   const { estado } = useEstado();
   const p = estado.projetos[0];
-  const feitas = estado.tarefas.filter(t => t.estado === 'feito').length;
+  const feitas = estado.tarefas.filter(t => t.estado === 'feito').length, n = estado.decisoes.length;
   return (
-    <div className="selos papel-borda" aria-label="Situação do lab">
-      {p && <span title={p.nome}><Icone nome="projetos" tam={18} />Dia {p.dia} de 30</span>}
-      <span><Icone nome="estrela" tam={18} />{feitas} feitas</span>
-      <span><Icone nome="decisoes" tam={18} />{estado.decisoes.length}</span>
-    </div>
+    <nav className="selos papel-borda" aria-label="Situação do lab">
+      {p && <button onClick={() => abre('projetos')} title={`Ciclo de ${p.nome}`}><Icone nome="projetos" tam={18} />Dia {p.dia} de 30</button>}
+      <button onClick={() => abre('trofeus')} title="Missões concluídas em todos os projetos"><Icone nome="estrela" tam={18} />{feitas} {feitas === 1 ? 'feita' : 'feitas'}</button>
+      <button onClick={() => abre('decisoes')} title="Decisões registradas"><Icone nome="decisoes" tam={18} />{n} {n === 1 ? 'decisão' : 'decisões'}</button>
+    </nav>
   );
 }
 
-export function Missoes({ abreProjeto }: { abreProjeto: (id: string) => void }) {
+/** O que a equipe tem nas mãos agora. O rosto leva à pessoa no mapa, o texto leva ao projeto. */
+export function ListaMissoes({ abreProjeto, escolhe, max = 5 }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; max?: number }) {
   const { estado } = useEstado();
-  const todas = estado.tarefas.filter(t => t.projeto_id);
-  const feitas = todas.filter(t => t.estado === 'feito').length;
-  const ativas = estado.tarefas.filter(t => t.estado === 'fazendo').slice(0, 4);
-  const pct = todas.length ? Math.round((feitas / todas.length) * 100) : 0;
+  const abertas = estado.tarefas.filter(t => t.estado !== 'feito').sort((a, b) => (a.estado === b.estado ? 0 : a.estado === 'fazendo' ? -1 : 1));
+  if (!abertas.length) return <p className="vazio">Ninguém tem missão aberta. Escolha alguém e aperte Missão no console.</p>;
   return (
-    <aside className="missoes papel-borda" aria-label="Missões ativas">
-      <h3 className="fita-titulo">Missões ativas</h3>
-      <div className="progresso-geral"><span>Progresso geral</span><div className="barra"><i style={{ transform: `scaleX(${pct / 100})` }} /></div><b>{pct}%</b></div>
-      {!ativas.length && <p className="vazio">Ninguém está com missão em andamento. Dê uma missão a alguém pelo console.</p>}
+    <>
       <ul>
-        {ativas.map(t => {
+        {abertas.slice(0, max).map(t => {
           const m = EQUIPE.find(e => e.id === t.agente), z = ZONAS.find(q => q.id === m?.zona), p = estado.projetos.find(x => x.id === t.projeto_id);
           return (
-            <li key={t.id}>
-              <button onClick={() => t.projeto_id && abreProjeto(t.projeto_id)} style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}>
-                <span className="marcador"><Retrato id={t.agente} tamanho={30} /></span>
-                <span className="texto"><b>{t.titulo}</b><small>{m?.nome}{p ? `, ${p.nome}` : ''}</small></span>
-                <span className="estado-fita">Fazendo</span>
+            <li key={t.id} className="cartao-missao" style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}>
+              <button className="marcador" onClick={() => escolhe(t.agente)} aria-label={`Ver ${m?.nome} no mapa`} title={`Ver ${m?.nome} no mapa`}><Retrato id={t.agente} tamanho={30} /></button>
+              <button className="texto" onClick={() => (t.projeto_id ? abreProjeto(t.projeto_id) : escolhe(t.agente))}>
+                <b>{t.titulo}</b><small>{m?.nome}{p ? `, ${p.nome}` : ''}</small>
               </button>
+              <span className={`estado-fita ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>
             </li>
           );
         })}
       </ul>
+      {abertas.length > max && estado.projetos[0] && <button className="link ver-todas" onClick={() => abreProjeto(estado.projetos[0].id)}>Ver as {abertas.length} missões abertas</button>}
+    </>
+  );
+}
+
+export function Missoes({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void }) {
+  const { estado } = useEstado();
+  const todas = estado.tarefas.filter(t => t.projeto_id);
+  const feitas = todas.filter(t => t.estado === 'feito').length;
+  const pct = todas.length ? Math.round((feitas / todas.length) * 100) : 0;
+  return (
+    <aside className="missoes papel-borda" aria-label="Missões">
+      <h3 className="fita-titulo">Missões</h3>
+      <div className="progresso-geral" title="Missões concluídas somando todos os projetos"><span>Todos os projetos</span><div className="barra"><i style={{ transform: `scaleX(${pct / 100})` }} /></div><b>{pct}%</b></div>
+      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} />
     </aside>
   );
 }
@@ -129,6 +141,9 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
   const z = escolhido ? ZONAS.find(q => q.id === escolhido.zona) : null;
   const minhas = escolhido ? estado.tarefas.filter(t => t.agente === escolhido.id) : [];
   const feitas = minhas.filter(t => t.estado === 'feito').length, notas = escolhido ? estado.memorias.filter(m => m.agente === escolhido.id).length : 0;
+  const agora = minhas.find(t => t.estado === 'fazendo'), fila = minhas.filter(t => t.estado === 'fila').length;
+  const situacao = !escolhido ? '' : agora ? `${escolhido.nome} está em ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
+    : fila ? `${escolhido.nome} tem ${fila} ${fila === 1 ? 'missão' : 'missões'} na fila. Abra Missão para começar.` : `${escolhido.nome} está livre. Dê uma missão.`;
   return (
     <section className="console madeira" aria-label="Console">
       <div className={`console-ficha papel-borda ${escolhido ? 'com' : 'sem'}`}>
@@ -148,12 +163,13 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
       </div>
       <div className="console-recado papel-borda" aria-live="polite">
         {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
-          : registro.length ? registro.slice(-3).map((r, i) => <p key={i}>{r}</p>)
-          : <p>Clique numa pessoa para dar uma ordem, ou numa área para ver quem trabalha nela.</p>}
+          : escolhido ? <><p><b>{z?.nome}</b> {situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
+          : registro.length ? registro.slice(-2).map((r, i) => <p key={i}>{r}</p>)
+          : <p>Escolha alguém no mapa ou em Pessoas para liberar as ações. Clique numa sala para abrir o que acontece nela.</p>}
       </div>
       <div className="console-acoes" role="toolbar" aria-label="Ações">
         {ACOES.map(a => (
-          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? '' : 'Escolha uma pessoa no mapa primeiro'}>
+          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha uma pessoa primeiro'}>
             <Icone nome={a.icone} tam={26} /><span>{a.nome}</span>
           </button>
         ))}
@@ -167,7 +183,15 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, ch
   useEffect(() => {
     const antes = document.activeElement as HTMLElement | null;
     caixa.current?.focus();
-    const tecla = (e: KeyboardEvent) => { if (e.key === 'Escape') aoFechar(); };
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { aoFechar(); return; }
+      if (e.key !== 'Tab' || !caixa.current) return;
+      const f = caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,textarea,a[href]');
+      if (!f.length) return;
+      const [pri, ult] = [f[0], f[f.length - 1]];
+      if (e.shiftKey && document.activeElement === pri) { e.preventDefault(); ult.focus(); }
+      else if (!e.shiftKey && document.activeElement === ult) { e.preventDefault(); pri.focus(); }
+    };
     addEventListener('keydown', tecla);
     return () => { removeEventListener('keydown', tecla); antes?.focus?.(); };
   }, [aoFechar]);
@@ -202,7 +226,7 @@ export function MapaTinta({ lab, escolhe }: { lab: DadosLab; escolhe: (zona: str
         return (
           <g key={z.id} className="zona-tinta" tabIndex={0} role="button" aria-label={z.nome} onClick={() => escolhe(z.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); escolhe(z.id); } }}>
             <rect x={x} y={y} width={w} height={h} rx="0.5" fill={z.cor} fillOpacity=".32" stroke="#3B2F25" strokeWidth="0.08" strokeDasharray="0.4 0.25" />
-            <text x={x + w / 2} y={y + h / 2} textAnchor="middle" dominantBaseline="middle" fontSize={Math.min(1.05, w / (z.curto.length * 0.62))}>{z.curto}</text>
+            <text x={x + w / 2} y={y + h / 2} textAnchor="middle" dominantBaseline="middle" fontSize={Math.min(1.5, w / (z.curto.length * 0.6))}>{z.curto}</text>
           </g>
         );
       })}

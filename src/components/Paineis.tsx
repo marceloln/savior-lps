@@ -107,10 +107,10 @@ export function Projetos({ inicial }: { inicial?: string }) {
   );
 }
 
-export function Agenda({ com }: { com?: string }) {
+export function Agenda({ com }: { com?: string[] }) {
   const { estado, criaReuniao, gravaAta, criaDecisao } = useEstado();
   const [nova, setNova] = useState(!!com);
-  const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: com ? [com] : [] as string[], projeto_id: '' });
+  const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: com ?? [] as string[], projeto_id: '' });
   const [ataDe, setAtaDe] = useState<number | null>(null), [ata, setAta] = useState(''), [decisao, setDecisao] = useState('');
   const salva = async () => { if (await criaReuniao({ ...f, projeto_id: f.projeto_id || null })) { setNova(false); setF({ ...f, titulo: '', pauta: '', participantes: [] }); } };
   const fecha = async (id: number, projeto_id: string | null) => {
@@ -120,7 +120,9 @@ export function Agenda({ com }: { com?: string }) {
       setAtaDe(null); setAta(''); setDecisao('');
     }
   };
-  const proximas = estado.reunioes.filter(r => r.status === 'agendada'), feitas = estado.reunioes.filter(r => r.status === 'feita').reverse();
+  const hoje = new Date().toISOString().slice(0, 10);
+  const proximas = estado.reunioes.filter(r => r.status === 'agendada');
+  const feitas = estado.reunioes.filter(r => r.status === 'feita').sort((a, b) => (b.dia + b.hora).localeCompare(a.dia + a.hora));
   return (
     <div className="agenda">
       <AvisoPrevia />
@@ -134,7 +136,7 @@ export function Agenda({ com }: { com?: string }) {
           <fieldset><legend>Quem participa</legend><div className="escolha">
             {EQUIPE.map(m => <label key={m.id} className={f.participantes.includes(m.id) ? 'on' : ''}><input type="checkbox" checked={f.participantes.includes(m.id)} onChange={e => setF({ ...f, participantes: e.target.checked ? [...f.participantes, m.id] : f.participantes.filter(x => x !== m.id) })} />{m.nome}</label>)}
           </div></fieldset>
-          <div className="linha"><button className="primario" type="submit" disabled={!f.titulo.trim() || !f.participantes.length}>Marcar</button><button type="button" className="leve" onClick={() => setNova(false)}>Desistir</button></div>
+          <div className="linha"><button className="primario" type="submit" disabled={f.titulo.trim().length < 3 || !f.participantes.length}>Marcar</button><button type="button" className="leve" onClick={() => setNova(false)}>Desistir</button></div>
         </form>
       )}
       <h3 className="secao">Próximas</h3>
@@ -143,7 +145,7 @@ export function Agenda({ com }: { com?: string }) {
         <article key={r.id} className="reuniao">
           <div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div>
           <div className="o-que"><h4>{r.titulo}</h4>{r.pauta && <p>{r.pauta}</p>}<div className="rostos">{r.participantes.map(p => <Retrato key={p} id={p} tamanho={24} />)}</div></div>
-          {ataDe !== r.id ? <button className="leve" onClick={() => { setAtaDe(r.id); setAta(''); }}>Registrar ata</button> : (
+          {r.dia > hoje ? <span className="ainda">Ata abre no dia</span> : ataDe !== r.id ? <button className="leve" onClick={() => { setAtaDe(r.id); setAta(''); }}>Registrar ata</button> : (
             <form className="form-ata" onSubmit={e => { e.preventDefault(); fecha(r.id, r.projeto_id); }}>
               <label>Ata<textarea rows={3} value={ata} onChange={e => setAta(e.target.value)} placeholder="O que foi falado, em poucas linhas" /></label>
               <label>Decisão tomada<input value={decisao} onChange={e => setDecisao(e.target.value)} placeholder="Opcional. Entra no registro de decisões" /></label>

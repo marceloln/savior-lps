@@ -1,6 +1,6 @@
 /* ===== Lab V30 · diário de campo: papel, couro verde e madeira sobre o open space ===== */
 :root{
-  --tinta:#2F4A3A; --tinta-2:#3B2F25; --texto-2:#6B5B45; --creme:#F6EEDA; --areia:#C5AA81; --ouro:#C99A3A;
+  --tinta:#2F4A3A; --tinta-2:#3B2F25; --texto-2:#5E4F3B; --creme:#F6EEDA; --areia:#C5AA81; --ouro:#C99A3A;
   --papel:#F3E9D0; --papel-2:#EADBB8; --papel-3:#DCC89E; --linha:rgba(59,47,37,.18); --fundo:#DDE1CC;
   --verde:#6E9A4A; --roxo:#7B6BA8; --teal:#5FB8A8; --telha:#C9603F;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
@@ -44,19 +44,24 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* coluna direita: selos e missões ativas */
 .coluna-direita{position:absolute;right:16px;top:16px;width:300px;display:flex;flex-direction:column;gap:var(--s3);z-index:3}
 .selos{display:flex;justify-content:space-around;padding:8px 10px;border-radius:999px}
-.selos span{display:flex;align-items:center;gap:5px;font:700 14px var(--corpo);font-variant-numeric:tabular-nums}
+.selos button{display:flex;align-items:center;gap:5px;font:700 14px var(--corpo);font-variant-numeric:tabular-nums;border:0;background:transparent;padding:4px 6px;border-radius:999px;color:inherit}
+@media (hover:hover) and (pointer:fine){.selos button:hover{background:rgba(59,47,37,.08)}}
 .missoes{padding:var(--s3) var(--s3) var(--s4)}
 .fita-titulo{margin:-2px auto var(--s3);width:max-content;padding:4px 18px;font:700 15px var(--titulo);color:var(--creme);background:var(--telha);border-radius:4px;box-shadow:0 2px 0 rgba(0,0,0,.2);position:relative}
 .progresso-geral{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;font-size:13px;color:var(--texto-2);margin-bottom:var(--s3)}
 .missoes ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.missoes li button{width:100%;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;text-align:left;padding:8px 10px 8px 0;border:1.5px solid rgba(59,47,37,.35);border-radius:10px;background:rgba(255,250,235,.55);position:relative;overflow:hidden}
-.missoes li button::before{content:'';position:absolute;inset:0 auto 0 0;width:38px;background:var(--c);opacity:.85}
-.marcador{position:relative;z-index:1;padding-left:4px}
-.missoes .texto{display:flex;flex-direction:column;min-width:0;padding-right:54px}
-.missoes .texto b{font-size:14px;line-height:1.25}
-.missoes .texto small{color:var(--texto-2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cartao-missao{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:8px 10px 8px 0;border:1.5px solid rgba(59,47,37,.35);border-radius:10px;background:rgba(255,250,235,.55);position:relative;overflow:hidden}
+.cartao-missao button{border:0;background:transparent;padding:0;text-align:left;color:inherit}
+.cartao-missao::before{content:'';position:absolute;inset:0 auto 0 0;width:38px;background:var(--c);opacity:.85}
+.marcador{position:relative;z-index:1;padding-left:4px!important;border-radius:50%}
+.cartao-missao .texto{display:flex;flex-direction:column;min-width:0;padding-right:58px}
+.cartao-missao .texto b{font-size:14px;line-height:1.25}
+.cartao-missao .texto small{color:var(--texto-2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .estado-fita{position:absolute;right:6px;top:6px;font:700 10px var(--corpo);text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:4px;background:#E9D9A6;color:var(--tinta-2)}
-@media (hover:hover) and (pointer:fine){.missoes li button:hover{background:rgba(255,250,235,.9)}}
+@media (hover:hover) and (pointer:fine){.cartao-missao:hover{background:rgba(255,250,235,.9)}.cartao-missao .texto:hover b{text-decoration:underline}}
+.estado-fita.fila{background:#E4E0D2}
+.ver-todas{display:block;margin:10px auto 0;font-weight:700}
+.missoes-livro ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 
 /* console de baixo */
 .console{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);width:min(940px,calc(100% - 640px));min-width:620px;display:grid;grid-template-columns:250px 1fr auto;gap:10px;padding:10px;border-radius:18px;z-index:4}
@@ -64,9 +69,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .console-ficha .dados{display:flex;flex-direction:column;min-width:0;flex:1}
 .console-ficha b{font:700 17px var(--titulo);line-height:1.1}
 .console-ficha small{color:var(--texto-2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.medidor{display:grid;grid-template-columns:52px 1fr 26px;align-items:center;gap:6px;font-size:11px;color:var(--texto-2);margin-top:3px}
+.medidor{display:grid;grid-template-columns:56px 1fr 26px;align-items:center;gap:6px;font-size:12px;color:var(--texto-2);margin-top:3px}
 .medidor em{font-style:normal;font-variant-numeric:tabular-nums;text-align:right}
-.soltar{position:absolute;right:6px;top:6px;border:0;background:transparent;padding:2px;border-radius:50%}
+.soltar{position:absolute;right:2px;top:2px;width:32px;height:32px;display:grid;place-items:center;border:0;background:transparent;border-radius:50%}
+@media (hover:hover) and (pointer:fine){.soltar:hover{background:rgba(59,47,37,.1)}}
 .console .briefing{display:flex;align-items:center;gap:10px;border:0;background:transparent;text-align:left;width:100%}
 .console .briefing b{display:block;font:700 17px var(--titulo)}.console .briefing small{color:var(--texto-2)}
 .console-recado{padding:10px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;border-radius:12px;min-height:84px}
@@ -77,7 +83,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .console-acoes button{width:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;border-radius:12px;border:1.5px solid #3B2A1C;background:var(--papel) url(./ui/papel.webp);background-size:256px;font:700 12px var(--corpo);box-shadow:inset 0 0 0 2px var(--papel),inset 0 -3px 0 rgba(59,47,37,.18);transition:transform .12s var(--sai)}
 .console-acoes button:active:not(:disabled){transform:translateY(1px) scale(.97)}
 .console-acoes button[aria-pressed="true"]{background:#CFE6D8;box-shadow:inset 0 0 0 2px #CFE6D8,inset 0 0 0 3px #2F7A6A}
-.console-acoes button:disabled{opacity:.5;cursor:default}
+.console-acoes button:disabled{opacity:.38;filter:grayscale(1);box-shadow:none;cursor:not-allowed}
 
 /* dica que segue o mouse */
 .dica{position:absolute;pointer-events:none;padding:8px 12px;display:flex;flex-direction:column;gap:1px;max-width:260px;z-index:6}
@@ -195,10 +201,12 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 .elenco{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 .elenco button{width:100%;display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid rgba(59,47,37,.25);background:rgba(255,250,235,.5);border-radius:10px;padding:6px 8px}
 .elenco span{display:flex;flex-direction:column;min-width:0}.elenco small{color:var(--texto-2);font-size:12px}
-.mapa-tinta{width:100%;height:auto;margin-bottom:var(--s3)}
+.mapa-tinta{width:100%;height:auto;flex-shrink:0;margin-bottom:var(--s3)}
 .mapa-tinta text{font:700 1px var(--titulo);fill:var(--tinta-2);pointer-events:none}
 .zona-tinta{cursor:pointer}.zona-tinta:hover rect,.zona-tinta:focus rect{fill-opacity:.6}
-.lista-lugares li{font-size:14px;line-height:1.35}
+.lista-lugares button{width:100%;display:grid;grid-template-columns:1fr auto;gap:2px 8px;text-align:left;padding:8px 10px;border:1.5px solid rgba(59,47,37,.25);border-radius:10px;background:rgba(255,250,235,.5);font-size:14px;line-height:1.35;color:inherit}
+.lista-lugares small{color:var(--texto-2);font-size:12px;align-self:center}.lista-lugares span{grid-column:1/-1;color:var(--texto-2)}
+@media (hover:hover) and (pointer:fine){.lista-lugares button:hover{background:rgba(255,250,235,.9)}}
 /* conversa */
 .chat{display:grid;grid-template-columns:1fr;min-height:0;flex:1}
 .chat.so{height:100%}
@@ -251,3 +259,22 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .tarefas-agente small{color:var(--texto-2);font-size:12px;margin-left:4px}.foto-colada .foto-lugar{max-width:100%}.cartao-lugar .primario{display:block;margin:var(--s2) auto 0}
+
+/* funções novas do HUD */
+.lab.com-livro .coluna-esquerda{z-index:9}
+.so-celular{display:none!important}
+.console-recado .ultimo{color:var(--texto-2);font-size:13px}
+.tarefas-agente li{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tarefas-agente .tit{flex:1;min-width:0}
+.mini{padding:3px 10px!important;font-size:12px!important}
+.nova-linha input{flex:2}.nova-linha select{flex:1;min-width:0}
+.elenco .com-acoes{display:grid;gap:4px}.acoes-pessoa{display:flex;gap:6px;padding-left:56px}
+.ainda{font-size:12px;color:var(--texto-2);align-self:center}
+.contexto{margin-top:var(--s4);text-align:left;width:100%}.contexto h4{margin:0 0 6px;font:700 15px var(--titulo)}
+.contexto ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}.contexto li{display:flex;gap:8px;align-items:baseline}
+@media (max-width:760px){
+  .so-celular{display:flex!important}
+  .menu-diario{mask-image:linear-gradient(90deg,#000 85%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .menu-diario button{font-size:12px}
+  .console-acoes button{min-height:48px;font-size:12px}
+  .acoes-pessoa{padding-left:0}
+}
