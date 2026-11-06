@@ -68,3 +68,8 @@ export function novaMemoria(c: unknown): Ok<{ agente: string; texto: string; ori
   if (!t) return falha('A nota está vazia.');
   return { ok: true, v: { agente: o.agente, texto: t, origem: o.origem === 'conversa' ? 'conversa' : 'manual' } };
 }
+
+export function mudancaProjeto(c: unknown): Ok<{ fase: number }> | Falha {
+  const f = (c as Record<string, unknown> | null)?.fase;
+  return Number.isInteger(f) && (f as number) >= 0 && (f as number) <= 3 ? { ok: true, v: { fase: f as number } } : falha('Fase inválida.');
+}

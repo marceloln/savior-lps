@@ -7,6 +7,7 @@ type Api = {
   criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'>) => Promise<void>;
   mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente'>>) => Promise<void>;
   apagaTarefa: (id: number) => Promise<void>;
+  mudaFase: (projeto: string, fase: number) => Promise<boolean>;
   criaReuniao: (r: Pick<Reuniao, 'titulo' | 'pauta' | 'dia' | 'hora' | 'participantes' | 'projeto_id'>) => Promise<boolean>;
   gravaAta: (id: number, ata: string) => Promise<boolean>;
   criaDecisao: (d: Pick<Decisao, 'titulo' | 'contexto' | 'projeto_id' | 'reuniao_id'>) => Promise<boolean>;
@@ -53,6 +54,10 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
         const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...t, id, detalhe: '', estado: 'fila' }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
       mudaTarefa: async (id, m) => { await grava(e => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `tarefas/${id}`, m)); },
       apagaTarefa: async id => { await grava(e => ({ ...e, tarefas: e.tarefas.filter(x => x.id !== id) }), () => chama('DELETE', `tarefas/${id}`)); },
+      mudaFase: async (id, fase) => grava(e => {
+        const p = e.projetos.find(x => x.id === id);
+        return { ...e, projetos: e.projetos.map(x => (x.id === id ? { ...x, fase } : x)), clientes: e.clientes.map(c => (c.id === p?.cliente_id ? { ...c, fase } : c)) };
+      }, () => chama('PATCH', `projetos/${id}`, { fase })),
       criaReuniao: async r => { const id = tmp(); return grava(e => ({ ...e, reunioes: [...e.reunioes, { ...r, id, status: 'agendada' as const, ata: '' }].sort((a, b) => (a.dia + a.hora).localeCompare(b.dia + b.hora)) }), () => chama<Reuniao>('POST', 'reunioes', r), (e, n) => ({ ...e, reunioes: e.reunioes.map(x => (x.id === id ? n : x)) })); },
       gravaAta: async (id, ata) => grava(e => ({ ...e, reunioes: e.reunioes.map(x => (x.id === id ? { ...x, ata, status: 'feita' } : x)) }), () => chama('PUT', `reunioes/${id}/ata`, { ata })),
       criaDecisao: async d => { const id = tmp(); return grava(e => ({ ...e, decisoes: [{ ...d, id, criado_em: agora() }, ...e.decisoes] }), () => chama<Decisao>('POST', 'decisoes', d), (e, n) => ({ ...e, decisoes: e.decisoes.map(x => (x.id === id ? n : x)) })); },

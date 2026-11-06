@@ -278,3 +278,5 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
   .console-acoes button{min-height:48px;font-size:12px}
   .acoes-pessoa{padding-left:0}
 }
+.troca-fase{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 var(--s3)}.troca-fase span{font-size:14px;flex-basis:100%}
+.fase.conversa{background:#E4E0D2;color:var(--tinta-2)}.sem-projeto{color:var(--texto-2);font-size:13px}

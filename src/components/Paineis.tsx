@@ -23,9 +23,10 @@ export function Clientes({ abreProjeto }: { abreProjeto: (id: string) => void })
         const projs = estado.projetos.filter(p => p.cliente_id === c.id);
         return (
           <article key={c.id} className="cliente">
-            <header><h3>{c.setor}</h3><span className="fase" data-f={c.fase}>{FASES[c.fase]}</span></header>
+            <header><h3>{c.setor}</h3>{projs.length ? <span className="fase" data-f={c.fase}>{FASES[c.fase]}</span> : <span className="fase conversa">Em conversa</span>}</header>
             <p>{c.situacao}</p>
             {projs.map(p => <button key={p.id} className="link" onClick={() => abreProjeto(p.id)}>{p.nome}, dia {p.dia} de 30</button>)}
+            {!projs.length && <small className="sem-projeto">Ainda sem projeto. O briefing com a Clara está em andamento.</small>}
           </article>
         );
       })}
@@ -77,8 +78,9 @@ function Kanban({ projeto }: { projeto: Projeto }) {
 }
 
 export function Projetos({ inicial }: { inicial?: string }) {
-  const { estado } = useEstado();
+  const { estado, mudaFase } = useEstado();
   const [id, setId] = useState(inicial ?? estado.projetos[0]?.id);
+  const [confirma, setConfirma] = useState(false);
   useEffect(() => { if (inicial) setId(inicial); }, [inicial]);
   const p = estado.projetos.find(x => x.id === id) ?? estado.projetos[0];
   if (!p) return <p className="vazio">Nenhum projeto ainda. Um briefing com a Clara é o começo de um.</p>;
@@ -102,6 +104,15 @@ export function Projetos({ inicial }: { inicial?: string }) {
         <div><span className="rotulo">Tarefas</span><b>{feitas} de {total} feitas</b></div>
       </div>
       {c && <p className="situacao">{c.situacao}</p>}
+      {p.fase < FASES.length - 1 && (
+        <div className="troca-fase">
+          {!confirma ? <button className="leve" onClick={() => (total - feitas ? setConfirma(true) : mudaFase(p.id, p.fase + 1))}>Fechar {FASES[p.fase]} e passar para {FASES[p.fase + 1]}</button> : <>
+            <span>Ainda tem {total - feitas} {total - feitas === 1 ? 'missão aberta' : 'missões abertas'} neste projeto. Passar mesmo assim?</span>
+            <button className="primario" onClick={() => { mudaFase(p.id, p.fase + 1); setConfirma(false); }}>Passar de fase</button>
+            <button className="leve" onClick={() => setConfirma(false)}>Ainda não</button>
+          </>}
+        </div>
+      )}
       <Kanban projeto={p} />
     </div>
   );

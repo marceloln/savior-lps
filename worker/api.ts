@@ -1,5 +1,5 @@
 // Rotas de dados do lab sobre o D1. Cada rota valida, grava e devolve o registro como ficou.
-import { SEMENTE, type EstadoLab } from '../src/lib/dados';
+import { diaDoCiclo, semente, type EstadoLab } from '../src/lib/dados';
 import * as V from './validacao';
 
 type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string };
@@ -7,25 +7,30 @@ const json = (dados: unknown, status = 200) => Response.json(dados, { status, he
 const ruim = (erro: string, status = 400) => json({ erro }, status);
 async function corpo(req: Request): Promise<unknown> { try { return await req.json(); } catch { return null; } }
 
-/** Grava os exemplos se o banco estiver vazio. Roda na primeira leitura. */
+/** Grava a história de exemplo se o banco estiver vazio. Roda na primeira leitura. */
 export async function semeia(db: D1Database) {
   const tem = await db.prepare('SELECT COUNT(*) AS n FROM clientes').first<{ n: number }>();
   if (tem && tem.n > 0) return;
-  const s = SEMENTE, st: D1PreparedStatement[] = [];
+  const s = semente(V.hojeBrasil()), st: D1PreparedStatement[] = [];
   for (const c of s.clientes) st.push(db.prepare('INSERT INTO clientes (id, setor, situacao, fase) VALUES (?, ?, ?, ?)').bind(c.id, c.setor, c.situacao, c.fase));
-  for (const p of s.projetos) st.push(db.prepare('INSERT INTO projetos (id, cliente_id, nome, fase, dia, mesa) VALUES (?, ?, ?, ?, ?, ?)').bind(p.id, p.cliente_id, p.nome, p.fase, p.dia, p.mesa));
+  for (const p of s.projetos) st.push(db.prepare('INSERT INTO projetos (id, cliente_id, nome, fase, dia, mesa, inicio) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(p.id, p.cliente_id, p.nome, p.fase, p.dia, p.mesa, p.inicio));
   for (const t of s.tarefas) st.push(db.prepare('INSERT INTO missoes (agente, titulo, detalhe, estado, projeto_id) VALUES (?, ?, ?, ?, ?)').bind(t.agente, t.titulo, t.detalhe, t.estado, t.projeto_id));
-  for (const r of s.reunioes) st.push(db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(r.titulo, r.pauta, r.dia, r.hora, JSON.stringify(r.participantes), r.projeto_id, r.status, r.ata));
-  for (const d of s.decisoes) st.push(db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id) VALUES (?, ?, ?, ?)').bind(d.titulo, d.contexto, d.projeto_id, d.reuniao_id));
-  for (const m of s.memorias) st.push(db.prepare('INSERT INTO memorias (agente, texto, origem) VALUES (?, ?, ?)').bind(m.agente, m.texto, m.origem));
+  for (const [agente, texto] of Object.entries(s.instrucoes)) st.push(db.prepare('INSERT OR REPLACE INTO instrucoes (agente, texto) VALUES (?, ?)').bind(agente, texto));
+  for (const m of [...s.memorias].reverse()) st.push(db.prepare('INSERT INTO memorias (agente, texto, origem, criado_em) VALUES (?, ?, ?, ?)').bind(m.agente, m.texto, m.origem, m.criado_em));
   await db.batch(st);
+  // reuniões primeiro, para cada decisão apontar para o id real de onde saiu
+  const ids = await db.batch(s.reunioes.map(r => db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id')
+    .bind(r.titulo, r.pauta, r.dia, r.hora, JSON.stringify(r.participantes), r.projeto_id, r.status, r.ata)));
+  const dec = s.reunioes.map((r, i) => ({ r, id: (ids[i].results[0] as { id: number }).id })).filter(x => x.r.decisao);
+  if (dec.length) await db.batch(dec.map(({ r, id }) => db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id, criado_em) VALUES (?, ?, ?, ?, ?)')
+    .bind(r.decisao!.titulo, r.decisao!.contexto, r.projeto_id, id, r.dia + ' 18:00:00')));
 }
 
 export async function lerEstado(db: D1Database): Promise<EstadoLab> {
   await semeia(db);
   const [cl, pr, ta, re, de, ins, me, co] = await db.batch([
     db.prepare('SELECT id, setor, situacao, fase FROM clientes ORDER BY criado_em'),
-    db.prepare('SELECT id, cliente_id, nome, fase, dia, mesa FROM projetos ORDER BY criado_em'),
+    db.prepare('SELECT id, cliente_id, nome, fase, dia, mesa, inicio FROM projetos ORDER BY criado_em'),
     db.prepare('SELECT id, agente, titulo, detalhe, estado, projeto_id FROM missoes ORDER BY id'),
     db.prepare('SELECT id, titulo, pauta, dia, hora, participantes, projeto_id, status, ata FROM reunioes ORDER BY dia, hora'),
     db.prepare('SELECT id, titulo, contexto, projeto_id, reuniao_id, criado_em FROM decisoes ORDER BY id DESC'),
@@ -35,7 +40,7 @@ export async function lerEstado(db: D1Database): Promise<EstadoLab> {
   ]);
   return {
     clientes: cl.results as EstadoLab['clientes'],
-    projetos: pr.results as EstadoLab['projetos'],
+    projetos: (pr.results as EstadoLab['projetos']).map(p => ({ ...p, dia: p.inicio ? diaDoCiclo(p.inicio, V.hojeBrasil()) : p.dia })),
     tarefas: ta.results as EstadoLab['tarefas'],
     reunioes: (re.results as (Omit<EstadoLab['reunioes'][number], 'participantes'> & { participantes: string })[]).map(r => ({ ...r, participantes: JSON.parse(r.participantes) })),
     decisoes: de.results as EstadoLab['decisoes'],
@@ -92,6 +97,14 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
     const v = V.novaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
     const r = await db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(v.v.titulo, v.v.pauta, v.v.dia, v.v.hora, JSON.stringify(v.v.participantes), v.v.projeto_id).first<{ id: number }>();
     return json({ id: r!.id, ...v.v, status: 'agendada', ata: '' }, 201);
+  }
+  x = caminho.match(/^\/api\/projetos\/([a-z0-9-]+)$/);
+  if (x && m === 'PATCH') {
+    const v = V.mudancaProjeto(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const p = await db.prepare('UPDATE projetos SET fase = ? WHERE id = ? RETURNING cliente_id').bind(v.v.fase, x[1]).first<{ cliente_id: string }>();
+    if (!p) return ruim('Projeto não encontrado.', 404);
+    await db.prepare('UPDATE clientes SET fase = ? WHERE id = ?').bind(v.v.fase, p.cliente_id).run();
+    return json({ ok: true });
   }
   x = caminho.match(/^\/api\/reunioes\/(\d+)\/ata$/);
   if (x && m === 'PUT') {
