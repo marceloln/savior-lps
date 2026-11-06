@@ -1,12 +1,18 @@
 // Worker da Agência V30: serve o build estático e responde as rotas /api.
 import { montaPedido } from './conversa';
 import { contextoDe, rotaDados } from './api';
+import { quemEntrou } from './acesso';
 
 export interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   ANTHROPIC_API_KEY?: string;
+  ACESSO_EQUIPE?: string;
+  ACESSO_AUD?: string;
 }
+
+/** Conversa custa dinheiro: no máximo 30 perguntas a cada 10 minutos para o lab inteiro. */
+export const LIMITE_CONVERSA = 30;
 
 const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 
@@ -16,6 +22,8 @@ async function conversa(req: Request, env: Env): Promise<Response> {
   try { corpo = await req.json(); } catch { return json({ erro: 'Corpo não é JSON.' }, 400); }
   const m = montaPedido(corpo);
   if (!m.ok) return json({ erro: m.erro }, 400);
+  const recentes = await env.DB.prepare("SELECT COUNT(*) AS n FROM mensagens WHERE papel = 'user' AND criado_em > datetime('now', '-10 minutes')").first<{ n: number }>();
+  if ((recentes?.n ?? 0) >= LIMITE_CONVERSA) return json({ erro: 'Muitas perguntas em pouco tempo. Espere alguns minutos e tente de novo.' }, 429);
   const contexto = await contextoDe(env.DB, m.agente);
   if (contexto) m.pedido.system += '\n\n' + contexto;
   const r = await fetch('https://api.anthropic.com/v1/messages', {
@@ -43,6 +51,8 @@ export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
     if (url.pathname === '/api/saude') return json({ ok: true });
+    if (url.pathname.startsWith('/api/') && env.ACESSO_EQUIPE && env.ACESSO_AUD && !(await quemEntrou(req, env.ACESSO_EQUIPE, env.ACESSO_AUD)))
+      return json({ erro: 'Entre pelo login da equipe para usar o lab.' }, 401);
     if (url.pathname === '/api/conversa' && req.method === 'POST') return conversa(req, env);
     const h = url.pathname.match(/^\/api\/historico\/([a-z]+)$/);
     if (h && req.method === 'GET') return historico(h[1], env);
