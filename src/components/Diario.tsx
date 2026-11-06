@@ -222,12 +222,14 @@ export function MapaTinta({ lab, escolhe }: { lab: DadosLab; escolhe: (zona: str
   return (
     <svg viewBox={`-1 -1 ${W + 2} ${H + 2}`} className="mapa-tinta" role="group" aria-label="Planta do lab">
       <rect x="-0.4" y="-0.4" width={W + 0.8} height={H + 0.8} rx="0.6" fill="#EAD9B4" stroke="#3B2F25" strokeWidth="0.12" />
-      {ZONAS.map(z => {
+      {ZONAS.map((z, i) => {
         const [x, y, w, h] = lab.zonas[z.id];
         return (
           <g key={z.id} className="zona-tinta" tabIndex={0} role="button" aria-label={z.nome} onClick={() => escolhe(z.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); escolhe(z.id); } }}>
             <rect x={x} y={y} width={w} height={h} rx="0.5" fill={z.cor} fillOpacity=".32" stroke="#3B2F25" strokeWidth="0.08" strokeDasharray="0.4 0.25" />
-            <text x={x + w / 2} y={y + h / 2} textAnchor="middle" dominantBaseline="middle" fontSize={Math.min(1.5, w / (z.curto.length * 0.6))}>{z.curto}</text>
+            {/* número grande no mapa e o nome na lista ao lado: legível até no celular */}
+            <circle cx={x + w / 2} cy={y + h / 2} r="1.25" fill="#FBF3E4" stroke="#3B2F25" strokeWidth="0.1" />
+            <text x={x + w / 2} y={y + h / 2 + 0.06} textAnchor="middle" dominantBaseline="middle" fontSize="1.5">{i + 1}</text>
           </g>
         );
       })}

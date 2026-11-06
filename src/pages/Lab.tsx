@@ -22,6 +22,27 @@ const SOBRE_ABA: Record<Aba, string> = {
   memoria: 'O que cada especialista já sabe sobre vocês.', conexoes: 'O que está ligado ao lab agora.', trofeus: 'O que a equipe já entregou.',
 };
 
+/** Página da esquerda da Agenda: a próxima reunião em destaque. */
+function ProximaReuniao() {
+  const { estado } = useEstado();
+  const r = estado.reunioes.find(x => x.status === 'agendada');
+  if (!r) return <p className="nota-mao">Nada marcado. Uma reunião curta por semana por projeto segura o ritmo.</p>;
+  const p = estado.projetos.find(x => x.id === r.projeto_id);
+  const quando = new Date(r.dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const quandoFrase = quando.charAt(0).toUpperCase() + quando.slice(1);
+  return (
+    <div className="proxima">
+      <span className="rotulo">Próxima reunião</span>
+      <h3>{r.titulo}</h3>
+      <p className="quando-grande">{quandoFrase}, {r.hora}</p>
+      {p && <p className="de-projeto">{p.nome}</p>}
+      {r.pauta && <p>{r.pauta}</p>}
+      <div className="rostos">{r.participantes.map(id => <Retrato key={id} id={id} tamanho={34} />)}</div>
+      <p className="nota-mao">Toda reunião termina com ata. Se não teve decisão, foi conversa.</p>
+    </div>
+  );
+}
+
 export function Lab() {
   const { lab, gente, erro } = useLab();
   const { estado, aviso, limpaAviso } = useEstado();
@@ -80,7 +101,7 @@ export function Lab() {
         projetos: p ? <>{p.mesa && <figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure>}<FasesIlustradas fase={p.fase} /></> : null,
         pessoas: <p className="nota-mao">Dezessete especialistas, cada um com mesa, papel e memória própria.</p>,
         lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><p className="nota-mao">Um deck de madeira solto no campus, com salas de vidro para reunião e protótipo.</p></>,
-        agenda: <p className="nota-mao">Toda reunião termina com ata. Se não teve decisão, foi conversa.</p>,
+        agenda: <ProximaReuniao />,
         decisoes: <p className="nota-mao">Decisão sem motivo escrito vira discussão de novo daqui a um mês.</p>,
         memoria: <p className="nota-mao">O que fica aqui entra em toda conversa com aquela pessoa.</p>,
         conexoes: null, trofeus: <p className="nota-mao">Contam o que foi feito de verdade, sem inventar número.</p>,
@@ -91,7 +112,7 @@ export function Lab() {
         pessoas: <ul className="elenco">{EQUIPE.map(e => <li key={e.id}><button onClick={() => { setEscolhido(e.id); setZona(e.zona); setAberto({ tipo: 'ficha', id: e.id }); }}><Retrato id={e.id} tamanho={44} /><span><b>{e.nome}</b><small>{e.papel}</small></span></button></li>)}</ul>,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = EQUIPE.filter(e => e.zona === z.id).length;
-          return <li key={z.id}><button onClick={() => abreSala(z.id)} style={{ ['--c' as string]: z.cor }}><b>{z.nome}</b><small>{n ? `${n} ${n === 1 ? 'pessoa' : 'pessoas'}` : 'Uso comum'}</small><span>{SOBRE_ZONA[z.id]}</span></button></li>;
+          return <li key={z.id}><button onClick={() => abreSala(z.id)} style={{ ['--c' as string]: z.cor }}><b><i className="num">{ZONAS.indexOf(z) + 1}</i>{z.nome}</b><small>{n ? `${n} ${n === 1 ? 'pessoa' : 'pessoas'}` : 'Uso comum'}</small><span>{SOBRE_ZONA[z.id]}</span></button></li>;
         })}</ul></>,
         memoria: estado.memorias.length ? <ul className="notas">{estado.memorias.map(n => <li key={n.id}><p>{n.texto}</p><footer><button className="link" onClick={() => setAberto({ tipo: 'ficha', id: n.agente, aba: 'memoria' })}>{EQUIPE.find(e => e.id === n.agente)?.nome}</button></footer></li>)}</ul> : <p className="vazio">Ninguém guardou nada ainda.</p>,
       }[a];
