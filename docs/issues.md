@@ -84,3 +84,10 @@ Papel, couro e madeira. Placa e menu à esquerda, lugar embaixo à esquerda, obj
 Com uma pessoa escolhida, Mover mostra as casas do piso e o caminho até o ponto clicado.
 
 Nota sobre a arte: os scripts em arte/ rodam com o Blender 4.2 em Python (bpy). Os caminhos de saída estão fixos na máquina onde foram gerados; ajuste antes de rodar em outro lugar.
+
+## #23 Ritmo do lab
+Hoje quase todo mundo sai da mesa a cada meio minuto e o escritório parece um corredor. A maior parte da equipe deve ficar trabalhando na mesa, com poucas pessoas circulando ao mesmo tempo.
+- No máximo 3 pessoas fora da mesa por conta própria ao mesmo tempo (ordens do jogador não contam)
+- Tempo na mesa entre 1 e 3 minutos antes de levantar
+- Café dura de 20 a 40 segundos e conversa com colega de 10 a 20 segundos
+- Teste: em 10 minutos simulados nunca há mais de 3 fora e a média na mesa fica acima de 80%
