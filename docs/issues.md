@@ -68,3 +68,17 @@ A conversa inclui a instrução salva do especialista, as notas de memória dele
 
 ## #18 Menus com dados
 Clientes, Projetos com mesa e kanban, Agenda, Decisões, Conexões e Troféus lendo e gravando pela API.
+
+## #19 Pessoas em 8 direções
+Seguindo as skills isometric-character-sprites e isometric-pathfinding: 8 direções renderizadas do mesmo modelo, direção escolhida pelo vetor de movimento, pé fixo em todas.
+Pronto quando: teste cobre a escolha da direção e ninguém escorrega de lado no mapa.
+
+## #20 Cenário vivo
+Árvores de fora balançam com vento e carros passam na rua, como sprites sobre o render. Salas de vidro e árvores grandes dentro do lab.
+Pronto quando: vento e trânsito rodam leves e respeitam movimento reduzido.
+
+## #21 Interface do diário de campo
+Papel, couro e madeira. Placa e menu à esquerda, lugar embaixo à esquerda, objetivo e missões à direita, console de ações embaixo no centro, livro aberto no centro para os detalhes.
+
+## #22 Ação Mover
+Com uma pessoa escolhida, Mover mostra as casas do piso e o caminho até o ponto clicado.
