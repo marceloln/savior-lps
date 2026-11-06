@@ -107,10 +107,10 @@ export function Projetos({ inicial }: { inicial?: string }) {
   );
 }
 
-export function Agenda() {
+export function Agenda({ com }: { com?: string }) {
   const { estado, criaReuniao, gravaAta, criaDecisao } = useEstado();
-  const [nova, setNova] = useState(false);
-  const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: [] as string[], projeto_id: '' });
+  const [nova, setNova] = useState(!!com);
+  const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: com ? [com] : [] as string[], projeto_id: '' });
   const [ataDe, setAtaDe] = useState<number | null>(null), [ata, setAta] = useState(''), [decisao, setDecisao] = useState('');
   const salva = async () => { if (await criaReuniao({ ...f, projeto_id: f.projeto_id || null })) { setNova(false); setF({ ...f, titulo: '', pauta: '', participantes: [] }); } };
   const fecha = async (id: number, projeto_id: string | null) => {

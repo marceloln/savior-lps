@@ -82,3 +82,5 @@ Papel, couro e madeira. Placa e menu à esquerda, lugar embaixo à esquerda, obj
 
 ## #22 Ação Mover
 Com uma pessoa escolhida, Mover mostra as casas do piso e o caminho até o ponto clicado.
+
+Nota sobre a arte: os scripts em arte/ rodam com o Blender 4.2 em Python (bpy). Os caminhos de saída estão fixos na máquina onde foram gerados; ajuste antes de rodar em outro lugar.

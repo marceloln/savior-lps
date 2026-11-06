@@ -43,9 +43,10 @@ function Memoria({ m }: { m: Membro }) {
   );
 }
 
-export function FichaAgente({ m, conversa }: { m: Membro; conversa: () => void }) {
-  const { estado } = useEstado();
-  const [aba, setAba] = useState<'visao' | 'instrucoes' | 'memoria'>('visao');
+export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: () => void; abaInicial?: 'visao' | 'instrucoes' | 'memoria' }) {
+  const { estado, criaTarefa } = useEstado();
+  const [aba, setAba] = useState<'visao' | 'instrucoes' | 'memoria'>(abaInicial ?? 'visao');
+  const [nova, setNova] = useState(''), [proj, setProj] = useState(estado.projetos[0]?.id ?? '');
   const z = ZONAS.find(q => q.id === m.zona)!;
   const abertas = estado.tarefas.filter(t => t.agente === m.id && t.estado !== 'feito');
   return (
@@ -56,13 +57,22 @@ export function FichaAgente({ m, conversa }: { m: Membro; conversa: () => void }
           <button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button></div>
       </div>
       <div className="abas" role="tablist">
-        {([['visao', 'Tarefas'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
+        {([['visao', 'Missões'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
           <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
       </div>
       <AvisoPrevia />
-      {aba === 'visao' && (abertas.length
-        ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul>
-        : <p className="vazio">Nenhuma tarefa aberta com {m.nome}. Dá para criar uma em Projetos.</p>)}
+      {aba === 'visao' && <>
+        {abertas.length
+          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul>
+          : <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
+        <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim()) return; criaTarefa({ agente: m.id, titulo: nova.trim(), projeto_id: proj || null }); setNova(''); }}>
+          <label className="so-leitor" htmlFor="nmis">Nova missão para {m.nome}</label>
+          <input id="nmis" value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
+          <label className="so-leitor" htmlFor="nproj">Projeto</label>
+          <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
+          <button type="submit" disabled={!nova.trim()}>Dar missão</button>
+        </form>
+      </>}
       {aba === 'instrucoes' && <Instrucoes key={m.id} m={m} />}
       {aba === 'memoria' && <Memoria m={m} />}
     </div>
