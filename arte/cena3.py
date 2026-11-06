@@ -12,12 +12,8 @@ PAREDE = mat('parede', '#F3F0EA', 0, 0.85)
 VERDE = mat('verde_v30', '#20352F', 0, 0.7)
 CREME = mat('creme_v30', '#F0EAD6', 0, 0.6)
 AREIA = mat('areia_v30', '#C5AA81', 0, 0.6)
-PRETO = mat('metal_preto', '#1E2120', 0.6, 0.38)
 ALU = mat('aluminio', '#C9CCCB', 0.9, 0.3)
-BRANCO = mat('laminado_branco', '#F5F3EE', 0, 0.32)
-COMP = mat('compensado', '#D9B98C', 0, 0.55, tex='carvalho.jpg')
 VIDRO = mat('vidro', '#E8F2F0', 0, 0.03, vidro=True)
-TELA_P = mat('tela_preta', '#0E1513', 0.1, 0.15)
 FOLHA = mat('folha', '#3F7A4A', 0, 0.5); FOLHA2 = mat('folha_clara', '#5E9A5C', 0, 0.5)
 TERRA = mat('terra', '#3A2A1E', 0, 0.9); CERAM = mat('ceramica', '#EDE7DB', 0, 0.3)
 LUZ = mat('luz', '#FFF1D6', 0, 0.3, emis_forca=10)
@@ -25,8 +21,7 @@ AMARELO = mat('amarelo', '#E9B949', 0.2, 0.35)
 LARANJA = mat('laranja', '#E59A3C', 0, 0.4)
 AZUL = mat('azul_planta', '#ffffff', 0, 0.75, tex='planta_azul.jpg')
 TEC = {k: mat('tecido_' + k, c, 0, 0.95, sheen=0.4) for k, c in {'salvia':'#8FA58A','terracota':'#C9603F','areia':'#D9C29A','verde':'#2F5A4C','azul':'#5E86B0','creme':'#E9E1CE','lilas':'#9C8DCB'}.items()}
-MON = [mat(f'monitor{k}', '#ffffff', 0, 0.25, tex=f'monitor{k}.png', emis_tex=True, emis_forca=1.3) for k in range(3)]
-def cor_mat(c, rug=0.5, metal=0.0): return mat('c' + c, c, metal, rug)
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'moveis_bpy.py')).read())
 
 # ---------------- peças com transformação e pegada ----------------
 OBST, PONTOS, TELAS, OBJETOS = [], {}, {}, []
@@ -301,8 +296,9 @@ for z, (x0, y0, w, h, cor) in ZONAS.items():
 def mesas(z, n=3, telas=2, dy=2.2, x1=1.5, passo=2.05):
     x0, y0 = ZONAS[z][:2]
     for i in range(n):
-        vz = peca(f'mesa_{z}_{i}', x0 + x1 + i * passo, y0 + dy, 0, lambda i=i: mesa_em_pe(telas, 1.5, tela_mat=i), info='mesa')
-        ponto('mesa_' + z, loc(vz, 0, 0.74), 'n')
+        vz = peca(f'mesa_{z}_{i}', x0 + x1 + i * passo, y0 + dy, 0, lambda i=i: mesa_trabalho(telas, 1.5, tela_mat=i), info='mesa')
+        peca(f'cadeira_{z}_{i}', x0 + x1 + i * passo, y0 + dy + 0.66, 0, lambda i=i: cadeira_escritorio(['#2E3236', '#3B4A44', '#4A3F36'][i % 3]), obst=False, info='cadeira')
+        ponto('mesa_' + z, loc(vz, 0, 0.66), 'n')
 def P(z, dx, dy): x0, y0 = ZONAS[z][:2]; return x0 + dx, y0 + dy
 
 # estratégia
@@ -320,7 +316,8 @@ peca('banq_c1', *P('comercial', 4.9, 5.3), 0, lambda: banqueta('verde')); peca('
 peca('planta_c1', *P('comercial', 6.9, 0.5), 0, lambda: planta(1.4))
 # arquivo
 peca('arquivos', *P('arquivo', 0.6, 0.6), 0, lambda: arquivo(5), info='arquivos')
-vz = peca('mesa_arquivo', *P('arquivo', 2.6, 3.0), 0, lambda: mesa_em_pe(1), info='mesa'); ponto('mesa_arquivo', loc(vz, 0, 0.74), 'n')
+vz = peca('mesa_arquivo', *P('arquivo', 2.6, 3.0), 0, lambda: mesa_trabalho(1), info='mesa'); ponto('mesa_arquivo', loc(vz, 0, 0.66), 'n')
+peca('cadeira_arquivo', *P('arquivo', 2.6, 3.66), 0, cadeira_escritorio, obst=False, info='cadeira')
 peca('estante_a', *P('arquivo', 4.9, 3.6), 90, lambda: estante(1.6, 2.0, 0.4))
 # reunião
 vz = peca('mesa_reuniao', *P('reuniao', 3.0, 3.6), 0, mesa_reuniao, info='mesa_reuniao')
@@ -335,7 +332,8 @@ peca('tripe', *P('marca', 7.6, 4.0), 0, tripe); peca('sofa_m', *P('marca', 2.6, 
 peca('planta_m1', *P('marca', 0.5, 6.0), 0, lambda: planta(1.3, 0.28, 9, 2))
 # tráfego: hub central
 vz = peca('totem_trafego', *P('trafego', 4.75, 0.8), 0, lambda: totem(3.4, 1.9), info='totem'); tela('trafego', vz, 0, 0.061, 0.9 + 0.95, 3.4, 1.9)
-vz = peca('mesa_trafego', *P('trafego', 4.75, 3.0), 0, lambda: mesa_em_pe(3, 2.2), info='mesa'); ponto('mesa_trafego', loc(vz, 0, 0.74), 'n'); ponto('entrega_trafego', loc(vz, 0.9, 1.5), 'n')
+vz = peca('mesa_trafego', *P('trafego', 4.75, 3.0), 0, lambda: mesa_trabalho(3, 2.2), info='mesa'); ponto('mesa_trafego', loc(vz, 0, 0.66), 'n')
+peca('cadeira_trafego', *P('trafego', 4.75, 3.66), 0, lambda: cadeira_escritorio('#3B4A44'), obst=False, info='cadeira'); ponto('entrega_trafego', loc(vz, 0.9, 1.5), 'n')
 peca('mesa_alta_t1', *P('trafego', 1.3, 5.4), 0, mesa_alta); peca('banq_t1', *P('trafego', 0.7, 6.0), 0, banqueta); peca('banq_t2', *P('trafego', 1.9, 6.1), 0, lambda: banqueta('salvia'))
 peca('mesa_alta_t2', *P('trafego', 8.2, 5.4), 0, mesa_alta); peca('banq_t3', *P('trafego', 8.8, 6.0), 0, lambda: banqueta('terracota'))
 peca('planta_t1', *P('trafego', 0.5, 0.6), 0, lambda: planta(1.7, 0.32)); peca('planta_t2', *P('trafego', 9.0, 0.6), 0, lambda: planta(1.5, 0.3, 10, 2))

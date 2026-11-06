@@ -119,7 +119,7 @@ export function Lab() {
       livro = <Livro titulo={nome} sobre={SOBRE_ABA[a]} ilustracao={ilustracao} aoFechar={fecha}>{corpo}</Livro>;
     } else if (aberto.tipo === 'ficha') {
       const p = EQUIPE.find(e => e.id === aberto.id)!, z = ZONAS.find(q => q.id === p.zona)!;
-      livro = <Livro titulo={p.nome} sobre={p.papel} cor={z.cor} ilustracao={<><Retrato id={p.id} tamanho={150} cor={z.cor + '40'} /><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>} aoFechar={fecha}>
+      livro = <Livro titulo={p.nome} sobre={p.papel} cor={z.cor} ilustracao={<><figure className="foto-colada estacao"><img style={{ background: `linear-gradient(${z.cor}30, ${z.cor}12)` }} src={`assets/estacao/${p.id}.webp`} alt={`${p.nome} trabalhando na ${z.nome}`} /><figcaption>{p.nome} na {z.nome}</figcaption></figure><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>} aoFechar={fecha}>
         <FichaAgente key={p.id + (aberto.aba ?? '')} m={p} abaInicial={aberto.aba} focaMissao={aberto.foca} aoDar={anota}
           noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /></Livro>;
     } else if (aberto.tipo === 'conversa') {

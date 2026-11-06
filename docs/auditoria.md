@@ -214,9 +214,9 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 | #28 Cliente e projeto pela interface | Feito | feature/cadastro |
 | #29 Ciclo do projeto | Feito | feature/dados-consistentes |
 | #30 Dados consistentes | Feito | feature/dados-consistentes |
-| #31 Cadeiras e estações | Cena pronta no Blender; entra no mapa junto com as pessoas sentadas | sem branch ainda |
-| #32 Personagens novos | Esperando autorização para instalar o MPFB, extensão do MakeHuman para Blender | sem branch ainda |
-| #33 Ficha na estação | Depende da #32 | sem branch ainda |
+| #31 Cadeiras e estações | Mesa na altura de quem senta e cadeira giratória em cada estação; quem trabalha aparece sentado digitando, com a cadeira no próprio quadro | feature/personagens |
+| #32 Personagens novos | 23 pessoas feitas no MPFB com roupas, cabelos e sapatos CC0; animação da Universal Animation Library adaptada osso a osso; render na mesma câmera e luz do lab | feature/personagens |
+| #33 Ficha na estação | Página da esquerda da ficha mostra a pessoa trabalhando na própria mesa, na cor da sala; rostos refeitos em 256 px | feature/personagens |
 | #34 Vocabulário | Feito | feature/vocabulario |
 | #35 Publicação | Com o sócio: Access, chave e pull request | |
 | #36 Pendências visuais | Planta numerada e próxima reunião feitas; ficha depende da #33 | feature/pendencias-visuais |

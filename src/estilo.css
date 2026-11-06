@@ -288,3 +288,4 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 .mapa-tinta text{font:700 1.5px var(--titulo)}
 .proxima{text-align:left;width:100%;display:grid;gap:6px}.proxima h3{margin:0;font:700 22px var(--titulo);color:var(--tinta)}
 .quando-grande{margin:0;font-weight:700}.de-projeto{margin:0;color:var(--texto-2);font-size:14px}.proxima .rostos{display:flex;gap:4px;margin:6px 0}
+.foto-colada.estacao img{aspect-ratio:4/3;object-fit:contain;padding:6px}

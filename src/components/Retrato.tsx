@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { EQUIPE } from '../lib/equipe';
 
+const LADO = 256; // tamanho de cada rosto no atlas
 let atlas: HTMLImageElement | null = null;
 let ordem: Promise<string[]> | null = null;
 const carrega = () => {
@@ -19,7 +20,7 @@ export function Retrato({ id, tamanho = 44, cor }: { id: string; tamanho?: numbe
       const i = ids.indexOf(id);
       const desenha = () => {
         const c = tela.current; if (!vivo || !c || i < 0) return;
-        const g = c.getContext('2d')!; g.clearRect(0, 0, c.width, c.height); g.drawImage(img, i * 128, 0, 128, 128, 0, 0, c.width, c.height);
+        const g = c.getContext('2d')!; g.clearRect(0, 0, c.width, c.height); g.drawImage(img, i * LADO, 0, LADO, LADO, 0, 0, c.width, c.height);
       };
       if (img.complete) desenha(); else img.addEventListener('load', desenha, { once: true });
     });

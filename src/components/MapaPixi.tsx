@@ -199,9 +199,10 @@ export function MapaPixi(props: Props) {
         const ordem = [...sim.agentes].sort((a, b) => proj.profundidade(b.pos.x, b.pos.y) - proj.profundidade(a.pos.x, a.pos.y));
         ordem.forEach((a, i) => {
           const [fx, fy] = proj.px(a.pos.x, a.pos.y);
-          sombras.ellipse(fx, fy, 0.3 * K, 0.15 * K).fill({ color: 0x28200f, alpha: 0.2 });
           let pose = sim.pose(a);
           if (pose === 'digitar' && a.dir !== 0) pose = 'parado';
+          // sentado, a cadeira já está no chão do render e a mancha de sombra ficaria por cima dela
+          if (pose !== 'digitar') sombras.ellipse(fx, fy, 0.3 * K, 0.15 * K).fill({ color: 0x28200f, alpha: 0.2 });
           const lista = QUADROS[pose];
           const f = pose === 'andar' ? Math.floor(t * 7.5) : Math.floor(t * (pose === 'digitar' ? 2.2 : 1.2) + a.semente);
           const q = gente.q[`${a.id}_d${a.dir}_${lista[f % lista.length]}`] ?? gente.q[`${a.id}_d${a.dir}_parado0`];
