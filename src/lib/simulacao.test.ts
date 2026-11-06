@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { criaSimulacao, MAX_FORA } from './simulacao';
+import { criaSimulacao, MAX_FORA, MIN_FORA } from './simulacao';
 import type { DadosLab } from './lab';
 
 const lab = JSON.parse(readFileSync(new URL('../../public/assets/lab.json', import.meta.url), 'utf8')) as DadosLab;
@@ -16,6 +16,14 @@ describe('ritmo do lab', () => {
     }
     expect(pior).toBeLessThanOrEqual(MAX_FORA);
     expect(naMesa / amostras).toBeGreaterThan(0.8);
+  });
+
+  it('o lab nunca fica parado: quase sempre tem 2 ou 3 circulando', () => {
+    const sim = criaSimulacao(lab);
+    for (let t = 0; t < 30; t += 0.1) sim.passo(0.1);
+    let ok = 0, n = 0;
+    for (let t = 0; t < 600; t += 0.1) { sim.passo(0.1); if (sim.fora() >= MIN_FORA) ok++; n++; }
+    expect(ok / n).toBeGreaterThan(0.9);
   });
 
   it('ordem do jogador não entra no limite de quem circula', () => {

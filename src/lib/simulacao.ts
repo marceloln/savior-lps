@@ -11,7 +11,7 @@ export type Agente = Membro & {
 };
 
 const VEL = 1.35; // metros por segundo, passo de quem anda no escritório
-export const MAX_FORA = 3; // quantos podem estar fora da mesa por conta própria ao mesmo tempo
+export const MIN_FORA = 2, MAX_FORA = 3; // sempre 2 ou 3 circulando por conta própria, o resto trabalha
 const entre = (a: number, b: number) => a + Math.random() * (b - a);
 
 export function criaSimulacao(lab: DadosLab) {
@@ -42,6 +42,12 @@ export function criaSimulacao(lab: DadosLab) {
   const fora = () => agentes.filter(a => a.estado !== 'mesa' && !a.mandado).length;
 
   function passo(dt: number) {
+    // se o lab ficou parado demais, quem está há mais tempo sentado levanta logo
+    if (fora() < MIN_FORA) {
+      const livres = agentes.filter(a => a.estado === 'mesa' && a.id !== 'clara' && a.id !== 'duda');
+      const prox = livres.reduce<Agente | null>((m, a) => (!m || a.espera < m.espera ? a : m), null);
+      if (prox && prox.espera > 3) prox.espera = 3;
+    }
     for (const a of agentes) {
       if (a.estado === 'andando') {
         const alvo = a.caminho[0];
