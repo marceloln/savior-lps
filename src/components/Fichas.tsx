@@ -79,17 +79,53 @@ export function FichaAgente({ m, conversa, abaInicial }: { m: Membro; conversa: 
   );
 }
 
-export function PainelZona({ zona, abreAgente, briefing }: { zona: string; abreAgente: (id: string) => void; briefing: () => void }) {
-  const time = EQUIPE.filter(m => m.zona === zona);
+type AbaZona = 'equipe' | 'missoes' | 'reunioes';
+
+/** O que acontece numa sala: quem trabalha ali, o que está em aberto e as reuniões com essa turma. */
+export function PainelZona({ zona, abreAgente, briefing, marcaReuniao }: {
+  zona: string; abreAgente: (id: string) => void; briefing: () => void; marcaReuniao: (com: string) => void;
+}) {
+  const { estado, criaTarefa } = useEstado();
+  const [aba, setAba] = useState<AbaZona>('equipe');
+  const time = EQUIPE.filter(m => m.zona === zona), ids = new Set(time.map(m => m.id));
+  const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
+  const abertas = estado.tarefas.filter(t => ids.has(t.agente) && t.estado !== 'feito');
+  const reunioes = estado.reunioes.filter(r => r.participantes.some(p => ids.has(p)));
+  const [nova, setNova] = useState(''), [quem, setQuem] = useState(time[0]?.id ?? '');
   return (
     <div className="zona">
-      {time.length
-        ? <ul className="time">{time.map(m => (
-            <li key={m.id}><button onClick={() => abreAgente(m.id)}>
-              <Retrato id={m.id} tamanho={40} /><span><b>{m.nome}</b><small>{m.papel}</small></span>
-            </button></li>))}</ul>
-        : <p className="vazio">Ninguém tem mesa fixa aqui. É área de uso comum, cada um passa quando precisa.</p>}
-      {zona === 'atendimento' && <button className="primario" onClick={briefing}>Começar briefing com a Clara</button>}
+      <div className="abas" role="tablist">
+        {([['equipe', 'Equipe'], ['missoes', `Missões (${abertas.length})`], ['reunioes', `Reuniões (${reunioes.length})`]] as const).map(([id, n]) =>
+          <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
+      </div>
+      <AvisoPrevia />
+      {aba === 'equipe' && <>
+        {time.length
+          ? <ul className="elenco">{time.map(m => (
+              <li key={m.id}><button onClick={() => abreAgente(m.id)}>
+                <Retrato id={m.id} tamanho={40} /><span><b>{m.nome}</b><small>{m.papel}</small></span>
+              </button></li>))}</ul>
+          : <p className="vazio">Ninguém tem mesa fixa aqui. É área de uso comum, cada um passa quando precisa.</p>}
+        {zona === 'atendimento' && <button className="primario" onClick={briefing}>Começar briefing com a Clara</button>}
+      </>}
+      {aba === 'missoes' && <>
+        {abertas.length
+          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo} <small>{nome(t.agente)}</small></li>)}</ul>
+          : <p className="vazio">A equipe daqui não tem missão aberta.</p>}
+        {time.length > 0 && <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim() || !quem) return; criaTarefa({ agente: quem, titulo: nova.trim(), projeto_id: null }); setNova(''); }}>
+          <label className="so-leitor" htmlFor="zmis">Nova missão</label>
+          <input id="zmis" value={nova} onChange={e => setNova(e.target.value)} placeholder="Nova missão para esta sala" maxLength={200} />
+          <label className="so-leitor" htmlFor="zquem">Para quem</label>
+          <select id="zquem" value={quem} onChange={e => setQuem(e.target.value)}>{time.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}</select>
+          <button type="submit" disabled={!nova.trim()}>Dar missão</button>
+        </form>}
+      </>}
+      {aba === 'reunioes' && <>
+        {reunioes.length
+          ? <ul className="tarefas-agente">{reunioes.map(r => <li key={r.id}><span className={`estado ${r.status === 'feita' ? 'feito' : 'fila'}`}>{r.status === 'feita' ? 'Feita' : `${r.dia.slice(8, 10)}/${r.dia.slice(5, 7)} ${r.hora}`}</span>{r.titulo} <small>{r.participantes.map(nome).join(', ')}</small></li>)}</ul>
+          : <p className="vazio">Nenhuma reunião com a equipe daqui.</p>}
+        {time.length > 0 && <button className="primario" onClick={() => marcaReuniao(time[0].id)}>Marcar reunião com a sala</button>}
+      </>}
     </div>
   );
 }

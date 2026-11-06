@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
-import { FichaAgente } from '../components/Fichas';
+import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus } from '../components/Paineis';
-import { CartaoLugar, Console, FasesIlustradas, Livro, MapaTinta, MenuDiario, Missoes, Placa, Selos, ABAS, SOBRE_ZONA, type Aba, type Acao } from '../components/Diario';
+import { CartaoLugar, Console, FotoLugar, FasesIlustradas, Livro, MapaTinta, MenuDiario, Missoes, Placa, Selos, ABAS, SOBRE_ZONA, type Aba, type Acao } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
@@ -12,7 +12,7 @@ import { EQUIPE } from '../lib/equipe';
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba } | { tipo: 'ficha'; id: string; aba?: 'visao' | 'instrucoes' | 'memoria' }
-  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string } | null;
+  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string } | { tipo: 'sala'; id: string } | null;
 
 const SOBRE_ABA: Record<Aba, string> = {
   clientes: 'Por setor e situação, nunca pelo nome.', projetos: 'A mesa do método e as tarefas de cada projeto.',
@@ -36,13 +36,16 @@ export function Lab() {
   const fecha = useCallback(() => setAberto(null), []);
   const m = EQUIPE.find(e => e.id === escolhido) ?? null;
 
+  const abreSala = useCallback((z: string) => {
+    setZona(z); setFoco(f => ({ zona: z, n: (f?.n ?? 0) + 1 })); setAberto({ tipo: 'sala', id: z });
+  }, []);
   const onHover = useCallback((alvo: Alvo, x: number, y: number) => setDica({ alvo, x, y }), []);
   const onClique = useCallback((alvo: Alvo) => {
     setDica(d => ({ ...d, alvo: null }));
     if (!alvo) { setZona(null); return; }
-    if (alvo.tipo === 'zona') { setZona(alvo.id); return; }
+    if (alvo.tipo === 'zona') { abreSala(alvo.id); return; }
     setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false);
-  }, []);
+  }, [abreSala]);
   const onMovido = useCallback((ok: boolean) => {
     if (!ok) { anota('Ali tem móvel no caminho. Escolha uma casa verde do piso.'); return; }
     setMirando(false); setEscolhido(id => { const p = EQUIPE.find(e => e.id === id); if (p) anota(`${p.nome} está a caminho.`); return id; });
@@ -76,7 +79,7 @@ export function Lab() {
       const corpo = {
         clientes: <Clientes abreProjeto={abreProjeto} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes />, trofeus: <Trofeus />,
         pessoas: <ul className="elenco">{EQUIPE.map(e => <li key={e.id}><button onClick={() => { setEscolhido(e.id); setZona(e.zona); setAberto({ tipo: 'ficha', id: e.id }); }}><Retrato id={e.id} tamanho={44} /><span><b>{e.nome}</b><small>{e.papel}</small></span></button></li>)}</ul>,
-        lugares: <><MapaTinta lab={lab} escolhe={z => { setZona(z); setFoco(f => ({ zona: z, n: (f?.n ?? 0) + 1 })); setAberto(null); }} /><ul className="lista-lugares">{ZONAS.map(z => <li key={z.id}><b>{z.nome}</b> {SOBRE_ZONA[z.id]}</li>)}</ul></>,
+        lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><ul className="lista-lugares">{ZONAS.map(z => <li key={z.id}><b>{z.nome}</b> {SOBRE_ZONA[z.id]}</li>)}</ul></>,
         memoria: estado.memorias.length ? <ul className="notas">{estado.memorias.map(n => <li key={n.id}><p>{n.texto}</p><footer><button className="link" onClick={() => setAberto({ tipo: 'ficha', id: n.agente, aba: 'memoria' })}>{EQUIPE.find(e => e.id === n.agente)?.nome}</button></footer></li>)}</ul> : <p className="vazio">Ninguém guardou nada ainda.</p>,
       }[a];
       livro = <Livro titulo={nome} sobre={SOBRE_ABA[a]} ilustracao={ilustracao} aoFechar={fecha}>{corpo}</Livro>;
@@ -88,6 +91,12 @@ export function Lab() {
       const p = EQUIPE.find(e => e.id === aberto.id)!;
       livro = <Livro titulo={p.id === 'clara' ? 'Briefing com a Clara' : `Conversa com ${p.nome}`} sobre={p.id === 'clara' ? 'Uma pergunta por vez, até fechar o pedido.' : p.papel} ilustracao={<Retrato id={p.id} tamanho={150} />} aoFechar={fecha}>
         <Chat agente={p.id} setAgente={id => setAberto({ tipo: 'conversa', id })} so /></Livro>;
+    } else if (aberto.tipo === 'sala') {
+      const z = ZONAS.find(q => q.id === aberto.id)!;
+      livro = <Livro titulo={z.nome} sobre={SOBRE_ZONA[z.id]} cor={z.cor} aoFechar={fecha}
+        ilustracao={<figure className="foto-colada"><FotoLugar zona={z.id} lab={lab} larg={300} alt={190} esc={0.62} /><figcaption>{z.nome}</figcaption></figure>}>
+        <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }}
+          briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /></Livro>;
     } else if (aberto.tipo === 'reuniao') {
       livro = <Livro titulo="Agenda" sobre={SOBRE_ABA.agenda} aoFechar={fecha}><Agenda com={aberto.com} /></Livro>;
     }
@@ -102,7 +111,7 @@ export function Lab() {
         <Placa />
         <MenuDiario ativa={aberto?.tipo === 'aba' ? aberto.aba : null} abre={a => setAberto(x => (x?.tipo === 'aba' && x.aba === a ? null : { tipo: 'aba', aba: a }))} />
       </div>
-      {lab && <CartaoLugar zona={zona} lab={lab} />}
+      {lab && !aberto && <CartaoLugar zona={zona} lab={lab} abre={abreSala} />}
       <div className="coluna-direita">
         <Selos />
         <Missoes abreProjeto={abreProjeto} />
@@ -111,7 +120,7 @@ export function Lab() {
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>
           {dica.alvo.tipo === 'agente'
             ? <><b>{dica.alvo.agente.nome}</b><small>{dica.alvo.agente.papel}</small><small className="acao">Clique para escolher</small></>
-            : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para ver o lugar</small></>}
+            : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para abrir a sala</small></>}
         </div>
       )}
       <Console escolhido={m} mirando={mirando} registro={registro} age={age}

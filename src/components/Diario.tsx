@@ -52,18 +52,24 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   );
 }
 
-export function CartaoLugar({ zona, lab }: { zona: string | null; lab: DadosLab }) {
+/** Recorte da sala tirado da própria foto do lab. */
+export function FotoLugar({ zona, lab, larg = 236, alt = 112, esc = 0.42 }: { zona: string; lab: DadosLab; larg?: number; alt?: number; esc?: number }) {
+  const r = lab.zonas[zona]; if (!r) return null;
+  const [cx, cy] = criaProjecao(lab).px(r[0] + r[2] / 2, r[1] + r[3] / 2, 0.6);
+  return <div className="foto-lugar" style={{ width: larg, height: alt, backgroundImage: 'url(assets/lab.webp)', backgroundSize: `${lab.larg * esc}px ${lab.alt * esc}px`, backgroundPosition: `${larg / 2 - cx * esc}px ${alt / 2 - cy * esc}px` }} />;
+}
+
+export function CartaoLugar({ zona, lab, abre }: { zona: string | null; lab: DadosLab; abre: (z: string) => void }) {
   const z = ZONAS.find(q => q.id === zona);
   if (!z) return null;
-  const r = lab.zonas[z.id], p = criaProjecao(lab), [cx, cy] = p.px(r[0] + r[2] / 2, r[1] + r[3] / 2, 0.6);
-  const esc = 0.42, lw = 236, lh = 112;
   const time = EQUIPE.filter(m => m.zona === z.id);
   return (
     <aside className="cartao-lugar papel-borda" aria-label={`Lugar: ${z.nome}`}>
       <h3>{z.nome}</h3>
-      <div className="foto-lugar" style={{ backgroundImage: 'url(assets/lab.webp)', backgroundSize: `${lab.larg * esc}px ${lab.alt * esc}px`, backgroundPosition: `${lw / 2 - cx * esc}px ${lh / 2 - cy * esc}px` }} />
+      <FotoLugar zona={z.id} lab={lab} />
       <p>{SOBRE_ZONA[z.id]}</p>
       {time.length > 0 && <div className="rostos">{time.map(m => <Retrato key={m.id} id={m.id} tamanho={26} />)}</div>}
+      <button className="primario" onClick={() => abre(z.id)}>Abrir a sala</button>
     </aside>
   );
 }

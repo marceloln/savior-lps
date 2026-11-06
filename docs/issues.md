@@ -91,3 +91,12 @@ Hoje quase todo mundo sai da mesa a cada meio minuto e o escritório parece um c
 - Tempo na mesa entre 1 e 3 minutos antes de levantar
 - Café dura de 20 a 40 segundos e conversa com colega de 10 a 20 segundos
 - Teste: em 10 minutos simulados nunca há mais de 3 fora e a média na mesa fica acima de 80%
+
+## #24 Salas abrem suas funções
+Clicar numa sala só mostrava um cartão pequeno no canto. A sala deve abrir o diário com o que acontece ali.
+- Página da esquerda: recorte da sala no mapa e para que ela serve
+- Abas Equipe, Missões e Reuniões
+- Equipe: quem trabalha ali, com acesso à ficha de cada um; na recepção, o briefing com a Clara
+- Missões: o que a equipe da sala tem em aberto e um campo para dar missão a alguém de lá
+- Reuniões: reuniões com gente da sala e um botão para marcar uma nova
+- A câmera vai até a sala ao abrir

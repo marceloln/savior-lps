@@ -250,3 +250,4 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
   .fechar-livro{right:14px;top:-4px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.tarefas-agente small{color:var(--texto-2);font-size:12px;margin-left:4px}.foto-colada .foto-lugar{max-width:100%}.cartao-lugar .primario{display:block;margin:var(--s2) auto 0}
