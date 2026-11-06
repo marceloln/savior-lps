@@ -37,4 +37,12 @@ describe('validação da API', () => {
     expect(V.hojeBrasil(Date.parse('2026-11-07T02:00:00Z'))).toBe('2026-11-06');
     expect(V.hojeBrasil(Date.parse('2026-11-07T03:30:00Z'))).toBe('2026-11-07');
   });
+  it('cliente entra por setor e situação e projeto precisa de cliente e nome', () => {
+    expect(V.slug('Rede de Postos no Interior!')).toBe('rede-de-postos-no-interior');
+    expect(V.slug('Ação e Conveniência')).toBe('acao-e-conveniencia');
+    expect(V.novoCliente({ setor: 'Rede de postos', situacao: 'Turno sem padrão' }).ok).toBe(true);
+    expect(V.novoCliente({ setor: 'x', situacao: 'Turno sem padrão' }).ok).toBe(false);
+    expect(V.novoProjeto({ cliente_id: 'postos', nome: 'Piloto' }).ok).toBe(true);
+    expect(V.novoProjeto({ nome: 'Piloto' }).ok).toBe(false);
+  });
 });

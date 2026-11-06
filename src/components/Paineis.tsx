@@ -14,11 +14,41 @@ export function AvisoPrevia() {
   return <p className="previa">Prévia sem servidor. Os dados são de exemplo e o que você mudar some ao recarregar.</p>;
 }
 
-export function Clientes({ abreProjeto }: { abreProjeto: (id: string) => void }) {
-  const { estado } = useEstado();
+/** Abre projeto para um cliente que ainda não tem. */
+function AbreProjeto({ cliente, abreProjeto }: { cliente: string; abreProjeto: (id: string) => void }) {
+  const { criaProjeto } = useEstado();
+  const [nome, setNome] = useState('');
+  return (
+    <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const id = await criaProjeto(cliente, nome.trim()); if (id) abreProjeto(id); }}>
+      <label className="so-leitor" htmlFor={`np-${cliente}`}>Nome do projeto</label>
+      <input id={`np-${cliente}`} value={nome} onChange={e => setNome(e.target.value)} placeholder="Nome do projeto, por exemplo Padrão de atendimento na loja" maxLength={120} />
+      <button type="submit" disabled={nome.trim().length < 3}>Abrir projeto</button>
+    </form>
+  );
+}
+
+export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: string) => void; novo?: boolean }) {
+  const { estado, criaCliente, criaProjeto } = useEstado();
+  const [form, setForm] = useState(novo);
+  const [f, setF] = useState({ setor: '', situacao: '', projeto: '' });
+  const salva = async () => {
+    const id = await criaCliente({ setor: f.setor.trim(), situacao: f.situacao.trim() });
+    if (!id) return;
+    setForm(false); setF({ setor: '', situacao: '', projeto: '' });
+    if (f.projeto.trim().length >= 3) { const p = await criaProjeto(id, f.projeto.trim()); if (p) abreProjeto(p); }
+  };
   return (
     <div className="lista-clientes">
       <AvisoPrevia />
+      {!form ? <button className="primario" onClick={() => setForm(true)}>Novo cliente</button> : (
+        <form className="form-reuniao" onSubmit={e => { e.preventDefault(); salva(); }}>
+          <p className="ajuda">Cliente entra por setor e situação, nunca pelo nome.</p>
+          <label>Setor<input autoFocus value={f.setor} onChange={e => setF({ ...f, setor: e.target.value })} placeholder="Rede de postos no interior" maxLength={120} /></label>
+          <label>Situação<input value={f.situacao} onChange={e => setF({ ...f, situacao: e.target.value })} placeholder="O que trava a operação hoje, em uma frase" maxLength={300} /></label>
+          <label>Projeto<input value={f.projeto} onChange={e => setF({ ...f, projeto: e.target.value })} placeholder="Opcional. Se tiver nome, o projeto já abre no diagnóstico" maxLength={120} /></label>
+          <div className="linha"><button className="primario" type="submit" disabled={f.setor.trim().length < 3 || f.situacao.trim().length < 3}>Cadastrar</button><button type="button" className="leve" onClick={() => setForm(false)}>Desistir</button></div>
+        </form>
+      )}
       {estado.clientes.map(c => {
         const projs = estado.projetos.filter(p => p.cliente_id === c.id);
         return (
@@ -26,7 +56,7 @@ export function Clientes({ abreProjeto }: { abreProjeto: (id: string) => void })
             <header><h3>{c.setor}</h3>{projs.length ? <span className="fase" data-f={c.fase}>{FASES[c.fase]}</span> : <span className="fase conversa">Em conversa</span>}</header>
             <p>{c.situacao}</p>
             {projs.map(p => <button key={p.id} className="link" onClick={() => abreProjeto(p.id)}>{p.nome}, dia {p.dia} de 30</button>)}
-            {!projs.length && <small className="sem-projeto">Ainda sem projeto. O briefing com a Clara está em andamento.</small>}
+            {!projs.length && <AbreProjeto cliente={c.id} abreProjeto={abreProjeto} />}
           </article>
         );
       })}

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { SEMENTE, type Decisao, type EstadoLab, type Memoria, type Reuniao, type Tarefa } from '../lib/dados';
+import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type EstadoLab, type Memoria, type Projeto, type Reuniao, type Tarefa } from '../lib/dados';
 
 type Modo = 'carregando' | 'banco' | 'previa';
 type Api = {
@@ -8,6 +8,8 @@ type Api = {
   mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente'>>) => Promise<void>;
   apagaTarefa: (id: number) => Promise<void>;
   mudaFase: (projeto: string, fase: number) => Promise<boolean>;
+  criaCliente: (c: Pick<Cliente, 'setor' | 'situacao'>) => Promise<string | null>;
+  criaProjeto: (cliente_id: string, nome: string) => Promise<string | null>;
   criaReuniao: (r: Pick<Reuniao, 'titulo' | 'pauta' | 'dia' | 'hora' | 'participantes' | 'projeto_id'>) => Promise<boolean>;
   gravaAta: (id: number, ata: string) => Promise<boolean>;
   criaDecisao: (d: Pick<Decisao, 'titulo' | 'contexto' | 'projeto_id' | 'reuniao_id'>) => Promise<boolean>;
@@ -58,6 +60,24 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
         const p = e.projetos.find(x => x.id === id);
         return { ...e, projetos: e.projetos.map(x => (x.id === id ? { ...x, fase } : x)), clientes: e.clientes.map(c => (c.id === p?.cliente_id ? { ...c, fase } : c)) };
       }, () => chama('PATCH', `projetos/${id}`, { fase })),
+      criaCliente: async c => {
+        const id = 'novo-' + Date.now().toString(36);
+        let final: string | null = id;
+        const ok = await grava(e => ({ ...e, clientes: [...e.clientes, { ...c, id, fase: 0 }] }), () => chama<Cliente>('POST', 'clientes', c).then(r => { final = r.id; return r; }),
+          (e, r) => ({ ...e, clientes: e.clientes.map(x => (x.id === id ? r : x)) }));
+        return ok ? final : null;
+      },
+      criaProjeto: async (cliente_id, nome) => {
+        const id = 'novo-' + Date.now().toString(36), inicio = hojeLocal();
+        const iniciais: Tarefa[] = missoesIniciais(nome).map(t => ({ ...t, id: tmp(), detalhe: '', estado: 'fila', projeto_id: id }));
+        let final: string | null = id;
+        const ok = await grava(e => ({ ...e, projetos: [...e.projetos, { id, cliente_id, nome, fase: 0, dia: 1, mesa: null, inicio }], tarefas: [...e.tarefas, ...iniciais],
+          clientes: e.clientes.map(c => (c.id === cliente_id ? { ...c, fase: 0 } : c)) }),
+          () => chama<{ projeto: Projeto; missoes: Tarefa[] }>('POST', 'projetos', { cliente_id, nome }).then(r => { final = r.projeto.id; return r; }),
+          (e, r) => { return { ...e, projetos: e.projetos.map(x => (x.id === id ? r.projeto : x)),
+            tarefas: [...e.tarefas.filter(t => t.projeto_id !== id), ...r.missoes] }; });
+        return ok ? final : null;
+      },
       criaReuniao: async r => { const id = tmp(); return grava(e => ({ ...e, reunioes: [...e.reunioes, { ...r, id, status: 'agendada' as const, ata: '' }].sort((a, b) => (a.dia + a.hora).localeCompare(b.dia + b.hora)) }), () => chama<Reuniao>('POST', 'reunioes', r), (e, n) => ({ ...e, reunioes: e.reunioes.map(x => (x.id === id ? n : x)) })); },
       gravaAta: async (id, ata) => grava(e => ({ ...e, reunioes: e.reunioes.map(x => (x.id === id ? { ...x, ata, status: 'feita' } : x)) }), () => chama('PUT', `reunioes/${id}/ata`, { ata })),
       criaDecisao: async d => { const id = tmp(); return grava(e => ({ ...e, decisoes: [{ ...d, id, criado_em: agora() }, ...e.decisoes] }), () => chama<Decisao>('POST', 'decisoes', d), (e, n) => ({ ...e, decisoes: e.decisoes.map(x => (x.id === id ? n : x)) })); },

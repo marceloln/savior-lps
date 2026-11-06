@@ -11,7 +11,7 @@ import { ZONAS } from '../lib/lab';
 import { EQUIPE } from '../lib/equipe';
 
 type Aberto =
-  | { tipo: 'aba'; aba: Aba } | { tipo: 'ficha'; id: string; aba?: 'visao' | 'instrucoes' | 'memoria'; foca?: boolean }
+  | { tipo: 'aba'; aba: Aba; novo?: boolean } | { tipo: 'ficha'; id: string; aba?: 'visao' | 'instrucoes' | 'memoria'; foca?: boolean }
   | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | null;
 
 const SOBRE_ABA: Record<Aba, string> = {
@@ -77,7 +77,7 @@ export function Lab() {
       const ilustracao = {
         missoes: null,
         clientes: <figure className="foto-colada"><img src="assets/mesa_postos.webp" alt="" /><figcaption>A mesa do método</figcaption></figure>,
-        projetos: p ? <><figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure><FasesIlustradas fase={p.fase} /></> : null,
+        projetos: p ? <>{p.mesa && <figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure>}<FasesIlustradas fase={p.fase} /></> : null,
         pessoas: <p className="nota-mao">Dezessete especialistas, cada um com mesa, papel e memória própria.</p>,
         lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><p className="nota-mao">Um deck de madeira solto no campus, com salas de vidro para reunião e protótipo.</p></>,
         agenda: <p className="nota-mao">Toda reunião termina com ata. Se não teve decisão, foi conversa.</p>,
@@ -87,7 +87,7 @@ export function Lab() {
       }[a];
       const corpo = {
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes abreProjeto={abreProjeto} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes />, trofeus: <Trofeus />,
+        clientes: <Clientes abreProjeto={abreProjeto} novo={aberto.novo} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes />, trofeus: <Trofeus />,
         pessoas: <ul className="elenco">{EQUIPE.map(e => <li key={e.id}><button onClick={() => { setEscolhido(e.id); setZona(e.zona); setAberto({ tipo: 'ficha', id: e.id }); }}><Retrato id={e.id} tamanho={44} /><span><b>{e.nome}</b><small>{e.papel}</small></span></button></li>)}</ul>,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = EQUIPE.filter(e => e.zona === z.id).length;
@@ -105,7 +105,7 @@ export function Lab() {
       const p = EQUIPE.find(e => e.id === aberto.id)!;
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');
       livro = <Livro titulo={p.id === 'clara' ? 'Briefing com a Clara' : `Conversa com ${p.nome}`} sobre={p.id === 'clara' ? 'Uma pergunta por vez, até fechar o pedido.' : p.papel} aoFechar={fecha}
-        ilustracao={<><Retrato id={p.id} tamanho={120} />{dela.length > 0 && <div className="contexto"><h4>Nas mãos de {p.nome}</h4><ul>{dela.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul></div>}</>}>
+        ilustracao={<><Retrato id={p.id} tamanho={120} />{p.id === 'clara' && <button className="primario cadastrar" onClick={() => setAberto({ tipo: 'aba', aba: 'clientes', novo: true })}>Cadastrar o cliente deste briefing</button>}{dela.length > 0 && <div className="contexto"><h4>Nas mãos de {p.nome}</h4><ul>{dela.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul></div>}</>}>
         <Chat agente={p.id} setAgente={id => setAberto({ tipo: 'conversa', id })} so /></Livro>;
     } else if (aberto.tipo === 'sala') {
       const z = ZONAS.find(q => q.id === aberto.id)!;

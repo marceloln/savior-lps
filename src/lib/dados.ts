@@ -14,6 +14,13 @@ export type EstadoLab = {
 
 export const FASES = ['Diagnóstico', 'Co-criação', 'Execução', 'Legado'] as const;
 
+/** Primeiras missões de todo projeto novo: o diagnóstico já sai andando. */
+export const missoesIniciais = (projeto: string): { agente: string; titulo: string }[] => [
+  { agente: 'rui', titulo: `Kickoff e calendário do diagnóstico de ${projeto}` },
+  { agente: 'lia', titulo: `Roteiro de entrevistas de campo para ${projeto}` },
+  { agente: 'davi', titulo: `Referências do setor para ${projeto}` },
+];
+
 /** Soma dias a uma data AAAA-MM-DD. */
 export function somaDias(data: string, n: number): string {
   const d = new Date(data + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10);

@@ -1,5 +1,5 @@
 // Rotas de dados do lab sobre o D1. Cada rota valida, grava e devolve o registro como ficou.
-import { diaDoCiclo, semente, type EstadoLab } from '../src/lib/dados';
+import { diaDoCiclo, missoesIniciais, semente, type EstadoLab } from '../src/lib/dados';
 import * as V from './validacao';
 
 type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string };
@@ -73,6 +73,23 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   if (caminho === '/api/conexoes' && m === 'GET') {
     const n = await db.prepare('SELECT COUNT(*) AS n FROM mensagens').first<{ n: number }>().catch(() => null);
     return json({ banco: n !== null, chave: Boolean(env.ANTHROPIC_API_KEY), mensagens: n?.n ?? 0 });
+  }
+  if (caminho === '/api/clientes' && m === 'POST') {
+    const v = V.novoCliente(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const id = `${V.slug(v.v.setor)}-${Date.now().toString(36)}`;
+    const r = await db.prepare('INSERT INTO clientes (id, setor, situacao) VALUES (?, ?, ?) RETURNING id, setor, situacao, fase').bind(id, v.v.setor, v.v.situacao).first();
+    return json(r, 201);
+  }
+  if (caminho === '/api/projetos' && m === 'POST') {
+    const v = V.novoProjeto(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    if (!(await db.prepare('SELECT 1 FROM clientes WHERE id = ?').bind(v.v.cliente_id).first())) return ruim('Esse cliente não existe.');
+    const id = `${V.slug(v.v.nome)}-${Date.now().toString(36)}`, inicio = V.hojeBrasil();
+    const [pr, ...ms] = await db.batch([
+      db.prepare('INSERT INTO projetos (id, cliente_id, nome, fase, dia, mesa, inicio) VALUES (?, ?, ?, 0, 1, NULL, ?) RETURNING id, cliente_id, nome, fase, dia, mesa, inicio').bind(id, v.v.cliente_id, v.v.nome, inicio),
+      ...missoesIniciais(v.v.nome).map(t => db.prepare('INSERT INTO missoes (agente, titulo, projeto_id) VALUES (?, ?, ?) RETURNING id, agente, titulo, detalhe, estado, projeto_id').bind(t.agente, t.titulo, id)),
+    ]);
+    await db.prepare('UPDATE clientes SET fase = 0 WHERE id = ?').bind(v.v.cliente_id).run();
+    return json({ projeto: pr.results[0], missoes: ms.map(x => x.results[0]) }, 201);
   }
   if (caminho === '/api/tarefas' && m === 'POST') {
     const v = V.novaTarefa(await corpo(req)); if (!v.ok) return ruim(v.erro);

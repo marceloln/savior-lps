@@ -73,3 +73,24 @@ export function mudancaProjeto(c: unknown): Ok<{ fase: number }> | Falha {
   const f = (c as Record<string, unknown> | null)?.fase;
   return Number.isInteger(f) && (f as number) >= 0 && (f as number) <= 3 ? { ok: true, v: { fase: f as number } } : falha('Fase inválida.');
 }
+
+/** Identificador legível a partir de um texto: minúsculas, sem acento, com hífen. */
+export function slug(t: string): string {
+  return t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'item';
+}
+
+export function novoCliente(c: unknown): Ok<{ setor: string; situacao: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>;
+  const setor = texto(o.setor, 120), situacao = texto(o.situacao, 300);
+  if (setor.length < 3) return falha('Diga o setor do cliente.');
+  if (situacao.length < 3) return falha('Conte a situação do cliente em uma frase.');
+  return { ok: true, v: { setor, situacao } };
+}
+
+export function novoProjeto(c: unknown): Ok<{ cliente_id: string; nome: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>;
+  const nome = texto(o.nome, 120);
+  if (typeof o.cliente_id !== 'string' || !o.cliente_id) return falha('Escolha o cliente do projeto.');
+  if (nome.length < 3) return falha('Dê um nome ao projeto.');
+  return { ok: true, v: { cliente_id: o.cliente_id, nome } };
+}
