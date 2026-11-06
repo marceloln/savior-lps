@@ -142,7 +142,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
   const minhas = escolhido ? estado.tarefas.filter(t => t.agente === escolhido.id) : [];
   const feitas = minhas.filter(t => t.estado === 'feito').length, notas = escolhido ? estado.memorias.filter(m => m.agente === escolhido.id).length : 0;
   const agora = minhas.find(t => t.estado === 'fazendo'), fila = minhas.filter(t => t.estado === 'fila').length;
-  const situacao = !escolhido ? '' : agora ? `${escolhido.nome} está em ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
+  const situacao = !escolhido ? '' : agora ? `Agora: ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
     : fila ? `${escolhido.nome} tem ${fila} ${fila === 1 ? 'missão' : 'missões'} na fila. Abra Missão para começar.` : `${escolhido.nome} está livre. Dê uma missão.`;
   return (
     <section className="console madeira" aria-label="Console">

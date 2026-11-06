@@ -18,9 +18,9 @@ export const hojeBrasil = (agora = Date.now()) => new Date(agora - 3 * 3600e3).t
 
 export function novaTarefa(c: unknown): Ok<{ agente: string; titulo: string; detalhe: string; projeto_id: string | null }> | Falha {
   const o = (c ?? {}) as Record<string, unknown>;
-  if (!ehAgente(o.agente)) return falha('Escolha quem faz a tarefa.');
+  if (!ehAgente(o.agente)) return falha('Escolha quem faz a missão.');
   const titulo = texto(o.titulo, 200);
-  if (!titulo) return falha('A tarefa precisa de um título.');
+  if (!titulo) return falha('A missão precisa de um título.');
   return { ok: true, v: { agente: o.agente, titulo, detalhe: texto(o.detalhe, 2000), projeto_id: typeof o.projeto_id === 'string' && o.projeto_id ? o.projeto_id : null } };
 }
 

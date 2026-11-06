@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import * as V from './validacao';
 
 describe('validação da API', () => {
-  it('tarefa precisa de dono e título', () => {
-    expect(V.novaTarefa({ titulo: 'x' })).toEqual({ ok: false, erro: 'Escolha quem faz a tarefa.' });
+  it('missão precisa de dono e título', () => {
+    expect(V.novaTarefa({ titulo: 'x' })).toEqual({ ok: false, erro: 'Escolha quem faz a missão.' });
     expect(V.novaTarefa({ agente: 'rui', titulo: '   ' }).ok).toBe(false);
     expect(V.novaTarefa({ agente: 'rui', titulo: ' Agenda ', projeto_id: '' })).toEqual({ ok: true, v: { agente: 'rui', titulo: 'Agenda', detalhe: '', projeto_id: null } });
   });

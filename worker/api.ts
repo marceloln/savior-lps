@@ -104,7 +104,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
     const v = V.mudancaTarefa(await corpo(req)); if (!v.ok) return ruim(v.erro);
     const campos = Object.keys(v.v), valores = Object.values(v.v);
     const r = await db.prepare(`UPDATE missoes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? RETURNING id, agente, titulo, detalhe, estado, projeto_id`).bind(...valores, Number(x[1])).first();
-    return r ? json(r) : ruim('Tarefa não encontrada.', 404);
+    return r ? json(r) : ruim('Missão não encontrada.', 404);
   }
   if (x && m === 'DELETE') {
     const r = await db.prepare('DELETE FROM missoes WHERE id = ?').bind(Number(x[1])).run();

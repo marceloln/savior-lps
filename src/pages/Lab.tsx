@@ -16,7 +16,7 @@ type Aberto =
 
 const SOBRE_ABA: Record<Aba, string> = {
   missoes: 'O que a equipe tem nas mãos agora.',
-  clientes: 'Por setor e situação, nunca pelo nome.', projetos: 'A mesa do método e as tarefas de cada projeto.',
+  clientes: 'Por setor e situação, nunca pelo nome.', projetos: 'A mesa do método e as missões de cada projeto.',
   pessoas: 'Quem está no lab e o que cada um faz.', lugares: 'A planta do open space. Clique numa sala para abrir.',
   agenda: 'Reuniões com ata e decisão.', decisoes: 'O que foi resolvido e por quê.',
   memoria: 'O que cada especialista já sabe sobre vocês.', conexoes: 'O que está ligado ao lab agora.', trofeus: 'O que a equipe já entregou.',

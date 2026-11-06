@@ -97,11 +97,11 @@ function Kanban({ projeto }: { projeto: Projeto }) {
         })}
       </div>
       <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!titulo.trim()) return; criaTarefa({ agente, titulo: titulo.trim(), projeto_id: projeto.id }); setTitulo(''); }}>
-        <label className="so-leitor" htmlFor="nt">Nova tarefa</label>
-        <input id="nt" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Nova tarefa para este projeto" maxLength={200} />
+        <label className="so-leitor" htmlFor="nt">Nova missão</label>
+        <input id="nt" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Nova missão para este projeto" maxLength={200} />
         <label className="so-leitor" htmlFor="nd">Quem faz</label>
         <select id="nd" value={agente} onChange={e => setAgente(e.target.value)}>{EQUIPE.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}</select>
-        <button type="submit" disabled={!titulo.trim()}>Criar tarefa</button>
+        <button type="submit" disabled={!titulo.trim()}>Dar missão</button>
       </form>
     </>
   );
@@ -131,7 +131,7 @@ export function Projetos({ inicial }: { inicial?: string }) {
       <div className="resumo-proj">
         <div><span className="rotulo">Projeto</span><b>{p.nome}</b></div>
         <div><span className="rotulo">Ciclo</span><b>Dia {p.dia} de 30</b></div>
-        <div><span className="rotulo">Tarefas</span><b>{feitas} de {total} feitas</b></div>
+        <div><span className="rotulo">Missões</span><b>{feitas} de {total} feitas</b></div>
       </div>
       {c && <p className="situacao">{c.situacao}</p>}
       {p.fase < FASES.length - 1 && (
@@ -240,8 +240,8 @@ export function Trofeus() {
   const { estado } = useEstado();
   const feitas = estado.tarefas.filter(t => t.estado === 'feito').length;
   const lista = [
-    { nome: 'Primeira entrega', meta: 1, atual: feitas, txt: 'Concluir uma tarefa' },
-    { nome: 'Semana redonda', meta: 10, atual: feitas, txt: 'Concluir dez tarefas' },
+    { nome: 'Primeira entrega', meta: 1, atual: feitas, txt: 'Concluir uma missão' },
+    { nome: 'Semana redonda', meta: 10, atual: feitas, txt: 'Concluir dez missões' },
     { nome: 'Lab conversando', meta: 5, atual: estado.conversas, txt: 'Cinco respostas de especialistas' },
     { nome: 'Decisão registrada', meta: 3, atual: estado.decisoes.length, txt: 'Três decisões no registro' },
     { nome: 'Memória viva', meta: 5, atual: estado.memorias.length, txt: 'Cinco notas na memória da equipe' },
