@@ -123,6 +123,31 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
     await db.prepare('UPDATE clientes SET fase = ? WHERE id = ?').bind(v.v.fase, p.cliente_id).run();
     return json({ ok: true });
   }
+  x = caminho.match(/^\/api\/reunioes\/(\d+)$/);
+  if (x && m === 'PATCH') {
+    const v = V.mudancaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const campos = Object.keys(v.v);
+    const r = await db.prepare(`UPDATE reunioes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? AND status = 'agendada' RETURNING id`).bind(...Object.values(v.v), Number(x[1])).first();
+    return r ? json({ ok: true }) : ruim('Só dá para remarcar reunião que ainda não aconteceu.', 404);
+  }
+  if (x && m === 'DELETE') {
+    const [, r] = await db.batch([
+      db.prepare('UPDATE decisoes SET reuniao_id = NULL WHERE reuniao_id = ?').bind(Number(x[1])),
+      db.prepare('DELETE FROM reunioes WHERE id = ?').bind(Number(x[1])),
+    ]);
+    return r.meta.changes ? json({ ok: true }) : ruim('Reunião não encontrada.', 404);
+  }
+  x = caminho.match(/^\/api\/decisoes\/(\d+)$/);
+  if (x && m === 'PATCH') {
+    const v = V.mudancaDecisao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const campos = Object.keys(v.v);
+    const r = await db.prepare(`UPDATE decisoes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? RETURNING id`).bind(...Object.values(v.v), Number(x[1])).first();
+    return r ? json({ ok: true }) : ruim('Decisão não encontrada.', 404);
+  }
+  if (x && m === 'DELETE') {
+    const r = await db.prepare('DELETE FROM decisoes WHERE id = ?').bind(Number(x[1])).run();
+    return r.meta.changes ? json({ ok: true }) : ruim('Decisão não encontrada.', 404);
+  }
   x = caminho.match(/^\/api\/reunioes\/(\d+)\/ata$/);
   if (x && m === 'PUT') {
     const v = V.ata(await corpo(req)); if (!v.ok) return ruim(v.erro);

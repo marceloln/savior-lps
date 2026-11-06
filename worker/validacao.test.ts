@@ -45,4 +45,11 @@ describe('validação da API', () => {
     expect(V.novoProjeto({ cliente_id: 'postos', nome: 'Piloto' }).ok).toBe(true);
     expect(V.novoProjeto({ nome: 'Piloto' }).ok).toBe(false);
   });
+  it('remarcar reunião e editar decisão validam o que muda', () => {
+    expect(V.mudancaReuniao({ dia: '2026-12-01', hora: '09:00' }).ok).toBe(true);
+    expect(V.mudancaReuniao({ dia: '2026-02-30' }).ok).toBe(false);
+    expect(V.mudancaReuniao({}).ok).toBe(false);
+    expect(V.mudancaDecisao({ titulo: '  ' }).ok).toBe(false);
+    expect(V.mudancaDecisao({ contexto: 'Porque sim' })).toEqual({ ok: true, v: { contexto: 'Porque sim' } });
+  });
 });

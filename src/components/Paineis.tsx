@@ -6,6 +6,13 @@ import { Retrato } from './Retrato';
 
 const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
 const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
+/** Botão de apagar que pede confirmação no próprio lugar, sem janela por cima. */
+function Apagar({ oque, apaga }: { oque: string; apaga: () => void }) {
+  const [certo, setCerto] = useState(false);
+  if (!certo) return <button className="leve mini" onClick={() => setCerto(true)} aria-label={`Apagar ${oque}`}>Apagar</button>;
+  return <span className="confirma">Apagar de vez?<button className="perigo mini" onClick={apaga}>Apagar</button><button className="leve mini" onClick={() => setCerto(false)}>Manter</button></span>;
+}
+
 const COLUNAS: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
 export function AvisoPrevia() {
@@ -149,7 +156,8 @@ export function Projetos({ inicial }: { inicial?: string }) {
 }
 
 export function Agenda({ com }: { com?: string[] }) {
-  const { estado, criaReuniao, gravaAta, criaDecisao } = useEstado();
+  const { estado, criaReuniao, gravaAta, criaDecisao, mudaReuniao, apagaReuniao } = useEstado();
+  const [remarca, setRemarca] = useState<{ id: number; dia: string; hora: string } | null>(null);
   const [nova, setNova] = useState(!!com);
   const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: com ?? [] as string[], projeto_id: '' });
   const [ataDe, setAtaDe] = useState<number | null>(null), [ata, setAta] = useState(''), [decisao, setDecisao] = useState('');
@@ -185,7 +193,15 @@ export function Agenda({ com }: { com?: string[] }) {
       {proximas.map(r => (
         <article key={r.id} className="reuniao">
           <div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div>
-          <div className="o-que"><h4>{r.titulo}</h4>{r.pauta && <p>{r.pauta}</p>}<div className="rostos">{r.participantes.map(p => <Retrato key={p} id={p} tamanho={24} />)}</div></div>
+          <div className="o-que"><h4>{r.titulo}</h4>{r.pauta && <p>{r.pauta}</p>}<div className="rostos">{r.participantes.map(p => <Retrato key={p} id={p} tamanho={24} />)}</div>
+            {remarca?.id === r.id ? (
+              <form className="linha remarca" onSubmit={async e => { e.preventDefault(); if (await mudaReuniao(r.id, { dia: remarca.dia, hora: remarca.hora })) setRemarca(null); }}>
+                <label>Dia<input type="date" value={remarca.dia} onChange={e => setRemarca({ ...remarca, dia: e.target.value })} /></label>
+                <label>Hora<input type="time" value={remarca.hora} onChange={e => setRemarca({ ...remarca, hora: e.target.value })} /></label>
+                <button className="primario mini" type="submit">Salvar</button><button type="button" className="leve mini" onClick={() => setRemarca(null)}>Desistir</button>
+              </form>
+            ) : r.id > 0 && <div className="linha acoes-reuniao"><button className="leve mini" onClick={() => setRemarca({ id: r.id, dia: r.dia, hora: r.hora })}>Remarcar</button><Apagar oque={r.titulo} apaga={() => apagaReuniao(r.id)} /></div>}
+          </div>
           {r.dia > hoje ? <span className="ainda">Ata abre no dia</span> : ataDe !== r.id ? <button className="leve" onClick={() => { setAtaDe(r.id); setAta(''); }}>Registrar ata</button> : (
             <form className="form-ata" onSubmit={e => { e.preventDefault(); fecha(r.id, r.projeto_id); }}>
               <label>Ata<textarea rows={3} value={ata} onChange={e => setAta(e.target.value)} placeholder="O que foi falado, em poucas linhas" /></label>
@@ -196,13 +212,14 @@ export function Agenda({ com }: { com?: string[] }) {
         </article>
       ))}
       <h3 className="secao">Feitas</h3>
-      {feitas.map(r => <article key={r.id} className="reuniao feita"><div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div><div className="o-que"><h4>{r.titulo}</h4><p>{r.ata}</p></div></article>)}
+      {feitas.map(r => <article key={r.id} className="reuniao feita"><div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div><div className="o-que"><h4>{r.titulo}</h4><p>{r.ata}</p>{r.id > 0 && <div className="linha acoes-reuniao"><Apagar oque={r.titulo} apaga={() => apagaReuniao(r.id)} /></div>}</div></article>)}
     </div>
   );
 }
 
 export function Decisoes() {
-  const { estado, criaDecisao } = useEstado();
+  const { estado, criaDecisao, mudaDecisao, apagaDecisao } = useEstado();
+  const [edita, setEdita] = useState<{ id: number; titulo: string; contexto: string } | null>(null);
   const [t, setT] = useState(''), [c, setC] = useState(''), [p, setP] = useState('');
   return (
     <div className="decisoes">
@@ -217,7 +234,14 @@ export function Decisoes() {
       <ol className="linha-tempo">
         {estado.decisoes.map(d => (
           <li key={d.id}><time>{new Date(d.criado_em.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</time>
-            <div><b>{d.titulo}</b>{d.contexto && <p>{d.contexto}</p>}{d.projeto_id && <small>{estado.projetos.find(x => x.id === d.projeto_id)?.nome}</small>}</div></li>
+            {edita?.id === d.id ? (
+              <form className="form-decisao" onSubmit={async e => { e.preventDefault(); if (await mudaDecisao(d.id, { titulo: edita.titulo, contexto: edita.contexto })) setEdita(null); }}>
+                <label>O que foi decidido<input value={edita.titulo} onChange={e => setEdita({ ...edita, titulo: e.target.value })} /></label>
+                <label>Por quê<input value={edita.contexto} onChange={e => setEdita({ ...edita, contexto: e.target.value })} /></label>
+                <div className="linha"><button className="primario mini" type="submit" disabled={!edita.titulo.trim()}>Salvar</button><button type="button" className="leve mini" onClick={() => setEdita(null)}>Desistir</button></div>
+              </form>
+            ) : <div><b>{d.titulo}</b>{d.contexto && <p>{d.contexto}</p>}{d.projeto_id && <small>{estado.projetos.find(x => x.id === d.projeto_id)?.nome}</small>}
+              {d.id > 0 && <div className="linha acoes-reuniao"><button className="leve mini" onClick={() => setEdita({ id: d.id, titulo: d.titulo, contexto: d.contexto })}>Editar</button><Apagar oque={d.titulo} apaga={() => apagaDecisao(d.id)} /></div>}</div>}</li>
         ))}
       </ol>
     </div>

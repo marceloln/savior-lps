@@ -94,3 +94,18 @@ export function novoProjeto(c: unknown): Ok<{ cliente_id: string; nome: string }
   if (nome.length < 3) return falha('Dê um nome ao projeto.');
   return { ok: true, v: { cliente_id: o.cliente_id, nome } };
 }
+
+export function mudancaReuniao(c: unknown): Ok<{ dia?: string; hora?: string; titulo?: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>, v: { dia?: string; hora?: string; titulo?: string } = {};
+  if (o.dia !== undefined) { if (!dataReal(o.dia)) return falha('Data inválida.'); v.dia = o.dia; }
+  if (o.hora !== undefined) { if (typeof o.hora !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(o.hora)) return falha('Hora inválida.'); v.hora = o.hora; }
+  if (o.titulo !== undefined) { const t = texto(o.titulo, 160); if (t.length < 3) return falha('O assunto precisa de pelo menos 3 letras.'); v.titulo = t; }
+  return Object.keys(v).length ? { ok: true, v } : falha('Nada para mudar.');
+}
+
+export function mudancaDecisao(c: unknown): Ok<{ titulo?: string; contexto?: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>, v: { titulo?: string; contexto?: string } = {};
+  if (o.titulo !== undefined) { const t = texto(o.titulo, 200); if (!t) return falha('Escreva o que foi decidido.'); v.titulo = t; }
+  if (o.contexto !== undefined) v.contexto = texto(o.contexto, 2000);
+  return Object.keys(v).length ? { ok: true, v } : falha('Nada para mudar.');
+}

@@ -281,3 +281,6 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 .troca-fase{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 var(--s3)}.troca-fase span{font-size:14px;flex-basis:100%}
 .fase.conversa{background:#E4E0D2;color:var(--tinta-2)}.sem-projeto{color:var(--texto-2);font-size:13px}
 .ajuda{margin:0;font-size:13px;color:var(--texto-2)}.cadastrar{margin-top:var(--s3)}
+.acoes-reuniao{margin-top:6px;gap:6px}.remarca{margin-top:6px;flex-wrap:wrap;align-items:flex-end;gap:6px}.remarca label{font-size:12px;display:flex;flex-direction:column}
+.confirma{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.perigo{border:1.5px solid #9E3B2A;background:#B5472F;color:#FBF3E4;border-radius:8px;font-weight:700}
