@@ -1,6 +1,6 @@
 # Issues
 
-Enquanto o repositório no GitHub não existe, as issues ficam aqui. Cada uma vira issue de verdade quando o repo for criado.
+As issues vivem aqui e no GitHub do repositório, com o mesmo número no título. A auditoria completa está em docs/auditoria.md.
 
 ## #1 Base do projeto
 React 18, TypeScript, Vite e PixiJS 8. Estrutura pages, hooks, components, lib. Vitest para a lib.
@@ -114,3 +114,51 @@ Revisão de UX e UI das telas. Cada painel precisa levar a uma ação.
 - Missão repetida para a mesma pessoa é recusada
 - Celular: aba Missões, faixa de abas com fim esmaecido, botões do console mais altos
 - Livro prende o Tab dentro dele; botão de soltar maior; texto secundário mais escuro
+
+## #26 Defeitos da auditoria
+- O livro rouba o foco do campo de missão logo depois que ele abre
+- Servidor aceita missão repetida para a mesma pessoa
+- Missão com projeto inexistente derruba a rota com erro 500
+- Apagar missão inexistente responde como se tivesse apagado
+- Servidor aceita ata de reunião futura e datas impossíveis
+Pronto quando: os testes da API cobrem cada caso e o teste da interface digita a missão logo depois de abrir.
+
+## #27 Acesso fechado antes de publicar
+Cloudflare Access na frente do Worker, só para a equipe. Limite de mensagens por minuto na conversa para proteger a chave.
+Pronto quando: sem login a página e a API recusam, e a conversa recusa rajada com aviso claro.
+
+## #28 Cliente e projeto pela interface
+Cadastrar cliente por setor e situação, abrir projeto ligado a ele. O briefing da Clara termina com um resumo e um botão que cria o cliente e o projeto já com as primeiras missões de diagnóstico.
+Pronto quando: um cliente novo nasce do briefing e aparece em Clientes e Projetos.
+
+## #29 Ciclo do projeto anda sozinho
+Projeto guarda a data de início. O dia do ciclo é calculado. A fase avança por botão no projeto, com aviso quando ainda há missão aberta da fase.
+Pronto quando: teste cobre o cálculo do dia e a troca de fase grava no banco.
+
+## #30 Dados consistentes
+Semente nova descrita em docs/auditoria.md, com datas relativas ao dia em que o banco é semeado, missões coerentes com a fase, reuniões com ata ligadas às decisões, memórias e instruções. Rota de desenvolvimento para semear de novo o banco local.
+Pronto quando: o lab conta a mesma história em todas as abas e as datas nunca envelhecem.
+
+## #31 Cadeiras e estações de trabalho
+Cadeira de escritório em cada mesa, mesas na altura de quem trabalha sentado, pessoas sentadas digitando quando estão na mesa.
+Pronto quando: ninguém trabalha em pé no render e as pessoas se sentam e levantam ao sair.
+
+## #32 Personagens novos
+Modelo com roupa de escritório, cabelo variado, sapato, óculos e acessórios. Mulheres e homens distintos. Mesma câmera e 8 direções, com poses parado, andar e sentado digitando.
+Pronto quando: cada um dos 17 é reconhecível pelo retrato e pelo mapa.
+
+## #33 Ficha com a pessoa na estação
+A página da esquerda da ficha mostra a pessoa sentada na própria estação, com a cor da sala, renderizada no Blender.
+Pronto quando: as 17 fichas abrem com a cena da pessoa.
+
+## #34 Vocabulário e textos
+Missão em todos os lugares, nunca tarefa. Console com frase natural para o que a pessoa faz agora.
+
+## #35 Publicação
+Pull request das branches empilhadas para a main, revisão, segredo da chave da Anthropic no Worker e primeiro deploy pela main. Depende da #27.
+
+## #36 Pendências visuais
+Nomes legíveis na planta de Lugares, página da esquerda útil na ficha e na Agenda, confirmar o balanço das árvores num navegador normal.
+
+## #37 Corrigir reunião e decisão
+Editar e apagar reunião e decisão lançadas errado, pela API e pela interface.
