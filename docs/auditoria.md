@@ -221,6 +221,7 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 | #35 Publicação | Com o sócio: Access, chave e pull request | |
 | #36 Pendências visuais | Planta numerada e próxima reunião feitas; ficha depende da #33 | feature/pendencias-visuais |
 | #37 Corrigir reunião e decisão | Feito | feature/corrige-reuniao |
+| #38 Postura dos personagens (issue 15 no GitHub) | Corcunda corrigida: o tronco mantém a curva do próprio modelo, parado parte do repouso ereto com os braços soltos, andando com a cabeça nivelada e sentado ereto com os cotovelos junto do corpo | feature/postura |
 
 Defeito achado no caminho: o Worker não sobe quando o módulo principal exporta uma constante solta. Corrigido na própria branch da #27.
-Testes automatizados: 43 passando.
+Testes automatizados: 46 passando.
