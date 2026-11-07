@@ -2,7 +2,7 @@
 import { diaDoCiclo, missoesIniciais, semente, type EstadoLab } from '../src/lib/dados';
 import * as V from './validacao';
 
-type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string };
+type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string; ACESSO_EQUIPE?: string; ACESSO_AUD?: string };
 const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 const ruim = (erro: string, status = 400) => json({ erro }, status);
 async function corpo(req: Request): Promise<unknown> { try { return await req.json(); } catch { return null; } }
@@ -78,7 +78,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   if (caminho === '/api/estado' && m === 'GET') return json(await lerEstado(db));
   if (caminho === '/api/conexoes' && m === 'GET') {
     const n = await db.prepare('SELECT COUNT(*) AS n FROM mensagens').first<{ n: number }>().catch(() => null);
-    return json({ banco: n !== null, chave: Boolean(env.ANTHROPIC_API_KEY), mensagens: n?.n ?? 0 });
+    return json({ banco: n !== null, chave: Boolean(env.ANTHROPIC_API_KEY), acesso: Boolean(env.ACESSO_EQUIPE && env.ACESSO_AUD), mensagens: n?.n ?? 0 });
   }
   if (caminho === '/api/clientes' && m === 'POST') {
     const v = V.novoCliente(await corpo(req)); if (!v.ok) return ruim(v.erro);

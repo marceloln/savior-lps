@@ -323,3 +323,18 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
   .console:not(.vazio-console) .console-acoes{gap:4px}.console:not(.vazio-console) .console-acoes button{width:56px}
 }
 @media (max-width:1280px) and (min-width:761px){.selos button{white-space:nowrap;font-size:13px}.selos .icone{display:none}}
+/* troféus como medalhas, conexões com o passo que falta */
+.trofeus{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.trofeus li{flex-direction:row;align-items:flex-start;gap:var(--s3)}
+.trofeus li>div{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.medalha{width:50px;height:50px;flex:none;border-radius:50%;display:grid;place-items:center;border:2px dashed rgba(59,47,37,.35);background:rgba(234,219,184,.5);opacity:.75}
+.trofeus li.ok .medalha{opacity:1;border:2px solid #8C6A3A;background:radial-gradient(circle at 35% 30%,#F3D58A,#C99A3A 70%);box-shadow:0 3px 0 rgba(90,60,20,.35),inset 0 0 0 3px rgba(255,240,200,.45)}
+.trofeus li.proximo{border-color:var(--ouro);border-style:dashed}
+.trofeus li.proximo .medalha{opacity:1;border-color:var(--ouro)}
+.trofeus li.proximo .conta{color:#8C6A3A;font-weight:700}
+.conexoes li{align-items:flex-start}
+.conexoes li>div{flex:1;min-width:0}.conexoes li .ponto{margin-top:5px}
+.conexoes small{line-height:1.4}
+.situacao-conexao{font:700 11px var(--corpo);text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:4px;background:#F2DFA6;color:#6B4E1E;white-space:nowrap}
+.conexoes li.ok .situacao-conexao{background:#D8E6C8;color:#3E5E2A}
+.conexoes li.ok{background:rgba(216,230,200,.25)}
