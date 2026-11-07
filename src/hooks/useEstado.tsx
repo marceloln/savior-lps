@@ -3,7 +3,7 @@ import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type E
 
 type Modo = 'carregando' | 'banco' | 'previa';
 type Api = {
-  estado: EstadoLab; modo: Modo; aviso: string | null; limpaAviso: () => void;
+  estado: EstadoLab; modo: Modo; motivo: string | null; aviso: string | null; limpaAviso: () => void;
   criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'>) => Promise<void>;
   mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente'>>) => Promise<void>;
   apagaTarefa: (id: number) => Promise<void>;
@@ -37,13 +37,16 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<EstadoLab>(SEMENTE);
   const [modo, setModo] = useState<Modo>('carregando');
   const [aviso, setAviso] = useState<string | null>(null);
+  const [motivo, setMotivo] = useState<string | null>(null);   // por que caiu em prévia, dito pelo servidor
 
   useEffect(() => {
-    chama<EstadoLab>('GET', 'estado').then(e => { setEstado(e); setModo('banco'); }).catch(() => setModo('previa'));
+    chama<EstadoLab>('GET', 'estado').then(e => { setEstado(e); setModo('banco'); }).catch((e: Error) => { setMotivo(e instanceof TypeError ? null : e.message); setModo('previa'); });
   }, []);
 
   // grava no banco; em prévia só muda na tela. Se o banco recusar, desfaz e avisa.
   const grava = useCallback(async <T,>(otimista: (e: EstadoLab) => EstadoLab, rede: () => Promise<T>, depois?: (e: EstadoLab, r: T) => EstadoLab) => {
+    // enquanto o banco não respondeu, a leitura sobrescreveria a mudança: melhor recusar e avisar
+    if (modo === 'carregando') { setAviso('O lab ainda está carregando. Tente de novo em um instante.'); return false; }
     let anterior: EstadoLab | null = null;
     setEstado(e => { anterior = e; return otimista(e); });
     if (modo !== 'banco') return true;
@@ -54,7 +57,7 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
   const api = useMemo<Api>(() => {
     const tmp = () => -Math.floor(Math.random() * 1e9);
     return {
-      estado, modo, aviso, limpaAviso: () => setAviso(null),
+      estado, modo, motivo, aviso, limpaAviso: () => setAviso(null),
       criaTarefa: async t => {
         if (estado.tarefas.some(x => x.agente === t.agente && x.estado !== 'feito' && x.titulo.trim().toLowerCase() === t.titulo.trim().toLowerCase())) { setAviso('Essa missão já está aberta com essa pessoa.'); return; }
         const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...t, id, detalhe: '', estado: 'fila' }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
@@ -93,7 +96,7 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
       criaMemoria: async (agente, texto, origem = 'manual') => { const id = tmp(); return grava(e => ({ ...e, memorias: [{ id, agente, texto, origem, criado_em: agora() }, ...e.memorias] }), () => chama<Memoria>('POST', 'memorias', { agente, texto, origem }), (e, n) => ({ ...e, memorias: e.memorias.map(x => (x.id === id ? n : x)) })); },
       apagaMemoria: async id => { await grava(e => ({ ...e, memorias: e.memorias.filter(x => x.id !== id) }), () => chama('DELETE', `memorias/${id}`)); },
     };
-  }, [estado, modo, aviso, grava]);
+  }, [estado, modo, motivo, aviso, grava]);
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }
 

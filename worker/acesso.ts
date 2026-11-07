@@ -7,10 +7,12 @@ let cache: { em: number; chaves: Chave[] } | null = null;
 
 const b64url = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0));
 
-async function chaves(equipe: string): Promise<Chave[]> {
-  if (cache && Date.now() - cache.em < 3600e3) return cache.chaves;
+/** Chaves públicas do Access, guardadas por 1 hora. Resposta sem chaves não vai para o cache. */
+async function chaves(equipe: string, renova = false): Promise<Chave[]> {
+  if (!renova && cache && Date.now() - cache.em < 3600e3) return cache.chaves;
   const r = await fetch(`https://${equipe}.cloudflareaccess.com/cdn-cgi/access/certs`);
-  const j = await r.json<{ keys: Chave[] }>();
+  const j = await r.json<{ keys?: Chave[] }>().catch(() => null);
+  if (!Array.isArray(j?.keys) || !j.keys.length) return cache?.chaves ?? [];
   cache = { em: Date.now(), chaves: j.keys };
   return j.keys;
 }
@@ -23,11 +25,12 @@ export async function quemEntrou(req: Request, equipe: string, aud: string, agor
   if (!h || !p || !s) return null;
   try {
     const cab = JSON.parse(new TextDecoder().decode(b64url(h))) as { kid: string; alg: string };
-    const corpo = JSON.parse(new TextDecoder().decode(b64url(p))) as { aud: string | string[]; exp: number; iss: string; email?: string };
+    const corpo = JSON.parse(new TextDecoder().decode(b64url(p))) as { aud: string | string[]; exp: number; nbf?: number; iss: string; email?: string };
     if (cab.alg !== 'RS256') return null;
     const auds = Array.isArray(corpo.aud) ? corpo.aud : [corpo.aud];
-    if (!auds.includes(aud) || corpo.exp * 1000 < agora || corpo.iss !== `https://${equipe}.cloudflareaccess.com`) return null;
-    const k = (await chaves(equipe)).find(x => x.kid === cab.kid);
+    if (!auds.includes(aud) || corpo.exp * 1000 < agora || (corpo.nbf ?? 0) * 1000 > agora + 60e3 || corpo.iss !== `https://${equipe}.cloudflareaccess.com`) return null;
+    // chave nova do Access ainda fora do cache: busca de novo antes de recusar
+    const k = (await chaves(equipe)).find(x => x.kid === cab.kid) ?? (await chaves(equipe, true)).find(x => x.kid === cab.kid);
     if (!k) return null;
     const chave = await crypto.subtle.importKey('jwk', { kty: k.kty, n: k.n, e: k.e, alg: 'RS256', ext: true }, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
     const ok = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', chave, b64url(s), new TextEncoder().encode(`${h}.${p}`));

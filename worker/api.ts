@@ -6,6 +6,7 @@ type Env = { DB: D1Database; ANTHROPIC_API_KEY?: string };
 const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 const ruim = (erro: string, status = 400) => json({ erro }, status);
 async function corpo(req: Request): Promise<unknown> { try { return await req.json(); } catch { return null; } }
+const existe = async (db: D1Database, tabela: 'projetos' | 'reunioes', id: string | number) => !!(await db.prepare(`SELECT 1 FROM ${tabela} WHERE id = ?`).bind(id).first());
 
 /** Grava a história de exemplo se o banco estiver vazio. Roda na primeira leitura. */
 export async function semeia(db: D1Database) {
@@ -17,13 +18,18 @@ export async function semeia(db: D1Database) {
   for (const t of s.tarefas) st.push(db.prepare('INSERT INTO missoes (agente, titulo, detalhe, estado, projeto_id) VALUES (?, ?, ?, ?, ?)').bind(t.agente, t.titulo, t.detalhe, t.estado, t.projeto_id));
   for (const [agente, texto] of Object.entries(s.instrucoes)) st.push(db.prepare('INSERT OR REPLACE INTO instrucoes (agente, texto) VALUES (?, ?)').bind(agente, texto));
   for (const m of [...s.memorias].reverse()) st.push(db.prepare('INSERT INTO memorias (agente, texto, origem, criado_em) VALUES (?, ?, ?, ?)').bind(m.agente, m.texto, m.origem, m.criado_em));
-  await db.batch(st);
-  // reuniões primeiro, para cada decisão apontar para o id real de onde saiu
-  const ids = await db.batch(s.reunioes.map(r => db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id')
-    .bind(r.titulo, r.pauta, r.dia, r.hora, JSON.stringify(r.participantes), r.projeto_id, r.status, r.ata)));
-  const dec = s.reunioes.map((r, i) => ({ r, id: (ids[i].results[0] as { id: number }).id })).filter(x => x.r.decisao);
-  if (dec.length) await db.batch(dec.map(({ r, id }) => db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id, criado_em) VALUES (?, ?, ?, ?, ?)')
-    .bind(r.decisao!.titulo, r.decisao!.contexto, r.projeto_id, id, r.dia + ' 18:00:00')));
+  // banco vazio: as reuniões recebem id 1, 2, 3... e cada decisão já aponta para a reunião de onde saiu
+  s.reunioes.forEach((r, i) => {
+    st.push(db.prepare('INSERT INTO reunioes (id, titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(i + 1, r.titulo, r.pauta, r.dia, r.hora, JSON.stringify(r.participantes), r.projeto_id, r.status, r.ata));
+    if (r.decisao) st.push(db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id, criado_em) VALUES (?, ?, ?, ?, ?)')
+      .bind(r.decisao.titulo, r.decisao.contexto, r.projeto_id, i + 1, r.dia + ' 18:00:00'));
+  });
+  // um batch só é uma transação: ou semeia tudo ou nada. Se outra leitura semeou junto, esta perde a corrida e segue.
+  try { await db.batch(st); } catch (e) {
+    const outra = await db.prepare('SELECT COUNT(*) AS n FROM clientes').first<{ n: number }>();
+    if (!outra?.n) throw e;
+  }
 }
 
 export async function lerEstado(db: D1Database): Promise<EstadoLab> {
@@ -112,6 +118,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   }
   if (caminho === '/api/reunioes' && m === 'POST') {
     const v = V.novaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    if (v.v.projeto_id && !(await existe(db, 'projetos', v.v.projeto_id))) return ruim('Esse projeto não existe.');
     const r = await db.prepare('INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id) VALUES (?, ?, ?, ?, ?, ?) RETURNING id').bind(v.v.titulo, v.v.pauta, v.v.dia, v.v.hora, JSON.stringify(v.v.participantes), v.v.projeto_id).first<{ id: number }>();
     return json({ id: r!.id, ...v.v, status: 'agendada', ata: '' }, 201);
   }
@@ -159,6 +166,8 @@ export async function rotaDados(req: Request, env: Env, caminho: string): Promis
   }
   if (caminho === '/api/decisoes' && m === 'POST') {
     const v = V.novaDecisao(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    if (v.v.projeto_id && !(await existe(db, 'projetos', v.v.projeto_id))) return ruim('Esse projeto não existe.');
+    if (v.v.reuniao_id !== null && !(await existe(db, 'reunioes', v.v.reuniao_id))) return ruim('Essa reunião não existe.');
     const r = await db.prepare('INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id) VALUES (?, ?, ?, ?) RETURNING id, titulo, contexto, projeto_id, reuniao_id, criado_em').bind(v.v.titulo, v.v.contexto, v.v.projeto_id, v.v.reuniao_id).first();
     return json(r, 201);
   }

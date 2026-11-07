@@ -17,6 +17,7 @@ describe('acesso', () => {
     expect(await quemEntrou(req({ aud: 'outra', exp: 9e9, iss }), 'v30', 'aud')).toBeNull();
     expect(await quemEntrou(req({ aud: 'aud', exp: 1, iss }), 'v30', 'aud')).toBeNull();
     expect(await quemEntrou(req({ aud: 'aud', exp: 9e9, iss: 'https://outra.cloudflareaccess.com' }), 'v30', 'aud')).toBeNull();
+    expect(await quemEntrou(req({ aud: 'aud', exp: 9e9, nbf: 9e9, iss }), 'v30', 'aud')).toBeNull();
   });
   it('sem o Access configurado, só o computador local passa', async () => {
     expect(await portaria(new Request('http://localhost:8787/api/estado'))).toBeNull();

@@ -1,6 +1,8 @@
 {
   // Um Worker só: o build estático em dist/ e as rotas /api em worker/index.ts
   "name": "agencia-v30",
+  // ACESSO_EQUIPE e ACESSO_AUD ficam no painel; sem isto cada deploy apagaria as duas e o lab não abriria
+  "keep_vars": true,
   "main": "worker/index.ts",
   "compatibility_date": "2026-04-25",
   "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },

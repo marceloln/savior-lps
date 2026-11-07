@@ -16,9 +16,9 @@ function Apagar({ oque, apaga }: { oque: string; apaga: () => void }) {
 const COLUNAS: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
 export function AvisoPrevia() {
-  const { modo } = useEstado();
+  const { modo, motivo } = useEstado();
   if (modo !== 'previa') return null;
-  return <p className="previa">Prévia sem servidor. Os dados são de exemplo e o que você mudar some ao recarregar.</p>;
+  return <p className="previa">{motivo && motivo !== 'O servidor do lab não respondeu.' ? motivo + ' ' : 'Prévia sem servidor. '}Os dados são de exemplo e o que você mudar some ao recarregar.</p>;
 }
 
 /** Abre projeto para um cliente que ainda não tem. */
