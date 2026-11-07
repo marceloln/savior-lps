@@ -1,6 +1,6 @@
 // Confere o token do Cloudflare Access antes de qualquer rota /api.
 // Com ACESSO_EQUIPE e ACESSO_AUD configurados, só passa quem entrou pelo login da equipe.
-// Sem essas variáveis (desenvolvimento local), tudo passa.
+// Sem essas variáveis, só passa o computador local; publicado, o lab fica fechado até o Access ser ligado.
 
 type Chave = { kid: string; kty: string; n: string; e: string; alg?: string };
 let cache: { em: number; chaves: Chave[] } | null = null;
@@ -35,4 +35,13 @@ export async function quemEntrou(req: Request, equipe: string, aud: string, agor
   } catch {
     return null;
   }
+}
+
+const LOCAL = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/** Decide se a rota /api atende. Devolve null para seguir, ou o motivo e o status para recusar. */
+export async function portaria(req: Request, equipe?: string, aud?: string): Promise<{ erro: string; status: number } | null> {
+  if (equipe && aud) return (await quemEntrou(req, equipe, aud)) ? null : { erro: 'Entre pelo login da equipe para usar o lab.', status: 401 };
+  if (LOCAL.has(new URL(req.url).hostname)) return null;
+  return { erro: 'O login da equipe ainda não foi ligado. O lab abre depois disso.', status: 503 };
 }

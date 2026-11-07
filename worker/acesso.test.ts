@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { quemEntrou } from './acesso';
+import { quemEntrou, portaria } from './acesso';
 
 describe('acesso', () => {
   it('sem token ninguém entra', async () => {
@@ -17,5 +17,14 @@ describe('acesso', () => {
     expect(await quemEntrou(req({ aud: 'outra', exp: 9e9, iss }), 'v30', 'aud')).toBeNull();
     expect(await quemEntrou(req({ aud: 'aud', exp: 1, iss }), 'v30', 'aud')).toBeNull();
     expect(await quemEntrou(req({ aud: 'aud', exp: 9e9, iss: 'https://outra.cloudflareaccess.com' }), 'v30', 'aud')).toBeNull();
+  });
+  it('sem o Access configurado, só o computador local passa', async () => {
+    expect(await portaria(new Request('http://localhost:8787/api/estado'))).toBeNull();
+    expect(await portaria(new Request('http://127.0.0.1:8787/api/estado'))).toBeNull();
+    expect((await portaria(new Request('https://agencia-v30.x.workers.dev/api/estado')))?.status).toBe(503);
+    expect((await portaria(new Request('https://agencia-v30.x.workers.dev/api/estado'), 'v30'))?.status).toBe(503);
+  });
+  it('com o Access configurado, sem login recusa até no computador local', async () => {
+    expect((await portaria(new Request('http://localhost:8787/api/estado'), 'v30', 'aud'))?.status).toBe(401);
   });
 });

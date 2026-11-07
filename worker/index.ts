@@ -1,7 +1,7 @@
 // Worker da Agência V30: serve o build estático e responde as rotas /api.
 import { montaPedido } from './conversa';
 import { contextoDe, rotaDados } from './api';
-import { quemEntrou } from './acesso';
+import { portaria } from './acesso';
 
 export interface Env {
   ASSETS: Fetcher;
@@ -51,8 +51,10 @@ export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
     if (url.pathname === '/api/saude') return json({ ok: true });
-    if (url.pathname.startsWith('/api/') && env.ACESSO_EQUIPE && env.ACESSO_AUD && !(await quemEntrou(req, env.ACESSO_EQUIPE, env.ACESSO_AUD)))
-      return json({ erro: 'Entre pelo login da equipe para usar o lab.' }, 401);
+    if (url.pathname.startsWith('/api/')) {
+      const recusa = await portaria(req, env.ACESSO_EQUIPE, env.ACESSO_AUD);
+      if (recusa) return json({ erro: recusa.erro }, recusa.status);
+    }
     if (url.pathname === '/api/conversa' && req.method === 'POST') return conversa(req, env);
     const h = url.pathname.match(/^\/api\/historico\/([a-z]+)$/);
     if (h && req.method === 'GET') return historico(h[1], env);
