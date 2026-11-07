@@ -3,6 +3,7 @@ import { useEstado } from '../hooks/useEstado';
 import { EQUIPE } from '../lib/equipe';
 import { FASES, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
+import { trofeus } from '../lib/resumo';
 
 const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
 const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
@@ -262,15 +263,7 @@ export function Conexoes() {
 
 export function Trofeus() {
   const { estado } = useEstado();
-  const feitas = estado.tarefas.filter(t => t.estado === 'feito').length;
-  const lista = [
-    { nome: 'Primeira entrega', meta: 1, atual: feitas, txt: 'Concluir uma missão' },
-    { nome: 'Semana redonda', meta: 10, atual: feitas, txt: 'Concluir dez missões' },
-    { nome: 'Lab conversando', meta: 5, atual: estado.conversas, txt: 'Cinco respostas de especialistas' },
-    { nome: 'Decisão registrada', meta: 3, atual: estado.decisoes.length, txt: 'Três decisões no registro' },
-    { nome: 'Memória viva', meta: 5, atual: estado.memorias.length, txt: 'Cinco notas na memória da equipe' },
-    { nome: 'Ritual em dia', meta: 3, atual: estado.reunioes.filter(r => r.status === 'feita').length, txt: 'Três reuniões com ata' },
-  ];
+  const lista = trofeus(estado);
   return (
     <ul className="trofeus">
       {lista.map(t => { const ok = t.atual >= t.meta; return (

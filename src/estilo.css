@@ -289,3 +289,37 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 .proxima{text-align:left;width:100%;display:grid;gap:6px}.proxima h3{margin:0;font:700 22px var(--titulo);color:var(--tinta)}
 .quando-grande{margin:0;font-weight:700}.de-projeto{margin:0;color:var(--texto-2);font-size:14px}.proxima .rostos{display:flex;gap:4px;margin:6px 0}
 .foto-colada.estacao img{aspect-ratio:4/3;object-fit:contain;padding:6px}
+
+/* auditoria de UX (issue 17) */
+.titulo-coluna{margin:0 0 var(--s2);font:800 20px var(--titulo);color:var(--tinta);text-align:center}
+.titulo-coluna::after{content:'';display:block;width:64px;height:1.5px;margin:6px auto 0;background:var(--tinta-2);opacity:.45}
+.cartao-missao .texto small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* diário aberto: missões e console saem de cena, o livro fica no espaço à direita do menu */
+.coluna-direita,.console{transition:opacity .18s ease,visibility .18s}
+.lab.com-livro .coluna-direita,.lab.com-livro .console{opacity:0;visibility:hidden;pointer-events:none}
+.cortina{background:rgba(32,26,14,.42)}
+@media (min-width:761px){.livro{left:calc(50% + 102px);width:min(1060px,calc(100% - 252px))}}
+/* console sem ninguém escolhido: o recado ocupa o espaço, as ações chegam com a pessoa */
+@media (min-width:1281px){.console.vazio-console{grid-template-columns:250px 1fr;width:min(720px,calc(100% - 640px))}}
+@media (min-width:761px) and (max-width:1280px){.console.vazio-console{grid-template-columns:250px 1fr}}
+.console-acoes{animation:surge .2s var(--sai)}
+/* página da esquerda: conteúdo perto do título, números de relance */
+.ilustracao{justify-content:flex-start;padding-top:var(--s2)}
+.resumo{width:100%;display:grid;gap:var(--s5)}
+.resumo dl{margin:0}
+.resumo dl div{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:10px 4px;border-bottom:1.5px dotted rgba(59,47,37,.35)}
+.resumo dt{font-weight:600}
+.resumo dd{margin:0;display:flex;align-items:center;gap:10px;font:800 26px/1 var(--titulo);color:var(--tinta);font-variant-numeric:tabular-nums}
+.resumo .zero dd{color:rgba(59,47,37,.35)}
+.resumo .rostos .retrato{margin-right:-6px}
+.resumo .nota-mao{margin:0 auto}
+/* ficha: o papel aparece uma vez só; no celular a pessoa volta a aparecer */
+@media (min-width:761px){.ficha .papel{display:none}}
+@media (max-width:760px){.ficha .retrato{display:block}}
+/* fases em cores calmas: diagnóstico não é erro */
+.fase[data-f="0"]{background:#A87A2C}.fase[data-f="2"]{background:#5E8A3E}.fase[data-f="3"]{background:var(--tinta)}
+@media (min-width:1281px){
+  .console:not(.vazio-console){grid-template-columns:214px 1fr auto}
+  .console:not(.vazio-console) .console-acoes{gap:4px}.console:not(.vazio-console) .console-acoes button{width:56px}
+}
+@media (max-width:1280px) and (min-width:761px){.selos button{white-space:nowrap;font-size:13px}.selos .icone{display:none}}
