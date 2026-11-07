@@ -219,7 +219,7 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 | #33 Ficha na estação | Página da esquerda da ficha mostra a pessoa trabalhando na própria mesa, na cor da sala; rostos refeitos em 256 px | feature/personagens |
 | #34 Vocabulário | Feito | feature/vocabulario |
 | #35 Publicação | Com o sócio: Access, chave e pull request | |
-| #36 Pendências visuais | Planta numerada e próxima reunião feitas; ficha depende da #33 | feature/pendencias-visuais |
+| #36 Pendências visuais | Feito; balanço das árvores de fora confirmado no navegador | feature/pendencias-visuais |
 | #37 Corrigir reunião e decisão | Feito | feature/corrige-reuniao |
 | #38 Postura dos personagens (issue 15 no GitHub) | Corcunda corrigida: o tronco mantém a curva do próprio modelo, parado parte do repouso ereto com os braços soltos, andando com a cabeça nivelada e sentado ereto com os cotovelos junto do corpo | feature/postura |
 
