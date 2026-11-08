@@ -2,13 +2,15 @@ import { useCallback, useState } from 'react';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
-import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus } from '../components/Paineis';
-import { CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Selos, ABAS, SOBRE_ZONA, type Aba, type Acao } from '../components/Diario';
+import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
+import { CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, ABAS, SOBRE_ZONA, type Aba, type Acao } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
 import { ZONAS } from '../lib/lab';
 import { EQUIPE } from '../lib/equipe';
+import { useConexoes } from '../hooks/useConexoes';
+import { clientesPorEtapa, notasPorPessoa, situacaoEquipe, trofeus } from '../lib/resumo';
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba; novo?: boolean } | { tipo: 'ficha'; id: string; aba?: 'visao' | 'instrucoes' | 'memoria'; foca?: boolean }
@@ -45,9 +47,10 @@ function ProximaReuniao() {
 
 export function Lab() {
   const { lab, gente, erro } = useLab();
-  const { estado, aviso, limpaAviso } = useEstado();
+  const { estado, modo, aviso, limpaAviso } = useEstado();
   const [dica, setDica] = useState<{ alvo: Alvo; x: number; y: number }>({ alvo: null, x: 0, y: 0 });
   const [aberto, setAberto] = useState<Aberto>(null);
+  const conexoes = useConexoes(aberto?.tipo === 'aba' && aberto.aba === 'conexoes');
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [zona, setZona] = useState<string | null>(null);
   const [mirando, setMirando] = useState(false);
@@ -95,20 +98,23 @@ export function Lab() {
     if (aberto.tipo === 'aba') {
       const a = aberto.aba, nome = ABAS.find(x => x.id === a)!.nome;
       const p = estado.projetos.find(x => x.id === projeto) ?? estado.projetos[0];
+      const eq = situacaoEquipe(estado, EQUIPE.map(e => e.id));
+      const tr = trofeus(estado), ganhos = tr.filter(t => t.atual >= t.meta).length;
+      const ultima = estado.decisoes[0]?.criado_em;
       const ilustracao = {
-        missoes: null,
-        clientes: <figure className="foto-colada"><img src="assets/mesa_postos.webp" alt="" /><figcaption>A mesa do método</figcaption></figure>,
+        missoes: <Resumo itens={[{ n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Fazendo agora' }, { n: estado.tarefas.filter(t => t.estado === 'fila').length, rotulo: 'Na fila' }, { n: estado.tarefas.filter(t => t.estado === 'feito').length, rotulo: 'Feitas' }]} nota="Missão boa cabe numa frase e tem dono." />,
+        clientes: <Resumo itens={clientesPorEtapa(estado).map(x => ({ n: x.n, rotulo: x.etapa }))} nota="Cliente entra em conversa e só vira projeto com diagnóstico." />,
         projetos: p ? <>{p.mesa && <figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure>}<FasesIlustradas fase={p.fase} /></> : null,
-        pessoas: <p className="nota-mao">Dezessete especialistas, cada um com mesa, papel e memória própria.</p>,
+        pessoas: <Resumo itens={[{ n: eq.fazendo, rotulo: 'Fazendo uma missão' }, { n: eq.fila, rotulo: 'Só com fila' }, { n: eq.livres.length, rotulo: 'Livres', extra: eq.livres.length > 0 && <span className="rostos">{eq.livres.slice(0, 6).map(id => <Retrato key={id} id={id} tamanho={26} />)}</span> }]} nota={`${EQUIPE.length} especialistas, cada um com mesa, papel e memória.`} />,
         lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><p className="nota-mao">Um deck de madeira solto no campus, com salas de vidro para reunião e protótipo.</p></>,
         agenda: <ProximaReuniao />,
-        decisoes: <p className="nota-mao">Decisão sem motivo escrito vira discussão de novo daqui a um mês.</p>,
-        memoria: <p className="nota-mao">O que fica aqui entra em toda conversa com aquela pessoa.</p>,
-        conexoes: null, trofeus: <p className="nota-mao">Contam o que foi feito de verdade, sem inventar número.</p>,
+        decisoes: <Resumo itens={[{ n: estado.decisoes.length, rotulo: 'Decisões registradas' }, ...(ultima ? [{ n: new Date(ultima.replace(' ', 'T')).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), rotulo: 'A última' }] : [])]} nota="Decisão sem motivo escrito vira discussão de novo daqui a um mês." />,
+        memoria: <Resumo itens={notasPorPessoa(estado).slice(0, 5).map(x => ({ n: x.n, rotulo: EQUIPE.find(e => e.id === x.agente)?.nome ?? x.agente, extra: <Retrato id={x.agente} tamanho={26} /> }))} nota="O que fica aqui entra em toda conversa com aquela pessoa." />,
+        conexoes: <Resumo itens={[{ n: `${itensConexao(conexoes, modo === 'banco').filter(i => i.ok).length} de 4`, rotulo: 'Ligados' }]} nota="Com as quatro ligadas, o lab abre para a equipe e os especialistas respondem de verdade." />, trofeus: <Resumo itens={[{ n: `${ganhos} de ${tr.length}`, rotulo: 'Conquistados' }]} nota="Contam o que foi feito de verdade, sem inventar número." />,
       }[a];
       const corpo = {
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes abreProjeto={abreProjeto} novo={aberto.novo} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes />, trofeus: <Trofeus />,
+        clientes: <Clientes abreProjeto={abreProjeto} novo={aberto.novo} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <ul className="elenco">{EQUIPE.map(e => <li key={e.id}><button onClick={() => { setEscolhido(e.id); setZona(e.zona); setAberto({ tipo: 'ficha', id: e.id }); }}><Retrato id={e.id} tamanho={44} /><span><b>{e.nome}</b><small>{e.papel}</small></span></button></li>)}</ul>,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = EQUIPE.filter(e => e.zona === z.id).length;
@@ -152,7 +158,7 @@ export function Lab() {
       {lab && !aberto && <CartaoLugar zona={zona} lab={lab} abre={abreSala} />}
       <div className="coluna-direita">
         <Selos abre={abreAba} />
-        <Missoes abreProjeto={abreProjeto} escolhe={escolhe} />
+        <Missoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={() => setAberto({ tipo: 'aba', aba: 'missoes' })} />
       </div>
       {dica.alvo && !aberto && (
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>

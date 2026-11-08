@@ -89,7 +89,7 @@ export function Selos({ abre }: { abre: (a: Aba) => void }) {
 }
 
 /** O que a equipe tem nas mãos agora. O rosto leva à pessoa no mapa, o texto leva ao projeto. */
-export function ListaMissoes({ abreProjeto, escolhe, max = 5 }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; max?: number }) {
+export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas?: () => void; max?: number }) {
   const { estado } = useEstado();
   const abertas = estado.tarefas.filter(t => t.estado !== 'feito').sort((a, b) => (a.estado === b.estado ? 0 : a.estado === 'fazendo' ? -1 : 1));
   if (!abertas.length) return <p className="vazio">Ninguém tem missão aberta. Escolha alguém e aperte Missão no console.</p>;
@@ -109,21 +109,21 @@ export function ListaMissoes({ abreProjeto, escolhe, max = 5 }: { abreProjeto: (
           );
         })}
       </ul>
-      {abertas.length > max && estado.projetos[0] && <button className="link ver-todas" onClick={() => abreProjeto(estado.projetos[0].id)}>Ver as {abertas.length} missões abertas</button>}
+      {abertas.length > max && verTodas && <button className="link ver-todas" onClick={verTodas}>Ver as {abertas.length} missões abertas</button>}
     </>
   );
 }
 
-export function Missoes({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void }) {
+export function Missoes({ abreProjeto, escolhe, verTodas }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void }) {
   const { estado } = useEstado();
   const todas = estado.tarefas.filter(t => t.projeto_id);
   const feitas = todas.filter(t => t.estado === 'feito').length;
   const pct = todas.length ? Math.round((feitas / todas.length) * 100) : 0;
   return (
     <aside className="missoes papel-borda" aria-label="Missões">
-      <h3 className="fita-titulo">Missões</h3>
+      <h3 className="titulo-coluna">Missões</h3>
       <div className="progresso-geral" title="Missões concluídas somando todos os projetos"><span>Todos os projetos</span><div className="barra"><i style={{ transform: `scaleX(${pct / 100})` }} /></div><b>{pct}%</b></div>
-      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} />
+      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={verTodas} />
     </aside>
   );
 }
@@ -145,7 +145,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
   const situacao = !escolhido ? '' : agora ? `Agora: ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
     : fila ? `${escolhido.nome} tem ${fila} ${fila === 1 ? 'missão' : 'missões'} na fila. Abra Missão para começar.` : `${escolhido.nome} está livre. Dê uma missão.`;
   return (
-    <section className="console madeira" aria-label="Console">
+    <section className={`console madeira ${escolhido ? '' : 'vazio-console'}`} aria-label="Console">
       <div className={`console-ficha papel-borda ${escolhido ? 'com' : 'sem'}`}>
         {escolhido ? (
           <>
@@ -165,15 +165,15 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
         {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
           : escolhido ? <><p><b>{z?.nome}</b> {situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
           : registro.length ? registro.slice(-2).map((r, i) => <p key={i}>{r}</p>)
-          : <p>Escolha alguém no mapa ou em Pessoas para liberar as ações. Clique numa sala para abrir o que acontece nela.</p>}
+          : <p>Escolha alguém no mapa ou em Pessoas para conversar, dar missão ou marcar reunião. Clique numa sala para ver o que acontece nela.</p>}
       </div>
-      <div className="console-acoes" role="toolbar" aria-label="Ações">
+      {escolhido && <div className="console-acoes" role="toolbar" aria-label={`Ações com ${escolhido.nome}`}>
         {ACOES.map(a => (
-          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha uma pessoa primeiro'}>
+          <button key={a.id} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={`${a.nome} com ${escolhido.nome}`}>
             <Icone nome={a.icone} tam={26} /><span>{a.nome}</span>
           </button>
         ))}
-      </div>
+      </div>}
     </section>
   );
 }
@@ -206,6 +206,16 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, ch
       <div className="pagina direita">{children}</div>
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
     </section>
+  );
+}
+
+/** Números grandes para a página da esquerda: o que dá para saber de relance. */
+export function Resumo({ itens, nota }: { itens: { n: number | string; rotulo: string; extra?: ReactNode }[]; nota?: string }) {
+  return (
+    <div className="resumo">
+      <dl>{itens.map(i => <div key={i.rotulo} className={i.n === 0 ? 'zero' : undefined}><dt>{i.rotulo}</dt><dd>{i.n}{i.extra}</dd></div>)}</dl>
+      {nota && <p className="nota-mao">{nota}</p>}
+    </div>
   );
 }
 

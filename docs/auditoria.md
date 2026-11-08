@@ -222,6 +222,7 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 | #36 Pendências visuais | Feito; balanço das árvores de fora confirmado no navegador | feature/pendencias-visuais |
 | #37 Corrigir reunião e decisão | Feito | feature/corrige-reuniao |
 | #38 Postura dos personagens (issue 15 no GitHub) | Corcunda corrigida: o tronco mantém a curva do próprio modelo, parado parte do repouso ereto com os braços soltos, andando com a cabeça nivelada e sentado ereto com os cotovelos junto do corpo | feature/postura |
+| #39 Auditoria de UX e design (issue 17 no GitHub) | Diário sozinho na tela, console enxuto sem pessoa escolhida, link para todas as missões, resumos úteis na página da esquerda, ficha sem repetição e com retrato no celular, fases em cores calmas, troféus como medalhas com o próximo em destaque, conexões com o passo exato do que falta | feature/ux-polimento |
 
 Defeito achado no caminho: o Worker não sobe quando o módulo principal exporta uma constante solta. Corrigido na própria branch da #27.
-Testes automatizados: 46 passando.
+Testes automatizados: 52 passando.

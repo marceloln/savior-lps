@@ -3,6 +3,9 @@ import { useEstado } from '../hooks/useEstado';
 import { EQUIPE } from '../lib/equipe';
 import { FASES, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
+import { trofeus } from '../lib/resumo';
+import { Icone, type NomeIcone } from './Icones';
+import type { Conexoes as ConexoesLab } from '../hooks/useConexoes';
 
 const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
 const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
@@ -248,36 +251,54 @@ export function Decisoes() {
   );
 }
 
-export function Conexoes() {
-  const { modo } = useEstado();
-  const [c, setC] = useState<{ banco: boolean; chave: boolean; mensagens: number } | null>(null);
-  useEffect(() => { fetch('api/conexoes').then(r => r.json()).then(setC).catch(() => setC(null)); }, []);
-  const itens = [
-    { nome: 'Worker na Cloudflare', ok: modo === 'banco', txt: modo === 'banco' ? 'Respondendo' : 'Esta é a prévia, sem Worker por trás' },
-    { nome: 'Banco D1', ok: !!c?.banco, txt: c?.banco ? `Ligado, ${c.mensagens} mensagens guardadas` : 'Sem acesso daqui' },
-    { nome: 'API do Claude', ok: !!c?.chave, txt: c?.chave ? 'Chave configurada' : 'Falta configurar o segredo ANTHROPIC_API_KEY no Worker' },
+/** O que o lab precisa para abrir para a equipe. O que falta vem com o passo para ligar. */
+export function itensConexao(c: ConexoesLab | null, noAr: boolean) {
+  return [
+    { nome: 'Worker na Cloudflare', ok: noAr, txt: 'Respondendo', passo: 'Esta é a prévia, sem Worker por trás. O deploy roda sozinho quando as pull requests entram na main.' },
+    { nome: 'Banco D1', ok: !!c?.banco, txt: `Ligado, ${c?.mensagens ?? 0} mensagens guardadas`, passo: 'O deploy cria as tabelas sozinho no banco agencia-v30.' },
+    { nome: 'Login da equipe', ok: !!c?.acesso, txt: 'Só entra quem faz parte da equipe', passo: 'No painel da Cloudflare, ligue o Access para o endereço do lab e preencha ACESSO_EQUIPE e ACESSO_AUD no Worker. O passo a passo está em docs/publicar.md.' },
+    { nome: 'Chave da Anthropic', ok: !!c?.chave, txt: 'Os especialistas respondem de verdade', passo: 'No Worker agencia-v30, em Configurações, Variáveis e segredos, crie o segredo ANTHROPIC_API_KEY.' },
   ];
-  return <ul className="conexoes">{itens.map(i => <li key={i.nome}><span className={`ponto ${i.ok ? 'ok' : ''}`} aria-hidden="true" /><div><b>{i.nome}</b><small>{i.txt}</small></div></li>)}</ul>;
 }
+
+export function Conexoes({ c }: { c: ConexoesLab | null }) {
+  const { modo } = useEstado();
+  return (
+    <ul className="conexoes">
+      {itensConexao(c, modo === 'banco').map(i => (
+        <li key={i.nome} className={i.ok ? 'ok' : ''}>
+          <span className={`ponto ${i.ok ? 'ok' : ''}`} aria-hidden="true" />
+          <div><b>{i.nome}</b><small>{i.ok ? i.txt : i.passo}</small></div>
+          <span className="situacao-conexao">{i.ok ? 'Ligado' : 'Falta'}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const ICONE_TROFEU: Record<string, NomeIcone> = {
+  'Primeira entrega': 'missao', 'Semana redonda': 'missao', 'Lab conversando': 'conversar',
+  'Decisão registrada': 'decisoes', 'Memória viva': 'memoria', 'Ritual em dia': 'reuniao',
+};
 
 export function Trofeus() {
   const { estado } = useEstado();
-  const feitas = estado.tarefas.filter(t => t.estado === 'feito').length;
-  const lista = [
-    { nome: 'Primeira entrega', meta: 1, atual: feitas, txt: 'Concluir uma missão' },
-    { nome: 'Semana redonda', meta: 10, atual: feitas, txt: 'Concluir dez missões' },
-    { nome: 'Lab conversando', meta: 5, atual: estado.conversas, txt: 'Cinco respostas de especialistas' },
-    { nome: 'Decisão registrada', meta: 3, atual: estado.decisoes.length, txt: 'Três decisões no registro' },
-    { nome: 'Memória viva', meta: 5, atual: estado.memorias.length, txt: 'Cinco notas na memória da equipe' },
-    { nome: 'Ritual em dia', meta: 3, atual: estado.reunioes.filter(r => r.status === 'feita').length, txt: 'Três reuniões com ata' },
-  ];
+  const lista = trofeus(estado);
+  // o próximo é o que falta menos, proporcionalmente
+  const abertos = lista.filter(t => t.atual < t.meta);
+  const proximo = abertos.sort((a, b) => b.atual / b.meta - a.atual / a.meta)[0]?.nome;
   return (
     <ul className="trofeus">
-      {lista.map(t => { const ok = t.atual >= t.meta; return (
-        <li key={t.nome} className={ok ? 'ok' : ''}>
-          <b>{t.nome}</b><small>{t.txt}</small>
-          <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={t.meta} aria-valuenow={Math.min(t.atual, t.meta)} aria-label={t.nome}><i style={{ transform: `scaleX(${Math.min(1, t.atual / t.meta)})` }} /></div>
-          <span className="conta">{ok ? 'Conquistado' : `${Math.min(t.atual, t.meta)} de ${t.meta}`}</span>
+      {lista.map(t => { const ok = t.atual >= t.meta, falta = t.meta - t.atual; return (
+        <li key={t.nome} className={ok ? 'ok' : t.nome === proximo ? 'proximo' : ''}>
+          <span className="medalha" aria-hidden="true"><Icone nome={ok ? 'estrela' : ICONE_TROFEU[t.nome] ?? 'trofeus'} tam={24} /></span>
+          <div>
+            <b>{t.nome}</b><small>{t.txt}</small>
+            {ok ? <span className="conta">Conquistado</span> : <>
+              <div className="barra" role="progressbar" aria-valuemin={0} aria-valuemax={t.meta} aria-valuenow={t.atual} aria-label={t.nome}><i style={{ transform: `scaleX(${t.atual / t.meta})` }} /></div>
+              <span className="conta">{t.atual} de {t.meta}, {falta === 1 ? 'falta 1' : `faltam ${falta}`}{t.nome === proximo ? '. É o próximo.' : ''}</span>
+            </>}
+          </div>
         </li>); })}
     </ul>
   );
