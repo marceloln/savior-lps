@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc --noEmit && tsc --noEmit -p worker && vite build",
+    "test": "vitest run",
+    "deploy": "npm run build && wrangler deploy",
+    "banco:local": "wrangler d1 migrations apply agencia-v30 --local",
+    "semear:local": "wrangler d1 execute agencia-v30 --local --command \"DELETE FROM decisoes; DELETE FROM reunioes; DELETE FROM missoes; DELETE FROM memorias; DELETE FROM instrucoes; DELETE FROM mensagens; DELETE FROM projetos; DELETE FROM clientes;\""
   },
   "keywords": [],
   "author": "",
@@ -15,11 +20,15 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "@types/node": "^22.20.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
-    "vitest": "^2.1.8"
-  }
+    "vitest": "^2.1.8",
+    "wrangler": "^4.40.0"
+  },
+  "type": "module"
 }
