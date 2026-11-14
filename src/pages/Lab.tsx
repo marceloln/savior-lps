@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
-import { CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, ABAS, SOBRE_ZONA, type Aba, type Acao } from '../components/Diario';
+import { Carregando, CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
@@ -12,9 +12,10 @@ import { useEquipe } from '../hooks/useEquipe';
 import { ORQUESTRADOR } from '../lib/equipe';
 import { useConexoes } from '../hooks/useConexoes';
 import { usePedido } from '../hooks/usePedido';
+import { useSaida } from '../hooks/useSaida';
 import { PainelPessoas, Pedidos, Skills } from '../components/Nucleo';
 import type { AbaFicha } from '../components/Fichas';
-import { clientesPorEtapa, notasPorPessoa, situacaoEquipe, trofeus } from '../lib/resumo';
+import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, situacaoEquipe, trofeus } from '../lib/resumo';
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba; novo?: boolean } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
@@ -33,7 +34,7 @@ const SOBRE_ABA: Record<Aba, string> = {
 /** Página da esquerda da Agenda: a próxima reunião em destaque. */
 function ProximaReuniao() {
   const { estado } = useEstado();
-  const r = estado.reunioes.find(x => x.status === 'agendada');
+  const r = proximasReunioes(estado)[0];
   if (!r) return <p className="nota-mao">Nada marcado. Uma reunião curta por semana por projeto segura o ritmo.</p>;
   const p = estado.projetos.find(x => x.id === r.projeto_id);
   const quando = new Date(r.dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -67,6 +68,15 @@ export function Lab() {
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
+  // o livro que acabou de fechar fica montado até a saída terminar
+  const { mostrado, saindo, saiu } = useSaida(aberto);
+  // fora do livro, Escape primeiro cancela o Mover e depois solta a pessoa escolhida
+  useEffect(() => {
+    if (aberto || (!mirando && !escolhido)) return;
+    const tecla = (e: KeyboardEvent) => { if (e.key !== 'Escape') return; if (mirando) setMirando(false); else setEscolhido(null); };
+    addEventListener('keydown', tecla);
+    return () => removeEventListener('keydown', tecla);
+  }, [aberto, mirando, escolhido]);
   const { equipe, de } = useEquipe();
   const m = (escolhido && de(escolhido)) || null;
 
@@ -102,14 +112,18 @@ export function Lab() {
     if (a === 'reuniao') setAberto({ tipo: 'reuniao', com: [m.id] });
   };
 
-  let livro = null;
-  if (aberto && lab && gente) {
-    if (aberto.tipo === 'aba') {
-      const a = aberto.aba, nome = ABAS.find(x => x.id === a)!.nome;
-      const p = estado.projetos.find(x => x.id === projeto) ?? estado.projetos[0];
+  // as duas páginas de Projetos falam do mesmo projeto: a escolha mora aqui
+  const projAtual = estado.projetos.find(x => x.id === projeto) ?? estado.projetos[0];
+  const vaiPara = (aba: Aba) => () => setAberto({ tipo: 'aba', aba });
+
+  let folha: { titulo: string; sobre?: string; cor?: string; largo?: boolean; voltar?: Voltar; ilustracao?: ReactNode; corpo: ReactNode } | null = null;
+  if (mostrado && lab && gente) {
+    if (mostrado.tipo === 'aba') {
+      const a = mostrado.aba, nome = ABAS.find(x => x.id === a)!.nome;
+      const p = projAtual;
       const eq = situacaoEquipe(estado, equipe.map(e => e.id));
       const tr = trofeus(estado), ganhos = tr.filter(t => t.atual >= t.meta).length;
-      const ultima = estado.decisoes[0]?.criado_em;
+      const ultima = decisoesRecentes(estado)[0]?.criado_em;
       const entregues = estado.pedidos.filter(x => x.estado === 'entregue').length;
       const ilustracao = {
         pedidos: <Resumo itens={[{ n: estado.pedidos.length - entregues, rotulo: 'Em andamento' }, { n: entregues, rotulo: 'Entregues' }, { n: estado.tarefas.filter(t => t.entrega).length, rotulo: 'Entregas da equipe' }]} nota="Você aprova o plano antes de a equipe começar." />,
@@ -120,55 +134,61 @@ export function Lab() {
         pessoas: <Resumo itens={[{ n: eq.fazendo, rotulo: 'Fazendo uma missão' }, { n: eq.fila, rotulo: 'Só com fila' }, { n: eq.livres.length, rotulo: 'Livres', extra: eq.livres.length > 0 && <span className="rostos">{eq.livres.slice(0, 6).map(id => <Retrato key={id} id={id} tamanho={26} />)}</span> }]} nota={`${equipe.length} especialistas, cada um com mesa, papel e memória.`} />,
         lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><p className="nota-mao">Um deck de madeira solto no campus, com salas de vidro para reunião e protótipo.</p></>,
         agenda: <ProximaReuniao />,
-        decisoes: <Resumo itens={[{ n: estado.decisoes.length, rotulo: 'Decisões registradas' }, ...(ultima ? [{ n: new Date(ultima.replace(' ', 'T')).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), rotulo: 'A última' }] : [])]} nota="Decisão sem motivo escrito vira discussão de novo daqui a um mês." />,
+        decisoes: <Resumo itens={[{ n: estado.decisoes.length, rotulo: 'Decisões registradas' }, ...(ultima ? [{ n: new Date(ultima.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), rotulo: 'A última' }] : [])]} nota="Decisão sem motivo escrito vira discussão de novo daqui a um mês." />,
         memoria: <Resumo itens={notasPorPessoa(estado).slice(0, 5).map(x => ({ n: x.n, rotulo: de(x.agente)?.nome ?? 'Quem saiu do lab', extra: <Retrato id={x.agente} tamanho={26} /> }))} nota="O que fica aqui entra em toda conversa com aquela pessoa." />,
         conexoes: <Resumo itens={[{ n: `${itensConexao(conexoes, modo === 'banco').filter(i => i.ok).length} de ${itensConexao(conexoes, modo === 'banco').length}`, rotulo: 'Ligados' }]} nota="Com Worker, banco, login e a chave de um provedor ligados, o lab abre para a equipe e os especialistas respondem de verdade." />, trofeus: <Resumo itens={[{ n: `${ganhos} de ${tr.length}`, rotulo: 'Conquistados' }]} nota="Contam o que foi feito de verdade, sem inventar número." />,
       }[a];
       const corpo = {
         pedidos: <Pedidos p={pedido} />, skills: <Skills />,
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes abreProjeto={abreProjeto} novo={aberto.novo} />, projetos: <Projetos inicial={projeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
+        clientes: <Clientes abreProjeto={abreProjeto} novo={mostrado.novo} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <PainelPessoas abre={id => { setEscolhido(id); setZona(de(id)?.zona ?? null); setAberto({ tipo: 'ficha', id }); }} />,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = equipe.filter(e => e.zona === z.id).length;
           return <li key={z.id}><button onClick={() => abreSala(z.id)} style={{ ['--c' as string]: z.cor }}><b><i className="num">{ZONAS.indexOf(z) + 1}</i>{z.nome}</b><small>{n ? `${n} ${n === 1 ? 'pessoa' : 'pessoas'}` : 'Uso comum'}</small><span>{SOBRE_ZONA[z.id]}</span></button></li>;
         })}</ul></>,
-        memoria: estado.memorias.length ? <ul className="notas">{estado.memorias.map(n => <li key={n.id}><p>{n.texto}</p><footer><button className="link" onClick={() => setAberto({ tipo: 'ficha', id: n.agente, aba: 'memoria' })}>{de(n.agente)?.nome ?? 'Quem saiu do lab'}</button></footer></li>)}</ul> : <p className="vazio">Ninguém guardou nada ainda.</p>,
+        memoria: estado.memorias.length ? <ul className="notas">{estado.memorias.map(n => <li key={n.id}><p>{n.texto}</p><footer><button className="link" onClick={() => setAberto({ tipo: 'ficha', id: n.agente, aba: 'memoria' })}>{de(n.agente)?.nome ?? 'Quem saiu do lab'}</button></footer></li>)}</ul>
+          : <Vazio icone="memoria" acao={{ rotulo: 'Escolher alguém da equipe', vai: vaiPara('pessoas') }}>Ninguém guardou nada ainda. A memória de cada pessoa fica na ficha dela.</Vazio>,
       }[a];
-      livro = <Livro titulo={nome} sobre={SOBRE_ABA[a]} ilustracao={ilustracao} aoFechar={fecha}>{corpo}</Livro>;
-    } else if (aberto.tipo === 'ficha') {
-      const p = de(aberto.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
-      livro = <Livro titulo={p.nome} sobre={p.papel} cor={z.cor} ilustracao={<><figure className="foto-colada estacao"><img style={{ background: `linear-gradient(${z.cor}30, ${z.cor}12)` }} src={`assets/estacao/${p.aparencia}.webp`} alt={`${p.nome} trabalhando na ${z.nome}`} /><figcaption>{p.nome} na {z.nome}</figcaption></figure><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>} aoFechar={fecha}>
-        <FichaAgente key={p.id + (aberto.aba ?? '')} m={p} abaInicial={aberto.aba} focaMissao={aberto.foca} aoDar={anota}
-          noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /></Livro>;
-    } else if (aberto.tipo === 'conversa') {
-      const p = de(aberto.id) ?? equipe[0];
+      folha = { titulo: nome, sobre: SOBRE_ABA[a], largo: a === 'projetos', ilustracao, corpo };
+    } else if (mostrado.tipo === 'ficha') {
+      const p = de(mostrado.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
+      folha = { titulo: p.nome, sobre: p.papel, cor: z.cor, voltar: { rotulo: 'Pessoas', vai: vaiPara('pessoas') },
+        ilustracao: <><figure className="foto-colada estacao"><img style={{ background: `linear-gradient(${z.cor}30, ${z.cor}12)` }} src={`assets/estacao/${p.aparencia}.webp`} alt={`${p.nome} trabalhando na ${z.nome}`} /><figcaption>{p.nome} na {z.nome}</figcaption></figure><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>,
+        corpo: <FichaAgente key={p.id + (mostrado.aba ?? '')} m={p} abaInicial={mostrado.aba} focaMissao={mostrado.foca} aoDar={anota}
+          noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /> };
+    } else if (mostrado.tipo === 'conversa') {
+      const p = de(mostrado.id) ?? equipe[0];
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');
-      livro = <Livro titulo={p.id === 'clara' ? 'Briefing com a Clara' : `Conversa com ${p.nome}`} sobre={p.id === 'clara' ? 'Uma pergunta por vez, até fechar o pedido.' : p.papel} aoFechar={fecha}
-        ilustracao={<><Retrato id={p.id} tamanho={120} />{p.id === 'clara' && <button className="primario cadastrar" onClick={() => setAberto({ tipo: 'aba', aba: 'clientes', novo: true })}>Cadastrar o cliente deste briefing</button>}{dela.length > 0 && <div className="contexto"><h4>Nas mãos de {p.nome}</h4><ul>{dela.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul></div>}</>}>
-        <Chat agente={p.id} setAgente={id => setAberto({ tipo: 'conversa', id })} so /></Livro>;
-    } else if (aberto.tipo === 'sala') {
-      const z = ZONAS.find(q => q.id === aberto.id)!;
-      livro = <Livro titulo={z.nome} sobre={SOBRE_ZONA[z.id]} cor={z.cor} aoFechar={fecha}
-        ilustracao={<figure className="foto-colada"><FotoLugar zona={z.id} lab={lab} larg={300} alt={190} esc={0.62} /><figcaption>{z.nome}</figcaption></figure>}>
-        <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }} aoDar={anota}
+      folha = { titulo: p.id === 'clara' ? 'Briefing com a Clara' : `Conversa com ${p.nome}`, sobre: p.id === 'clara' ? 'Uma pergunta por vez, até fechar o pedido.' : p.papel,
+        voltar: { rotulo: `Ficha de ${p.nome}`, vai: () => setAberto({ tipo: 'ficha', id: p.id }) },
+        ilustracao: <><Retrato id={p.id} tamanho={120} />{p.id === 'clara' && <button className="primario cadastrar" onClick={() => setAberto({ tipo: 'aba', aba: 'clientes', novo: true })}>Cadastrar o cliente deste briefing</button>}{dela.length > 0 && <div className="contexto"><h4>Nas mãos de {p.nome}</h4><ul>{dela.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul></div>}</>,
+        corpo: <Chat agente={p.id} setAgente={id => setAberto({ tipo: 'conversa', id })} so /> };
+    } else if (mostrado.tipo === 'sala') {
+      const z = ZONAS.find(q => q.id === mostrado.id)!;
+      folha = { titulo: z.nome, sobre: SOBRE_ZONA[z.id], cor: z.cor, voltar: { rotulo: 'Lugares', vai: vaiPara('lugares') },
+        ilustracao: <figure className="foto-colada"><FotoLugar zona={z.id} lab={lab} larg={300} alt={190} esc={0.62} /><figcaption>{z.nome}</figcaption></figure>,
+        corpo: <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }} aoDar={anota}
           conversa={id => { setEscolhido(id); setAberto({ tipo: 'conversa', id }); }} darMissao={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id, aba: 'visao', foca: true }); }}
-          briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /></Livro>;
-    } else if (aberto.tipo === 'reuniao') {
-      livro = <Livro titulo="Agenda" sobre={SOBRE_ABA.agenda} aoFechar={fecha}><Agenda com={aberto.com} /></Livro>;
+          briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /> };
+    } else if (mostrado.tipo === 'reuniao') {
+      folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} /> };
     }
   }
+  // onde estou: o menu marca a seção de quem está aberto, mesmo fora das abas
+  const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
+  const carregando = !erro && (modo === 'carregando' || !lab || !gente);
 
   return (
-    <div className={livro ? 'lab com-livro' : 'lab'}>
+    <div className={aberto ? 'lab com-livro' : 'lab'}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
       {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
         onHover={onHover} onClique={onClique} onMovido={onMovido} />}
       <div className="coluna-esquerda">
         <Placa />
-        <MenuDiario ativa={aberto?.tipo === 'aba' ? aberto.aba : null} abre={abreAba} />
+        <MenuDiario ativa={secao} abre={abreAba} />
       </div>
-      {lab && !aberto && <CartaoLugar zona={zona} lab={lab} abre={abreSala} />}
+      {lab && <CartaoLugar zona={zona} lab={lab} abre={abreSala} oculto={!!aberto} />}
       <div className="coluna-direita">
         <Selos abre={abreAba} />
         <Missoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={() => setAberto({ tipo: 'aba', aba: 'missoes' })} />
@@ -183,8 +203,8 @@ export function Lab() {
       <Console escolhido={m} mirando={mirando} registro={registro} age={age} ocupado={pedido.ocupado}
         pedir={texto => { pedido.planeja(texto, null); setAberto({ tipo: 'aba', aba: 'pedidos' }); }}
         briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} solta={() => { setEscolhido(null); setMirando(false); }} />
-      {livro && <div className="cortina" onClick={fecha} />}
-      {livro}
+      {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha}>{folha.corpo}</Livro>}
+      {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
     </div>
   );

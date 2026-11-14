@@ -1,23 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useEstado } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
-import { FASES, type Estado, type Projeto } from '../lib/dados';
+import { FASES, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { Entrega, Executar, SeletorModelo } from './Nucleo';
-import { trofeus } from '../lib/resumo';
+import { decisoesRecentes, proximasReunioes, trofeus } from '../lib/resumo';
+import { useRecem } from '../hooks/useRecem';
+import { EditaMissao } from './Missao';
+import { TEXTO_PREVIA } from './Diario';
 import { PROVEDORES, type Provedor } from '../lib/modelos';
 import { Icone, type NomeIcone } from './Icones';
 import type { Conexoes as ConexoesLab } from '../hooks/useConexoes';
 
 const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
-/** Botão de apagar que pede confirmação no próprio lugar, sem janela por cima. */
 const COLUNAS: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
-export function AvisoPrevia() {
+/** Aviso completo de prévia. Fica só em Conexões; no resto da tela basta o selo da placa. */
+function AvisoPrevia() {
   const { modo, motivo } = useEstado();
   if (modo !== 'previa') return null;
-  return <p className="previa">{motivo && motivo !== 'O servidor do lab não respondeu.' ? motivo + ' ' : 'Prévia sem servidor. '}Os dados são de exemplo e o que você mudar some ao recarregar.</p>;
+  return <p className="previa">{motivo && motivo !== 'O servidor do lab não respondeu.' ? motivo + ' ' : 'Prévia sem servidor. '}{TEXTO_PREVIA}</p>;
 }
 
 /** Abre projeto para um cliente que ainda não tem. */
@@ -45,7 +48,6 @@ export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: stri
   };
   return (
     <div className="lista-clientes">
-      <AvisoPrevia />
       {!form ? <button className="primario" onClick={() => setForm(true)}>Novo cliente</button> : (
         <form className="form-reuniao" onSubmit={e => { e.preventDefault(); salva(); }}>
           <p className="ajuda">Cliente entra por setor e situação, nunca pelo nome.</p>
@@ -61,7 +63,7 @@ export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: stri
           <article key={c.id} className="cliente">
             <header><h3>{c.setor}</h3>{projs.length ? <span className="fase" data-f={c.fase}>{FASES[c.fase]}</span> : <span className="fase conversa">Em conversa</span>}</header>
             <p>{c.situacao}</p>
-            {projs.map(p => <button key={p.id} className="link" onClick={() => abreProjeto(p.id)}>{p.nome}, dia {p.dia} de 30</button>)}
+            {projs.map(p => <button key={p.id} className="link" onClick={() => abreProjeto(p.id)}>{p.nome}, {textoDoCiclo(p.inicio, hojeLocal()).toLowerCase()}</button>)}
             {!projs.length && <AbreProjeto cliente={c.id} abreProjeto={abreProjeto} />}
           </article>
         );
@@ -73,8 +75,11 @@ export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: stri
 function Kanban({ projeto }: { projeto: Projeto }) {
   const { equipe, nome } = useEquipe();
   const { estado, criaTarefa, mudaTarefa, apagaTarefa } = useEstado();
-  const [titulo, setTitulo] = useState(''), [agente, setAgente] = useState('rui');
+  const [titulo, setTitulo] = useState(''), [agente, setAgente] = useState(equipe.some(m => m.id === 'rui') ? 'rui' : equipe[0]?.id ?? '');
+  const [edita, setEdita] = useState<number | null>(null);
   const tarefas = estado.tarefas.filter(t => t.projeto_id === projeto.id);
+  // o carimbo só bate em quem foi concluída com a tela aberta
+  const recem = useRecem(tarefas.filter(t => t.estado === 'feito').map(t => t.id));
   const proximo: Record<Estado, Estado | null> = { fila: 'fazendo', fazendo: 'feito', feito: null };
   const anterior: Record<Estado, Estado | null> = { fila: null, fazendo: 'fila', feito: 'fazendo' };
   return (
@@ -87,16 +92,20 @@ function Kanban({ projeto }: { projeto: Projeto }) {
               <h4>{col.nome} <span>{lista.length}</span></h4>
               {!lista.length && <p className="vazio">Nada aqui.</p>}
               {lista.map(t => (
+                edita === t.id ? <div key={t.id} className="cartao editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></div> :
                 <div key={t.id} className={`cartao ${t.estado}`}>
+                  {t.estado === 'feito' && <span className={`carimbo ${recem.has(t.id) ? 'bate' : ''}`}>Feito</span>}
                   <p>{t.titulo}</p>
+                  {t.detalhe && <p className="detalhe">{t.detalhe}</p>}
                   {t.entrega && <details className="ver-entrega"><summary>Ver a entrega</summary><Entrega t={t} /></details>}
                   <footer>
                     <span className="dono"><Retrato id={t.agente} tamanho={22} />{nome(t.agente)}</span>
                     {t.id < 0 ? <span className="salvando">Salvando</span> : <span className="acoes">
                       {anterior[t.estado] && <button onClick={() => mudaTarefa(t.id, { estado: anterior[t.estado]! })} aria-label={`Voltar ${t.titulo}`}>Voltar</button>}
+                      {t.estado !== 'feito' && <button onClick={() => setEdita(t.id)} aria-label={`Editar ${t.titulo}`}>Editar</button>}
                       {t.estado !== 'feito' && <Executar t={t} />}
                       {proximo[t.estado] && <button className="avanca" onClick={() => mudaTarefa(t.id, { estado: proximo[t.estado]! })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}
-                      {t.estado === 'feito' && <button onClick={() => apagaTarefa(t.id)} aria-label={`Arquivar ${t.titulo}`}>Arquivar</button>}
+                      {t.estado === 'feito' && <Apagar oque={t.titulo} verbo="Arquivar" apaga={() => apagaTarefa(t.id)} />}
                     </span>}
                   </footer>
                 </div>
@@ -105,7 +114,7 @@ function Kanban({ projeto }: { projeto: Projeto }) {
           );
         })}
       </div>
-      <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!titulo.trim()) return; criaTarefa({ agente, titulo: titulo.trim(), projeto_id: projeto.id }); setTitulo(''); }}>
+      <form className="nova-linha" onSubmit={async e => { e.preventDefault(); if (titulo.trim() && (await criaTarefa({ agente, titulo: titulo.trim(), projeto_id: projeto.id }))) setTitulo(''); }}>
         <label className="so-leitor" htmlFor="nt">Nova missão</label>
         <input id="nt" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Nova missão para este projeto" maxLength={200} />
         <label className="so-leitor" htmlFor="nd">Quem faz</label>
@@ -116,20 +125,19 @@ function Kanban({ projeto }: { projeto: Projeto }) {
   );
 }
 
-export function Projetos({ inicial }: { inicial?: string }) {
+/** O projeto escolhido mora na página, para a foto e a fase da esquerda acompanharem a aba daqui. */
+export function Projetos({ atual, escolhe }: { atual?: string; escolhe: (id: string) => void }) {
   const { estado, mudaFase } = useEstado();
-  const [id, setId] = useState(inicial ?? estado.projetos[0]?.id);
   const [confirma, setConfirma] = useState(false);
-  useEffect(() => { if (inicial) setId(inicial); }, [inicial]);
-  const p = estado.projetos.find(x => x.id === id) ?? estado.projetos[0];
+  const p = estado.projetos.find(x => x.id === atual) ?? estado.projetos[0];
   if (!p) return <p className="vazio">Nenhum projeto ainda. Um briefing com a Clara é o começo de um.</p>;
+  const ciclo = textoDoCiclo(p.inicio, hojeLocal());
   const c = estado.clientes.find(x => x.id === p.cliente_id);
   const feitas = estado.tarefas.filter(t => t.projeto_id === p.id && t.estado === 'feito').length, total = estado.tarefas.filter(t => t.projeto_id === p.id).length;
   return (
     <div className="projetos">
-      <AvisoPrevia />
       <div className="abas" role="tablist">
-        {estado.projetos.map(x => <button key={x.id} role="tab" aria-selected={x.id === p.id} onClick={() => setId(x.id)}>{estado.clientes.find(k => k.id === x.cliente_id)?.setor}</button>)}
+        {estado.projetos.map(x => <button key={x.id} role="tab" aria-selected={x.id === p.id} onClick={() => { escolhe(x.id); setConfirma(false); }}>{estado.clientes.find(k => k.id === x.cliente_id)?.setor}</button>)}
       </div>
       {p.mesa && (
         <figure className="mesa">
@@ -139,7 +147,7 @@ export function Projetos({ inicial }: { inicial?: string }) {
       )}
       <div className="resumo-proj">
         <div><span className="rotulo">Projeto</span><b>{p.nome}</b></div>
-        <div><span className="rotulo">Ciclo</span><b>Dia {p.dia} de 30</b></div>
+        <div><span className="rotulo">Ciclo</span><b className={ciclo.startsWith('Dia') ? undefined : 'encerrado'}>{ciclo}</b></div>
         <div><span className="rotulo">Missões</span><b>{feitas} de {total} feitas</b></div>
       </div>
       {c && <p className="situacao">{c.situacao}</p>}
@@ -152,7 +160,7 @@ export function Projetos({ inicial }: { inicial?: string }) {
           </>}
         </div>
       )}
-      <Kanban projeto={p} />
+      <Kanban key={p.id} projeto={p} />
     </div>
   );
 }
@@ -162,26 +170,30 @@ export function Agenda({ com }: { com?: string[] }) {
   const { estado, criaReuniao, gravaAta, criaDecisao, mudaReuniao, apagaReuniao } = useEstado();
   const [remarca, setRemarca] = useState<{ id: number; dia: string; hora: string } | null>(null);
   const [nova, setNova] = useState(!!com);
-  const [f, setF] = useState({ titulo: '', pauta: '', dia: new Date().toISOString().slice(0, 10), hora: '09:30', participantes: com ?? [] as string[], projeto_id: '' });
+  const [f, setF] = useState({ titulo: '', pauta: '', dia: hojeLocal(), hora: '09:30', participantes: com ?? [] as string[], projeto_id: '' });
   const [ataDe, setAtaDe] = useState<number | null>(null), [ata, setAta] = useState(''), [decisao, setDecisao] = useState('');
   const salva = async () => { if (await criaReuniao({ ...f, projeto_id: f.projeto_id || null })) { setNova(false); setF({ ...f, titulo: '', pauta: '', participantes: [] }); } };
+  // ata e decisão são duas gravações seguidas: o segundo clique espera a primeira dupla terminar
+  const fechando = useRef(false);
   const fecha = async (id: number, projeto_id: string | null) => {
-    if (!ata.trim()) return;
-    if (await gravaAta(id, ata.trim())) {
-      if (decisao.trim()) await criaDecisao({ titulo: decisao.trim(), contexto: '', projeto_id, reuniao_id: id });
-      setAtaDe(null); setAta(''); setDecisao('');
-    }
+    if (!ata.trim() || fechando.current) return;
+    fechando.current = true;
+    try {
+      if (await gravaAta(id, ata.trim())) {
+        if (decisao.trim()) await criaDecisao({ titulo: decisao.trim(), contexto: '', projeto_id, reuniao_id: id });
+        setAtaDe(null); setAta(''); setDecisao('');
+      }
+    } finally { fechando.current = false; }
   };
-  const hoje = new Date().toISOString().slice(0, 10);
-  const proximas = estado.reunioes.filter(r => r.status === 'agendada');
+  const hoje = hojeLocal();
+  const proximas = proximasReunioes(estado);
   const feitas = estado.reunioes.filter(r => r.status === 'feita').sort((a, b) => (b.dia + b.hora).localeCompare(a.dia + a.hora));
   return (
     <div className="agenda">
-      <AvisoPrevia />
       {!nova ? <button className="primario" onClick={() => setNova(true)}>Marcar reunião</button> : (
         <form className="form-reuniao" onSubmit={e => { e.preventDefault(); salva(); }}>
-          <label>Assunto<input required value={f.titulo} onChange={e => setF({ ...f, titulo: e.target.value })} placeholder="Ritual semanal do piloto" /></label>
-          <label>Pauta<input value={f.pauta} onChange={e => setF({ ...f, pauta: e.target.value })} placeholder="O que precisa sair decidido" /></label>
+          <label>Assunto<input required autoFocus value={f.titulo} maxLength={160} onChange={e => setF({ ...f, titulo: e.target.value })} placeholder="Ritual semanal do piloto" /></label>
+          <label>Pauta<input value={f.pauta} maxLength={1000} onChange={e => setF({ ...f, pauta: e.target.value })} placeholder="O que precisa sair decidido" /></label>
           <div className="linha"><label>Dia<input type="date" required value={f.dia} onChange={e => setF({ ...f, dia: e.target.value })} /></label>
             <label>Hora<input type="time" required value={f.hora} onChange={e => setF({ ...f, hora: e.target.value })} /></label>
             <label>Projeto<select value={f.projeto_id} onChange={e => setF({ ...f, projeto_id: e.target.value })}><option value="">Nenhum</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select></label></div>
@@ -207,8 +219,8 @@ export function Agenda({ com }: { com?: string[] }) {
           </div>
           {r.dia > hoje ? <span className="ainda">Ata abre no dia</span> : ataDe !== r.id ? <button className="leve" onClick={() => { setAtaDe(r.id); setAta(''); }}>Registrar ata</button> : (
             <form className="form-ata" onSubmit={e => { e.preventDefault(); fecha(r.id, r.projeto_id); }}>
-              <label>Ata<textarea rows={3} value={ata} onChange={e => setAta(e.target.value)} placeholder="O que foi falado, em poucas linhas" /></label>
-              <label>Decisão tomada<input value={decisao} onChange={e => setDecisao(e.target.value)} placeholder="Opcional. Entra no registro de decisões" /></label>
+              <label>Ata<textarea rows={3} value={ata} maxLength={6000} onChange={e => setAta(e.target.value)} placeholder="O que foi falado, em poucas linhas" /></label>
+              <label>Decisão tomada<input value={decisao} maxLength={200} onChange={e => setDecisao(e.target.value)} placeholder="Opcional. Entra no registro de decisões" /></label>
               <div className="linha"><button className="primario" type="submit" disabled={!ata.trim()}>Fechar reunião</button><button type="button" className="leve" onClick={() => setAtaDe(null)}>Desistir</button></div>
             </form>
           )}
@@ -226,21 +238,20 @@ export function Decisoes() {
   const [t, setT] = useState(''), [c, setC] = useState(''), [p, setP] = useState('');
   return (
     <div className="decisoes">
-      <AvisoPrevia />
       <form className="form-decisao" onSubmit={async e => { e.preventDefault(); if (await criaDecisao({ titulo: t.trim(), contexto: c.trim(), projeto_id: p || null, reuniao_id: null })) { setT(''); setC(''); } }}>
-        <label>O que foi decidido<input value={t} onChange={e => setT(e.target.value)} placeholder="Piloto roda primeiro na unidade com mais fluxo" /></label>
-        <label>Por quê<input value={c} onChange={e => setC(e.target.value)} placeholder="O motivo, em uma frase" /></label>
+        <label>O que foi decidido<input value={t} maxLength={200} onChange={e => setT(e.target.value)} placeholder="Piloto roda primeiro na unidade com mais fluxo" /></label>
+        <label>Por quê<input value={c} maxLength={2000} onChange={e => setC(e.target.value)} placeholder="O motivo, em uma frase" /></label>
         <div className="linha"><select aria-label="Projeto" value={p} onChange={e => setP(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(x => <option key={x.id} value={x.id}>{x.nome}</option>)}</select>
           <button className="primario" type="submit" disabled={!t.trim()}>Registrar decisão</button></div>
       </form>
       {!estado.decisoes.length && <p className="vazio">Nenhuma decisão registrada. Toda reunião que termina com algo resolvido deveria deixar uma aqui.</p>}
       <ol className="linha-tempo">
-        {estado.decisoes.map(d => (
+        {decisoesRecentes(estado).map(d => (
           <li key={d.id}><time>{new Date(d.criado_em.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</time>
             {edita?.id === d.id ? (
               <form className="form-decisao" onSubmit={async e => { e.preventDefault(); if (await mudaDecisao(d.id, { titulo: edita.titulo, contexto: edita.contexto })) setEdita(null); }}>
-                <label>O que foi decidido<input value={edita.titulo} onChange={e => setEdita({ ...edita, titulo: e.target.value })} /></label>
-                <label>Por quê<input value={edita.contexto} onChange={e => setEdita({ ...edita, contexto: e.target.value })} /></label>
+                <label>O que foi decidido<input value={edita.titulo} maxLength={200} onChange={e => setEdita({ ...edita, titulo: e.target.value })} /></label>
+                <label>Por quê<input value={edita.contexto} maxLength={2000} onChange={e => setEdita({ ...edita, contexto: e.target.value })} /></label>
                 <div className="linha"><button className="primario mini" type="submit" disabled={!edita.titulo.trim()}>Salvar</button><button type="button" className="leve mini" onClick={() => setEdita(null)}>Desistir</button></div>
               </form>
             ) : <div><b>{d.titulo}</b>{d.contexto && <p>{d.contexto}</p>}{d.projeto_id && <small>{estado.projetos.find(x => x.id === d.projeto_id)?.nome}</small>}
@@ -265,6 +276,7 @@ export function itensConexao(c: ConexoesLab | null, noAr: boolean) {
 export function Conexoes({ c }: { c: ConexoesLab | null }) {
   const { modo, estado, salvaModeloPadrao } = useEstado();
   return (<>
+    <AvisoPrevia />
     <div className="campo modelo-padrao">
       <label htmlFor="mp">Modelo de IA padrão do lab</label>
       <SeletorModelo key={estado.modeloPadrao} id="mp" valor={estado.modeloPadrao} aoMudar={salvaModeloPadrao} />

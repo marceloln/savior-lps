@@ -27,6 +27,8 @@ describe('validação da API', () => {
     expect(V.novaMemoria({ agente: 'lia', texto: '' }, ids).ok).toBe(false);
     expect(V.instrucao('lia', { texto: '' }, ids)).toEqual({ ok: true, v: { agente: 'lia', texto: '' } });
     expect(V.instrucao('ninguem', { texto: 'x' }, ids).ok).toBe(false);
+    expect(V.instrucao('lia', null, ids).ok).toBe(false);
+    expect(V.instrucao('lia', { outro: 1 }, ids).ok).toBe(false);
   });
   it('data só passa se existir no calendário', () => {
     expect(V.dataReal('2026-11-30')).toBe(true);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { diaDoCiclo, semente, somaDias } from './dados';
+import { diaDoCiclo, semente, somaDias, textoDoCiclo } from './dados';
 import { EQUIPE } from './equipe';
 
 const HOJE = '2026-11-06';
@@ -12,6 +12,13 @@ describe('ciclo de 30 dias', () => {
     expect(diaDoCiclo(somaDias(HOJE, -17), HOJE)).toBe(18);
     expect(diaDoCiclo(somaDias(HOJE, -90), HOJE)).toBe(30);
     expect(diaDoCiclo(somaDias(HOJE, 3), HOJE)).toBe(1);
+  });
+  it('depois do dia 30 a frase conta há quantos dias o ciclo acabou', () => {
+    expect(textoDoCiclo(HOJE, HOJE)).toBe('Dia 1 de 30');
+    expect(textoDoCiclo(somaDias(HOJE, -29), HOJE)).toBe('Dia 30 de 30');
+    expect(textoDoCiclo(somaDias(HOJE, -30), HOJE)).toBe('Ciclo encerrado há 1 dia');
+    expect(textoDoCiclo(somaDias(HOJE, -90), HOJE)).toBe('Ciclo encerrado há 61 dias');
+    expect(textoDoCiclo('', HOJE)).toBe('Dia 1 de 30');
   });
 });
 

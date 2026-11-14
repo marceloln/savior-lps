@@ -43,6 +43,14 @@ export function diaDoCiclo(inicio: string, hoje: string): number {
   return Math.min(30, Math.max(1, Math.round(ms / 864e5) + 1));
 }
 
+/** Frase do ciclo na tela: o dia enquanto o ciclo corre e há quantos dias ele acabou depois do dia 30. */
+export function textoDoCiclo(inicio: string, hoje: string): string {
+  const passou = Math.round((Date.parse(hoje + 'T12:00:00Z') - Date.parse(inicio + 'T12:00:00Z')) / 864e5) + 1 - 30;
+  if (Number.isNaN(passou)) return 'Dia 1 de 30';   // projeto sem data de início ainda
+  if (passou <= 0) return `Dia ${diaDoCiclo(inicio, hoje)} de 30`;
+  return `Ciclo encerrado há ${passou} ${passou === 1 ? 'dia' : 'dias'}`;
+}
+
 export const hojeLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 
 // Entregas de exemplo do pedido que já vem pronto na história. Sem número de resultado e sem nome de cliente.

@@ -183,7 +183,8 @@ export async function rotaDados(req: Request, env: Env, caminho: string, ids: V.
     const v = V.mudancaReuniao(await corpo(req)); if (!v.ok) return ruim(v.erro);
     const campos = Object.keys(v.v);
     const r = await db.prepare(`UPDATE reunioes SET ${campos.map(c => c + ' = ?').join(', ')} WHERE id = ? AND status = 'agendada' RETURNING id`).bind(...Object.values(v.v), Number(x[1])).first();
-    return r ? json({ ok: true }) : ruim('Só dá para remarcar reunião que ainda não aconteceu.', 404);
+    if (r) return json({ ok: true });
+    return (await existe(db, 'reunioes', Number(x[1]))) ? ruim('Só dá para remarcar reunião que ainda não aconteceu.', 409) : ruim('Reunião não encontrada.', 404);
   }
   if (x && m === 'DELETE') {
     const [, r] = await db.batch([

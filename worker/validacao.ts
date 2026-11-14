@@ -65,7 +65,10 @@ export function novaDecisao(c: unknown): Ok<{ titulo: string; contexto: string; 
 
 export function instrucao(agente: string, c: unknown, ids: Ids): Ok<{ agente: string; texto: string }> | Falha {
   if (!ehAgente(agente, ids)) return falha('Especialista desconhecido.');
-  return { ok: true, v: { agente, texto: texto((c as Record<string, unknown> | null)?.texto, 3000) } };
+  // corpo que não é JSON ou sem o campo texto não pode apagar a instrução por engano
+  const t = (c as Record<string, unknown> | null)?.texto;
+  if (typeof t !== 'string') return falha('Mande o texto da instrução.');
+  return { ok: true, v: { agente, texto: texto(t, 3000) } };
 }
 
 export function novaMemoria(c: unknown, ids: Ids): Ok<{ agente: string; texto: string; origem: 'manual' | 'conversa' }> | Falha {
