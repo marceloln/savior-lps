@@ -238,3 +238,13 @@ Quatro auditorias em paralelo (funcional, design e UX, motion, arquitetura) e tr
 
 Ainda sem teste: chamada real aos provedores, e inércia e pinça num aparelho de verdade.
 Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao remarcar reunião que já aconteceu, Escape em dois tempos fora do livro.
+
+## Rodada 2, 14 de novembro (issue 30)
+
+- Modelos de pedido no formulário: diagnóstico, proposta, ritual da semana, plano de 30 dias, treinamento e post. O trecho a completar já vem selecionado.
+- Ajuste na resposta final do pedido: a orquestração reescreve a resposta com o que o sócio pediu.
+- Baixar tudo: resposta e entregas num arquivo markdown só.
+- Para você, na tela inicial: resposta pronta, pedido parado e reunião de hoje. Resposta aberta sai da lista.
+- Menu do diário agrupado em trabalho, equipe, registro e lab.
+
+109 testes. Passeio em 1440, 1280 e 390 no Worker local com IA simulada.

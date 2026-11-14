@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { hojeLocal } from '../lib/dados';
+import { paraVoce } from '../lib/pedidos';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
@@ -204,7 +206,8 @@ export function Lab() {
       {lab && <CartaoLugar zona={zona} lab={lab} abre={abreSala} oculto={!!aberto} />}
       <div className="coluna-direita">
         <Selos abre={abreAba} />
-        <Missoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={() => setAberto({ tipo: 'aba', aba: 'missoes' })} />
+        <Missoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={() => setAberto({ tipo: 'aba', aba: 'missoes' })} abre={a => setAberto({ tipo: 'aba', aba: a })}
+          atencao={paraVoce(estado, hojeLocal(), Date.now(), pedido.ocupado ? pedido.corrida.pedido : null)} />
       </div>
       {dica.alvo && !aberto && (
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>

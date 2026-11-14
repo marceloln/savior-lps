@@ -1,5 +1,6 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import type { Atencao } from '../lib/pedidos';
 import { Icone, type NomeIcone } from './Icones';
 import { Retrato } from './Retrato';
 import { useEstado } from '../hooks/useEstado';
@@ -10,11 +11,12 @@ import { criaProjecao } from '../lib/projecao';
 import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
 
 export type Aba = 'pedidos' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
-export const ABAS: { id: Aba; nome: string }[] = [
-  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' },
-  { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' }, { id: 'skills', nome: 'Skills' },
-  { id: 'lugares', nome: 'Lugares' }, { id: 'agenda', nome: 'Agenda' }, { id: 'decisoes', nome: 'Decisões' },
-  { id: 'memoria', nome: 'Memória' }, { id: 'conexoes', nome: 'Conexões' }, { id: 'trofeus', nome: 'Troféus' },
+export const ABAS: { id: Aba; nome: string; corte?: boolean }[] = [
+  // corte marca onde começa um assunto novo no menu: trabalho, equipe, registro e o lab em si
+  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
+  { id: 'pessoas', nome: 'Pessoas', corte: true }, { id: 'skills', nome: 'Skills' }, { id: 'lugares', nome: 'Lugares' },
+  { id: 'agenda', nome: 'Agenda', corte: true }, { id: 'decisoes', nome: 'Decisões' }, { id: 'memoria', nome: 'Memória' },
+  { id: 'conexoes', nome: 'Conexões', corte: true }, { id: 'trofeus', nome: 'Troféus' },
 ];
 
 export const SOBRE_ZONA: Record<string, string> = {
@@ -72,7 +74,7 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
-        <button key={a.id} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
+        <button key={a.id} className={a.corte ? 'corte' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
           <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
         </button>
       ))}
@@ -144,16 +146,30 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
   );
 }
 
-export function Missoes({ abreProjeto, escolhe, verTodas }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void }) {
+const ROTULO_ATENCAO = { resposta: 'Resposta pronta', parado: 'Pedido parado', reuniao: 'Reunião hoje' } as const;
+
+export function Missoes({ abreProjeto, escolhe, verTodas, atencao, abre }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void; atencao: Atencao[]; abre: (a: Aba) => void }) {
   const { estado } = useEstado();
   const todas = estado.tarefas.filter(t => t.projeto_id);
   const feitas = todas.filter(t => t.estado === 'feito').length;
   const pct = todas.length ? Math.round((feitas / todas.length) * 100) : 0;
+  // resposta que o sócio já abriu sai da lista. Fica guardado neste navegador
+  const [vistas, setVistas] = useState<number[]>(() => { try { return JSON.parse(localStorage.getItem('lab.respostas-vistas') ?? '[]'); } catch { return []; } });
+  const viu = (id: number) => { const l = [...vistas, id].slice(-50); setVistas(l); try { localStorage.setItem('lab.respostas-vistas', JSON.stringify(l)); } catch { /* sem armazenamento, vale só nesta visita */ } };
+  atencao = atencao.filter(a => a.tipo !== 'resposta' || !vistas.includes(a.pedido));
   return (
     <aside className="missoes papel-borda" aria-label="Missões">
+      {atencao.length > 0 && <section className="para-voce" aria-label="Para você">
+        <h3>Para você</h3>
+        <ul>{atencao.map(a => (
+          <li key={a.tipo + ('pedido' in a ? a.pedido : a.reuniao)}><button className={a.tipo} onClick={() => { if (a.tipo === 'resposta') viu(a.pedido); abre(a.tipo === 'reuniao' ? 'agenda' : 'pedidos'); }}>
+            <Icone nome={a.tipo === 'reuniao' ? 'agenda' : 'pedidos'} tam={18} /><span><b>{ROTULO_ATENCAO[a.tipo]}</b><small>{a.texto}</small></span>
+          </button></li>
+        ))}</ul>
+      </section>}
       <h3 className="titulo-coluna">Missões</h3>
       <div className="progresso-geral" title="Missões concluídas somando todos os projetos"><span>Todos os projetos</span><div className="barra"><i style={{ transform: `scaleX(${pct / 100})` }} /></div><b>{pct}%</b></div>
-      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={verTodas} />
+      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={verTodas} max={atencao.length ? 5 - Math.min(2, atencao.length) : 5} />
     </aside>
   );
 }

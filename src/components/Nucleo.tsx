@@ -4,6 +4,7 @@ import { useEstado } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
 import type { ApiPedido } from '../hooks/usePedido';
 import { MAX_MISSOES, type MissaoProposta, type Pedido, type Skill, type Tarefa } from '../lib/dados';
+import { MODELOS_DE_PEDIDO, documentoDoPedido, nomeDoArquivo } from '../lib/pedidos';
 import { APARENCIAS, ORQUESTRADOR, type Agente } from '../lib/equipe';
 import { ZONAS } from '../lib/lab';
 import { leMarkdown, type Trecho } from '../lib/markdown';
@@ -29,6 +30,15 @@ export function Markdown({ texto }: { texto: string }) {
       })}
     </div>
   );
+}
+
+/** Entrega o texto como arquivo markdown para guardar ou mandar adiante. */
+function Baixar({ nome, texto, rotulo = 'Baixar' }: { nome: string; texto: () => string; rotulo?: string }) {
+  return <button type="button" className="leve mini" onClick={() => {
+    const url = URL.createObjectURL(new Blob([texto()], { type: 'text/markdown;charset=utf-8' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: nome });
+    a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }}>{rotulo}</button>;
 }
 
 function Copiar({ texto }: { texto: string }) {
@@ -125,9 +135,11 @@ function Plano({ p }: { p: ApiPedido }) {
 }
 
 function CartaoPedido({ ped, p, aberto }: { ped: Pedido; p: ApiPedido; aberto: boolean }) {
-  const { estado, executando, apagaPedido } = useEstado();
-  const { nome } = useEquipe();
+  const { estado, executando, apagaPedido, sintetiza } = useEstado();
+  const { nome, de } = useEquipe();
+  const [ajuste, setAjuste] = useState(''), [refazendo, setRefazendo] = useState(false);
   const missoes = estado.tarefas.filter(t => t.pedido_id === ped.id);
+  const documento = () => documentoDoPedido(ped, missoes.filter(t => t.entrega).map(t => ({ nome: nome(t.agente), papel: de(t.agente)?.papel ?? 'Especialista', titulo: t.titulo, entrega: t.entrega })));
   const meu = p.corrida.pedido === ped.id, rodando = meu && p.ocupado;
   const prontas = missoes.filter(t => t.entrega).length;
   // o carimbo bate só na entrega que chegou com a tela aberta
@@ -152,7 +164,14 @@ function CartaoPedido({ ped, p, aberto }: { ped: Pedido; p: ApiPedido; aberto: b
         })}
       </ol>
       {meu && p.corrida.etapa === 'sintetizando' && <p className="andamento"><Retrato id={ORQUESTRADOR} tamanho={26} />{nome(ORQUESTRADOR)} está juntando as entregas.</p>}
-      {ped.sintese && <section className="sintese"><header><h4>Resposta ao pedido</h4><Copiar texto={ped.sintese} /></header><Markdown texto={ped.sintese} /></section>}
+      {ped.sintese && <section className="sintese"><header><h4>Resposta ao pedido</h4><Copiar texto={ped.sintese} /><Baixar nome={nomeDoArquivo(ped.texto)} texto={documento} rotulo="Baixar tudo" /></header>
+        {refazendo ? <p className="andamento"><Retrato id={ORQUESTRADOR} tamanho={26} />{nome(ORQUESTRADOR)} está reescrevendo a resposta.</p> : <Markdown texto={ped.sintese} />}
+        <form className="nova-linha" onSubmit={async e => { e.preventDefault(); if (!ajuste.trim() || refazendo) return; setRefazendo(true); try { if (await sintetiza(ped.id, ajuste.trim())) setAjuste(''); } finally { setRefazendo(false); } }}>
+          <label className="so-leitor" htmlFor={'ajp' + ped.id}>Pedir ajuste na resposta</label>
+          <input id={'ajp' + ped.id} value={ajuste} onChange={e => setAjuste(e.target.value)} placeholder="Pedir ajuste na resposta. Ex.: em formato de e-mail para o diretor" maxLength={2000} />
+          <button type="submit" disabled={!ajuste.trim() || refazendo || p.ocupado}>Refazer</button>
+        </form>
+      </section>}
       {!rodando && <div className="linha">
         {ped.estado !== 'entregue' && missoes.length > 0 && <button type="button" className="primario" disabled={p.ocupado} onClick={() => p.continua(ped.id)}>Continuar de onde parou</button>}
         <Apagar oque="este pedido" apaga={() => apagaPedido(ped.id)} />
@@ -170,6 +189,9 @@ export function Pedidos({ p, rascunho }: { p: ApiPedido; rascunho?: string }) {
     <div className="pedidos">
       <form className="pedir" onSubmit={e => { e.preventDefault(); if (texto.trim().length >= 8 && !p.ocupado) { p.planeja(texto.trim(), proj || null); setTexto(''); } }}>
         <label htmlFor="ped">O que você precisa do lab?</label>
+        <div className="modelos-pedido" role="group" aria-label="Começar por um tipo de trabalho">
+          {MODELOS_DE_PEDIDO.map(m => <button key={m.rotulo} type="button" onClick={() => { setTexto(m.texto); const c = document.getElementById('ped') as HTMLTextAreaElement | null; c?.focus(); const i = m.texto.indexOf('['), f = m.texto.indexOf(']'); if (c && i >= 0) requestAnimationFrame(() => c.setSelectionRange(i, f + 1)); }}>{m.rotulo}</button>)}
+        </div>
         <textarea id="ped" rows={3} value={texto} onChange={e => setTexto(e.target.value)} maxLength={4000} autoFocus
           placeholder="Ex.: montar a pauta do ritual de segunda da distribuidora e o que o gerente precisa olhar antes" />
         <div className="linha">

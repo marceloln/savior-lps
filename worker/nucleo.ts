@@ -163,15 +163,17 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
   }
   x = caminho.match(/^\/api\/pedidos\/(\d+)\/sintese$/);
   if (x && m === 'POST') {
-    const ped = await db.prepare('SELECT id, texto FROM pedidos WHERE id = ?').bind(Number(x[1])).first<{ id: number; texto: string }>();
+    const ped = await db.prepare('SELECT id, texto, sintese FROM pedidos WHERE id = ?').bind(Number(x[1])).first<{ id: number; texto: string; sintese: string }>();
     if (!ped) return ruim('Pedido não encontrado.', 404);
+    // com ajuste, a orquestração reescreve a resposta que já deu
+    const pedeAjuste = V.ajuste(await corpo(req));
     const orq = quem(ORQUESTRADOR); if (!orq) return ruim('A orquestração não está na equipe.', 503);
     const { results } = await db.prepare('SELECT agente, titulo, entrega FROM missoes WHERE pedido_id = ? ORDER BY id').bind(ped.id).all<Pick<Tarefa, 'agente' | 'titulo' | 'entrega'>>();
     const prontas = results.filter(t => t.entrega);
     if (!prontas.length) return ruim('Ainda não há nenhuma entrega para juntar.', 409);
     if (prontas.length < results.length) return ruim('Ainda há missão deste pedido sem entrega.', 409);
     if (!(await reserva(db, 'sintese'))) return cheio();
-    const r = await fala(env, orq, [{ role: 'user', content: promptSintese(ped.texto, prontas.map(t => { const a = todos.find(z => z.id === t.agente); return { nome: a?.nome ?? 'Colega', papel: a?.papel ?? 'especialista', titulo: t.titulo, entrega: t.entrega }; })) }], 6000, PAPEL_ORQUESTRA);
+    const r = await fala(env, orq, [{ role: 'user', content: promptSintese(ped.texto, prontas.map(t => { const a = todos.find(z => z.id === t.agente); return { nome: a?.nome ?? 'Colega', papel: a?.papel ?? 'especialista', titulo: t.titulo, entrega: t.entrega }; }), ped.sintese && pedeAjuste ? { anterior: ped.sintese, ajuste: pedeAjuste } : undefined) }], 6000, PAPEL_ORQUESTRA);
     if (!r.ok) return ruim(r.erro, r.status);
     const feito = await db.prepare("UPDATE pedidos SET sintese = ?, estado = 'entregue' WHERE id = ? RETURNING id, texto, projeto_id, estado, sintese, criado_em").bind(r.texto, ped.id).first();
     return feito ? json(feito) : ruim('O pedido foi apagado enquanto a síntese era escrita.', 409);

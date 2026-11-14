@@ -68,7 +68,7 @@ export function promptExecucao(d: DadosExecucao): string {
   ].filter(Boolean).join('\n');
 }
 
-export function promptSintese(pedido: string, entregas: { nome: string; papel: string; titulo: string; entrega: string }[]): string {
+export function promptSintese(pedido: string, entregas: { nome: string; papel: string; titulo: string; entrega: string }[], refaz?: { anterior: string; ajuste: string }): string {
   return [
     'CONSOLIDAR', 'Pedido do sócio: ' + pedido.trim(), '',
     'ENTREGAS DA EQUIPE', ...entregas.map(e => `${e.nome}, ${e.papel.toLowerCase()}. ${e.titulo}\n${corta(e.entrega, 3500)}`),
@@ -76,5 +76,6 @@ export function promptSintese(pedido: string, entregas: { nome: string; papel: s
     'Junte as entregas em uma resposta só para o sócio, em markdown, começando por um título de nível 2.',
     'Diga a resposta ao pedido em poucas linhas, quem trouxe o quê, o que fazer agora com dono e o que ainda não se sabe.',
     'Aponte contradição entre as entregas se houver. Não repita as entregas inteiras.',
-  ].join('\n');
+    refaz ? '\nSUA RESPOSTA ANTERIOR\n' + corta(refaz.anterior, 4000) + '\n\nAJUSTE PEDIDO PELO SÓCIO\n' + refaz.ajuste + '\nReescreva a resposta inteira já com o ajuste.' : '',
+  ].filter(Boolean).join('\n');
 }
