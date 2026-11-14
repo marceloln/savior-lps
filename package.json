@@ -9,7 +9,7 @@
     "test": "vitest run",
     "deploy": "npm run build && wrangler deploy",
     "banco:local": "wrangler d1 migrations apply agencia-v30 --local",
-    "semear:local": "wrangler d1 execute agencia-v30 --local --command \"DELETE FROM decisoes; DELETE FROM reunioes; DELETE FROM missoes; DELETE FROM memorias; DELETE FROM instrucoes; DELETE FROM mensagens; DELETE FROM projetos; DELETE FROM clientes;\""
+    "semear:local": "wrangler d1 execute agencia-v30 --local --command \"DELETE FROM decisoes; DELETE FROM reunioes; DELETE FROM missoes; DELETE FROM pedidos; DELETE FROM agente_skills; DELETE FROM skills; DELETE FROM agentes; DELETE FROM config; DELETE FROM uso; DELETE FROM memorias; DELETE FROM instrucoes; DELETE FROM mensagens; DELETE FROM projetos; DELETE FROM clientes;\""
   },
   "keywords": [],
   "author": "",

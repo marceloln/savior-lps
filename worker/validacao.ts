@@ -145,7 +145,7 @@ export function mudancaAgente(c: unknown): Ok<{ nome?: string; papel?: string; z
 
 export function novaSkill(c: unknown): Ok<{ nome: string; descricao: string; conteudo: string; para_todos: number }> | Falha {
   const o = (c ?? {}) as Record<string, unknown>;
-  const nome = texto(o.nome, 80), conteudo = texto(o.conteudo, 12000);
+  const nome = texto(o.nome, 80), conteudo = texto(o.conteudo, 6000);
   if (nome.length < 3) return falha('Dê um nome à skill.');
   if (conteudo.length < 20) return falha('Escreva o que o especialista precisa saber para fazer isso bem.');
   return { ok: true, v: { nome, descricao: texto(o.descricao, 200), conteudo, para_todos: o.para_todos === true ? 1 : 0 } };
@@ -155,7 +155,7 @@ export function mudancaSkill(c: unknown): Ok<{ nome?: string; descricao?: string
   const o = (c ?? {}) as Record<string, unknown>, v: { nome?: string; descricao?: string; conteudo?: string; para_todos?: number } = {};
   if (o.nome !== undefined) { const t = texto(o.nome, 80); if (t.length < 3) return falha('Dê um nome à skill.'); v.nome = t; }
   if (o.descricao !== undefined) v.descricao = texto(o.descricao, 200);
-  if (o.conteudo !== undefined) { const t = texto(o.conteudo, 12000); if (t.length < 20) return falha('O texto da skill ficou curto demais.'); v.conteudo = t; }
+  if (o.conteudo !== undefined) { const t = texto(o.conteudo, 6000); if (t.length < 20) return falha('O texto da skill ficou curto demais.'); v.conteudo = t; }
   if (o.para_todos !== undefined) { if (typeof o.para_todos !== 'boolean') return falha('Valor inválido.'); v.para_todos = o.para_todos ? 1 : 0; }
   return Object.keys(v).length ? { ok: true, v } : falha('Nada para mudar.');
 }

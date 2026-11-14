@@ -14,7 +14,7 @@ async function conversa(req: Request, env: Env, todos: Agente[], ids: Set<string
   const m = montaPedido(corpo, ids);
   if (!m.ok) return json({ erro: m.erro }, 400);
   if (!(await reserva(env.DB, 'conversa'))) return json({ erro: 'Muitas perguntas em pouco tempo. Espere alguns minutos e tente de novo.' }, 429);
-  const r = await fala(env, todos.find(a => a.id === m.agente)!, m.messages, 1024);
+  const r = await fala(env, todos.find(a => a.id === m.agente)!, m.messages, 3000);
   if (!r.ok) return json({ erro: r.erro }, r.status);
   await env.DB.batch([
     env.DB.prepare('INSERT INTO mensagens (agente, papel, texto) VALUES (?, ?, ?)').bind(m.agente, 'user', m.messages.at(-1)!.content),

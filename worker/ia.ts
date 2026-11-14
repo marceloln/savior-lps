@@ -7,29 +7,34 @@ export type Chaves = { ANTHROPIC_API_KEY?: string; OPENAI_API_KEY?: string; GOOG
 export type Chamada = { modelo: string; system: string; messages: Mensagem[]; max: number };
 export type Resposta = { ok: true; texto: string } | { ok: false; status: number; erro: string };
 type Buscar = (url: string, init: RequestInit) => Promise<Response>;
+/** O que cada provedor devolve: o texto e se a resposta bateu no teto de tamanho. */
+type Lido = { texto: string; cortada: boolean };
 
 export const chaveDe = (env: Chaves, p: Provedor) => (p === 'anthropic' ? env.ANTHROPIC_API_KEY : p === 'openai' ? env.OPENAI_API_KEY : env.GOOGLE_API_KEY);
 export const provedoresLigados = (env: Chaves) => ({ anthropic: !!env.ANTHROPIC_API_KEY, openai: !!env.OPENAI_API_KEY, google: !!env.GOOGLE_API_KEY });
 
-const MONTA: Record<Provedor, (id: string, chave: string, c: Chamada) => { url: string; init: RequestInit; le: (d: unknown) => string }> = {
+const MONTA: Record<Provedor, (id: string, chave: string, c: Chamada) => { url: string; init: RequestInit; le: (d: unknown) => Lido }> = {
   anthropic: (id, chave, c) => ({
     url: 'https://api.anthropic.com/v1/messages',
     init: { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': chave, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({ model: id, max_tokens: c.max, system: c.system, messages: c.messages }) },
-    le: d => ((d as { content?: { type: string; text?: string }[] }).content ?? []).filter(x => x.type === 'text').map(x => x.text ?? '').join('\n'),
+    le: d => { const r = d as { content?: { type: string; text?: string }[]; stop_reason?: string };
+      return { texto: (r.content ?? []).filter(x => x.type === 'text').map(x => x.text ?? '').join('\n'), cortada: r.stop_reason === 'max_tokens' }; },
   }),
   openai: (id, chave, c) => ({
     url: 'https://api.openai.com/v1/chat/completions',
     init: { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + chave },
       body: JSON.stringify({ model: id, max_completion_tokens: c.max, messages: [{ role: 'system', content: c.system }, ...c.messages] }) },
-    le: d => (d as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? '',
+    le: d => { const c = (d as { choices?: { message?: { content?: string }; finish_reason?: string }[] }).choices?.[0];
+      return { texto: c?.message?.content ?? '', cortada: c?.finish_reason === 'length' }; },
   }),
   google: (id, chave, c) => ({
     url: `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(id)}:generateContent`,
     init: { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': chave },
       body: JSON.stringify({ systemInstruction: { parts: [{ text: c.system }] }, generationConfig: { maxOutputTokens: c.max },
         contents: c.messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })) }) },
-    le: d => ((d as { candidates?: { content?: { parts?: { text?: string }[] } }[] }).candidates?.[0]?.content?.parts ?? []).map(p => p.text ?? '').join(''),
+    le: d => { const c = (d as { candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[] }).candidates?.[0];
+      return { texto: (c?.content?.parts ?? []).map(p => p.text ?? '').join(''), cortada: c?.finishReason === 'MAX_TOKENS' }; },
   }),
 };
 
@@ -58,10 +63,14 @@ export async function chamaIA(env: Chaves, c: Chamada, buscar: Buscar = fetch): 
   let r: Response;
   try { r = await buscar(p.url, p.init); } catch { return { ok: false, status: 502, erro: `Não deu para falar com a ${nome} agora. Tente de novo em instantes.` }; }
   if (!r.ok) {
-    if (r.status === 404 || r.status === 400) return { ok: false, status: 502, erro: `A ${nome} recusou o modelo ${m.id}. Confira o nome do modelo na ficha do especialista.` };
+    // o motivo vai para o log do Worker, sem a chave; para quem usa vai uma frase que diga o que fazer
+    console.error('provedor recusou', m.provedor, m.id, r.status, (await r.text().catch(() => '')).slice(0, 300));
+    if (r.status === 404) return { ok: false, status: 502, erro: `A ${nome} recusou o modelo ${m.id}. Confira o nome do modelo na ficha do especialista.` };
     if (r.status === 401 || r.status === 403) return { ok: false, status: 502, erro: `A ${nome} recusou a chave. Confira o segredo ${PROVEDORES[m.provedor].segredo} no Worker.` };
     return { ok: false, status: 502, erro: `A ${nome} não respondeu agora. Tente de novo em instantes.` };
   }
-  const texto = p.le(await r.json().catch(() => ({}))).trim();
-  return texto ? { ok: true, texto } : { ok: false, status: 502, erro: `A ${nome} respondeu vazio. Tente de novo.` };
+  const lido = p.le(await r.json().catch(() => ({}))), texto = lido.texto.trim();
+  // modelo que pensa antes de responder pode gastar o teto inteiro pensando
+  if (!texto) return { ok: false, status: 502, erro: lido.cortada ? `O modelo ${m.id} gastou o limite de tamanho antes de responder. Tente de novo ou escolha um modelo mais simples para essa pessoa.` : `A ${nome} respondeu vazio. Tente de novo.` };
+  return { ok: true, texto: lido.cortada ? texto + '\n\nA resposta bateu no limite de tamanho e foi cortada aqui. Peça um ajuste para encurtar ou continuar.' : texto };
 }

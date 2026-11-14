@@ -37,6 +37,13 @@ describe('provedores de IA', () => {
     expect(b.contents.map((x: { role: string }) => x.role)).toEqual(['user', 'model', 'user']);
     expect(b.systemInstruction.parts[0].text).toContain('Lia');
   });
+  it('resposta cortada no limite avisa no fim do texto; cortada e vazia vira erro que diz o que fazer', async () => {
+    const cortada = await chamaIA(env, c('anthropic:claude-sonnet-5-5'), falso({ content: [{ type: 'text', text: 'Começo do plano' }], stop_reason: 'max_tokens' }).buscar);
+    expect(cortada.ok && cortada.texto).toContain('foi cortada aqui');
+    const vazia = await chamaIA(env, c('openai:gpt-6-astra'), falso({ choices: [{ message: { content: '' }, finish_reason: 'length' }] }).buscar);
+    expect(vazia).toMatchObject({ ok: false, status: 502 });
+    if (!vazia.ok) expect(vazia.erro).toContain('limite de tamanho');
+  });
   it('sem a chave do provedor, diz qual segredo falta e não chama ninguém', async () => {
     const f = falso({});
     const r = await chamaIA({ ANTHROPIC_API_KEY: 'ka' }, c('openai:gpt-6-astra'), f.buscar);

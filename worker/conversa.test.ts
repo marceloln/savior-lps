@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { montaPedido, sistemaDe } from './conversa';
+import { montaPedido, sistemaDe, LIMITE_SKILLS } from './conversa';
 import { EQUIPE } from '../src/lib/equipe';
 import { SKILLS_BASE } from '../src/lib/skills';
 
@@ -35,5 +35,12 @@ describe('conversa', () => {
     expect(s).toContain('### Método V30');
     expect(s).toContain('Gravidade, Urgência e Tendência');
     expect(sistemaDe({ id: 'gil-abc', nome: 'Gil', papel: 'Pricing', zona: 'dados' })).toContain('Você é Gil, pricing no Lab V30');
+  });
+  it('as skills juntas não passam do teto: as últimas ficam de fora inteiras', () => {
+    const muitas = Array.from({ length: 8 }, (_, i) => ({ id: i + 1, nome: `Skill ${i + 1}`, conteudo: 'x'.repeat(5000) }));
+    const s = sistemaDe(de('lia'), muitas);
+    expect(s).toContain('### Skill 1');
+    expect(s).not.toContain('### Skill 8');
+    expect(s.length).toBeLessThan(sistemaDe(de('lia')).length + LIMITE_SKILLS + 200);
   });
 });

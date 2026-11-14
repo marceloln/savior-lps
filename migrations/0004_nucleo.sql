@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS pedidos (
 ALTER TABLE missoes ADD COLUMN pedido_id INTEGER REFERENCES pedidos(id);
 ALTER TABLE missoes ADD COLUMN entrega TEXT NOT NULL DEFAULT '';
 ALTER TABLE missoes ADD COLUMN modelo TEXT NOT NULL DEFAULT '';
+-- Preenchido enquanto um modelo escreve a entrega. Impede duas execuções da mesma missão ao mesmo tempo.
+ALTER TABLE missoes ADD COLUMN executando_desde TEXT;
 
 CREATE TABLE IF NOT EXISTS config (chave TEXT PRIMARY KEY, valor TEXT NOT NULL);
 
