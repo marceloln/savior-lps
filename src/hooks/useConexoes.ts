@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type Conexoes = { banco: boolean; chave: boolean; acesso: boolean; mensagens: number };
+export type Conexoes = { banco: boolean; chave: boolean; acesso: boolean; mensagens: number; provedores?: Record<'anthropic' | 'openai' | 'google', boolean> };
 
 /** Pergunta ao Worker o que está ligado, só quando a tela de conexões abre. Na prévia volta null. */
 export function useConexoes(ativo: boolean): Conexoes | null {

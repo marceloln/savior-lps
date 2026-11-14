@@ -1,17 +1,18 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Icone, type NomeIcone } from './Icones';
 import { Retrato } from './Retrato';
 import { useEstado } from '../hooks/useEstado';
-import { EQUIPE, type Membro } from '../lib/equipe';
+import type { Membro } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
 import { FASES } from '../lib/dados';
 
-export type Aba = 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
+export type Aba = 'pedidos' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
 export const ABAS: { id: Aba; nome: string; so?: 'celular' }[] = [
-  { id: 'missoes', nome: 'Missões', so: 'celular' },
-  { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' },
+  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões', so: 'celular' },
+  { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' }, { id: 'skills', nome: 'Skills' },
   { id: 'lugares', nome: 'Lugares' }, { id: 'agenda', nome: 'Agenda' }, { id: 'decisoes', nome: 'Decisões' },
   { id: 'memoria', nome: 'Memória' }, { id: 'conexoes', nome: 'Conexões' }, { id: 'trofeus', nome: 'Troféus' },
 ];
@@ -63,7 +64,7 @@ export function FotoLugar({ zona, lab, larg = 236, alt = 112, esc = 0.42 }: { zo
 export function CartaoLugar({ zona, lab, abre }: { zona: string | null; lab: DadosLab; abre: (z: string) => void }) {
   const z = ZONAS.find(q => q.id === zona);
   if (!z) return null;
-  const time = EQUIPE.filter(m => m.zona === z.id);
+  const time = useEquipe().equipe.filter(m => m.zona === z.id);
   return (
     <aside className="cartao-lugar papel-borda" aria-label={`Lugar: ${z.nome}`}>
       <h3>{z.nome}</h3>
@@ -90,6 +91,7 @@ export function Selos({ abre }: { abre: (a: Aba) => void }) {
 
 /** O que a equipe tem nas mãos agora. O rosto leva à pessoa no mapa, o texto leva ao projeto. */
 export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas?: () => void; max?: number }) {
+  const { de } = useEquipe();
   const { estado } = useEstado();
   const abertas = estado.tarefas.filter(t => t.estado !== 'feito').sort((a, b) => (a.estado === b.estado ? 0 : a.estado === 'fazendo' ? -1 : 1));
   if (!abertas.length) return <p className="vazio">Ninguém tem missão aberta. Escolha alguém e aperte Missão no console.</p>;
@@ -97,7 +99,7 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
     <>
       <ul>
         {abertas.slice(0, max).map(t => {
-          const m = EQUIPE.find(e => e.id === t.agente), z = ZONAS.find(q => q.id === m?.zona), p = estado.projetos.find(x => x.id === t.projeto_id);
+          const m = de(t.agente), z = ZONAS.find(q => q.id === m?.zona), p = estado.projetos.find(x => x.id === t.projeto_id);
           return (
             <li key={t.id} className="cartao-missao" style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}>
               <button className="marcador" onClick={() => escolhe(t.agente)} aria-label={`Ver ${m?.nome} no mapa`} title={`Ver ${m?.nome} no mapa`}><Retrato id={t.agente} tamanho={30} /></button>
@@ -134,9 +136,11 @@ const ACOES: { id: Acao; nome: string; icone: NomeIcone }[] = [
   { id: 'missao', nome: 'Missão', icone: 'missao' }, { id: 'memoria', nome: 'Memória', icone: 'memoria' }, { id: 'reuniao', nome: 'Reunião', icone: 'reuniao' },
 ];
 
-export function Console({ escolhido, mirando, registro, age, briefing, solta }: {
+export function Console({ escolhido, mirando, registro, age, briefing, solta, pedir, ocupado }: {
   escolhido: Membro | null; mirando: boolean; registro: string[]; age: (a: Acao) => void; briefing: () => void; solta: () => void;
+  pedir: (texto: string) => void; ocupado: boolean;
 }) {
+  const [pedido, setPedido] = useState('');
   const { estado } = useEstado();
   const z = escolhido ? ZONAS.find(q => q.id === escolhido.zona) : null;
   const minhas = escolhido ? estado.tarefas.filter(t => t.agente === escolhido.id) : [];
@@ -164,8 +168,12 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
       <div className="console-recado papel-borda" aria-live="polite">
         {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
           : escolhido ? <><p><b>{z?.nome}</b> {situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
-          : registro.length ? registro.slice(-2).map((r, i) => <p key={i}>{r}</p>)
-          : <p>Escolha alguém no mapa ou em Pessoas para conversar, dar missão ou marcar reunião. Clique numa sala para ver o que acontece nela.</p>}
+          : <form className="pedir-rapido" onSubmit={e => { e.preventDefault(); if (pedido.trim().length >= 8 && !ocupado) { pedir(pedido.trim()); setPedido(''); } }}>
+              <label htmlFor="pr">Peça ao lab</label>
+              <div><input id="pr" value={pedido} onChange={e => setPedido(e.target.value)} maxLength={4000} placeholder="O que você precisa? A orquestração divide entre a equipe" />
+                <button type="submit" className="primario" disabled={pedido.trim().length < 8 || ocupado}>Pedir</button></div>
+              <small>{ocupado ? 'Um pedido está andando. Acompanhe em Pedidos.' : registro.length ? registro[registro.length - 1] : 'Ou escolha alguém no mapa para conversar e dar missão direto.'}</small>
+            </form>}
       </div>
       {escolhido && <div className="console-acoes" role="toolbar" aria-label={`Ações com ${escolhido.nome}`}>
         {ACOES.map(a => (

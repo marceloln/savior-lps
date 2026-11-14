@@ -16,7 +16,7 @@ describe('resumos do diário', () => {
   it('cada pessoa cai em um só grupo: fazendo, fila ou livre', () => {
     const ids = EQUIPE.map(e => e.id), s = situacaoEquipe(SEMENTE, ids);
     expect(s.fazendo + s.fila + s.livres.length).toBe(ids.length);
-    const e = { ...vazio, tarefas: [{ id: 1, agente: 'lia', titulo: 'a', detalhe: '', estado: 'fazendo' as const, projeto_id: null }, { id: 2, agente: 'lia', titulo: 'b', detalhe: '', estado: 'fila' as const, projeto_id: null }] };
+    const e = { ...vazio, tarefas: [{ id: 1, agente: 'lia', titulo: 'a', detalhe: '', estado: 'fazendo' as const, projeto_id: null, pedido_id: null, entrega: '', modelo: '' }, { id: 2, agente: 'lia', titulo: 'b', detalhe: '', estado: 'fila' as const, projeto_id: null, pedido_id: null, entrega: '', modelo: '' }] };
     expect(situacaoEquipe(e, ['lia', 'rui'])).toEqual({ fazendo: 1, fila: 0, livres: ['rui'] });
   });
   it('notas por pessoa em ordem decrescente', () => {

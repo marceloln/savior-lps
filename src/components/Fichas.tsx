@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { EQUIPE, type Membro } from '../lib/equipe';
+import type { Agente, Membro } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS } from '../lib/lab';
 import { useEstado } from '../hooks/useEstado';
 import { Retrato } from './Retrato';
 import { AvisoPrevia } from './Paineis';
+import { Entrega, Executar, Treino } from './Nucleo';
+import { nomeDoModelo } from '../lib/modelos';
 
 function Instrucoes({ m }: { m: Membro }) {
   const { estado, salvaInstrucao } = useEstado();
@@ -43,30 +46,36 @@ function Memoria({ m }: { m: Membro }) {
   );
 }
 
+export type AbaFicha = 'visao' | 'treino' | 'instrucoes' | 'memoria';
+
 export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao }: {
-  m: Membro; conversa: () => void; abaInicial?: 'visao' | 'instrucoes' | 'memoria'; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
+  m: Agente; conversa: () => void; abaInicial?: AbaFicha; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
 }) {
   const { estado, criaTarefa, mudaTarefa } = useEstado();
-  const [aba, setAba] = useState<'visao' | 'instrucoes' | 'memoria'>(abaInicial ?? 'visao');
+  const [aba, setAba] = useState<AbaFicha>(abaInicial ?? 'visao');
   const [nova, setNova] = useState(''), [proj, setProj] = useState(estado.projetos[0]?.id ?? '');
   const z = ZONAS.find(q => q.id === m.zona)!;
   const abertas = estado.tarefas.filter(t => t.agente === m.id && t.estado !== 'feito');
+  const entregas = estado.tarefas.filter(t => t.agente === m.id && t.entrega).reverse();
+  const nSkills = estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).length;
   return (
     <div className="ficha-agente">
       <div className="ficha">
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
+          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span></p>
           <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
             {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}</div></div>
       </div>
       <div className="abas" role="tablist">
-        {([['visao', 'Missões'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
+        {([['visao', 'Missões'], ['treino', 'Treino'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
           <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
       </div>
       <AvisoPrevia />
       {aba === 'visao' && <>
         {abertas.length
           ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}</span>
+              <Executar t={t} />
               {t.id > 0 && <button className="leve mini" onClick={() => mudaTarefa(t.id, { estado: t.estado === 'fila' ? 'fazendo' : 'feito' })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}</li>)}</ul>
           : <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
         <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim()) return; criaTarefa({ agente: m.id, titulo: nova.trim(), projeto_id: proj || null }); aoDar?.(`Missão dada a ${m.nome}: ${nova.trim()}.`); setNova(''); }}>
@@ -76,7 +85,10 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
+        {entregas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
+          {entregas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
       </>}
+      {aba === 'treino' && <Treino m={m} />}
       {aba === 'instrucoes' && <Instrucoes key={m.id} m={m} />}
       {aba === 'memoria' && <Memoria m={m} />}
     </div>
@@ -92,8 +104,8 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
 }) {
   const { estado, criaTarefa } = useEstado();
   const [aba, setAba] = useState<AbaZona>('equipe');
-  const time = EQUIPE.filter(m => m.zona === zona), ids = new Set(time.map(m => m.id));
-  const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
+  const { equipe, nome } = useEquipe();
+  const time = equipe.filter(m => m.zona === zona), ids = new Set(time.map(m => m.id));
   const abertas = estado.tarefas.filter(t => ids.has(t.agente) && t.estado !== 'feito');
   const reunioes = estado.reunioes.filter(r => r.participantes.some(p => ids.has(p)));
   const [nova, setNova] = useState(''), [quem, setQuem] = useState(time[0]?.id ?? '');

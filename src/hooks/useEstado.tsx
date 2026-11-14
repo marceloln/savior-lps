@@ -1,11 +1,29 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type EstadoLab, type Memoria, type Projeto, type Reuniao, type Tarefa } from '../lib/dados';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type EstadoLab, type Memoria, type MissaoProposta, type Pedido, type Projeto, type Reuniao, type Skill, type Tarefa } from '../lib/dados';
+import { ORQUESTRADOR, type Agente } from '../lib/equipe';
+import { entregaSimulada, planoSimulado, sinteseSimulada } from '../lib/simulado';
 
 type Modo = 'carregando' | 'banco' | 'previa';
 type Api = {
   estado: EstadoLab; modo: Modo; motivo: string | null; aviso: string | null; limpaAviso: () => void;
-  criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'>) => Promise<void>;
-  mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente'>>) => Promise<void>;
+  /** Missões que um especialista está escrevendo neste momento. */
+  executando: number[];
+  criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'> & { detalhe?: string }) => Promise<void>;
+  mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente' | 'detalhe'>>) => Promise<void>;
+  /** O especialista executa a missão com o modelo dele e a entrega fica guardada. Com ajuste, refaz a partir da versão anterior. */
+  executa: (id: number, ajuste?: string) => Promise<boolean>;
+  /** A orquestração propõe as missões de um pedido. Nada é gravado até o sócio aprovar. */
+  planeja: (texto: string, projeto_id: string | null) => Promise<MissaoProposta[] | null>;
+  criaPedido: (texto: string, projeto_id: string | null, missoes: MissaoProposta[]) => Promise<{ pedido: number; tarefas: number[] } | null>;
+  sintetiza: (pedido: number) => Promise<boolean>;
+  apagaPedido: (pedido: number) => Promise<boolean>;
+  criaAgente: (a: Pick<Agente, 'nome' | 'papel' | 'zona' | 'aparencia' | 'modelo'>) => Promise<string | null>;
+  mudaAgente: (id: string, m: Partial<Pick<Agente, 'nome' | 'papel' | 'zona' | 'modelo' | 'ativo'>>) => Promise<boolean>;
+  criaSkill: (k: Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>, agente?: string) => Promise<boolean>;
+  mudaSkill: (id: string, m: Partial<Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>>) => Promise<boolean>;
+  apagaSkill: (id: string) => Promise<boolean>;
+  vinculaSkills: (agente: string, skills: string[]) => Promise<boolean>;
+  salvaModeloPadrao: (modelo: string) => Promise<boolean>;
   apagaTarefa: (id: number) => Promise<void>;
   mudaFase: (projeto: string, fase: number) => Promise<boolean>;
   criaCliente: (c: Pick<Cliente, 'setor' | 'situacao'>) => Promise<string | null>;
@@ -24,6 +42,8 @@ type Api = {
 
 const Ctx = createContext<Api | null>(null);
 const agora = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
+const pausa = (ms: number) => new Promise(r => setTimeout(r, ms));
+const NOVA = { detalhe: '', estado: 'fila' as const, pedido_id: null, entrega: '', modelo: '' };
 
 async function chama<T>(metodo: string, rota: string, corpo?: unknown): Promise<T> {
   const r = await fetch('api/' + rota, { method: metodo, headers: corpo ? { 'content-type': 'application/json' } : undefined, body: corpo ? JSON.stringify(corpo) : undefined });
@@ -34,9 +54,13 @@ async function chama<T>(metodo: string, rota: string, corpo?: unknown): Promise<
 
 /** Estado do lab lido do D1 pelo Worker. Sem servidor, roda em prévia com os exemplos e não grava nada. */
 export function EstadoProvider({ children }: { children: ReactNode }) {
-  const [estado, setEstado] = useState<EstadoLab>(SEMENTE);
+  const [estado, poeNaTela] = useState<EstadoLab>(SEMENTE);
+  // o estado mais novo fica também numa referência: o pedido ao lab encadeia várias chamadas e cada uma precisa ler o que a anterior gravou
+  const vivo = useRef(estado);
+  const setEstado = useCallback((f: EstadoLab | ((e: EstadoLab) => EstadoLab)) => { vivo.current = typeof f === 'function' ? f(vivo.current) : f; poeNaTela(vivo.current); }, []);
   const [modo, setModo] = useState<Modo>('carregando');
   const [aviso, setAviso] = useState<string | null>(null);
+  const [executando, setExecutando] = useState<number[]>([]);
   const [motivo, setMotivo] = useState<string | null>(null);   // por que caiu em prévia, dito pelo servidor
 
   useEffect(() => {
@@ -52,15 +76,15 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
     if (modo !== 'banco') return true;
     try { const r = await rede(); if (depois) setEstado(e => depois(e, r)); return true; }
     catch (err) { if (anterior) setEstado(anterior); setAviso((err as Error).message); return false; }
-  }, [modo]);
+  }, [modo, setEstado]);
 
   const api = useMemo<Api>(() => {
     const tmp = () => -Math.floor(Math.random() * 1e9);
     return {
-      estado, modo, motivo, aviso, limpaAviso: () => setAviso(null),
+      estado, modo, motivo, aviso, executando, limpaAviso: () => setAviso(null),
       criaTarefa: async t => {
         if (estado.tarefas.some(x => x.agente === t.agente && x.estado !== 'feito' && x.titulo.trim().toLowerCase() === t.titulo.trim().toLowerCase())) { setAviso('Essa missão já está aberta com essa pessoa.'); return; }
-        const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...t, id, detalhe: '', estado: 'fila' }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
+        const id = tmp(); await grava(e => ({ ...e, tarefas: [...e.tarefas, { ...NOVA, ...t, id }] }), () => chama<Tarefa>('POST', 'tarefas', t), (e, r) => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? r : x)) })); },
       mudaTarefa: async (id, m) => { await grava(e => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `tarefas/${id}`, m)); },
       apagaTarefa: async id => { await grava(e => ({ ...e, tarefas: e.tarefas.filter(x => x.id !== id) }), () => chama('DELETE', `tarefas/${id}`)); },
       mudaFase: async (id, fase) => grava(e => {
@@ -76,7 +100,7 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
       },
       criaProjeto: async (cliente_id, nome) => {
         const id = 'novo-' + Date.now().toString(36), inicio = hojeLocal();
-        const iniciais: Tarefa[] = missoesIniciais(nome).map(t => ({ ...t, id: tmp(), detalhe: '', estado: 'fila', projeto_id: id }));
+        const iniciais: Tarefa[] = missoesIniciais(nome).map(t => ({ ...NOVA, ...t, id: tmp(), projeto_id: id }));
         let final: string | null = id;
         const ok = await grava(e => ({ ...e, projetos: [...e.projetos, { id, cliente_id, nome, fase: 0, dia: 1, mesa: null, inicio }], tarefas: [...e.tarefas, ...iniciais],
           clientes: e.clientes.map(c => (c.id === cliente_id ? { ...c, fase: 0 } : c)) }),
@@ -94,9 +118,77 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
       criaDecisao: async d => { const id = tmp(); return grava(e => ({ ...e, decisoes: [{ ...d, id, criado_em: agora() }, ...e.decisoes] }), () => chama<Decisao>('POST', 'decisoes', d), (e, n) => ({ ...e, decisoes: e.decisoes.map(x => (x.id === id ? n : x)) })); },
       salvaInstrucao: async (agente, texto) => grava(e => { const i = { ...e.instrucoes }; if (texto.trim()) i[agente] = texto.trim(); else delete i[agente]; return { ...e, instrucoes: i }; }, () => chama('PUT', `instrucoes/${agente}`, { texto })),
       criaMemoria: async (agente, texto, origem = 'manual') => { const id = tmp(); return grava(e => ({ ...e, memorias: [{ id, agente, texto, origem, criado_em: agora() }, ...e.memorias] }), () => chama<Memoria>('POST', 'memorias', { agente, texto, origem }), (e, n) => ({ ...e, memorias: e.memorias.map(x => (x.id === id ? n : x)) })); },
+      executa: async (id, ajuste) => {
+        const t = vivo.current.tarefas.find(x => x.id === id); if (!t) return false;
+        const antes = t.estado, titulo = t.titulo, dono = t.agente;
+        const poe = (m: Partial<Tarefa>) => setEstado(e => ({ ...e, tarefas: e.tarefas.map(x => (x.id === id ? { ...x, ...m } : x)) }));
+        poe({ estado: 'fazendo' });
+        setExecutando(l => [...l, id]);
+        try { return await roda(); } finally { setExecutando(l => l.filter(x => x !== id)); }
+        async function roda() {
+        if (modo !== 'banco') {   // prévia: mostra o fluxo com uma entrega que se declara simulada
+          await pausa(1400);
+          const a = vivo.current.agentes.find(x => x.id === dono);
+          poe({ estado: 'feito', entrega: entregaSimulada(a?.nome ?? 'O especialista', a?.papel ?? 'especialista', titulo), modelo: 'simulado:previa' });
+          return true;
+        }
+        try { poe(await chama<Tarefa>('POST', `tarefas/${id}/executar`, { ajuste: ajuste ?? '' })); return true; }
+        catch (err) { poe({ estado: antes }); setAviso((err as Error).message); return false; }
+        }
+      },
+      planeja: async (texto, projeto_id) => {
+        if (modo !== 'banco') { await pausa(900); return planoSimulado(texto, vivo.current.agentes.filter(a => a.ativo && a.id !== ORQUESTRADOR)); }
+        try { return (await chama<{ missoes: MissaoProposta[] }>('POST', 'pedidos/plano', { texto, projeto_id })).missoes; }
+        catch (err) { setAviso((err as Error).message); return null; }
+      },
+      criaPedido: async (texto, projeto_id, missoes) => {
+        if (modo !== 'banco') {
+          const pedido = Math.max(0, ...vivo.current.pedidos.map(p => p.id)) + 1;
+          const novas: Tarefa[] = missoes.map(m => ({ ...NOVA, ...m, id: tmp(), projeto_id, pedido_id: pedido }));
+          setEstado(e => ({ ...e, pedidos: [{ id: pedido, texto, projeto_id, estado: 'andando', sintese: '', criado_em: agora() }, ...e.pedidos], tarefas: [...e.tarefas, ...novas] }));
+          return { pedido, tarefas: novas.map(t => t.id) };
+        }
+        try {
+          const r = await chama<{ pedido: Pedido; missoes: Tarefa[] }>('POST', 'pedidos', { texto, projeto_id, missoes });
+          setEstado(e => ({ ...e, pedidos: [r.pedido, ...e.pedidos], tarefas: [...e.tarefas, ...r.missoes] }));
+          return { pedido: r.pedido.id, tarefas: r.missoes.map(t => t.id) };
+        } catch (err) { setAviso((err as Error).message); return null; }
+      },
+      sintetiza: async id => {
+        const poe = (m: Partial<Pedido>) => setEstado(e => ({ ...e, pedidos: e.pedidos.map(p => (p.id === id ? { ...p, ...m } : p)) }));
+        if (modo !== 'banco') {
+          await pausa(1200);
+          setEstado(e => {
+            const ped = e.pedidos.find(p => p.id === id); if (!ped) return e;
+            const partes = e.tarefas.filter(t => t.pedido_id === id).map(t => ({ nome: e.agentes.find(a => a.id === t.agente)?.nome ?? 'Colega', titulo: t.titulo }));
+            return { ...e, pedidos: e.pedidos.map(p => (p.id === id ? { ...p, estado: 'entregue', sintese: sinteseSimulada(ped.texto, partes) } : p)) };
+          });
+          return true;
+        }
+        try { poe(await chama<Pedido>('POST', `pedidos/${id}/sintese`)); return true; }
+        catch (err) { setAviso((err as Error).message); return false; }
+      },
+      apagaPedido: async id => grava(e => ({ ...e, pedidos: e.pedidos.filter(p => p.id !== id), tarefas: e.tarefas.filter(t => t.pedido_id !== id || t.entrega).map(t => (t.pedido_id === id ? { ...t, pedido_id: null } : t)) }), () => chama('DELETE', `pedidos/${id}`)),
+      criaAgente: async a => {
+        const id = 'novo-' + Date.now().toString(36); let final: string | null = id;
+        const ok = await grava(e => ({ ...e, agentes: [...e.agentes, { ...a, id, base: false, ativo: true }] }), () => chama<Agente>('POST', 'agentes', a).then(r => { final = r.id; return r; }),
+          (e, r) => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? r : x)) }));
+        return ok ? final : null;
+      },
+      mudaAgente: async (id, m) => grava(e => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `agentes/${id}`, m)),
+      criaSkill: async (k, agente) => {
+        const id = 'nova-' + Date.now().toString(36);
+        const liga = (e: EstadoLab, sid: string) => (agente && !k.para_todos ? { ...e.vinculos, [agente]: [...(e.vinculos[agente] ?? []).filter(x => x !== id), sid] } : e.vinculos);
+        return grava(e => ({ ...e, skills: [...e.skills, { ...k, id }], vinculos: liga(e, id) }), () => chama<Skill>('POST', 'skills', { ...k, agente }),
+          (e, r) => ({ ...e, skills: e.skills.map(x => (x.id === id ? r : x)), vinculos: liga(e, r.id) }));
+      },
+      mudaSkill: async (id, m) => grava(e => ({ ...e, skills: e.skills.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `skills/${id}`, m)),
+      apagaSkill: async id => grava(e => ({ ...e, skills: e.skills.filter(x => x.id !== id), vinculos: Object.fromEntries(Object.entries(e.vinculos).map(([a, l]) => [a, l.filter(x => x !== id)])) }), () => chama('DELETE', `skills/${id}`)),
+      vinculaSkills: async (agente, skills) => grava(e => ({ ...e, vinculos: { ...e.vinculos, [agente]: skills } }), () => chama('PUT', `agentes/${agente}/skills`, { skills })),
+      salvaModeloPadrao: async modelo => grava(e => ({ ...e, modeloPadrao: modelo }), () => chama('PUT', 'config/modelo', { modelo })),
       apagaMemoria: async id => { await grava(e => ({ ...e, memorias: e.memorias.filter(x => x.id !== id) }), () => chama('DELETE', `memorias/${id}`)); },
     };
-  }, [estado, modo, motivo, aviso, grava]);
+  }, [estado, modo, motivo, aviso, executando, grava, setEstado]);
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }
 

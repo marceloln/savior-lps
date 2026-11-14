@@ -338,3 +338,84 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:13px;font-weight:700;color
 .situacao-conexao{font:700 11px var(--corpo);text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:4px;background:#F2DFA6;color:#6B4E1E;white-space:nowrap}
 .conexoes li.ok .situacao-conexao{background:#D8E6C8;color:#3E5E2A}
 .conexoes li.ok{background:rgba(216,230,200,.25)}
+
+/* ===== núcleo multiagente (issue 21): pedido ao lab, entregas, treino, skills ===== */
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--s4)}
+.campo>label,.treinar label,.novo-especialista label,.skill-form label,.pedir>label{font-weight:700;font-size:14px;color:var(--tinta-2)}
+.seletor-modelo{display:flex;flex-direction:column;gap:6px}.seletor-modelo select{max-width:100%}
+.outro-modelo{display:flex;gap:6px;align-items:center}.outro-modelo input{flex:1;min-width:0}
+.andamento{display:flex;align-items:center;gap:8px;margin:var(--s3) 0;padding:8px 12px;border-radius:10px;background:rgba(95,184,168,.16);font-weight:600}
+.andamento::after{content:'';width:18px;height:6px;margin-left:2px;background:radial-gradient(circle,var(--tinta) 2.5px,transparent 3px) 0 0/6px 6px repeat-x;animation:pontos 1.1s steps(4) infinite}
+.andamento.erro{background:rgba(201,96,63,.14)}.andamento.erro::after{display:none}
+@keyframes pontos{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+/* pedir */
+.pedir{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) var(--s4);border-radius:12px;border:1.5px solid rgba(59,47,37,.3);background:rgba(255,250,235,.6);margin-bottom:var(--s4)}
+.pedir textarea{resize:vertical;min-height:64px}.pedir .linha{justify-content:flex-end;align-items:center}.pedir select{flex:1;min-width:0;max-width:260px;margin-right:auto}
+.pedir-rapido{display:flex;flex-direction:column;gap:4px;width:100%}
+.pedir-rapido label{font:800 15px var(--titulo);color:var(--tinta)}
+.pedir-rapido>div{display:flex;gap:8px}.pedir-rapido input{flex:1;min-width:0;padding:8px 12px;border-radius:999px;border:1.5px solid rgba(59,47,37,.4);background:#FFFBF0;font:inherit}
+.pedir-rapido small{color:var(--texto-2);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* plano */
+.plano{padding:var(--s3) var(--s4);border-radius:12px;border:1.5px dashed var(--tinta);margin-bottom:var(--s4);animation:surge .22s var(--sai)}
+.plano header{display:flex;gap:10px;align-items:center;margin-bottom:var(--s3)}.plano header p{margin:0;line-height:1.35}
+.plano ol{list-style:none;margin:0 0 var(--s3);padding:0;display:grid;gap:var(--s3);counter-reset:passo}
+.plano li{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:start;counter-increment:passo}
+.plano li>div{display:grid;gap:6px;min-width:0}.plano li input,.plano li select,.plano li textarea{width:100%;min-width:0}
+.plano li textarea{resize:vertical;font-size:13.5px}
+/* lista de pedidos */
+.lista-pedidos{display:grid;gap:var(--s3)}
+.pedido{border:1.5px solid rgba(59,47,37,.28);border-radius:12px;background:rgba(255,250,235,.55);padding:0 var(--s3)}
+.pedido>summary,.passos summary,.ver-entrega>summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:center;padding:10px 0}
+.pedido summary::-webkit-details-marker,.ver-entrega summary::-webkit-details-marker{display:none}
+.pedido>summary .tit{flex:1;min-width:0;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pedido summary small{color:var(--texto-2);font-size:12px;white-space:nowrap}
+.estado.feito{background:#D8E6C8;color:#3E5E2A}
+.passos{list-style:none;margin:0;padding:0 0 var(--s2);display:grid;gap:2px;border-top:1.5px dotted rgba(59,47,37,.3)}
+.passos li{border-bottom:1.5px dotted rgba(59,47,37,.2)}.passos li:last-child{border-bottom:0}
+.passos summary .tit{flex:1;min-width:0;font-size:14px;line-height:1.3}.passos summary b{margin-right:4px}
+.passos li.escrevendo summary small{color:var(--tinta);font-weight:700}.passos li.pronta summary small{color:#3E5E2A;font-weight:700}
+.passos li.escrevendo{background:linear-gradient(90deg,rgba(95,184,168,.18),transparent)}
+.pedido>.linha{padding:var(--s2) 0 var(--s3);align-items:center}
+.sintese{margin:var(--s2) 0 var(--s3);padding:var(--s3) var(--s4);border-radius:10px;background:#FFFBF0;border:1.5px solid var(--ouro)}
+.sintese header{display:flex;justify-content:space-between;align-items:center;gap:8px}.sintese h4{margin:0;font:800 17px var(--titulo);color:var(--tinta)}
+/* entrega */
+.entrega{padding:var(--s3);border-radius:10px;background:#FFFBF0;border:1.5px solid rgba(59,47,37,.22);margin-bottom:var(--s3)}
+.entrega>header{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1.5px dotted rgba(59,47,37,.25);margin-bottom:8px}
+.entrega>header span{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.2}.entrega>header small{color:var(--texto-2);font-size:12px}
+.entrega .nova-linha{margin-top:var(--s2)}.entrega .nova-linha input{font-size:13.5px}
+.ver-entrega>summary{padding:4px 0;font-weight:700;font-size:13px;color:var(--tinta);text-decoration:underline;text-underline-offset:3px}
+.entregas-agente{margin-top:var(--s5)}.entregas-agente h4{margin:0 0 var(--s2);font:800 16px var(--titulo)}
+.md{line-height:1.5;font-size:14.5px;overflow-wrap:anywhere}
+.md h4{font:800 18px/1.25 var(--titulo);color:var(--tinta);margin:0 0 8px}.md h5{font:700 15px var(--corpo);margin:14px 0 4px;color:var(--tinta-2)}
+.md p{margin:0 0 8px}.md ul,.md ol{margin:0 0 8px;padding-left:20px}.md li{margin-bottom:3px}
+.md-tabela{overflow-x:auto;margin:0 0 8px}.md table{border-collapse:collapse;font-size:13.5px;min-width:100%}
+.md th,.md td{border:1px solid rgba(59,47,37,.3);padding:4px 8px;text-align:left;vertical-align:top}.md th{background:var(--papel-2)}
+/* ficha: modelo, skills e treino */
+.selos-ficha{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px}
+.selos-ficha span{font:700 11px var(--corpo);padding:2px 8px;border-radius:999px;background:var(--papel-2);border:1px solid rgba(59,47,37,.25)}
+.skills-do-agente,.aparencias{border:0;padding:0;margin:0 0 var(--s4);display:grid;gap:6px}
+.skills-do-agente legend,.aparencias legend{font-weight:700;font-size:14px;padding:0;margin-bottom:6px}
+.skills-do-agente label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;border:1.5px solid rgba(59,47,37,.22);cursor:pointer}
+.skills-do-agente label.on{background:rgba(110,154,74,.14);border-color:rgba(110,154,74,.55)}
+.skills-do-agente span{display:flex;flex-direction:column;min-width:0}.skills-do-agente small{color:var(--texto-2);font-size:12.5px;line-height:1.3}
+.skills-do-agente input{margin-top:3px;accent-color:var(--tinta)}
+.treinar,.novo-especialista,.skill-form{display:flex;flex-direction:column;gap:6px;padding:var(--s3) var(--s4);border-radius:12px;border:1.5px dashed rgba(59,47,37,.35);margin-bottom:var(--s3)}
+.treinar h4,.novo-especialista h4,.skill-form h4{margin:0 0 4px;font:800 17px var(--titulo);color:var(--tinta)}
+.treinar textarea,.skill-form textarea{resize:vertical}.treinar .linha,.skill-form .linha{margin-top:6px;align-items:center}.treinar .ok{color:var(--verde);font-weight:700}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}.duas>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.aparencias{grid-template-columns:repeat(auto-fill,48px);gap:8px}
+.aparencias label{border-radius:50%;padding:2px;border:2px solid transparent;cursor:pointer;line-height:0}
+.aparencias label.on{border-color:var(--tinta);background:var(--papel-2)}.aparencias label:has(:focus-visible){outline:2px solid var(--ouro);outline-offset:2px}
+.caixa{display:flex;gap:8px;align-items:center;font-weight:600!important}
+/* biblioteca de skills */
+.skills>.linha,.pedidos~.linha{align-items:center;margin-bottom:var(--s3)}.skills .nota,.elenco~.nota{margin:0;flex:1;min-width:200px}
+.skills ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
+.skills li{display:flex;gap:var(--s3);align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;border:1.5px solid rgba(59,47,37,.25);background:rgba(255,250,235,.5)}
+.skills li>div{display:flex;flex-direction:column;gap:3px;min-width:0}.skills li small{color:var(--texto-2);font-size:13px;line-height:1.35}
+.skills .quem{display:flex;gap:2px;align-items:center;font-size:12px;color:var(--texto-2);margin-top:2px}
+.modelo-padrao{padding-bottom:var(--s3);border-bottom:1.5px dotted rgba(59,47,37,.3)}
+.linha>.nota{margin:0;flex:1;min-width:180px}
+@media (max-width:760px){.duas{grid-template-columns:1fr}.plano li{grid-template-columns:1fr auto}.plano li>.retrato{display:none}.pedir-rapido small{display:none}}
+@media (prefers-reduced-motion:reduce){.andamento::after{animation:none}.plano{animation:none}}
+.skills-do-agente input,.caixa input,.aparencias input{width:auto;flex:none}
+.skills li>.linha{flex-wrap:nowrap;flex:none;align-items:center}
