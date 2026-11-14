@@ -3,7 +3,7 @@ import { Application, Assets, BlurFilter, Container, Graphics, Sprite, Texture, 
 import type { DadosLab } from '../lib/lab';
 import { zonaEm, ZONAS } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
-import { criaSimulacao, type Agente, type Pessoa } from '../lib/simulacao';
+import { criaSimulacao, quadroDoPasso, type Agente, type Pessoa } from '../lib/simulacao';
 import { criaPessoa } from './genteShader';
 
 export type AtlasGente = { escala: number; q: Record<string, number[]> };
@@ -215,7 +215,8 @@ export function MapaPixi(props: Props) {
           // sentado, a cadeira já está no chão do render e a mancha de sombra ficaria por cima dela
           if (pose !== 'digitar') sombras.ellipse(fx, fy, 0.3 * K, 0.15 * K).fill({ color: 0x28200f, alpha: 0.2 });
           const lista = QUADROS[pose];
-          const f = pose === 'andar' ? Math.floor(t * 7.5) : Math.floor(t * (pose === 'digitar' ? 2.2 : 1.2) + a.semente);
+          // andando, o quadro sai do chão percorrido e não do relógio: a perna não patina
+          const f = pose === 'andar' ? quadroDoPasso(a.andado) : Math.floor(t * (pose === 'digitar' ? 2.2 : 1.2) + a.semente);
           const q = gente.q[`${a.aparencia}_d${a.dir}_${lista[f % lista.length]}`] ?? gente.q[`${a.aparencia}_d${a.dir}_parado0`];
           const p = pessoas.get(a.id)!;
           if (q) p.poe(fx, fy, proj.profundidade(a.pos.x, a.pos.y), q, false, 1 / gente.escala);
