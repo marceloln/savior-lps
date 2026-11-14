@@ -17,7 +17,8 @@ type Api = {
   /** A orquestração propõe as missões de um pedido. Nada é gravado até o sócio aprovar. */
   planeja: (texto: string, projeto_id: string | null) => Promise<MissaoProposta[] | null>;
   criaPedido: (texto: string, projeto_id: string | null, missoes: MissaoProposta[]) => Promise<{ pedido: number; tarefas: number[] } | null>;
-  sintetiza: (pedido: number) => Promise<boolean>;
+  /** Junta as entregas na resposta do pedido. Com ajuste, reescreve a resposta que já existe. */
+  sintetiza: (pedido: number, ajuste?: string) => Promise<boolean>;
   apagaPedido: (pedido: number) => Promise<boolean>;
   criaAgente: (a: Pick<Agente, 'nome' | 'papel' | 'zona' | 'aparencia' | 'modelo'>) => Promise<string | null>;
   mudaAgente: (id: string, m: Partial<Pick<Agente, 'nome' | 'papel' | 'zona' | 'modelo' | 'ativo'>>) => Promise<boolean>;
@@ -186,18 +187,18 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
           return { pedido: r.pedido.id, tarefas: r.missoes.map(t => t.id) };
         } catch (err) { setAviso(recadoDeErro(err)); return null; }
       },
-      sintetiza: async id => {
+      sintetiza: async (id, ajuste) => {
         const poe = (m: Partial<Pedido>) => setEstado(e => ({ ...e, pedidos: e.pedidos.map(p => (p.id === id ? { ...p, ...m } : p)) }));
         if (modo !== 'banco') {
           await pausa(1200);
           setEstado(e => {
             const ped = e.pedidos.find(p => p.id === id); if (!ped) return e;
             const partes = e.tarefas.filter(t => t.pedido_id === id).map(t => ({ nome: e.agentes.find(a => a.id === t.agente)?.nome ?? 'Colega', titulo: t.titulo }));
-            return { ...e, pedidos: e.pedidos.map(p => (p.id === id ? { ...p, estado: 'entregue', sintese: sinteseSimulada(ped.texto, partes) } : p)) };
+            return { ...e, pedidos: e.pedidos.map(p => (p.id === id ? { ...p, estado: 'entregue', sintese: sinteseSimulada(ped.texto, partes) + (ajuste ? `\n\n**Ajuste pedido:** ${ajuste}` : '') } : p)) };
           });
           return true;
         }
-        try { poe(await ocupa(() => chama<Pedido>('POST', `pedidos/${id}/sintese`))); return true; }
+        try { poe(await ocupa(() => chama<Pedido>('POST', `pedidos/${id}/sintese`, { ajuste: ajuste ?? '' }))); return true; }
         catch (err) { setAviso(recadoDeErro(err)); return false; }
       },
       apagaPedido: async id => grava(e => ({ ...e, pedidos: e.pedidos.filter(p => p.id !== id), tarefas: e.tarefas.filter(t => t.pedido_id !== id || t.entrega).map(t => (t.pedido_id === id ? { ...t, pedido_id: null } : t)) }), () => chama('DELETE', `pedidos/${id}`)),

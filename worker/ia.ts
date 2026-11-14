@@ -47,8 +47,11 @@ function simula(c: Chamada): string {
   }
   if (t.startsWith('MISSÃO')) return entregaSimulada(quem?.[1] ?? 'o especialista', quem?.[2] ?? 'especialista', t.split('\n')[1] ?? 'Missão');
   if (t.startsWith('CONSOLIDAR')) {
-    const partes = [...t.matchAll(/^([^\n,]+), [^.\n]+\. ([^\n]+)$/gm)].map(m => ({ nome: m[1], titulo: m[2] }));
-    return sinteseSimulada((t.split('\n')[1] ?? '').replace('Pedido do sócio: ', ''), partes);
+    // só as entregas contam: a resposta anterior, quando vem, fica de fora da leitura
+    const [base, refaz] = t.split('\nSUA RESPOSTA ANTERIOR\n');
+    const partes = [...base.matchAll(/^([^\n,]+), [^.\n]+\. ([^\n]+)$/gm)].map(m => ({ nome: m[1], titulo: m[2] }));
+    const ajuste = refaz?.match(/AJUSTE PEDIDO PELO SÓCIO\n([^\n]+)/)?.[1];
+    return sinteseSimulada((t.split('\n')[1] ?? '').replace('Pedido do sócio: ', ''), partes) + (ajuste ? `\n\n**Ajuste pedido:** ${ajuste}` : '');
   }
   return `Resposta simulada de ${quem?.[1] ?? 'um especialista'}. Com um provedor de IA ligado, aqui vem a resposta de verdade.`;
 }

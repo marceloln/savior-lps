@@ -100,4 +100,12 @@ describe('orquestração', () => {
     const r = await chamaIA({ IA_SIMULADA: '1' }, { ...c('simulado:teste'), messages: [{ role: 'user', content: promptSintese('Reunião igual', [{ nome: 'Nina', papel: 'Processos lean', titulo: 'Pauta fixa', entrega: '## Pauta' }]) }] });
     expect(r.ok && r.texto).toContain('**Nina**: Pauta fixa');
   });
+  it('a síntese refeita leva a resposta anterior e o ajuste, e a simulada não confunde as duas', async () => {
+    const p = promptSintese('Reunião igual', [{ nome: 'Nina', papel: 'Processos lean', titulo: 'Pauta fixa', entrega: '## Pauta' }], { anterior: '## Antes\nRui, gerente. Outra coisa', ajuste: 'Mais curto' });
+    expect(p).toContain('SUA RESPOSTA ANTERIOR\n## Antes');
+    expect(p).toContain('AJUSTE PEDIDO PELO SÓCIO\nMais curto');
+    const r = await chamaIA({ IA_SIMULADA: '1' }, { ...c('simulado:teste'), messages: [{ role: 'user', content: p }] });
+    expect(r.ok && r.texto).toContain('**Ajuste pedido:** Mais curto');
+    expect(r.ok && r.texto).not.toContain('**Rui**');
+  });
 });
