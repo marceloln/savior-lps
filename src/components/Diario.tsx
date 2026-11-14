@@ -7,11 +7,11 @@ import type { Membro } from '../lib/equipe';
 import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
-import { FASES } from '../lib/dados';
+import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
 
 export type Aba = 'pedidos' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
-export const ABAS: { id: Aba; nome: string; so?: 'celular' }[] = [
-  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões', so: 'celular' },
+export const ABAS: { id: Aba; nome: string }[] = [
+  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' },
   { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' }, { id: 'skills', nome: 'Skills' },
   { id: 'lugares', nome: 'Lugares' }, { id: 'agenda', nome: 'Agenda' }, { id: 'decisoes', nome: 'Decisões' },
   { id: 'memoria', nome: 'Memória' }, { id: 'conexoes', nome: 'Conexões' }, { id: 'trofeus', nome: 'Troféus' },
@@ -33,12 +33,38 @@ export const SOBRE_ZONA: Record<string, string> = {
   atendimento: 'O balcão da Clara. Todo cliente novo começa por uma conversa aqui.',
 };
 
+export const TEXTO_PREVIA = 'Os dados são de exemplo e o que você mudar some ao recarregar.';
+
+/** Placa do lab. Em prévia leva um selo único, com o motivo no title. */
 export function Placa() {
+  const { modo, motivo } = useEstado();
   return (
     <header className="placa papel-borda">
       <b>Lab V30</b>
       <small>Diário de campo</small>
+      {modo === 'previa' && <span className="selo-previa" title={`${motivo ?? 'Prévia sem servidor.'} ${TEXTO_PREVIA}`}>Prévia</span>}
     </header>
+  );
+}
+
+/** Estado vazio com desenho: ícone, frase e, quando faz sentido, o próximo passo. */
+export function Vazio({ icone, children, acao }: { icone: NomeIcone; children: ReactNode; acao?: { rotulo: string; vai: () => void } }) {
+  return (
+    <div className="vazio-desenho">
+      <span className="vazio-icone"><Icone nome={icone} tam={34} /></span>
+      <p>{children}</p>
+      {acao && <button type="button" className="leve" onClick={acao.vai}>{acao.rotulo}</button>}
+    </div>
+  );
+}
+
+/** Tela de espera enquanto o estado e o mapa carregam. */
+export function Carregando() {
+  return (
+    <div className="carregando" role="status" aria-label="Carregando o lab">
+      <div className="placa papel-borda"><b>Lab V30</b><small>Abrindo o diário</small></div>
+      <div className="barra-carga"><i /></div>
+    </div>
   );
 }
 
@@ -46,7 +72,7 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
-        <button key={a.id} className={a.so ? 'so-celular' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
+        <button key={a.id} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
           <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
         </button>
       ))}
@@ -61,17 +87,18 @@ export function FotoLugar({ zona, lab, larg = 236, alt = 112, esc = 0.42 }: { zo
   return <div className="foto-lugar" style={{ width: larg, height: alt, backgroundImage: 'url(assets/lab.webp)', backgroundSize: `${lab.larg * esc}px ${lab.alt * esc}px`, backgroundPosition: `${larg / 2 - cx * esc}px ${alt / 2 - cy * esc}px` }} />;
 }
 
-export function CartaoLugar({ zona, lab, abre }: { zona: string | null; lab: DadosLab; abre: (z: string) => void }) {
+/** Fica montado enquanto houver sala escolhida. Com o livro aberto some por opacidade, para não reanimar a cada fechamento. */
+export function CartaoLugar({ zona, lab, abre, oculto }: { zona: string | null; lab: DadosLab; abre: (z: string) => void; oculto: boolean }) {
   const z = ZONAS.find(q => q.id === zona);
   if (!z) return null;
   const time = useEquipe().equipe.filter(m => m.zona === z.id);
   return (
-    <aside className="cartao-lugar papel-borda" aria-label={`Lugar: ${z.nome}`}>
+    <aside className={`cartao-lugar papel-borda ${oculto ? 'oculto' : ''}`} aria-label={`Lugar: ${z.nome}`} aria-hidden={oculto}>
       <h3>{z.nome}</h3>
       <FotoLugar zona={z.id} lab={lab} />
       <p>{SOBRE_ZONA[z.id]}</p>
       {time.length > 0 && <div className="rostos">{time.map(m => <Retrato key={m.id} id={m.id} tamanho={26} />)}</div>}
-      <button className="primario" onClick={() => abre(z.id)}>Abrir a sala</button>
+      <button className="primario" tabIndex={oculto ? -1 : 0} onClick={() => abre(z.id)}>Abrir a sala</button>
     </aside>
   );
 }
@@ -80,9 +107,10 @@ export function Selos({ abre }: { abre: (a: Aba) => void }) {
   const { estado } = useEstado();
   const p = estado.projetos[0];
   const feitas = estado.tarefas.filter(t => t.estado === 'feito').length, n = estado.decisoes.length;
+  const ciclo = p ? textoDoCiclo(p.inicio, hojeLocal()) : '';
   return (
     <nav className="selos papel-borda" aria-label="Situação do lab">
-      {p && <button onClick={() => abre('projetos')} title={`Ciclo de ${p.nome}`}><Icone nome="projetos" tam={18} />Dia {p.dia} de 30</button>}
+      {p && <button onClick={() => abre('projetos')} title={`Ciclo de ${p.nome}. ${ciclo}.`}><Icone nome="projetos" tam={18} />{ciclo.startsWith('Dia') ? ciclo : 'Ciclo encerrado'}</button>}
       <button onClick={() => abre('trofeus')} title="Missões concluídas em todos os projetos"><Icone nome="estrela" tam={18} />{feitas} {feitas === 1 ? 'feita' : 'feitas'}</button>
       <button onClick={() => abre('decisoes')} title="Decisões registradas"><Icone nome="decisoes" tam={18} />{n} {n === 1 ? 'decisão' : 'decisões'}</button>
     </nav>
@@ -94,7 +122,7 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
   const { de } = useEquipe();
   const { estado } = useEstado();
   const abertas = estado.tarefas.filter(t => t.estado !== 'feito').sort((a, b) => (a.estado === b.estado ? 0 : a.estado === 'fazendo' ? -1 : 1));
-  if (!abertas.length) return <p className="vazio">Ninguém tem missão aberta. Escolha alguém e aperte Missão no console.</p>;
+  if (!abertas.length) return <Vazio icone="missao">Ninguém tem missão aberta. Escolha alguém no mapa e aperte Missão no console.</Vazio>;
   return (
     <>
       <ul>
@@ -149,7 +177,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
   const situacao = !escolhido ? '' : agora ? `Agora: ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
     : fila ? `${escolhido.nome} tem ${fila} ${fila === 1 ? 'missão' : 'missões'} na fila. Abra Missão para começar.` : `${escolhido.nome} está livre. Dê uma missão.`;
   return (
-    <section className={`console madeira ${escolhido ? '' : 'vazio-console'}`} aria-label="Console">
+    <section className={`console madeira ${escolhido ? 'com-pessoa' : 'vazio-console'}`} aria-label="Console">
       <div className={`console-ficha papel-borda ${escolhido ? 'com' : 'sem'}`}>
         {escolhido ? (
           <>
@@ -167,7 +195,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
       </div>
       <div className="console-recado papel-borda" aria-live="polite">
         {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
-          : escolhido ? <><p><b>{z?.nome}</b> {situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
+          : escolhido ? <><span className="rotulo">{z?.nome}</span><p className="situacao-console">{situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
           : <form className="pedir-rapido" onSubmit={e => { e.preventDefault(); if (pedido.trim().length >= 8 && !ocupado) { pedir(pedido.trim()); setPedido(''); } }}>
               <label htmlFor="pr">Peça ao lab</label>
               <div><input id="pr" value={pedido} onChange={e => setPedido(e.target.value)} maxLength={4000} placeholder="O que você precisa? A orquestração divide entre a equipe" />
@@ -175,38 +203,54 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
               <small>{ocupado ? 'Um pedido está andando. Acompanhe em Pedidos.' : registro.length ? registro[registro.length - 1] : 'Ou escolha alguém no mapa para conversar e dar missão direto.'}</small>
             </form>}
       </div>
-      {escolhido && <div className="console-acoes" role="toolbar" aria-label={`Ações com ${escolhido.nome}`}>
+      {/* as ações ficam sempre no lugar: sem pessoa escolhida ficam apagadas, assim o console não muda de tamanho */}
+      <div className="console-acoes" role="toolbar" aria-label={escolhido ? `Ações com ${escolhido.nome}` : 'Ações. Escolha alguém no mapa'}>
         {ACOES.map(a => (
-          <button key={a.id} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={`${a.nome} com ${escolhido.nome}`}>
+          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha alguém no mapa'}>
             <Icone nome={a.icone} tam={26} /><span>{a.nome}</span>
           </button>
         ))}
-      </div>}
+      </div>
     </section>
   );
 }
 
-export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, children }: { titulo: string; sobre?: string; ilustracao?: ReactNode; cor?: string; aoFechar: () => void; children: ReactNode }) {
+export type Voltar = { rotulo: string; vai: () => void };
+
+/** O diário aberto. Quando saindo, toca a animação de saída e avisa em aoSair para ser desmontado. */
+export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, voltar, saindo = false, aoSair, aoFechar, children }: {
+  titulo: string; sobre?: string; ilustracao?: ReactNode; cor?: string; largo?: boolean; voltar?: Voltar;
+  saindo?: boolean; aoSair?: () => void; aoFechar: () => void; children: ReactNode;
+}) {
   const caixa = useRef<HTMLElement>(null);
   useEffect(() => {
     const antes = document.activeElement as HTMLElement | null;
-    // quem abriu o livro com um campo em foco mantém o foco ali
-    if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus();
+    // quem abriu o livro com um campo em foco mantém o foco ali. Sem rolar: no celular a tela pulava ao abrir
+    if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus({ preventScroll: true });
+    return () => { if (antes?.isConnected) antes.focus({ preventScroll: true }); };
+  }, []);
+  useEffect(() => {
+    if (saindo) { const t = setTimeout(() => aoSair?.(), 320); return () => clearTimeout(t); }   // se a animação não tocar, sai do mesmo jeito
     const tecla = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { aoFechar(); return; }
       if (e.key !== 'Tab' || !caixa.current) return;
-      const f = caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,textarea,a[href]');
-      if (!f.length) return;
-      const [pri, ult] = [f[0], f[f.length - 1]];
-      if (e.shiftKey && document.activeElement === pri) { e.preventDefault(); ult.focus(); }
-      else if (!e.shiftKey && document.activeElement === ult) { e.preventDefault(); pri.focus(); }
+      const f = caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select,textarea,a[href],summary,[tabindex="0"]');
+      if (!f.length) { e.preventDefault(); return; }
+      const [pri, ult] = [f[0], f[f.length - 1]], foco = document.activeElement;
+      // o foco na própria caixa ou fora dela volta para dentro: nada de escapar para o menu atrás da cortina
+      const fora = foco === caixa.current || !caixa.current.contains(foco);
+      if (e.shiftKey && (fora || foco === pri)) { e.preventDefault(); ult.focus(); }
+      else if (!e.shiftKey && (fora || foco === ult)) { e.preventDefault(); pri.focus(); }
     };
     addEventListener('keydown', tecla);
-    return () => { removeEventListener('keydown', tecla); antes?.focus?.(); };
-  }, [aoFechar]);
-  return (
-    <section ref={caixa} tabIndex={-1} role="dialog" aria-label={titulo} className="livro" style={{ ['--c' as string]: cor }}>
+    return () => removeEventListener('keydown', tecla);
+  }, [aoFechar, saindo, aoSair]);
+  return (<>
+    <div className={`cortina ${saindo ? 'saindo' : ''}`} onClick={saindo ? undefined : aoFechar} />
+    <section ref={caixa} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titulo} className={`livro ${largo ? 'largo' : ''} ${saindo ? 'saindo' : ''}`} style={{ ['--c' as string]: cor }}
+      onAnimationEnd={e => { if (saindo && e.target === e.currentTarget) aoSair?.(); }}>
       <div className="pagina esquerda">
+        {voltar && <button type="button" className="voltar" onClick={voltar.vai}><span aria-hidden="true">‹</span> {voltar.rotulo}</button>}
         <h2>{titulo}</h2>
         {sobre && <p className="sobre">{sobre}</p>}
         <div className="ilustracao">{ilustracao}</div>
@@ -214,7 +258,7 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, ch
       <div className="pagina direita">{children}</div>
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
     </section>
-  );
+  </>);
 }
 
 /** Números grandes para a página da esquerda: o que dá para saber de relance. */

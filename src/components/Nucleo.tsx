@@ -11,6 +11,8 @@ import { leModelo, MODELOS, nomeDoModelo } from '../lib/modelos';
 import { skillDeTreino } from '../lib/skills';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
+import { Vazio } from './Diario';
+import { useRecem } from '../hooks/useRecem';
 
 const linha = (x: Trecho[]): ReactNode => x.map((t, i) => (t.forte ? <strong key={i}>{t.x}</strong> : t.x));
 
@@ -128,6 +130,8 @@ function CartaoPedido({ ped, p, aberto }: { ped: Pedido; p: ApiPedido; aberto: b
   const missoes = estado.tarefas.filter(t => t.pedido_id === ped.id);
   const meu = p.corrida.pedido === ped.id, rodando = meu && p.ocupado;
   const prontas = missoes.filter(t => t.entrega).length;
+  // o carimbo bate só na entrega que chegou com a tela aberta
+  const recem = useRecem(missoes.filter(t => t.entrega).map(t => t.id));
   const quando = new Date(ped.criado_em.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
   return (
     <details className="pedido" open={aberto || rodando}>
@@ -140,7 +144,7 @@ function CartaoPedido({ ped, p, aberto }: { ped: Pedido; p: ApiPedido; aberto: b
             <li key={t.id} className={escrevendo ? 'escrevendo' : t.entrega ? 'pronta' : ''}>
               <details>
                 <summary><Retrato id={t.agente} tamanho={28} /><span className="tit"><b>{nome(t.agente)}</b> {t.titulo}</span>
-                  <small>{escrevendo ? 'Escrevendo' : t.entrega ? 'Entregou' : 'Na fila'}</small></summary>
+                  {!escrevendo && t.entrega ? <span className={`carimbo discreto ${recem.has(t.id) ? 'bate' : ''}`}>Feito</span> : <small>{escrevendo ? 'Escrevendo' : 'Na fila'}</small>}</summary>
                 {t.entrega ? <Entrega t={t} /> : <p className="nota">{t.detalhe || 'Ainda sem entrega.'}</p>}
               </details>
             </li>
@@ -179,7 +183,7 @@ export function Pedidos({ p, rascunho }: { p: ApiPedido; rascunho?: string }) {
       {p.corrida.etapa === 'erro' && <p className="andamento erro" role="alert">O pedido parou no meio. O motivo está no aviso. Dá para continuar de onde parou.</p>}
       {estado.pedidos.length
         ? <div className="lista-pedidos">{estado.pedidos.map((ped, i) => <CartaoPedido key={ped.id} ped={ped} p={p} aberto={p.corrida.pedido === ped.id || (p.corrida.pedido === null && p.corrida.etapa === 'parado' && i === 0)} />)}</div>
-        : <p className="vazio">Nenhum pedido ainda. Escreva o que você precisa e a orquestração divide entre a equipe.</p>}
+        : p.corrida.etapa === 'parado' && <Vazio icone="pedidos" acao={{ rotulo: 'Escrever o primeiro pedido', vai: () => document.getElementById('ped')?.focus() }}>Nenhum pedido ainda. Escreva o que você precisa e a orquestração divide entre a equipe.</Vazio>}
     </div>
   );
 }
