@@ -226,3 +226,15 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 
 Defeito achado no caminho: o Worker não sobe quando o módulo principal exporta uma constante solta. Corrigido na própria branch da #27.
 Testes automatizados: 52 passando.
+
+## Superauditoria de 14 de novembro
+
+Quatro auditorias em paralelo (funcional, design e UX, motion, arquitetura) e três frentes de correção, cada uma com issue e branch própria.
+
+- Núcleo multiagente e multi-IA (issue 21, PR 24): equipe, skills e pedidos no banco, três provedores, execução de missão com entrega, pedido ao lab com plano, aprovação e síntese. Revisão independente aplicada: trava de execução, pedido atômico, resposta cortada avisada, teto de skills.
+- Mapa e motion (issue 22, PR 25): passo no ritmo do chão, zoom ancorado, inércia, anel de quem está escolhido, balão de quem escreve, papel da distribuição, nome das salas.
+- Acabamento de interface (issue 23, PR 26): 32 itens entre defeitos, contraste, tipografia, botões, livro, laptop e celular.
+- Junção (PR 27): as três frentes num ramo, 103 testes, passeio completo em 1440, 1280 e 390 no Worker local com IA simulada.
+
+Ainda sem teste: chamada real aos provedores, e inércia e pinça num aparelho de verdade.
+Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao remarcar reunião que já aconteceu, Escape em dois tempos fora do livro.
