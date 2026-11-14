@@ -28,3 +28,23 @@ export function criaProjecao(lab: DadosLab): Projecao {
   const profundidade = (x: number, y: number, z = 0) => dist - (x * D[0] + y * D[1] + z * D[2]);
   return { px, chao, profundidade };
 }
+
+// Gestos da câmera: só as contas, para poder testar sem tela.
+
+/** Zoom depois de um giro da roda. O deltaY é limitado para um mouse de roda livre não disparar o zoom de uma vez. */
+export const zoomDaRoda = (z: number, deltaY: number) => z * Math.exp(-Math.max(-120, Math.min(120, deltaY)) * 0.0015);
+
+export type Amostra = { t: number; x: number; y: number };
+
+/** Velocidade do arrasto (px/s) nos últimos `janela` ms antes de soltar. Devolve null quando o dedo já tinha parado
+ *  ou vinha devagar (até 60 px/s): aí o mapa fica onde foi largado. O teto de 3000 px/s segura um safanão. */
+export function velocidadeDoArrasto(amostras: Amostra[], agora: number, janela = 80): { vx: number; vy: number } | null {
+  const rec = amostras.filter(a => a.t >= agora - janela);
+  if (rec.length < 2) return null;
+  const a = rec[0], b = rec[rec.length - 1], dt = (b.t - a.t) / 1000;
+  if (dt <= 0) return null;
+  const vx = (b.x - a.x) / dt, vy = (b.y - a.y) / dt, v = Math.hypot(vx, vy);
+  if (v <= 60) return null;
+  const f = Math.min(1, 3000 / v);
+  return { vx: vx * f, vy: vy * f };
+}
