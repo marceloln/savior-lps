@@ -1,9 +1,14 @@
 import { useState } from 'react';
-import { EQUIPE, type Membro } from '../lib/equipe';
+import type { Agente, Membro } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS } from '../lib/lab';
 import { useEstado } from '../hooks/useEstado';
 import { Retrato } from './Retrato';
-import { AvisoPrevia } from './Paineis';
+import { Apagar } from './Apagar';
+import { EditaMissao } from './Missao';
+import { Vazio } from './Diario';
+import { Entrega, Executar, Treino } from './Nucleo';
+import { nomeDoModelo } from '../lib/modelos';
 
 function Instrucoes({ m }: { m: Membro }) {
   const { estado, salvaInstrucao } = useEstado();
@@ -32,51 +37,61 @@ function Memoria({ m }: { m: Membro }) {
         <input id="nm" value={texto} onChange={e => setTexto(e.target.value)} placeholder={`Algo que ${m.nome} precisa lembrar`} maxLength={1500} />
         <button type="submit" disabled={!texto.trim()}>Guardar</button>
       </form>
-      {!notas.length && <p className="vazio">{m.nome} ainda não lembra de nada específico. Guarde aqui o que vale para todas as conversas, ou guarde uma resposta direto do chat.</p>}
+      {!notas.length && <Vazio icone="memoria" acao={{ rotulo: 'Guardar a primeira nota', vai: () => document.getElementById('nm')?.focus() }}>{m.nome} ainda não lembra de nada específico. Guarde aqui o que vale para todas as conversas, ou guarde uma resposta direto do chat.</Vazio>}
       <ul className="notas">
         {notas.map(n => (
           <li key={n.id}><p>{n.texto}</p><footer><small>{n.origem === 'conversa' ? 'Da conversa' : 'Anotado'}, {new Date(n.criado_em.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR')}</small>
-            <button onClick={() => apagaMemoria(n.id)} aria-label={`Esquecer: ${n.texto.slice(0, 40)}`}>Esquecer</button></footer></li>
+            <Apagar oque={`a nota: ${n.texto.slice(0, 40)}`} verbo="Esquecer" apaga={() => apagaMemoria(n.id)} /></footer></li>
         ))}
       </ul>
     </div>
   );
 }
 
+export type AbaFicha = 'visao' | 'treino' | 'instrucoes' | 'memoria';
+
 export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao }: {
-  m: Membro; conversa: () => void; abaInicial?: 'visao' | 'instrucoes' | 'memoria'; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
+  m: Agente; conversa: () => void; abaInicial?: AbaFicha; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
 }) {
   const { estado, criaTarefa, mudaTarefa } = useEstado();
-  const [aba, setAba] = useState<'visao' | 'instrucoes' | 'memoria'>(abaInicial ?? 'visao');
+  const [aba, setAba] = useState<AbaFicha>(abaInicial ?? 'visao');
   const [nova, setNova] = useState(''), [proj, setProj] = useState(estado.projetos[0]?.id ?? '');
+  const [edita, setEdita] = useState<number | null>(null);
   const z = ZONAS.find(q => q.id === m.zona)!;
   const abertas = estado.tarefas.filter(t => t.agente === m.id && t.estado !== 'feito');
+  const entregas = estado.tarefas.filter(t => t.agente === m.id && t.entrega).reverse();
+  const nSkills = estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).length;
   return (
     <div className="ficha-agente">
       <div className="ficha">
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
+          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span></p>
           <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
             {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}</div></div>
       </div>
       <div className="abas" role="tablist">
-        {([['visao', 'Missões'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
+        {([['visao', 'Missões'], ['treino', 'Treino'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
           <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
       </div>
-      <AvisoPrevia />
       {aba === 'visao' && <>
         {abertas.length
-          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}</span>
+          ? <ul className="tarefas-agente">{abertas.map(t => edita === t.id ? <li key={t.id} className="editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></li> : <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}</span>
+              {t.id > 0 && <button className="leve mini" onClick={() => setEdita(t.id)} aria-label={`Editar ${t.titulo}`}>Editar</button>}
+              <Executar t={t} />
               {t.id > 0 && <button className="leve mini" onClick={() => mudaTarefa(t.id, { estado: t.estado === 'fila' ? 'fazendo' : 'feito' })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}</li>)}</ul>
           : <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
-        <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim()) return; criaTarefa({ agente: m.id, titulo: nova.trim(), projeto_id: proj || null }); aoDar?.(`Missão dada a ${m.nome}: ${nova.trim()}.`); setNova(''); }}>
+        <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && (await criaTarefa({ agente: m.id, titulo, projeto_id: proj || null }))) { aoDar?.(`Missão dada a ${m.nome}: ${titulo}.`); setNova(''); } }}>
           <label className="so-leitor" htmlFor="nmis">Nova missão para {m.nome}</label>
           <input id="nmis" autoFocus={focaMissao} value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
           <label className="so-leitor" htmlFor="nproj">Projeto</label>
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
+        {entregas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
+          {entregas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
       </>}
+      {aba === 'treino' && <Treino m={m} />}
       {aba === 'instrucoes' && <Instrucoes key={m.id} m={m} />}
       {aba === 'memoria' && <Memoria m={m} />}
     </div>
@@ -92,8 +107,8 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
 }) {
   const { estado, criaTarefa } = useEstado();
   const [aba, setAba] = useState<AbaZona>('equipe');
-  const time = EQUIPE.filter(m => m.zona === zona), ids = new Set(time.map(m => m.id));
-  const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
+  const { equipe, nome } = useEquipe();
+  const time = equipe.filter(m => m.zona === zona), ids = new Set(time.map(m => m.id));
   const abertas = estado.tarefas.filter(t => ids.has(t.agente) && t.estado !== 'feito');
   const reunioes = estado.reunioes.filter(r => r.participantes.some(p => ids.has(p)));
   const [nova, setNova] = useState(''), [quem, setQuem] = useState(time[0]?.id ?? '');
@@ -103,7 +118,6 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
         {([['equipe', 'Equipe'], ['missoes', `Missões (${abertas.length})`], ['reunioes', `Reuniões (${reunioes.length})`]] as const).map(([id, n]) =>
           <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
       </div>
-      <AvisoPrevia />
       {aba === 'equipe' && <>
         {time.length
           ? <ul className="elenco">{time.map(m => (
@@ -116,9 +130,9 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
       </>}
       {aba === 'missoes' && <>
         {abertas.length
-          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo} <small>{nome(t.agente)}</small></li>)}</ul>
+          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}</span><small>{nome(t.agente)}</small></li>)}</ul>
           : <p className="vazio">A equipe daqui não tem missão aberta.</p>}
-        {time.length > 0 && <form className="nova-linha" onSubmit={e => { e.preventDefault(); if (!nova.trim() || !quem) return; criaTarefa({ agente: quem, titulo: nova.trim(), projeto_id: null }); aoDar?.(`Missão dada a ${nome(quem)}: ${nova.trim()}.`); setNova(''); }}>
+        {time.length > 0 && <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && quem && (await criaTarefa({ agente: quem, titulo, projeto_id: null }))) { aoDar?.(`Missão dada a ${nome(quem)}: ${titulo}.`); setNova(''); } }}>
           <label className="so-leitor" htmlFor="zmis">Nova missão</label>
           <input id="zmis" value={nova} onChange={e => setNova(e.target.value)} placeholder="Nova missão para esta sala" maxLength={200} />
           <label className="so-leitor" htmlFor="zquem">Para quem</label>

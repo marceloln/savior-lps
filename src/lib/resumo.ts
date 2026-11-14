@@ -1,5 +1,5 @@
 // Resumos do estado do lab para as páginas da esquerda do diário. Só contas, sem tela.
-import { FASES, type EstadoLab } from './dados';
+import { FASES, type Decisao, type EstadoLab, type Reuniao } from './dados';
 
 export type Trofeu = { nome: string; meta: number; atual: number; txt: string };
 
@@ -38,4 +38,14 @@ export function notasPorPessoa(e: EstadoLab): { agente: string; n: number }[] {
   const conta = new Map<string, number>();
   for (const m of e.memorias) conta.set(m.agente, (conta.get(m.agente) ?? 0) + 1);
   return [...conta].map(([agente, n]) => ({ agente, n })).sort((a, b) => b.n - a.n || a.agente.localeCompare(b.agente));
+}
+
+/** Reuniões que ainda vão acontecer, da mais próxima para a mais distante. */
+export function proximasReunioes(e: EstadoLab): Reuniao[] {
+  return e.reunioes.filter(r => r.status === 'agendada').sort((a, b) => (a.dia + a.hora).localeCompare(b.dia + b.hora) || a.id - b.id);
+}
+
+/** Decisões da mais nova para a mais antiga. */
+export function decisoesRecentes(e: EstadoLab): Decisao[] {
+  return [...e.decisoes].sort((a, b) => b.criado_em.localeCompare(a.criado_em) || b.id - a.id);
 }
