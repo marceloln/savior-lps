@@ -234,7 +234,8 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
     const tecla = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { aoFechar(); return; }
       if (e.key !== 'Tab' || !caixa.current) return;
-      const f = caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select,textarea,a[href],summary,[tabindex="0"]');
+      // só o que está visível: campo dentro de detalhe fechado não recebe foco
+      const f = [...caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select,textarea,a[href],summary,[tabindex="0"]')].filter(el => el.offsetParent !== null);
       if (!f.length) { e.preventDefault(); return; }
       const [pri, ult] = [f[0], f[f.length - 1]], foco = document.activeElement;
       // o foco na própria caixa ou fora dela volta para dentro: nada de escapar para o menu atrás da cortina
