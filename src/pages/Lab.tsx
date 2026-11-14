@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
@@ -68,6 +68,15 @@ export function Lab() {
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
+  // plano aprovado: o livro sai da frente para o mapa mostrar o papel chegando em cada mesa e quem está escrevendo
+  const distribuido = pedido.distribuicao?.n;
+  useEffect(() => { if (distribuido) { setAberto(null); setRegistro(r => [...r.slice(-5), 'Plano distribuído. A equipe está escrevendo.']); } }, [distribuido]);
+  // quando a corrida termina ou trava, Pedidos volta sozinho se nada mais estiver aberto
+  const etapa = pedido.corrida.etapa, etapaAntes = useRef(etapa);
+  useEffect(() => {
+    const antes = etapaAntes.current; etapaAntes.current = etapa;
+    if ((antes === 'sintetizando' && etapa === 'parado') || (etapa === 'erro' && antes !== 'erro')) setAberto(x => x ?? { tipo: 'aba', aba: 'pedidos' });
+  }, [etapa]);
   // o livro que acabou de fechar fica montado até a saída terminar
   const { mostrado, saindo, saiu } = useSaida(aberto);
   // fora do livro, Escape primeiro cancela o Mover e depois solta a pessoa escolhida

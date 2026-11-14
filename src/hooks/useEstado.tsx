@@ -101,7 +101,12 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
     setEstado(e => { anterior = e; return otimista(e); });
     if (modo !== 'banco') return true;
     try { const r = await ocupa(rede); if (depois) setEstado(e => depois(e, r)); return true; }
-    catch (err) { if (anterior) setEstado(anterior); setAviso(recadoDeErro(err)); return false; }
+    catch (err) {
+      setAviso(recadoDeErro(err));
+      // a foto de antes pode estar velha se outra coisa mudou nesse meio tempo: a verdade é o banco. Só sem rede volta a foto.
+      try { setEstado(await chama<EstadoLab>('GET', 'estado')); } catch { if (anterior) setEstado(anterior); }
+      return false;
+    }
   }, [modo, setEstado, ocupa]);
 
   const api = useMemo<Api>(() => {

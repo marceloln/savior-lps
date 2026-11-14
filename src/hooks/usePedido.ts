@@ -32,8 +32,13 @@ export function usePedido() {
     setC(x => (plano ? { ...x, etapa: 'plano', plano } : PARADA));
   }, []);
 
+  // o segundo clique em Distribuir enquanto o primeiro ainda cria o pedido não cria outro
+  const criando = useRef(false);
   const aprova = useCallback(async (plano: MissaoProposta[]) => {
-    const r = await agora.current.criaPedido(c.texto, c.projeto, plano);
+    if (criando.current) return;
+    criando.current = true;
+    let r: Awaited<ReturnType<typeof agora.current.criaPedido>>;
+    try { r = await agora.current.criaPedido(c.texto, c.projeto, plano); } finally { criando.current = false; }
     if (r) { setDistribuicao({ n: Date.now(), para: plano.map(m => m.agente) }); await roda(r.pedido, r.tarefas); }
   }, [c.texto, c.projeto, roda]);
 
