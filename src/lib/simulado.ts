@@ -13,7 +13,7 @@ export function planoSimulado(texto: string, equipe: Membro[]): MissaoProposta[]
   let escolhidos = pontos.filter(x => x.n > 0).sort((a, b) => b.n - a.n).slice(0, 3).map(x => x.m);
   if (!escolhidos.length) escolhidos = equipe.slice(0, 2);
   const curto = texto.trim().replace(/\s+/g, ' ').slice(0, 70);
-  return escolhidos.map(m => ({ agente: m.id, titulo: `${m.papel}: ${curto}`.slice(0, 120), detalhe: `Entregar a parte de ${norm(m.papel)} do pedido, em uma página, com próximo passo e dono.` }));
+  return escolhidos.map(m => ({ agente: m.id, titulo: `${m.papel}: ${curto}`.slice(0, 120), detalhe: `Entregar a parte de ${m.papel.toLowerCase()} do pedido, em uma página, com próximo passo e dono.` }));
 }
 
 export function entregaSimulada(nome: string, papel: string, titulo: string): string {
