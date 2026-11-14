@@ -15,6 +15,8 @@ type Props = {
   escrevendo: string[];
   /** Pedido recém-distribuído: um papel sai da mesa de quem orquestra para a mesa de cada um. n muda a cada distribuição. */
   distribuicao: { de: string; para: string[]; n: number } | null;
+  /** Chamado uma vez, quando as texturas do mapa terminam de carregar. */
+  aoPronto?: () => void;
   onHover: (a: Alvo, x: number, y: number) => void; onClique: (a: Alvo) => void; onMovido: (ok: boolean) => void;
 };
 type Vivos = Record<string, [number, number]>;
@@ -61,6 +63,7 @@ export function MapaPixi(props: Props) {
       const texVivo: Record<string, Texture> = {};
       await Promise.all(Object.keys(ancoras).map(async k => { texVivo[k] = await Assets.load<Texture>(`assets/vivos/${k}.webp`); }));
       if (!vivo) return;
+      atual.current.aoPronto?.();
       const proj = criaProjecao(lab), sim = criaSimulacao(lab, atual.current.equipe), K = lab.k;
       let equipeNoMapa = atual.current.equipe;
       const base0 = { profundidade: prof.source, kz: 1 / (K * lab.U[2]), dz: lab.D[2], larg: lab.larg, alt: lab.alt, prof: lab.prof };

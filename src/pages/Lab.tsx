@@ -68,6 +68,10 @@ export function Lab() {
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
+  // a tela de espera só sai quando o mapa tem as texturas. Se o mapa não avisar em 8 segundos, sai assim mesmo
+  const [mapaPronto, setMapaPronto] = useState(false);
+  const avisaPronto = useCallback(() => setMapaPronto(true), []);
+  useEffect(() => { const t = setTimeout(avisaPronto, 8000); return () => clearTimeout(t); }, [avisaPronto]);
   // plano aprovado: o livro sai da frente para o mapa mostrar o papel chegando em cada mesa e quem está escrevendo
   const distribuido = pedido.distribuicao?.n;
   useEffect(() => { if (distribuido) { setAberto(null); setRegistro(r => [...r.slice(-5), 'Plano distribuído. A equipe está escrevendo.']); } }, [distribuido]);
@@ -186,12 +190,12 @@ export function Lab() {
   }
   // onde estou: o menu marca a seção de quem está aberto, mesmo fora das abas
   const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
-  const carregando = !erro && (modo === 'carregando' || !lab || !gente);
+  const carregando = !erro && (modo === 'carregando' || !lab || !gente || !mapaPronto);
 
   return (
     <div className={aberto ? 'lab com-livro' : 'lab'}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
-      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
+      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
         onHover={onHover} onClique={onClique} onMovido={onMovido} />}
       <div className="coluna-esquerda">
         <Placa />

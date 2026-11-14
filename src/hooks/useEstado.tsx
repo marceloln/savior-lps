@@ -163,7 +163,8 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
           poe({ estado: 'feito', entrega: entregaSimulada(a?.nome ?? 'O especialista', a?.papel ?? 'especialista', titulo), modelo: 'simulado:previa' });
           return true;
         }
-        try { poe(await chama<Tarefa>('POST', `tarefas/${id}/executar`, { ajuste: ajuste ?? '' })); return true; }
+        // entrega que sai em menos de um segundo ainda mostra quem está escrevendo no mapa
+        try { const [feita] = await Promise.all([chama<Tarefa>('POST', `tarefas/${id}/executar`, { ajuste: ajuste ?? '' }), pausa(1200)]); poe(feita); return true; }
         catch (err) { poe({ estado: antes }); setAviso(recadoDeErro(err)); return false; }
         }
       },
