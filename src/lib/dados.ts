@@ -1,15 +1,24 @@
 // Tipos e dados de exemplo compartilhados entre o Worker e a interface.
 // Cliente aparece só por setor e situação. Nada aqui é dado real.
+import { agentesBase, type Agente } from './equipe';
+import { MODELO_PADRAO } from './modelos';
+import { SKILLS_BASE, VINCULOS_BASE } from './skills';
 export type Estado = 'fila' | 'fazendo' | 'feito';
 export type Cliente = { id: string; setor: string; situacao: string; fase: number };
 export type Projeto = { id: string; cliente_id: string; nome: string; fase: number; dia: number; mesa: string | null; inicio: string };
-export type Tarefa = { id: number; agente: string; titulo: string; detalhe: string; estado: Estado; projeto_id: string | null };
+/** Missão. Quando o especialista executa, a entrega fica guardada com o modelo que escreveu. */
+export type Tarefa = { id: number; agente: string; titulo: string; detalhe: string; estado: Estado; projeto_id: string | null; pedido_id: number | null; entrega: string; modelo: string };
+export type Skill = { id: string; nome: string; descricao: string; conteudo: string; para_todos: boolean };
+/** Pedido de um sócio ao lab: vira missões, cada uma com entrega, e fecha com a síntese da orquestração. */
+export type Pedido = { id: number; texto: string; projeto_id: string | null; estado: 'andando' | 'entregue'; sintese: string; criado_em: string };
+export type MissaoProposta = { agente: string; titulo: string; detalhe: string };
 export type Reuniao = { id: number; titulo: string; pauta: string; dia: string; hora: string; participantes: string[]; projeto_id: string | null; status: 'agendada' | 'feita'; ata: string };
 export type Decisao = { id: number; titulo: string; contexto: string; projeto_id: string | null; reuniao_id: number | null; criado_em: string };
 export type Memoria = { id: number; agente: string; texto: string; origem: 'manual' | 'conversa'; criado_em: string };
 export type EstadoLab = {
   clientes: Cliente[]; projetos: Projeto[]; tarefas: Tarefa[]; reunioes: Reuniao[]; decisoes: Decisao[];
   instrucoes: Record<string, string>; memorias: Memoria[]; conversas: number;
+  agentes: Agente[]; skills: Skill[]; vinculos: Record<string, string[]>; pedidos: Pedido[]; modeloPadrao: string;
 };
 
 export const FASES = ['Diagnóstico', 'Co-criação', 'Execução', 'Legado'] as const;
@@ -34,6 +43,48 @@ export function diaDoCiclo(inicio: string, hoje: string): number {
 
 export const hojeLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 
+// Entregas de exemplo do pedido que já vem pronto na história. Sem número de resultado e sem nome de cliente.
+const ENTREGA_PAUTA = `## Pauta fixa da reunião de segunda
+
+Dura 40 minutos e segue sempre a mesma ordem.
+
+1. **O que fechou na semana.** Cada vendedor fala em um minuto.
+2. **O que travou e por quê.** Só o que depende de alguém da sala.
+3. **Visitas da semana.** Quem visita quem e com qual objetivo.
+4. **Um combinado por pessoa.** Com data.
+
+### Regras
+- Começa na hora, com quem estiver.
+- Quem conduz é o gerente da praça. A matriz só ouve na primeira rodada.
+- O combinado da semana anterior abre a reunião seguinte.
+
+### Próximo passo
+Testar nas duas praças de rotina mais diferente. Dono: gerente de cada praça. Data: próxima segunda.`;
+const ENTREGA_PAINEL = `## O que o gerente olha antes da reunião
+
+Uma página, montada na sexta à tarde.
+
+- Visitas combinadas e visitas feitas, por vendedor.
+- Clientes que não compram há mais tempo que o normal da praça.
+- Combinados da segunda anterior que ficaram abertos.
+
+### O que falta para montar
+- De onde sai a lista de visitas feitas em cada praça.
+- Quem atualiza os combinados durante a semana.
+
+### Próximo passo
+Levantar essas duas respostas com os gerentes. Dono: Otto. Data: até quarta.`;
+const SINTESE_EXEMPLO = `## Reunião de segunda igual em todas as praças
+
+A resposta tem duas peças. Nina fechou a **pauta fixa** de 40 minutos, com a mesma ordem para todo mundo. Otto definiu a **página que o gerente olha antes**, para a reunião começar com fato e não com impressão.
+
+### O que fazer agora
+1. Testar a pauta nas duas praças de rotina mais diferente na próxima segunda. Dono: gerente de cada praça.
+2. Responder de onde sai a lista de visitas feitas e quem atualiza os combinados. Dono: Otto, até quarta.
+
+### O que ainda não sabemos
+Se a matriz consegue ficar só ouvindo na primeira rodada. Vale combinar isso antes do teste.`;
+
 type Semente = Omit<EstadoLab, 'reunioes'> & { reunioes: (Reuniao & { decisao?: { titulo: string; contexto: string } })[] };
 
 /**
@@ -52,7 +103,7 @@ export function semente(hoje: string): Semente {
   const P = (id: string, cliente_id: string, nome: string, fase: number, inicio: string, mesa: string): Projeto =>
     ({ id, cliente_id, nome, fase, inicio, dia: diaDoCiclo(inicio, hoje), mesa });
   let n = 0;
-  const M = (agente: string, titulo: string, estado: Estado, projeto_id: string | null): Tarefa => ({ id: ++n, agente, titulo, detalhe: '', estado, projeto_id });
+  const M = (agente: string, titulo: string, estado: Estado, projeto_id: string | null, extra: Partial<Tarefa> = {}): Tarefa => ({ id: ++n, agente, titulo, detalhe: '', estado, projeto_id, pedido_id: null, entrega: '', modelo: '', ...extra });
   let r = 0;
   const R = (titulo: string, pauta: string, dia: string, hora: string, participantes: string[], projeto_id: string | null, ata = '', decisao?: { titulo: string; contexto: string }) =>
     ({ id: ++r, titulo, pauta, dia, hora, participantes, projeto_id, status: ata ? 'feita' as const : 'agendada' as const, ata, decisao });
@@ -113,6 +164,8 @@ export function semente(hoje: string): Semente {
       M('davi', 'Como outras distribuidoras organizam a semana comercial', 'feito', 'distribuidora-ritmo'),
       M('caio', 'Mapear como cada praça conduz a semana comercial', 'fazendo', 'distribuidora-ritmo'),
       M('nina', 'Desenhar a rotina de visita do vendedor', 'fazendo', 'distribuidora-ritmo'),
+      M('nina', 'Pauta fixa da reunião de segunda', 'feito', 'distribuidora-ritmo', { pedido_id: 1, modelo: MODELO_PADRAO, entrega: ENTREGA_PAUTA }),
+      M('otto', 'O que o gerente olha antes da reunião', 'feito', 'distribuidora-ritmo', { pedido_id: 1, modelo: MODELO_PADRAO, entrega: ENTREGA_PAINEL }),
       M('otto', 'Rascunho do painel semanal do gerente comercial', 'fila', 'distribuidora-ritmo'),
       M('ana', 'Agente que monta a pauta da reunião de segunda', 'fila', 'distribuidora-ritmo'),
       M('rui', 'Kickoff e calendário do diagnóstico', 'feito', 'conveniencia-padrao'),
@@ -147,6 +200,11 @@ export function semente(hoje: string): Semente {
       N('clara', 'A marca em conversa vende bem online e quer que a loja física entregue a mesma experiência.', -1),
     ].reverse(),
     conversas: 0,
+    agentes: agentesBase(),
+    skills: SKILLS_BASE,
+    vinculos: VINCULOS_BASE,
+    pedidos: [{ id: 1, texto: 'Preciso de um jeito simples de fazer a reunião de segunda ser igual em todas as praças da distribuidora.', projeto_id: 'distribuidora-ritmo', estado: 'entregue', sintese: SINTESE_EXEMPLO, criado_em: d(-1) + ' 11:00:00' }],
+    modeloPadrao: MODELO_PADRAO,
   };
 }
 

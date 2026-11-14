@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { paraApi, textoDeErro } from './conversa';
 import { sistemaDe } from '../../worker/conversa';
+import { EQUIPE } from './equipe';
 
 describe('conversa no navegador', () => {
   it('tira avisos de erro e começa por quem pergunta', () => {
@@ -18,7 +19,7 @@ describe('conversa no navegador', () => {
     expect(textoDeErro(503, { erro: 'Falta a chave.' })).toBe('Falta a chave.');
   });
   it('a Clara recebe a instrução de briefing e os outros não', () => {
-    expect(sistemaDe('clara')).toContain('uma pergunta por vez');
-    expect(sistemaDe('lia')).not.toContain('uma pergunta por vez');
+    expect(sistemaDe(EQUIPE.find(e => e.id === 'clara')!)).toContain('uma pergunta por vez');
+    expect(sistemaDe(EQUIPE.find(e => e.id === 'lia')!)).not.toContain('uma pergunta por vez');
   });
 });
