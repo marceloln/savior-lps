@@ -1,8 +1,10 @@
 // Ícones desenhados no traço do diário: contorno em tinta marrom e um toque de cor dentro.
-type Nome = 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus'
+type Nome = 'pedidos' | 'skills' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus'
   | 'mover' | 'conversar' | 'missao' | 'reuniao' | 'briefing' | 'fechar' | 'estrela' | 'fita';
 
 const D: Record<Nome, { cor: string; fill?: string; tracos: string }> = {
+  pedidos: { cor: '#E9B949', fill: 'M4 6h16v9H13l-5 4v-4H4z', tracos: 'M4 6h16v9H13l-5 4v-4H4zM12 8.5v3M12 13h.01' },
+  skills: { cor: '#5FB6D9', fill: 'M5 5h6a2 2 0 0 1 1 1 2 2 0 0 1 1-1h6v13h-6a2 2 0 0 0-1 1 2 2 0 0 0-1-1H5z', tracos: 'M5 5h6a2 2 0 0 1 1 1 2 2 0 0 1 1-1h6v13h-6a2 2 0 0 0-1 1 2 2 0 0 0-1-1H5zM12 6v13M7.5 9h2M7.5 12h2M14.5 9h2M14.5 12h2' },
   clientes: { cor: '#C9603F', fill: 'M5 9h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z', tracos: 'M5 9h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM9 9V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M5 13h14M11 13v2h2v-2' },
   projetos: { cor: '#4F86C6', fill: 'M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z', tracos: 'M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2zM9 4v14M15 6v14' },
   pessoas: { cor: '#E0A06A', fill: 'M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', tracos: 'M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM5 20c.8-4 3.6-6 7-6s6.2 2 7 6' },

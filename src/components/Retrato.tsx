@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { EQUIPE } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 
 const LADO = 256; // tamanho de cada rosto no atlas
 let atlas: HTMLImageElement | null = null;
@@ -11,13 +11,14 @@ const carrega = () => {
 };
 
 /** Rosto de frente, renderizado do mesmo modelo 3D que anda no mapa. */
-export function Retrato({ id, tamanho = 44, cor }: { id: string; tamanho?: number; cor?: string }) {
+export function Retrato({ id, tamanho = 44, cor, rosto: fixo }: { id: string; tamanho?: number; cor?: string; rosto?: string }) {
   const tela = useRef<HTMLCanvasElement>(null);
+  const quem = useEquipe().de(id), rosto = fixo ?? quem?.aparencia ?? id;   // o rosto é o do boneco que a pessoa usa no mapa
   useEffect(() => {
     let vivo = true;
     const { img, ordem } = carrega();
     ordem.then(ids => {
-      const i = ids.indexOf(id);
+      const i = ids.indexOf(rosto);
       const desenha = () => {
         const c = tela.current; if (!vivo || !c || i < 0) return;
         const g = c.getContext('2d')!; g.clearRect(0, 0, c.width, c.height); g.drawImage(img, i * LADO, 0, LADO, LADO, 0, 0, c.width, c.height);
@@ -25,6 +26,6 @@ export function Retrato({ id, tamanho = 44, cor }: { id: string; tamanho?: numbe
       if (img.complete) desenha(); else img.addEventListener('load', desenha, { once: true });
     });
     return () => { vivo = false; };
-  }, [id]);
-  return <canvas ref={tela} width={tamanho * 2} height={tamanho * 2} className="retrato" style={{ width: tamanho, height: tamanho, background: cor }} title={EQUIPE.find(e => e.id === id)?.nome} aria-hidden="true" />;
+  }, [rosto]);
+  return <canvas ref={tela} width={tamanho * 2} height={tamanho * 2} className="retrato" style={{ width: tamanho, height: tamanho, background: cor }} title={quem?.nome} aria-hidden="true" />;
 }

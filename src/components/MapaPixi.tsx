@@ -3,14 +3,18 @@ import { Application, Assets, BlurFilter, Container, Graphics, Sprite, Texture, 
 import type { DadosLab } from '../lib/lab';
 import { zonaEm, ZONAS } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
-import { criaSimulacao, type Agente } from '../lib/simulacao';
+import { criaSimulacao, type Agente, type Pessoa } from '../lib/simulacao';
 import { criaPessoa } from './genteShader';
 
 export type AtlasGente = { escala: number; q: Record<string, number[]> };
 export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | null;
 type Props = {
-  lab: DadosLab; gente: AtlasGente; zonaAtiva: string | null;
+  lab: DadosLab; gente: AtlasGente; equipe: Pessoa[]; zonaAtiva: string | null;
   selecionado: string | null; modoMover: boolean; foco: { zona: string; n: number } | null;
+  /** Quem está escrevendo uma entrega ou planejando agora (ids). O mapa mostra um balão sobre a pessoa. */
+  escrevendo: string[];
+  /** Pedido recém-distribuído: um papel sai da mesa de quem orquestra para a mesa de cada um. n muda a cada distribuição. */
+  distribuicao: { de: string; para: string[]; n: number } | null;
   onHover: (a: Alvo, x: number, y: number) => void; onClique: (a: Alvo) => void; onMovido: (ok: boolean) => void;
 };
 type Vivos = Record<string, [number, number]>;
@@ -46,7 +50,8 @@ export function MapaPixi(props: Props) {
       const texVivo: Record<string, Texture> = {};
       await Promise.all(Object.keys(ancoras).map(async k => { texVivo[k] = await Assets.load<Texture>(`assets/vivos/${k}.webp`); }));
       if (!vivo) return;
-      const proj = criaProjecao(lab), sim = criaSimulacao(lab), K = lab.k;
+      const proj = criaProjecao(lab), sim = criaSimulacao(lab, atual.current.equipe), K = lab.k;
+      let equipeNoMapa = atual.current.equipe;
       const base0 = { profundidade: prof.source, kz: 1 / (K * lab.U[2]), dz: lab.D[2], larg: lab.larg, alt: lab.alt, prof: lab.prof };
       const mundo = new Container(); app.stage.addChild(mundo);
       mundo.addChild(new Sprite(fundo));
@@ -194,6 +199,12 @@ export function MapaPixi(props: Props) {
           if (mira && modoMover) losango(casas, mira.x, mira.y, CASA, sim.livre(mira) ? 0x2f8f7c : 0xd9776a, 0.75, 2);
           losango(casas, cx, cy, CASA * 1.1, 0xe9b949, 0.35, 2.5);
         }
+        // a equipe mudou no banco: entra quem chegou, sai quem foi desligado
+        if (atual.current.equipe !== equipeNoMapa) {
+          equipeNoMapa = atual.current.equipe; sim.sincroniza(equipeNoMapa);
+          for (const a of sim.agentes) if (!pessoas.has(a.id)) { const p = criaPessoa({ ...base0, atlas }); camada.addChild(p.mesh); pessoas.set(a.id, p); }
+          for (const [id, p] of pessoas) if (!sim.agentes.some(a => a.id === id)) { camada.removeChild(p.mesh); p.mesh.destroy(); pessoas.delete(id); }
+        }
         // pessoas de trás para frente
         sombras.clear();
         const ordem = [...sim.agentes].sort((a, b) => proj.profundidade(b.pos.x, b.pos.y) - proj.profundidade(a.pos.x, a.pos.y));
@@ -205,7 +216,7 @@ export function MapaPixi(props: Props) {
           if (pose !== 'digitar') sombras.ellipse(fx, fy, 0.3 * K, 0.15 * K).fill({ color: 0x28200f, alpha: 0.2 });
           const lista = QUADROS[pose];
           const f = pose === 'andar' ? Math.floor(t * 7.5) : Math.floor(t * (pose === 'digitar' ? 2.2 : 1.2) + a.semente);
-          const q = gente.q[`${a.id}_d${a.dir}_${lista[f % lista.length]}`] ?? gente.q[`${a.id}_d${a.dir}_parado0`];
+          const q = gente.q[`${a.aparencia}_d${a.dir}_${lista[f % lista.length]}`] ?? gente.q[`${a.aparencia}_d${a.dir}_parado0`];
           const p = pessoas.get(a.id)!;
           if (q) p.poe(fx, fy, proj.profundidade(a.pos.x, a.pos.y), q, false, 1 / gente.escala);
           camada.setChildIndex(p.mesh, i);

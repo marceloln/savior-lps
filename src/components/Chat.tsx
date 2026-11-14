@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useConversa } from '../hooks/useConversa';
-import { EQUIPE } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS } from '../lib/lab';
 import { Retrato } from './Retrato';
 import { useEstado } from '../hooks/useEstado';
@@ -13,7 +13,7 @@ function Conversa({ agente }: { agente: string }) {
   const [guardadas, setGuardadas] = useState<Set<number>>(new Set());
   const [texto, setTexto] = useState('');
   const lista = useRef<HTMLDivElement>(null);
-  const m = EQUIPE.find(e => e.id === agente)!;
+  const m = useEquipe().de(agente)!;
   useEffect(() => { const l = lista.current; if (l) l.scrollTop = l.scrollHeight; }, [falas, enviando]);
   const manda = async () => { if (await envia(texto)) setTexto(''); };
   return (
@@ -42,11 +42,12 @@ function Conversa({ agente }: { agente: string }) {
 }
 
 export function Chat({ agente, setAgente, so }: { agente: string; setAgente: (id: string) => void; so?: boolean }) {
+  const { equipe } = useEquipe();
   return (
     <div className={`chat ${so ? 'so' : ''}`}>
       {!so && (
         <nav className="contatos" aria-label="Especialistas">
-          {EQUIPE.filter(e => e.id !== 'clara').map(e => (
+          {equipe.filter(e => e.id !== 'clara').map(e => (
             <button key={e.id} aria-pressed={e.id === agente} onClick={() => setAgente(e.id)}>
               <Retrato id={e.id} tamanho={32} cor={corDe(e.zona) + '40'} />
               <span><b>{e.nome}</b><small>{e.papel}</small></span>

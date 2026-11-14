@@ -1,21 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useEstado } from '../hooks/useEstado';
-import { EQUIPE } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { FASES, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
+import { Apagar } from './Apagar';
+import { Entrega, Executar, SeletorModelo } from './Nucleo';
 import { trofeus } from '../lib/resumo';
+import { PROVEDORES, type Provedor } from '../lib/modelos';
 import { Icone, type NomeIcone } from './Icones';
 import type { Conexoes as ConexoesLab } from '../hooks/useConexoes';
 
-const nome = (id: string) => EQUIPE.find(e => e.id === id)?.nome ?? id;
 const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
 /** Botão de apagar que pede confirmação no próprio lugar, sem janela por cima. */
-function Apagar({ oque, apaga }: { oque: string; apaga: () => void }) {
-  const [certo, setCerto] = useState(false);
-  if (!certo) return <button className="leve mini" onClick={() => setCerto(true)} aria-label={`Apagar ${oque}`}>Apagar</button>;
-  return <span className="confirma">Apagar de vez?<button className="perigo mini" onClick={apaga}>Apagar</button><button className="leve mini" onClick={() => setCerto(false)}>Manter</button></span>;
-}
-
 const COLUNAS: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
 export function AvisoPrevia() {
@@ -75,6 +71,7 @@ export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: stri
 }
 
 function Kanban({ projeto }: { projeto: Projeto }) {
+  const { equipe, nome } = useEquipe();
   const { estado, criaTarefa, mudaTarefa, apagaTarefa } = useEstado();
   const [titulo, setTitulo] = useState(''), [agente, setAgente] = useState('rui');
   const tarefas = estado.tarefas.filter(t => t.projeto_id === projeto.id);
@@ -92,10 +89,12 @@ function Kanban({ projeto }: { projeto: Projeto }) {
               {lista.map(t => (
                 <div key={t.id} className={`cartao ${t.estado}`}>
                   <p>{t.titulo}</p>
+                  {t.entrega && <details className="ver-entrega"><summary>Ver a entrega</summary><Entrega t={t} /></details>}
                   <footer>
                     <span className="dono"><Retrato id={t.agente} tamanho={22} />{nome(t.agente)}</span>
                     {t.id < 0 ? <span className="salvando">Salvando</span> : <span className="acoes">
                       {anterior[t.estado] && <button onClick={() => mudaTarefa(t.id, { estado: anterior[t.estado]! })} aria-label={`Voltar ${t.titulo}`}>Voltar</button>}
+                      {t.estado !== 'feito' && <Executar t={t} />}
                       {proximo[t.estado] && <button className="avanca" onClick={() => mudaTarefa(t.id, { estado: proximo[t.estado]! })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}
                       {t.estado === 'feito' && <button onClick={() => apagaTarefa(t.id)} aria-label={`Arquivar ${t.titulo}`}>Arquivar</button>}
                     </span>}
@@ -110,7 +109,7 @@ function Kanban({ projeto }: { projeto: Projeto }) {
         <label className="so-leitor" htmlFor="nt">Nova missão</label>
         <input id="nt" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Nova missão para este projeto" maxLength={200} />
         <label className="so-leitor" htmlFor="nd">Quem faz</label>
-        <select id="nd" value={agente} onChange={e => setAgente(e.target.value)}>{EQUIPE.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}</select>
+        <select id="nd" value={agente} onChange={e => setAgente(e.target.value)}>{equipe.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}</select>
         <button type="submit" disabled={!titulo.trim()}>Dar missão</button>
       </form>
     </>
@@ -159,6 +158,7 @@ export function Projetos({ inicial }: { inicial?: string }) {
 }
 
 export function Agenda({ com }: { com?: string[] }) {
+  const { equipe } = useEquipe();
   const { estado, criaReuniao, gravaAta, criaDecisao, mudaReuniao, apagaReuniao } = useEstado();
   const [remarca, setRemarca] = useState<{ id: number; dia: string; hora: string } | null>(null);
   const [nova, setNova] = useState(!!com);
@@ -186,7 +186,7 @@ export function Agenda({ com }: { com?: string[] }) {
             <label>Hora<input type="time" required value={f.hora} onChange={e => setF({ ...f, hora: e.target.value })} /></label>
             <label>Projeto<select value={f.projeto_id} onChange={e => setF({ ...f, projeto_id: e.target.value })}><option value="">Nenhum</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select></label></div>
           <fieldset><legend>Quem participa</legend><div className="escolha">
-            {EQUIPE.map(m => <label key={m.id} className={f.participantes.includes(m.id) ? 'on' : ''}><input type="checkbox" checked={f.participantes.includes(m.id)} onChange={e => setF({ ...f, participantes: e.target.checked ? [...f.participantes, m.id] : f.participantes.filter(x => x !== m.id) })} />{m.nome}</label>)}
+            {equipe.map(m => <label key={m.id} className={f.participantes.includes(m.id) ? 'on' : ''}><input type="checkbox" checked={f.participantes.includes(m.id)} onChange={e => setF({ ...f, participantes: e.target.checked ? [...f.participantes, m.id] : f.participantes.filter(x => x !== m.id) })} />{m.nome}</label>)}
           </div></fieldset>
           <div className="linha"><button className="primario" type="submit" disabled={f.titulo.trim().length < 3 || !f.participantes.length}>Marcar</button><button type="button" className="leve" onClick={() => setNova(false)}>Desistir</button></div>
         </form>
@@ -257,13 +257,19 @@ export function itensConexao(c: ConexoesLab | null, noAr: boolean) {
     { nome: 'Worker na Cloudflare', ok: noAr, txt: 'Respondendo', passo: 'Esta é a prévia, sem Worker por trás. O deploy roda sozinho quando as pull requests entram na main.' },
     { nome: 'Banco D1', ok: !!c?.banco, txt: `Ligado, ${c?.mensagens ?? 0} mensagens guardadas`, passo: 'O deploy cria as tabelas sozinho no banco agencia-v30.' },
     { nome: 'Login da equipe', ok: !!c?.acesso, txt: 'Só entra quem faz parte da equipe', passo: 'No painel da Cloudflare, ligue o Access para o endereço do lab e preencha ACESSO_EQUIPE e ACESSO_AUD no Worker. O passo a passo está em docs/publicar.md.' },
-    { nome: 'Chave da Anthropic', ok: !!c?.chave, txt: 'Os especialistas respondem de verdade', passo: 'No Worker agencia-v30, em Configurações, Variáveis e segredos, crie o segredo ANTHROPIC_API_KEY.' },
+    ...(Object.keys(PROVEDORES) as Provedor[]).map(p => ({ nome: `IA da ${PROVEDORES[p].nome}`, ok: !!c?.provedores?.[p], txt: 'Chave ligada. Dá para usar os modelos dela.',
+      passo: `No Worker agencia-v30, em Configurações, Variáveis e segredos, crie o segredo ${PROVEDORES[p].segredo}.${p === 'anthropic' ? '' : ' Só precisa se algum especialista usar modelo dela.'}` })),
   ];
 }
 
 export function Conexoes({ c }: { c: ConexoesLab | null }) {
-  const { modo } = useEstado();
-  return (
+  const { modo, estado, salvaModeloPadrao } = useEstado();
+  return (<>
+    <div className="campo modelo-padrao">
+      <label htmlFor="mp">Modelo de IA padrão do lab</label>
+      <SeletorModelo key={estado.modeloPadrao} id="mp" valor={estado.modeloPadrao} aoMudar={salvaModeloPadrao} />
+      <p className="nota">Vale para quem não tem modelo próprio. Cada especialista pode ter o seu, na aba Treino da ficha.</p>
+    </div>
     <ul className="conexoes">
       {itensConexao(c, modo === 'banco').map(i => (
         <li key={i.nome} className={i.ok ? 'ok' : ''}>
@@ -273,7 +279,7 @@ export function Conexoes({ c }: { c: ConexoesLab | null }) {
         </li>
       ))}
     </ul>
-  );
+  </>);
 }
 
 const ICONE_TROFEU: Record<string, NomeIcone> = {

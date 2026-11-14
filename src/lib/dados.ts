@@ -11,6 +11,8 @@ export type Tarefa = { id: number; agente: string; titulo: string; detalhe: stri
 export type Skill = { id: string; nome: string; descricao: string; conteudo: string; para_todos: boolean };
 /** Pedido de um sócio ao lab: vira missões, cada uma com entrega, e fecha com a síntese da orquestração. */
 export type Pedido = { id: number; texto: string; projeto_id: string | null; estado: 'andando' | 'entregue'; sintese: string; criado_em: string };
+/** Um pedido vira no máximo este número de missões. */
+export const MAX_MISSOES = 5;
 export type MissaoProposta = { agente: string; titulo: string; detalhe: string };
 export type Reuniao = { id: number; titulo: string; pauta: string; dia: string; hora: string; participantes: string[]; projeto_id: string | null; status: 'agendada' | 'feita'; ata: string };
 export type Decisao = { id: number; titulo: string; contexto: string; projeto_id: string | null; reuniao_id: number | null; criado_em: string };

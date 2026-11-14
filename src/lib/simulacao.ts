@@ -1,12 +1,14 @@
 // Vida no lab: cada pessoa trabalha na mesa e de vez em quando vai ao café ou à mesa de um colega.
 import type { DadosLab } from './lab';
-import { EQUIPE, type Membro } from './equipe';
+import type { Membro } from './equipe';
 import { criaGrade, rota, type Grade, type P2 } from './rotas';
 import { direcaoDe, olharPara } from './direcao';
 
 export type Pose = 'parado' | 'andar' | 'digitar';
-export type Agente = Membro & {
-  casa: P2; pos: P2; caminho: P2[]; estado: 'mesa' | 'andando' | 'parado';
+/** Quem entra no mapa: o especialista e o boneco que ele usa. */
+export type Pessoa = Membro & { aparencia: string };
+export type Agente = Pessoa & {
+  semMesa: boolean; casa: P2; pos: P2; caminho: P2[]; estado: 'mesa' | 'andando' | 'parado';
   dir: number; dirCasa: number; espera: number; semente: number; aoChegar: (() => void) | null; mandado: boolean;
 };
 
@@ -14,17 +16,39 @@ const VEL = 1.35; // metros por segundo, passo de quem anda no escritório
 export const MIN_FORA = 2, MAX_FORA = 3; // sempre 2 ou 3 circulando por conta própria, o resto trabalha
 const entre = (a: number, b: number) => a + Math.random() * (b - a);
 
-export function criaSimulacao(lab: DadosLab) {
+export function criaSimulacao(lab: DadosLab, equipe: Pessoa[]) {
   const grade: Grade = criaGrade(lab);
-  const usados: Record<string, number> = {};
-  const agentes: Agente[] = EQUIPE.map((m, i) => {
-    const lista = m.id === 'clara' ? lab.pontos.clara : lab.pontos['mesa_' + m.zona] ?? [];
-    const k = (usados[m.zona] = (usados[m.zona] ?? -1) + 1);
-    const p = lista[k % Math.max(1, lista.length)] ?? { x: lab.X / 2, y: lab.Y / 2 };
-    const dirCasa = m.id === 'clara' ? 4 : 0; // mesa: olha para os monitores em -y; Clara olha para quem chega
-    return { ...m, casa: { x: p.x, y: p.y }, pos: { x: p.x, y: p.y }, caminho: [], estado: 'mesa', dir: dirCasa, dirCasa,
-      espera: 15 + i * 11, semente: i * 1.37, aoChegar: null, mandado: false };
-  });
+  const livre = (p: P2) => { const i = Math.floor(p.x / 0.25), j = Math.floor(p.y / 0.25); return i >= 0 && j >= 0 && i < grade.gx && j < grade.gy && !grade.bloq[j * grade.gx + i]; };
+  const agentes: Agente[] = [];
+  let entrou = 0;
+
+  /** Lugar de quem chega: a próxima mesa vaga da sala. Sem mesa vaga, fica de pé num ponto livre perto do meio da sala. */
+  function lugar(m: Pessoa): { casa: P2; semMesa: boolean } {
+    const mesas = m.id === 'clara' ? lab.pontos.clara ?? [] : lab.pontos['mesa_' + m.zona] ?? [];
+    const vaga = mesas.find(p => !agentes.some(a => !a.semMesa && a.casa.x === p.x && a.casa.y === p.y));
+    if (vaga) return { casa: { x: vaga.x, y: vaga.y }, semMesa: false };
+    const r = lab.zonas[m.zona], cx = r ? r[0] + r[2] / 2 : lab.X / 2, cy = r ? r[1] + r[3] / 2 : lab.Y / 2;
+    for (let raio = 0; raio < 12; raio++) for (let k = 0; k < 8; k++) {
+      const p = { x: cx + Math.cos(k * 0.785) * raio * 0.5, y: cy + Math.sin(k * 0.785) * raio * 0.5 };
+      if (livre(p) && !agentes.some(a => Math.hypot(a.casa.x - p.x, a.casa.y - p.y) < 0.7)) return { casa: p, semMesa: true };
+    }
+    return { casa: { x: cx, y: cy }, semMesa: true };
+  }
+
+  /** Põe a equipe do banco no mapa: entra quem é novo, sai quem foi desligado, muda de sala quem mudou. */
+  function sincroniza(lista: Pessoa[]) {
+    for (let i = agentes.length - 1; i >= 0; i--) if (!lista.some(m => m.id === agentes[i].id)) agentes.splice(i, 1);
+    for (const m of lista) {
+      const a = agentes.find(x => x.id === m.id);
+      if (a && a.zona === m.zona) { a.nome = m.nome; a.papel = m.papel; a.aparencia = m.aparencia; continue; }
+      if (a) agentes.splice(agentes.indexOf(a), 1);
+      const { casa, semMesa } = lugar(m), i = entrou++;
+      const dirCasa = m.id === 'clara' || semMesa ? 4 : 0; // mesa: olha para os monitores em -y; de pé: olha para quem chega
+      agentes.push({ ...m, semMesa, casa, pos: { ...casa }, caminho: [], estado: 'mesa', dir: dirCasa, dirCasa,
+        espera: 15 + (i % 17) * 11, semente: i * 1.37, aoChegar: null, mandado: false });
+    }
+  }
+  sincroniza(equipe);
   const cafe = lab.pontos.cafe ?? [];
 
   const vai = (a: Agente, alvo: P2, aoChegar: () => void) => {
@@ -74,8 +98,7 @@ export function criaSimulacao(lab: DadosLab) {
       }
     }
   }
-  const pose = (a: Agente): Pose => a.estado === 'andando' ? 'andar' : a.estado === 'mesa' && a.id !== 'clara' ? 'digitar' : 'parado';
+  const pose = (a: Agente): Pose => a.estado === 'andando' ? 'andar' : a.estado === 'mesa' && a.id !== 'clara' && !a.semMesa ? 'digitar' : 'parado';
   const caminhoAte = (id: string, alvo: P2) => { const a = agentes.find(x => x.id === id); return a ? rota(grade, a.pos, alvo) : []; };
-  const livre = (p: P2) => { const i = Math.floor(p.x / 0.25), j = Math.floor(p.y / 0.25); return i >= 0 && j >= 0 && i < grade.gx && j < grade.gy && !grade.bloq[j * grade.gx + i]; };
-  return { agentes, passo, pose, grade, mover, caminhoAte, livre, fora };
+  return { agentes, passo, pose, grade, mover, caminhoAte, livre, fora, sincroniza };
 }

@@ -1,10 +1,9 @@
 // Textos que a orquestração e os especialistas recebem para planejar um pedido, executar uma missão e fechar a síntese.
 // Tudo puro: recebe dados, devolve texto. As palavras em maiúsculas no começo também servem ao provedor simulado.
 import type { Cliente, MissaoProposta, Projeto } from '../src/lib/dados';
-import { FASES } from '../src/lib/dados';
+import { FASES, MAX_MISSOES } from '../src/lib/dados';
 import type { Membro } from '../src/lib/equipe';
 
-export const MAX_MISSOES = 5;
 const corta = (t: string, n: number) => (t.length > n ? t.slice(0, n) + '\n[...]' : t);
 
 const projetoEmTexto = (p?: Projeto | null, c?: Cliente | null) =>
