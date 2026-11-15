@@ -1,5 +1,7 @@
-// Quem trabalha no lab e onde fica a mesa de cada um.
+// Quem trabalha no lab. Os 17 abaixo são a equipe de partida; o banco guarda a equipe viva, que os sócios podem ampliar.
 export type Membro = { id: string; nome: string; papel: string; zona: string };
+/** Especialista como fica no banco: aparência é o boneco do mapa, modelo vazio usa o padrão do lab. */
+export type Agente = Membro & { aparencia: string; modelo: string; base: boolean; ativo: boolean };
 
 export const EQUIPE: Membro[] = [
   { id: 'lia', nome: 'Lia', papel: 'Analista de diagnóstico', zona: 'estrategia' },
@@ -20,3 +22,11 @@ export const EQUIPE: Membro[] = [
   { id: 'nico', nome: 'Nico', papel: 'Gestão de conhecimento', zona: 'arquivo' },
   { id: 'clara', nome: 'Clara', papel: 'Atendimento e briefing', zona: 'atendimento' },
 ];
+
+/** Quem recebe o pedido do sócio, divide em missões e junta as entregas no fim. */
+export const ORQUESTRADOR = 'duda';
+
+/** Bonecos que existem no atlas do mapa. Os seis últimos ainda não têm dono na equipe de partida. */
+export const APARENCIAS = [...EQUIPE.map(e => e.id), 'vera', 'otavio', 'iris', 'bento', 'sol', 'visita'];
+
+export const agentesBase = (): Agente[] => EQUIPE.map(m => ({ ...m, aparencia: m.id, modelo: '', base: true, ativo: true }));

@@ -1,8 +1,11 @@
 // Ícones desenhados no traço do diário: contorno em tinta marrom e um toque de cor dentro.
-type Nome = 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus'
+type Nome = 'pedidos' | 'skills' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus'
+  | 'paineis' | 'ampliar' | 'reduzir' | 'relogio' | 'raio' | 'check'
   | 'mover' | 'conversar' | 'missao' | 'reuniao' | 'briefing' | 'fechar' | 'estrela' | 'fita';
 
 const D: Record<Nome, { cor: string; fill?: string; tracos: string }> = {
+  pedidos: { cor: '#E9B949', fill: 'M4 6h16v9H13l-5 4v-4H4z', tracos: 'M4 6h16v9H13l-5 4v-4H4zM12 8.5v3M12 13h.01' },
+  skills: { cor: '#5FB6D9', fill: 'M5 5h6a2 2 0 0 1 1 1 2 2 0 0 1 1-1h6v13h-6a2 2 0 0 0-1 1 2 2 0 0 0-1-1H5z', tracos: 'M5 5h6a2 2 0 0 1 1 1 2 2 0 0 1 1-1h6v13h-6a2 2 0 0 0-1 1 2 2 0 0 0-1-1H5zM12 6v13M7.5 9h2M7.5 12h2M14.5 9h2M14.5 12h2' },
   clientes: { cor: '#C9603F', fill: 'M5 9h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z', tracos: 'M5 9h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM9 9V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M5 13h14M11 13v2h2v-2' },
   projetos: { cor: '#4F86C6', fill: 'M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z', tracos: 'M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2zM9 4v14M15 6v14' },
   pessoas: { cor: '#E0A06A', fill: 'M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', tracos: 'M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM5 20c.8-4 3.6-6 7-6s6.2 2 7 6' },
@@ -12,6 +15,12 @@ const D: Record<Nome, { cor: string; fill?: string; tracos: string }> = {
   memoria: { cor: '#8E7CC3', fill: 'M7 4c6 1 10 5 11 12l-4 3C10 15 8 10 7 4z', tracos: 'M7 4c6 1 10 5 11 12l-4 3C10 15 8 10 7 4zM7 4l7 15M4 20h8' },
   conexoes: { cor: '#E9B949', fill: 'M9 10h6v6H9z', tracos: 'M10 4h4v3h-4zM8 7h8l-1 3H9zM9 10h6v6a3 3 0 0 1-6 0zM12 19v2' },
   trofeus: { cor: '#E9B949', fill: 'M7 4h10v5a5 5 0 0 1-10 0z', tracos: 'M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M8 20h8l-1-3H9z' },
+  relogio: { cor: '#E9DDBF', fill: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', tracos: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 8v4l3 2' },
+  raio: { cor: '#E9B949', fill: 'M13 3L5 14h6l-1 7 8-11h-6z', tracos: 'M13 3L5 14h6l-1 7 8-11h-6z' },
+  check: { cor: '#7FB069', fill: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', tracos: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM8.5 12.5l2.5 2.5 4.5-5' },
+  paineis: { cor: '#5FB8A8', fill: 'M4 5h16v11H4z', tracos: 'M4 5h16v11H4zM9 20h6M12 16v4M7.5 13v-3M11 13V8M14.5 13v-2M17 13v-4' },
+  ampliar: { cor: 'transparent', tracos: 'M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5' },
+  reduzir: { cor: 'transparent', tracos: 'M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5' },
   mover: { cor: '#8B6A45', fill: 'M7 4h5v9l6 3v3H7z', tracos: 'M7 4h5v9l6 3v3H7zM7 15h5M5 21h15' },
   conversar: { cor: '#5FA9C2', fill: 'M4 6h16v10H10l-4 3v-3H4z', tracos: 'M4 6h16v10H10l-4 3v-3H4zM8 10h8M8 13h5' },
   missao: { cor: '#C9603F', fill: 'M7 4h10l-2 4 2 4H7z', tracos: 'M7 4h10l-2 4 2 4H7zM7 4v17' },

@@ -9,3 +9,10 @@ export function direcaoDe(dx: number, dy: number): number {
 
 /** Direção para olhar de um ponto para outro. */
 export const olharPara = (de: { x: number; y: number }, para: { x: number; y: number }) => direcaoDe(para.x - de.x, para.y - de.y);
+
+/** Um passo de giro (45 graus) de `dir` rumo a `alvo` pelo lado mais curto. Meia-volta exata gira no sentido horário. */
+export function giraUmPasso(dir: number, alvo: number): number {
+  const falta = (((alvo - dir) % 8) + 8) % 8; // quantos passos no sentido horário
+  if (!falta) return dir;
+  return (dir + (falta <= 4 ? 1 : 7)) % 8;
+}

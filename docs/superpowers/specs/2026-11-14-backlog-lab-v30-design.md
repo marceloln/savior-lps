@@ -1,0 +1,99 @@
+# Backlog do Lab V30 e desenho do pixel perfect
+
+Data: 14 de novembro de 2026. Estado: aguardando aprovação do sócio. Nada daqui foi implementado.
+
+## Intenção
+
+Deixar o lab no ponto para os consultores usarem: publicado, consistente no pixel e com as ferramentas que faltam. O visual aprovado não muda de cara. Muda a consistência.
+
+## O que a medição mostrou
+
+Contagem no navegador, 16 telas, em 1440, 1280 e 390 de largura.
+
+- 14 tamanhos de letra em uso: 12, 13, 13,33, 14, 14,5, 15, 16, 17, 18, 20, 22, 24, 26 e 30
+- 12 alturas de botão e campo no computador: 18, 24, 26, 27, 29, 30, 32, 34, 36, 40, 44 e 50
+- 12 raios de canto: 2, 4, 5, 8, 9, 10, 12, 14, 18, 20, pílula e círculo
+- Sete em cada dez textos em peso 700 ou mais. Há uso de peso 900, que a fonte não tem
+- No celular: retrato do cartão de missão com 34 por 30, título do cartão no quadro com 18 de altura, links da Memória estreitos, fechar o livro com 34 de largura
+
+## Objetivos
+
+- Tudo que parece igual é igual: mesma letra, mesma altura, mesmo raio, mesmo respiro
+- Nenhum alvo de toque abaixo de 44 por 44 no celular
+- Mudança visual não aprovada falha um teste
+
+## Fora do escopo
+
+- Trocar fonte, paleta ou a ideia do diário de campo
+- Redesenhar telas que já funcionam
+
+## O que seria um fracasso
+
+- O lab ficar diferente do que foi aprovado
+- Consertar tela a tela e os números voltarem a subir na rodada seguinte
+
+## Caminhos considerados
+
+1. Sistema primeiro, depois as telas. Fecha os degraus como variáveis, passa tela a tela no que sobrar e guarda fotos de referência. Custa mais no começo e para de voltar. Recomendado.
+2. Tela a tela, direto. Resultado mais rápido na primeira tela, mas cada tela vira um caso à parte. Foi assim que chegamos nos 14 tamanhos.
+3. Redesenhar do zero. Joga fora um visual aprovado por um ganho que o caminho 1 já entrega.
+
+Escolha: pendente do sócio.
+
+## Degraus propostos
+
+Chamadas minhas, a confirmar.
+
+- Letra: 12, 13, 14, 16, 18, 22 e 28
+- Peso: 400 no corpo, 500 em destaque leve, 700 em rótulo e ação, 800 só nos títulos em Alegreya
+- Altura de controle: 32, 40 e 48 no computador, 44 no mínimo no celular
+- Raio: 4, 8, 12, 18 e pílula
+- Espaço: grade de 4
+
+## Backlog
+
+P1 primeiro, P2 logo depois, P3 pode esperar.
+
+### 1. Publicar (depende do sócio)
+
+- P1 Juntar a pull request 20, da conta do deploy
+- P1 Juntar 33 e 35 no ramo da junção e a 27 na main
+- P1 Ligar o Cloudflare Access
+- P1 Guardar a chave de um provedor e rodar um pedido real de ponta a ponta
+
+### 2. Pixel perfect
+
+- P1 Escala de texto em 7 degraus
+- P1 Peso e hierarquia
+- P1 Altura dos controles
+- P1 Raios de canto
+- P1 Grade de espaço
+- P1 Alvos de toque no celular
+- P2 Passada tela a tela com régua, 16 telas em três tamanhos
+- P2 Estados dos controles: foco, mouse, apertado e desligado
+- P2 Folha de estilo separada por área, com os degraus como variáveis
+- P2 Fotos de referência e comparação automática
+
+### 3. Funcionalidade
+
+- P1 Prazo nas missões
+- P2 Lousa, mesa de projetos e parede da Marca vivas
+- P2 Modelos de trabalho nas mesas de cada sala
+- P2 Clara que improvisa perguntas com o modelo de IA
+- P2 Anexo no pedido
+- P3 Pedido em segundo plano
+- P3 Usuário por sócio
+- P3 Ferramentas para os agentes
+
+### 4. Qualidade
+
+- P2 Teste de ponta a ponta no repositório
+- P2 Peso do carregamento, com o mapa sob demanda
+- P2 Revisão dos textos do briefing por quem faz briefing
+- P3 Confirmar os dias de cada fase na linha do tempo
+- P3 Passada com leitor de tela
+
+## Deixado para quem construir
+
+- Nome das variáveis e a ordem dos arquivos de estilo
+- Ferramenta de comparação de fotos

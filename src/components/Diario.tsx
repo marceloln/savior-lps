@@ -1,19 +1,25 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Fragment } from 'react';
+import { useEu } from '../hooks/useEu';
+import { iniciaisDoSocio, nomeDoSocio } from '../lib/socio';
+import type { Atencao } from '../lib/pedidos';
 import { Icone, type NomeIcone } from './Icones';
 import { Retrato } from './Retrato';
 import { useEstado } from '../hooks/useEstado';
-import { EQUIPE, type Membro } from '../lib/equipe';
+import type { Membro } from '../lib/equipe';
+import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
-import { FASES } from '../lib/dados';
+import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
 
-export type Aba = 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
-export const ABAS: { id: Aba; nome: string; so?: 'celular' }[] = [
-  { id: 'missoes', nome: 'Missões', so: 'celular' },
-  { id: 'clientes', nome: 'Clientes' }, { id: 'projetos', nome: 'Projetos' }, { id: 'pessoas', nome: 'Pessoas' },
-  { id: 'lugares', nome: 'Lugares' }, { id: 'agenda', nome: 'Agenda' }, { id: 'decisoes', nome: 'Decisões' },
-  { id: 'memoria', nome: 'Memória' }, { id: 'conexoes', nome: 'Conexões' }, { id: 'trofeus', nome: 'Troféus' },
+export type Aba = 'pedidos' | 'paineis' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
+export const ABAS: { id: Aba; nome: string; corte?: boolean; grupo?: string }[] = [
+  // corte marca onde começa um assunto novo no menu: trabalho, equipe, registro e o lab em si
+  { id: 'pedidos', nome: 'Pedidos', grupo: 'Trabalho' }, { id: 'missoes', nome: 'Missões' }, { id: 'paineis', nome: 'Painéis' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
+  { id: 'pessoas', nome: 'Pessoas', corte: true, grupo: 'Equipe' }, { id: 'skills', nome: 'Skills' }, { id: 'lugares', nome: 'Lugares' },
+  { id: 'agenda', nome: 'Agenda', corte: true, grupo: 'Registro' }, { id: 'decisoes', nome: 'Decisões' }, { id: 'memoria', nome: 'Memória' },
+  { id: 'conexoes', nome: 'Conexões', corte: true, grupo: 'Lab' }, { id: 'trofeus', nome: 'Troféus' },
 ];
 
 export const SOBRE_ZONA: Record<string, string> = {
@@ -32,12 +38,49 @@ export const SOBRE_ZONA: Record<string, string> = {
   atendimento: 'O balcão da Clara. Todo cliente novo começa por uma conversa aqui.',
 };
 
+export const TEXTO_PREVIA = 'Os dados são de exemplo e o que você mudar some ao recarregar.';
+
+/** Placa do lab. Em prévia leva um selo único, com o motivo no title. */
 export function Placa() {
+  const { modo, motivo } = useEstado();
   return (
     <header className="placa papel-borda">
-      <b>Lab V30</b>
-      <small>Diário de campo</small>
+      <b><span className="marca-cheia">Vetor30</span><span className="marca-curta" aria-hidden="true">V30</span></b>
+      <small>Lab, diário de campo</small>
+      {modo === 'previa' && <span className="selo-previa" title={`${motivo ?? 'Prévia sem servidor.'} ${TEXTO_PREVIA}`}>Prévia</span>}
     </header>
+  );
+}
+
+/** Pé da lateral: quem está logado. Sem login ligado, leva às Conexões, onde está o passo que falta. */
+export function AreaDoSocio({ abreConexoes }: { abreConexoes: () => void }) {
+  const email = useEu();
+  return (
+    <button type="button" className="socio" onClick={abreConexoes} title={email ?? 'Login da equipe desligado. Ver em Conexões.'}>
+      <span className="socio-rosto" aria-hidden="true">{iniciaisDoSocio(email)}</span>
+      <span className="socio-texto"><b>{nomeDoSocio(email)}</b><small>{email ?? 'Login da equipe desligado'}</small></span>
+    </button>
+  );
+}
+
+/** Estado vazio com desenho: ícone, frase e, quando faz sentido, o próximo passo. */
+export function Vazio({ icone, children, acao }: { icone: NomeIcone; children: ReactNode; acao?: { rotulo: string; vai: () => void } }) {
+  return (
+    <div className="vazio-desenho">
+      <span className="vazio-icone"><Icone nome={icone} tam={34} /></span>
+      <p>{children}</p>
+      {acao && <button type="button" className="leve" onClick={acao.vai}>{acao.rotulo}</button>}
+    </div>
+  );
+}
+
+/** Tela de espera enquanto o estado e o mapa carregam. */
+export function Carregando() {
+  return (
+    <div className="carregando" role="status" aria-label="Carregando o lab">
+      <div className="placa papel-borda"><b>Lab V30</b><small>Abrindo o diário</small></div>
+      <div className="barra-carga"><i /></div>
+    </div>
   );
 }
 
@@ -45,9 +88,12 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
-        <button key={a.id} className={a.so ? 'so-celular' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
-          <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
-        </button>
+        <Fragment key={a.id}>
+          {a.grupo && <span className="grupo" aria-hidden="true">{a.grupo}</span>}
+          <button className={a.corte ? 'corte' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)} title={a.nome}>
+            <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
+          </button>
+        </Fragment>
       ))}
     </nav>
   );
@@ -60,17 +106,18 @@ export function FotoLugar({ zona, lab, larg = 236, alt = 112, esc = 0.42 }: { zo
   return <div className="foto-lugar" style={{ width: larg, height: alt, backgroundImage: 'url(assets/lab.webp)', backgroundSize: `${lab.larg * esc}px ${lab.alt * esc}px`, backgroundPosition: `${larg / 2 - cx * esc}px ${alt / 2 - cy * esc}px` }} />;
 }
 
-export function CartaoLugar({ zona, lab, abre }: { zona: string | null; lab: DadosLab; abre: (z: string) => void }) {
+/** Fica montado enquanto houver sala escolhida. Com o livro aberto some por opacidade, para não reanimar a cada fechamento. */
+export function CartaoLugar({ zona, lab, abre, oculto }: { zona: string | null; lab: DadosLab; abre: (z: string) => void; oculto: boolean }) {
   const z = ZONAS.find(q => q.id === zona);
   if (!z) return null;
-  const time = EQUIPE.filter(m => m.zona === z.id);
+  const time = useEquipe().equipe.filter(m => m.zona === z.id);
   return (
-    <aside className="cartao-lugar papel-borda" aria-label={`Lugar: ${z.nome}`}>
+    <aside className={`cartao-lugar papel-borda ${oculto ? 'oculto' : ''}`} aria-label={`Lugar: ${z.nome}`} aria-hidden={oculto}>
       <h3>{z.nome}</h3>
       <FotoLugar zona={z.id} lab={lab} />
       <p>{SOBRE_ZONA[z.id]}</p>
       {time.length > 0 && <div className="rostos">{time.map(m => <Retrato key={m.id} id={m.id} tamanho={26} />)}</div>}
-      <button className="primario" onClick={() => abre(z.id)}>Abrir a sala</button>
+      <button className="primario" tabIndex={oculto ? -1 : 0} onClick={() => abre(z.id)}>Abrir a sala</button>
     </aside>
   );
 }
@@ -79,9 +126,10 @@ export function Selos({ abre }: { abre: (a: Aba) => void }) {
   const { estado } = useEstado();
   const p = estado.projetos[0];
   const feitas = estado.tarefas.filter(t => t.estado === 'feito').length, n = estado.decisoes.length;
+  const ciclo = p ? textoDoCiclo(p.inicio, hojeLocal()) : '';
   return (
     <nav className="selos papel-borda" aria-label="Situação do lab">
-      {p && <button onClick={() => abre('projetos')} title={`Ciclo de ${p.nome}`}><Icone nome="projetos" tam={18} />Dia {p.dia} de 30</button>}
+      {p && <button onClick={() => abre('projetos')} title={`Ciclo de ${p.nome}. ${ciclo}.`}><Icone nome="projetos" tam={18} />{ciclo.startsWith('Dia') ? ciclo : 'Ciclo encerrado'}</button>}
       <button onClick={() => abre('trofeus')} title="Missões concluídas em todos os projetos"><Icone nome="estrela" tam={18} />{feitas} {feitas === 1 ? 'feita' : 'feitas'}</button>
       <button onClick={() => abre('decisoes')} title="Decisões registradas"><Icone nome="decisoes" tam={18} />{n} {n === 1 ? 'decisão' : 'decisões'}</button>
     </nav>
@@ -90,14 +138,15 @@ export function Selos({ abre }: { abre: (a: Aba) => void }) {
 
 /** O que a equipe tem nas mãos agora. O rosto leva à pessoa no mapa, o texto leva ao projeto. */
 export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas?: () => void; max?: number }) {
+  const { de } = useEquipe();
   const { estado } = useEstado();
   const abertas = estado.tarefas.filter(t => t.estado !== 'feito').sort((a, b) => (a.estado === b.estado ? 0 : a.estado === 'fazendo' ? -1 : 1));
-  if (!abertas.length) return <p className="vazio">Ninguém tem missão aberta. Escolha alguém e aperte Missão no console.</p>;
+  if (!abertas.length) return <Vazio icone="missao">Ninguém tem missão aberta. Escolha alguém no mapa e aperte Missão no console.</Vazio>;
   return (
     <>
       <ul>
         {abertas.slice(0, max).map(t => {
-          const m = EQUIPE.find(e => e.id === t.agente), z = ZONAS.find(q => q.id === m?.zona), p = estado.projetos.find(x => x.id === t.projeto_id);
+          const m = de(t.agente), z = ZONAS.find(q => q.id === m?.zona), p = estado.projetos.find(x => x.id === t.projeto_id);
           return (
             <li key={t.id} className="cartao-missao" style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}>
               <button className="marcador" onClick={() => escolhe(t.agente)} aria-label={`Ver ${m?.nome} no mapa`} title={`Ver ${m?.nome} no mapa`}><Retrato id={t.agente} tamanho={30} /></button>
@@ -114,16 +163,30 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
   );
 }
 
-export function Missoes({ abreProjeto, escolhe, verTodas }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void }) {
+const ROTULO_ATENCAO = { resposta: 'Resposta pronta', parado: 'Pedido parado', reuniao: 'Reunião hoje' } as const;
+
+export function Missoes({ abreProjeto, escolhe, verTodas, atencao, abre }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void; atencao: Atencao[]; abre: (a: Aba) => void }) {
   const { estado } = useEstado();
   const todas = estado.tarefas.filter(t => t.projeto_id);
   const feitas = todas.filter(t => t.estado === 'feito').length;
   const pct = todas.length ? Math.round((feitas / todas.length) * 100) : 0;
+  // resposta que o sócio já abriu sai da lista. Fica guardado neste navegador
+  const [vistas, setVistas] = useState<number[]>(() => { try { return JSON.parse(localStorage.getItem('lab.respostas-vistas') ?? '[]'); } catch { return []; } });
+  const viu = (id: number) => { const l = [...vistas, id].slice(-50); setVistas(l); try { localStorage.setItem('lab.respostas-vistas', JSON.stringify(l)); } catch { /* sem armazenamento, vale só nesta visita */ } };
+  atencao = atencao.filter(a => a.tipo !== 'resposta' || !vistas.includes(a.pedido));
   return (
     <aside className="missoes papel-borda" aria-label="Missões">
+      {atencao.length > 0 && <section className="para-voce" aria-label="Para você">
+        <h3>Para você</h3>
+        <ul>{atencao.map(a => (
+          <li key={a.tipo + ('pedido' in a ? a.pedido : a.reuniao)}><button className={a.tipo} onClick={() => { if (a.tipo === 'resposta') viu(a.pedido); abre(a.tipo === 'reuniao' ? 'agenda' : 'pedidos'); }}>
+            <Icone nome={a.tipo === 'reuniao' ? 'agenda' : 'pedidos'} tam={18} /><span><b>{ROTULO_ATENCAO[a.tipo]}</b><small>{a.texto}</small></span>
+          </button></li>
+        ))}</ul>
+      </section>}
       <h3 className="titulo-coluna">Missões</h3>
       <div className="progresso-geral" title="Missões concluídas somando todos os projetos"><span>Todos os projetos</span><div className="barra"><i style={{ transform: `scaleX(${pct / 100})` }} /></div><b>{pct}%</b></div>
-      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={verTodas} />
+      <ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={verTodas} max={atencao.length ? 5 - Math.min(2, atencao.length) : 5} />
     </aside>
   );
 }
@@ -134,9 +197,11 @@ const ACOES: { id: Acao; nome: string; icone: NomeIcone }[] = [
   { id: 'missao', nome: 'Missão', icone: 'missao' }, { id: 'memoria', nome: 'Memória', icone: 'memoria' }, { id: 'reuniao', nome: 'Reunião', icone: 'reuniao' },
 ];
 
-export function Console({ escolhido, mirando, registro, age, briefing, solta }: {
+export function Console({ escolhido, mirando, registro, age, briefing, solta, pedir, ocupado }: {
   escolhido: Membro | null; mirando: boolean; registro: string[]; age: (a: Acao) => void; briefing: () => void; solta: () => void;
+  pedir: (texto: string) => void; ocupado: boolean;
 }) {
+  const [pedido, setPedido] = useState('');
   const { estado } = useEstado();
   const z = escolhido ? ZONAS.find(q => q.id === escolhido.zona) : null;
   const minhas = escolhido ? estado.tarefas.filter(t => t.agente === escolhido.id) : [];
@@ -145,7 +210,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
   const situacao = !escolhido ? '' : agora ? `Agora: ${agora.titulo}.${fila ? ` Mais ${fila} na fila.` : ''}`
     : fila ? `${escolhido.nome} tem ${fila} ${fila === 1 ? 'missão' : 'missões'} na fila. Abra Missão para começar.` : `${escolhido.nome} está livre. Dê uma missão.`;
   return (
-    <section className={`console madeira ${escolhido ? '' : 'vazio-console'}`} aria-label="Console">
+    <section className={`console madeira ${escolhido ? 'com-pessoa' : 'vazio-console'}`} aria-label="Console">
       <div className={`console-ficha papel-borda ${escolhido ? 'com' : 'sem'}`}>
         {escolhido ? (
           <>
@@ -163,48 +228,82 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta }: 
       </div>
       <div className="console-recado papel-borda" aria-live="polite">
         {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
-          : escolhido ? <><p><b>{z?.nome}</b> {situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
-          : registro.length ? registro.slice(-2).map((r, i) => <p key={i}>{r}</p>)
-          : <p>Escolha alguém no mapa ou em Pessoas para conversar, dar missão ou marcar reunião. Clique numa sala para ver o que acontece nela.</p>}
+          : escolhido ? <><span className="rotulo">{z?.nome}</span><p className="situacao-console">{situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
+          : <form className="pedir-rapido" onSubmit={e => { e.preventDefault(); if (pedido.trim().length >= 8 && !ocupado) { pedir(pedido.trim()); setPedido(''); } }}>
+              <label htmlFor="pr">Peça ao lab</label>
+              <div><input id="pr" value={pedido} onChange={e => setPedido(e.target.value)} maxLength={4000} placeholder="O que você precisa? A orquestração divide entre a equipe" />
+                <button type="submit" className="primario" disabled={pedido.trim().length < 8 || ocupado}>Pedir</button></div>
+              <small>{ocupado ? 'Um pedido está andando. Acompanhe em Pedidos.' : registro.length ? registro[registro.length - 1] : 'Ou escolha alguém no mapa para conversar e dar missão direto.'}</small>
+            </form>}
       </div>
-      {escolhido && <div className="console-acoes" role="toolbar" aria-label={`Ações com ${escolhido.nome}`}>
+      {/* as ações ficam sempre no lugar: sem pessoa escolhida ficam apagadas, assim o console não muda de tamanho */}
+      <div className="console-acoes" role="toolbar" aria-label={escolhido ? `Ações com ${escolhido.nome}` : 'Ações. Escolha alguém no mapa'}>
         {ACOES.map(a => (
-          <button key={a.id} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={`${a.nome} com ${escolhido.nome}`}>
+          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha alguém no mapa'}>
             <Icone nome={a.icone} tam={26} /><span>{a.nome}</span>
           </button>
         ))}
-      </div>}
+      </div>
     </section>
   );
 }
 
-export function Livro({ titulo, sobre, ilustracao, cor = '#2F4A3A', aoFechar, children }: { titulo: string; sobre?: string; ilustracao?: ReactNode; cor?: string; aoFechar: () => void; children: ReactNode }) {
+export type Voltar = { rotulo: string; vai: () => void };
+
+/** O diário aberto. Quando saindo, toca a animação de saída e avisa em aoSair para ser desmontado. */
+export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, voltar, saindo = false, aoSair, aoFechar, cheia = false, aoAmpliar, children }: {
+  titulo: string; sobre?: string; ilustracao?: ReactNode; cor?: string; largo?: boolean; voltar?: Voltar;
+  saindo?: boolean; aoSair?: () => void; aoFechar: () => void; children: ReactNode;
+  /** Tela inteira: o livro ocupa a janela toda e a página da esquerda dá lugar ao conteúdo. */
+  cheia?: boolean; aoAmpliar?: () => void;
+}) {
   const caixa = useRef<HTMLElement>(null);
   useEffect(() => {
     const antes = document.activeElement as HTMLElement | null;
-    // quem abriu o livro com um campo em foco mantém o foco ali
-    if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus();
+    // quem abriu o livro com um campo em foco mantém o foco ali. Sem rolar: no celular a tela pulava ao abrir
+    if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus({ preventScroll: true });
+    return () => { if (antes?.isConnected) antes.focus({ preventScroll: true }); };
+  }, []);
+  useEffect(() => {
+    if (saindo) { const t = setTimeout(() => aoSair?.(), 320); return () => clearTimeout(t); }   // se a animação não tocar, sai do mesmo jeito
     const tecla = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { aoFechar(); return; }
       if (e.key !== 'Tab' || !caixa.current) return;
-      const f = caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input,select,textarea,a[href]');
-      if (!f.length) return;
-      const [pri, ult] = [f[0], f[f.length - 1]];
-      if (e.shiftKey && document.activeElement === pri) { e.preventDefault(); ult.focus(); }
-      else if (!e.shiftKey && document.activeElement === ult) { e.preventDefault(); pri.focus(); }
+      // só o que está visível: campo dentro de detalhe fechado não recebe foco
+      const f = [...caixa.current.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select,textarea,a[href],summary,[tabindex="0"]')].filter(el => el.offsetParent !== null);
+      if (!f.length) { e.preventDefault(); return; }
+      const [pri, ult] = [f[0], f[f.length - 1]], foco = document.activeElement;
+      // o foco na própria caixa ou fora dela volta para dentro: nada de escapar para o menu atrás da cortina
+      const fora = foco === caixa.current || !caixa.current.contains(foco);
+      if (e.shiftKey && (fora || foco === pri)) { e.preventDefault(); ult.focus(); }
+      else if (!e.shiftKey && (fora || foco === ult)) { e.preventDefault(); pri.focus(); }
     };
     addEventListener('keydown', tecla);
-    return () => { removeEventListener('keydown', tecla); antes?.focus?.(); };
-  }, [aoFechar]);
-  return (
-    <section ref={caixa} tabIndex={-1} role="dialog" aria-label={titulo} className="livro" style={{ ['--c' as string]: cor }}>
+    return () => removeEventListener('keydown', tecla);
+  }, [aoFechar, saindo, aoSair]);
+  return (<>
+    <div className={`cortina ${saindo ? 'saindo' : ''}`} onClick={saindo ? undefined : aoFechar} />
+    <section ref={caixa} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titulo} className={`livro ${largo ? 'largo' : ''} ${cheia ? 'cheia' : ''} ${saindo ? 'saindo' : ''}`} style={{ ['--c' as string]: cor }}
+      onAnimationEnd={e => { if (saindo && e.target === e.currentTarget) aoSair?.(); }}>
       <div className="pagina esquerda">
+        {voltar && <button type="button" className="voltar" onClick={voltar.vai}><span aria-hidden="true">‹</span> {voltar.rotulo}</button>}
         <h2>{titulo}</h2>
         {sobre && <p className="sobre">{sobre}</p>}
         <div className="ilustracao">{ilustracao}</div>
       </div>
-      <div className="pagina direita">{children}</div>
+      <div className="pagina direita">{cheia && <h2 className="titulo-cheia">{titulo}</h2>}{children}</div>
+      {aoAmpliar && <button className="ampliar-livro" onClick={aoAmpliar} aria-pressed={cheia} aria-label={cheia ? 'Sair da tela inteira' : 'Abrir em tela inteira'} title={cheia ? 'Sair da tela inteira' : 'Tela inteira'}><Icone nome={cheia ? 'reduzir' : 'ampliar'} tam={16} /></button>}
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
+    </section>
+  </>);
+}
+
+/** Cartão com ícone e título, para agrupar um assunto dentro de uma página. */
+export function Bloco({ icone, titulo, acao, children }: { icone: NomeIcone; titulo: string; acao?: { rotulo: string; vai: () => void }; children: ReactNode }) {
+  return (
+    <section className="bloco">
+      <header><span className="bloco-icone"><Icone nome={icone} tam={20} /></span><h4>{titulo}</h4>{acao && <button type="button" className="link" onClick={acao.vai}>{acao.rotulo}</button>}</header>
+      {children}
     </section>
   );
 }

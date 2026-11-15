@@ -226,3 +226,44 @@ O lab também tem missões internas, sem projeto: tom de voz dos posts com Iara,
 
 Defeito achado no caminho: o Worker não sobe quando o módulo principal exporta uma constante solta. Corrigido na própria branch da #27.
 Testes automatizados: 52 passando.
+
+## Superauditoria de 14 de novembro
+
+Quatro auditorias em paralelo (funcional, design e UX, motion, arquitetura) e três frentes de correção, cada uma com issue e branch própria.
+
+- Núcleo multiagente e multi-IA (issue 21, PR 24): equipe, skills e pedidos no banco, três provedores, execução de missão com entrega, pedido ao lab com plano, aprovação e síntese. Revisão independente aplicada: trava de execução, pedido atômico, resposta cortada avisada, teto de skills.
+- Mapa e motion (issue 22, PR 25): passo no ritmo do chão, zoom ancorado, inércia, anel de quem está escolhido, balão de quem escreve, papel da distribuição, nome das salas.
+- Acabamento de interface (issue 23, PR 26): 32 itens entre defeitos, contraste, tipografia, botões, livro, laptop e celular.
+- Junção (PR 27): as três frentes num ramo, 103 testes, passeio completo em 1440, 1280 e 390 no Worker local com IA simulada.
+
+Ainda sem teste: chamada real aos provedores, e inércia e pinça num aparelho de verdade.
+Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao remarcar reunião que já aconteceu, Escape em dois tempos fora do livro.
+
+## Rodada 2, 14 de novembro (issue 30)
+
+- Modelos de pedido no formulário: diagnóstico, proposta, ritual da semana, plano de 30 dias, treinamento e post. O trecho a completar já vem selecionado.
+- Ajuste na resposta final do pedido: a orquestração reescreve a resposta com o que o sócio pediu.
+- Baixar tudo: resposta e entregas num arquivo markdown só.
+- Para você, na tela inicial: resposta pronta, pedido parado e reunião de hoje. Resposta aberta sai da lista.
+- Menu do diário agrupado em trabalho, equipe, registro e lab.
+
+109 testes. Passeio em 1440, 1280 e 390 no Worker local com IA simulada.
+
+## Ferramentas vivas, 15 de novembro (issue 32)
+
+- Painéis no menu: Quadro geral de missões, Linha do tempo dos ciclos de 30 dias e Calendário do mês.
+- As telas do cenário mostram a miniatura viva de cada ferramenta: totem do Tráfego com o quadro, tela de Dados com a linha do tempo, TV da Reunião com o calendário. Clique abre em tela inteira.
+- Botão de tela inteira no livro, para qualquer painel.
+- As faixas de fase na linha do tempo são um ritmo de referência (dias 1 a 7, 8 a 14, 15 a 26, 27 a 30). A fase real continua sendo a que o projeto marca.
+
+114 testes. Conferido em 1440, 1280 e 390.
+
+## Briefing guiado com a Clara, 15 de novembro (issue 34)
+
+- Seis modelos de briefing por tipo de tarefa: diagnóstico, proposta, plano de 30 dias, treinamento de equipe, conteúdo e outro pedido.
+- A Clara pergunta uma coisa por vez, mostra o direcionamento de cada resposta, oferece respostas prontas e pede um exemplo quando a resposta aberta vem curta.
+- Roteiro na página da esquerda, com progresso e o que já fechou. Clicar num item reabre a pergunta.
+- Fechamento com resumo, que vira pedido ao lab, cadastro de cliente já preenchido ou texto copiado. A leitura da Clara, pelo modelo de IA, aponta o que falta.
+- Rascunho guardado no navegador. A conversa livre com a Clara continua a um clique.
+
+120 testes. Conferido em 1440, 1280 e 390.
