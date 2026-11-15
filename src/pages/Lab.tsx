@@ -9,7 +9,7 @@ import { MapaPixi, type Alvo } from '../components/MapaPixi';
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
-import { Carregando, CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
+import { AreaDoSocio, Carregando, CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
@@ -76,6 +76,9 @@ export function Lab() {
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
   const briefing = useBriefing();
+  // menu recolhido fica só nos ícones. A escolha é lembrada neste navegador
+  const [recolhido, setRecolhido] = useState(() => { try { return localStorage.getItem('lab.menu-recolhido') === '1'; } catch { return false; } });
+  const alternaMenu = () => setRecolhido(r => { try { localStorage.setItem('lab.menu-recolhido', r ? '0' : '1'); } catch { /* vale só nesta visita */ } return !r; });
   // as miniaturas das telas do mapa só mudam quando o estado muda
   const telasDoMapa = useMemo(() => resumoDasTelas(estado, hojeLocal()), [estado]);
   // qual ferramenta dos Painéis está aberta e se o livro ocupa a tela inteira
@@ -217,14 +220,16 @@ export function Lab() {
   const carregando = !erro && (modo === 'carregando' || !lab || !gente || !mapaPronto);
 
   return (
-    <div className={aberto ? 'lab com-livro' : 'lab'}>
+    <div className={`lab ${aberto ? 'com-livro' : ''} ${recolhido ? 'menu-recolhido' : ''}`}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
       {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
         onHover={onHover} onClique={onClique} onMovido={onMovido} />}
-      <div className="coluna-esquerda">
+      <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />
+        <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>
         <MenuDiario ativa={secao} abre={abreAba} />
-      </div>
+        <AreaDoSocio abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} />
+      </aside>
       {lab && <CartaoLugar zona={zona} lab={lab} abre={abreSala} oculto={!!aberto} />}
       <div className="coluna-direita">
         <Selos abre={abreAba} />

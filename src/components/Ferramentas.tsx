@@ -6,6 +6,8 @@ import { useEquipe } from '../hooks/useEquipe';
 import { FASES, hojeLocal, type Estado } from '../lib/dados';
 import { COLUNAS_DO_QUADRO, RITMO_DO_CICLO, linhaDoTempo, mesDoCalendario, quadro } from '../lib/ferramentas';
 import { Retrato } from './Retrato';
+import { Bloco } from './Diario';
+import { proximasReunioes } from '../lib/resumo';
 
 export type Ferramenta = 'quadro' | 'linha' | 'calendario';
 export const FERRAMENTAS: { id: Ferramenta; nome: string; sobre: string }[] = [
@@ -86,6 +88,16 @@ function LinhaDoTempo({ abreProjeto }: { abreProjeto: (id: string) => void }) {
           </div>
         ))}
         {hojeVisivel && <div className="hoje" style={{ ['--x' as string]: pct(l.hoje + 0.5) }}><span>Hoje</span></div>}
+      </div>
+      <div className="blocos">
+        <Bloco icone="agenda" titulo="Próximas reuniões">
+          {proximasReunioes(estado).length
+            ? <ul className="proximas">{proximasReunioes(estado).slice(0, 4).map(r => <li key={r.id}><b>{r.dia.slice(8)}/{r.dia.slice(5, 7)} às {r.hora}</b><span>{r.titulo}</span></li>)}</ul>
+            : <p className="nota">Nenhuma reunião marcada.</p>}
+        </Bloco>
+        <Bloco icone="missao" titulo="Missões por projeto">
+          <ul className="onde">{l.projetos.map(p => <li key={p.id}><b>{p.nome}</b><span className="barra"><i style={{ transform: `scaleX(${p.total ? p.feitas / p.total : 0})` }} /></span><small>{p.feitas} de {p.total}</small></li>)}</ul>
+        </Bloco>
       </div>
       <p className="nota">As faixas mostram o ritmo de referência do ciclo. A fase em que o projeto está de fato é a escrita ao lado do nome.</p>
     </div>

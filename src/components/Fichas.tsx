@@ -6,7 +6,7 @@ import { useEstado } from '../hooks/useEstado';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { EditaMissao } from './Missao';
-import { Vazio } from './Diario';
+import { Vazio, Bloco } from './Diario';
 import { Entrega, Executar, Treino } from './Nucleo';
 import { nomeDoModelo } from '../lib/modelos';
 
@@ -88,6 +88,21 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
+        <div className="blocos">
+          <Bloco icone="skills" titulo={`No que ${m.nome} foi treinado`} acao={{ rotulo: 'Treinar', vai: () => setAba('treino') }}>
+            <ul className="fichas-skill">{estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).slice(0, 6).map(k => <li key={k.id}>{k.nome}</li>)}</ul>
+          </Bloco>
+          <Bloco icone="memoria" titulo={`O que ${m.nome} lembra`} acao={{ rotulo: 'Ver tudo', vai: () => setAba('memoria') }}>
+            {estado.memorias.some(n => n.agente === m.id)
+              ? <ul className="lembra">{estado.memorias.filter(n => n.agente === m.id).slice(0, 2).map(n => <li key={n.id}>{n.texto}</li>)}</ul>
+              : <p className="nota">Nada guardado ainda. Uma resposta boa na conversa pode virar nota.</p>}
+          </Bloco>
+          <Bloco icone="projetos" titulo="Em que projetos está">
+            {estado.projetos.some(p => estado.tarefas.some(t => t.agente === m.id && t.projeto_id === p.id))
+              ? <ul className="onde">{estado.projetos.filter(p => estado.tarefas.some(t => t.agente === m.id && t.projeto_id === p.id)).map(p => { const dele = estado.tarefas.filter(t => t.agente === m.id && t.projeto_id === p.id), f = dele.filter(t => t.estado === 'feito').length; return <li key={p.id}><b>{p.nome}</b><span className="barra"><i style={{ transform: `scaleX(${f / dele.length})` }} /></span><small>{f} de {dele.length}</small></li>; })}</ul>
+              : <p className="nota">Sem missão em projeto. O que {m.nome} faz hoje é do lab.</p>}
+          </Bloco>
+        </div>
         {entregas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
           {entregas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
       </>}

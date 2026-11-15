@@ -1,0 +1,149 @@
+/* ===== acabamento de interface (issue 23) ===== */
+@keyframes sobe{from{transform:translateY(24px);opacity:0}}
+@keyframes desce{to{transform:translateY(24px);opacity:0}}
+/* resposta ao clique em todo botão */
+button{transition:transform var(--d-rapido) var(--sai)}
+button:active:not(:disabled){transform:scale(.97)}
+button:disabled{cursor:default}
+/* texto longo sem espaço não estoura a página do livro */
+.pagina :where(p,h2,h3,h4,h5,li,dt,dd,b,small,summary,figcaption,.tit){overflow-wrap:anywhere}
+.pagina button,.pagina .estado,.pagina .fase,.pagina time{overflow-wrap:normal}
+.cartao-missao .texto b,.console-recado p,.aviso p{overflow-wrap:anywhere}
+
+/* placa com o selo de prévia e tela de espera */
+.selo-previa{display:block;width:max-content;margin:6px auto 0;padding:1px 10px;border-radius:var(--r-4);border:1px solid #B98A2E;background:#F2DFA6;color:#5E4318;font:700 var(--t-12) var(--corpo);letter-spacing:.08em;text-transform:uppercase;cursor:help}
+.carregando{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);background:var(--fundo)}
+.carregando .placa{min-width:200px}
+.barra-carga{width:200px;height:8px;border-radius:var(--r-8);border:1px solid rgba(59,47,37,.45);background:rgba(59,47,37,.12);overflow:hidden}
+.barra-carga i{display:block;width:100%;height:100%;background:var(--tinta);transform-origin:left;animation:carga 1.2s var(--sai) infinite}
+@keyframes carga{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+/* estado vazio com desenho */
+.vazio-desenho{display:flex;flex-direction:column;align-items:center;gap:var(--s3);margin:var(--s5) auto;padding:var(--s5) var(--s4);max-width:440px;text-align:center;border:1.5px dashed rgba(59,47,37,.35);border-radius:var(--r-12)}
+.vazio-desenho p{margin:0;color:var(--texto-2);line-height:1.45}
+.vazio-icone{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(234,219,184,.7);border:1.5px solid rgba(59,47,37,.35)}
+.missoes .vazio-desenho{margin:var(--s2) 0 0;padding:var(--s4) var(--s3);font-size:var(--t-14)}
+.sugestoes{list-style:none;margin:0;padding:0;display:grid;gap:6px;width:100%}
+.sugestoes button{width:100%;min-height:var(--h-md);padding:8px 14px;text-align:left;border:1.5px solid rgba(59,47,37,.4);border-radius:var(--r-12);background:#FFFBF0;font:700 var(--t-14)/1.3 var(--corpo);color:var(--tinta-2)}
+@media (hover:hover) and (pointer:fine){.sugestoes button:hover{background:var(--papel-2)}}
+.falas>.vazio-desenho{margin-top:auto;margin-bottom:auto}
+
+/* conversa: só as falas novas entram com movimento; erro é aviso de sistema, sem rosto */
+.fala.nova,.aviso-conversa.nova{animation:surge var(--d-medio) var(--sai)}
+.aviso-conversa{align-self:center;display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;justify-content:center;max-width:92%;padding:8px 14px;border-radius:var(--r-8);border:1.5px solid #C98A6E;background:#F8E4D8;color:#6E2C1A;font-size:var(--t-14)}
+.aviso-conversa p{margin:0;line-height:1.4;flex:1;min-width:180px}
+.aviso-conversa button{background:#FFFBF0}
+
+/* onde estou e como volto */
+.voltar{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;min-height:var(--h-sm);margin:-10px 0 4px -6px;padding:0 8px;border:0;border-radius:var(--r-8);background:transparent;font:700 var(--t-13) var(--corpo);color:#75552A}
+.voltar span{font-size:var(--t-18);line-height:1}
+@media (hover:hover) and (pointer:fine){.voltar:hover{background:rgba(59,47,37,.08)}}
+
+/* console: mesmas colunas com e sem pessoa; as ações só mudam de opacidade */
+.console-recado{position:relative;z-index:1}
+.console-recado .rotulo{margin:0 0 2px;display:block}
+.console-recado .situacao-console{font-weight:700}
+.console-acoes{transition:opacity var(--d-rapido) ease,visibility var(--d-rapido)}
+.console-acoes button:disabled{cursor:default}
+@media (min-width:761px){
+  .console.vazio-console .console-recado{grid-column:2/4;grid-row:1}
+  .console.vazio-console .console-acoes{grid-column:3;grid-row:1;opacity:0;visibility:hidden;pointer-events:none}
+  .console.vazio-console .console-ficha{grid-row:1}
+}
+@media (max-width:760px){.console.vazio-console .console-acoes{display:none}}
+
+/* missão: detalhe, edição no lugar e carimbo de feito */
+.detalhe{display:block;margin:2px 0 0;color:var(--texto-2);font-size:var(--t-13);line-height:1.35;font-weight:400}
+.cartao{position:relative}
+.cartao p.detalhe{margin:-2px 0 6px;text-decoration:none}
+.cartao footer{flex-direction:column;align-items:stretch}
+.edita-missao{display:flex;flex-direction:column;gap:var(--s2);width:100%}
+.edita-missao textarea{resize:vertical}
+.edita-missao .linha{align-items:center}
+.tarefas-agente li.editando,.cartao.editando{padding:var(--s3);border:1.5px dashed rgba(59,47,37,.45);border-radius:var(--r-8);background:rgba(255,250,235,.6)}
+.tarefas-agente li{padding:6px 0;border-bottom:1.5px dotted rgba(59,47,37,.25)}
+.tarefas-agente li:last-child{border-bottom:0}
+.tarefas-agente .tit{display:flex;flex-direction:column}
+.carimbo{position:absolute;right:8px;top:6px;padding:0 7px;border:2px solid #3E6B2A;border-radius:var(--r-8);color:#3E6B2A;background:rgba(255,251,240,.85);font:800 var(--t-12)/1.5 var(--corpo);letter-spacing:.08em;text-transform:uppercase;transform:rotate(-6deg);pointer-events:none}
+.carimbo.bate{animation:carimba var(--d-medio) var(--sai)}
+@keyframes carimba{from{opacity:0;transform:rotate(-6deg) scale(1.15)}}
+.carimbo.discreto{position:static;flex:none;border-width:1.5px;background:transparent}
+.cartao.feito>p:first-of-type{padding-right:58px}
+.resumo-proj .encerrado{color:#8A3122}
+.notas footer .confirma,.notas footer .leve{color:var(--tinta-2)}
+.notas footer .leve.mini{border:1.5px solid rgba(59,47,37,.4);color:#8A3122;font-size:var(--t-13)}
+.notas footer .perigo.mini{color:#FFF7EA}
+
+/* formulário de uma linha */
+.nova-linha{align-items:center}
+.nova-linha select{flex:1 1 180px;min-width:180px}
+.nova-linha input{flex:2 1 220px}
+.linha{align-items:center}
+.form-reuniao>.linha,.remarca{align-items:flex-end}
+
+/* medidas para laptop: menu inteiro em 768 de altura, nada por baixo do console */
+.coluna-esquerda{max-height:calc(100% - 32px)}
+.menu-diario{min-height:0;overflow-y:auto;scrollbar-width:thin}
+.menu-diario .icone{width:20px;height:20px;flex:none}
+@media (min-width:761px){
+  .coluna-direita{max-height:calc(100% - 32px)}
+  .missoes{min-height:0;overflow-y:auto;scrollbar-width:thin}
+}
+@media (min-width:761px) and (max-width:1280px){
+  .coluna-direita{max-height:calc(100% - 164px)}
+  .console{grid-template-columns:230px 1fr auto}
+}
+/* o cartão do lugar sai de cima do menu sempre que a tela é estreita ou baixa */
+@media (min-width:761px) and (max-width:1280px),(min-width:761px) and (max-height:880px){
+  .cartao-lugar{left:216px;bottom:140px}
+}
+
+/* celular: alvos de toque de 44 px e campos sem zoom */
+@media (max-width:760px){
+  .primario,.leve,.perigo,.mini,.nova-linha button,.campo button,.abas button,.acoes button,.acoes .leve.mini,.voltar,.guardar,.soltar,.sugestoes button,.link,.cartao-missao .texto,.elenco button{min-height:44px!important}
+  .soltar{width:44px}
+  .menu-diario button{min-height:48px;font-size:var(--t-12)}.menu-diario{overflow-y:hidden}
+  input,select,textarea{font-size:var(--t-16);min-height:44px}
+  .escolha label{min-height:44px;padding:0 14px}
+  .nova-linha input{flex:1 1 100%}
+  .nova-linha select{flex:1 1 0;min-width:0}
+  .voltar{margin:0 0 0 -6px}
+  .pagina.esquerda{flex-direction:row;align-items:center;gap:var(--s2);padding-right:56px}
+  .pagina.esquerda h2{text-align:left;flex:1;min-width:0}
+  .selo-previa{margin:0;font-size:var(--t-12);padding:0 6px}.placa{display:flex;align-items:center;gap:6px}
+  .aviso{bottom:auto;top:70px;border-radius:var(--r-12)}
+}
+
+/* movimento reduzido: fades curtos, sem deslocamento */
+@media (prefers-reduced-motion:reduce){
+  button,.barra i{transition:none}
+  button:active:not(:disabled){transform:none}
+  .menu-diario button{transition:background-color var(--d-rapido) ease}
+  .livro,.cortina,.cartao-lugar,.plano,.fala.nova,.aviso-conversa.nova,.carimbo.bate{animation:aparece var(--d-rapido) ease-out}
+  .livro.saindo,.cortina.saindo{animation:some var(--d-rapido) ease-out forwards}
+  .andamento::after{animation:none}
+  .barra-carga i{animation:pisca 1.2s ease-in-out infinite}
+}
+
+/* acertos de formulário: caixas de marcar sem altura de campo e classes que se atropelavam */
+input[type="checkbox"],input[type="radio"]{min-height:0;padding:0;width:18px;height:18px;flex:none;accent-color:var(--tinta)}
+.campo{align-items:stretch;border-top:0;padding-top:0}
+.conversa .campo{flex-direction:row;align-items:flex-end;gap:8px;margin:0;border-top:1.5px dotted rgba(59,47,37,.35);padding-top:10px}
+.conversa .campo textarea{flex:1;min-width:0;resize:none}
+.skills-do-agente label,.caixa{flex-direction:row}
+.skills-do-agente label b{color:var(--tinta-2);font-size:var(--t-14)}.skills-do-agente small{font-weight:400}
+.reuniao{grid-template-columns:112px 1fr auto}
+.reuniao .quando b{white-space:nowrap}
+.reuniao .rostos{justify-content:flex-start;margin:2px 0 6px}
+@media (max-width:760px){.reuniao{grid-template-columns:1fr}}
+/* etiqueta de estado da missão em linha própria: com 12 px ela cobria o título na coluna estreita */
+.cartao-missao .texto{padding-right:0}
+.cartao-missao .estado-fita{position:static;grid-column:2;justify-self:start;margin-top:-4px}
+.missoes{scrollbar-width:none}
+.pagina.direita>.linha{margin-bottom:var(--s3)}
+.tarefas-agente .tit{flex:1 1 220px;min-width:min(100%,200px)}
+.memoria .notas{margin-top:var(--s3)}
+/* contraste AA com o creme da marca */
+.fase[data-f="1"]{background:#44627F}
+.console-recado .mira{color:#256B5C}
+.lista-clientes>.primario{justify-self:start}
