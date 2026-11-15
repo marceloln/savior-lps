@@ -83,3 +83,30 @@ button.link{min-height:var(--h-sm);display:inline-flex;align-items:center}
 /* a etiqueta Hoje fica acima das datas da régua */
 .linha-tempo .grade>.hoje span{top:-18px}
 .linha-tempo .grade{margin-top:var(--s5)}
+
+/* ---------- telas cheias: sugestões, modelos, folha de data e barra do pedido ---------- */
+.kanban h4,.quadro-geral h4{align-items:center;gap:6px;justify-content:flex-start}
+.kanban h4 span,.quadro-geral h4 span{margin-left:auto}
+.sugestoes-missao{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--s2)}
+.sugestoes-missao button{min-height:var(--h-sm);padding:4px 12px;border-radius:var(--r-pilula);border:1.5px dashed rgba(59,47,37,.4);background:transparent;font:var(--p-medio) var(--t-13) var(--corpo);color:var(--tinta-2);transition:background-color var(--d-rapido) ease,transform var(--d-rapido) var(--sai)}
+.sugestoes-missao button:active{transform:scale(.97)}
+.modelos-skill{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s2)}
+.modelos-skill button{position:relative;z-index:1;width:100%;height:100%;display:grid;gap:2px;align-content:start;text-align:left;padding:10px 12px;border-radius:var(--r-8);border:1.5px dashed rgba(59,47,37,.4);background:transparent;font:inherit;color:var(--tinta-2);transition:background-color var(--d-rapido) ease,transform var(--d-rapido) var(--sai)}
+.modelos-skill b{font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta)}
+.modelos-skill small{line-height:1.35;color:var(--texto-2)}
+.modelos-skill button:active{transform:scale(.98)}
+.skills>.bloco{margin-top:var(--s4)}
+@media (hover:hover) and (pointer:fine){.sugestoes-missao button:hover,.modelos-skill button:hover{background:rgba(197,170,129,.3);border-style:solid}}
+.ultimas{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ultimas li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:center;font-size:var(--t-14);color:var(--tinta-2)}
+.ultimas span{overflow-wrap:anywhere}
+.barra-pedido{height:6px;margin:0 0 var(--s2);border-radius:var(--r-pilula);background:rgba(59,47,37,.16);overflow:hidden}
+.barra-pedido i{display:block;height:100%;background:var(--ouro);transform-origin:left;transition:transform var(--d-lento) var(--sai)}
+.reuniao .quando{align-self:start;min-width:74px;padding:6px 8px;border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);border-top:5px solid var(--telha);box-shadow:var(--sombra-1);text-align:center}
+.reuniao.feita .quando{border-top-color:rgba(59,47,37,.35)}
+.briefing-fecho .acoes-fecho .primario{min-height:var(--h-lg);padding-inline:var(--s5)}
+.briefing-fecho .outras-fecho{margin-top:var(--s2);align-items:center;flex-wrap:wrap;gap:6px}
+.briefing-fecho .outras-fecho span{font-size:var(--t-13);color:var(--texto-2);margin-right:2px}
+@media (max-width:760px){.sugestoes-missao button,.modelos-skill button{min-height:44px}}
+@media (prefers-reduced-motion:reduce){.sugestoes-missao button,.modelos-skill button,.barra-pedido i{transition:none}.sugestoes-missao button:active,.modelos-skill button:active{transform:none}}
+.skills .modelos-skill li{padding:0;border:0;background:none;box-shadow:none;border-radius:0}

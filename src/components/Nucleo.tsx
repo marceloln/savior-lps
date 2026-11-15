@@ -12,7 +12,8 @@ import { leModelo, MODELOS, nomeDoModelo } from '../lib/modelos';
 import { skillDeTreino } from '../lib/skills';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
-import { Vazio } from './Diario';
+import { Bloco, Vazio } from './Diario';
+import { MODELOS_DE_SKILL } from '../lib/sugestoes';
 import { useRecem } from '../hooks/useRecem';
 
 const linha = (x: Trecho[]): ReactNode => x.map((t, i) => (t.forte ? <strong key={i}>{t.x}</strong> : t.x));
@@ -149,6 +150,7 @@ function CartaoPedido({ ped, p, aberto }: { ped: Pedido; p: ApiPedido; aberto: b
     <details className="pedido" open={aberto || rodando}>
       <summary><span className={`estado ${ped.estado === 'entregue' ? 'feito' : 'fazendo'}`}>{ped.estado === 'entregue' ? 'Entregue' : rodando ? 'Andando' : 'Parado'}</span>
         <span className="tit">{ped.texto}</span><small>{quando}, {prontas} de {missoes.length}</small></summary>
+      {ped.estado !== 'entregue' && missoes.length > 0 && <div className="barra-pedido" role="progressbar" aria-valuemin={0} aria-valuemax={missoes.length} aria-valuenow={prontas} aria-label="Entregas prontas"><i style={{ transform: `scaleX(${prontas / missoes.length})` }} /></div>}
       <ol className="passos">
         {missoes.map(t => {
           const escrevendo = executando.includes(t.id);
@@ -291,6 +293,7 @@ export function Skills() {
   const { equipe } = useEquipe();
   const vazia = { nome: '', descricao: '', conteudo: '', para_todos: false };
   const [edita, setEdita] = useState<string | null>(null), [f, setF] = useState(vazia);
+  const comeca = (m: { nome: string; descricao: string; conteudo: string }) => { setEdita('nova'); setF({ ...m, para_todos: false }); };
   const abre = (k: Skill | null) => { setEdita(k ? k.id : 'nova'); setF(k ? { nome: k.nome, descricao: k.descricao, conteudo: k.conteudo, para_todos: k.para_todos } : vazia); };
   const pronto = f.nome.trim().length >= 3 && f.conteudo.trim().length >= 20;
   const salva = async () => { if (!pronto) return; const ok = edita === 'nova' ? await criaSkill(f) : await mudaSkill(edita!, f); if (ok) setEdita(null); };
@@ -321,6 +324,10 @@ export function Skills() {
           );
         })}
       </ul>
+      <Bloco icone="skills" titulo="Comece por um modelo">
+        <p className="nota">Esqueletos para você completar com o jeito V30 de fazer.</p>
+        <ul className="modelos-skill">{MODELOS_DE_SKILL.filter(m => !estado.skills.some(k => k.nome === m.nome)).map(m => <li key={m.nome}><button type="button" onClick={() => comeca(m)}><b>{m.nome}</b><small>{m.descricao}</small></button></li>)}</ul>
+      </Bloco>
     </div>
   );
 }

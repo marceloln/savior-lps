@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { sugestoesDeMissao } from '../lib/sugestoes';
 import type { Agente, Membro } from '../lib/equipe';
 import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS } from '../lib/lab';
@@ -88,6 +89,7 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
+        {!nova && <div className="sugestoes-missao" role="group" aria-label="Sugestões de missão">{sugestoesDeMissao(m.zona).map(s => <button key={s} type="button" onClick={() => { setNova(s); document.getElementById('nmis')?.focus(); }}>{s}</button>)}</div>}
         <div className="blocos">
           <Bloco icone="skills" titulo={`No que ${m.nome} foi treinado`} acao={{ rotulo: 'Treinar', vai: () => setAba('treino') }}>
             <ul className="fichas-skill">{estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).slice(0, 6).map(k => <li key={k.id}>{k.nome}</li>)}</ul>

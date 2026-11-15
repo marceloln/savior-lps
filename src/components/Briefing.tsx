@@ -61,10 +61,13 @@ function Fechamento({ b, pedir, cadastra }: { b: ApiBriefing; pedir: (texto: str
       {b.leitura.estado === 'erro' && <div className="aviso-conversa nova" role="alert"><p>{b.leitura.texto}</p><button type="button" className="leve mini" onClick={b.pedeLeitura}>Tentar de novo</button></div>}
       <div className="linha acoes-fecho">
         <button type="button" className="primario" onClick={() => pedir(pedidoDoBriefing(m, b.respostas))}>Pedir ao lab</button>
-        {cliente && <button type="button" className="leve" onClick={() => cadastra(cliente)}>Cadastrar o cliente</button>}
-        <button type="button" className="leve" disabled={b.leitura.estado === 'lendo'} onClick={b.pedeLeitura}>{b.leitura.estado === 'pronta' ? 'Pedir outra leitura' : 'O que falta, Clara?'}</button>
-        <button type="button" className="leve" onClick={async () => { try { await navigator.clipboard.writeText(resumoDoBriefing(m, b.respostas)); setCopiou(true); setTimeout(() => setCopiou(false), 1800); } catch { /* sem área de transferência */ } }}>{copiou ? 'Copiado' : 'Copiar'}</button>
-        <button type="button" className="leve" onClick={b.recomeca}>Novo briefing</button>
+      </div>
+      <div className="linha outras-fecho">
+        <span>Ou</span>
+        {cliente && <button type="button" className="leve mini" onClick={() => cadastra(cliente)}>Cadastrar o cliente</button>}
+        <button type="button" className="leve mini" disabled={b.leitura.estado === 'lendo'} onClick={b.pedeLeitura}>{b.leitura.estado === 'pronta' ? 'Pedir outra leitura' : 'O que falta, Clara?'}</button>
+        <button type="button" className="leve mini" onClick={async () => { try { await navigator.clipboard.writeText(resumoDoBriefing(m, b.respostas)); setCopiou(true); setTimeout(() => setCopiou(false), 1800); } catch { /* sem área de transferência */ } }}>{copiou ? 'Copiado' : 'Copiar'}</button>
+        <button type="button" className="leve mini" onClick={b.recomeca}>Novo briefing</button>
       </div>
     </section>
   );
