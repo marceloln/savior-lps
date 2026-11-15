@@ -22,6 +22,7 @@ LARANJA = mat('laranja', '#E59A3C', 0, 0.4)
 AZUL = mat('azul_planta', '#ffffff', 0, 0.75, tex='planta_azul.jpg')
 TEC = {k: mat('tecido_' + k, c, 0, 0.95, sheen=0.4) for k, c in {'salvia':'#8FA58A','terracota':'#C9603F','areia':'#D9C29A','verde':'#2F5A4C','azul':'#5E86B0','creme':'#E9E1CE','lilas':'#9C8DCB'}.items()}
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'moveis_bpy.py')).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pessoais_bpy.py')).read())
 
 # ---------------- peças com transformação e pegada ----------------
 OBST, PONTOS, TELAS, OBJETOS = [], {}, {}, []
@@ -43,6 +44,12 @@ def peca(nome, x, y, rot, fn, obst=True, info=None, margem=0.12):
         r = [min(xs) - margem, min(ys) - margem, max(xs) + margem, max(ys) + margem]
         if obst: OBST.append(r)
         if info: OBJETOS.append({'id': nome, 'info': info, 'r': [round(v, 3) for v in r], 'alt': round(max(zs), 2)})
+    # cada peça vira uma malha só: com milhares de objetos soltos, cada operação do Blender fica lenta
+    malhas = [o for o in novos if o.type == 'MESH']
+    if len(malhas) > 1:
+        bpy.ops.object.select_all(action='DESELECT')
+        for o in malhas: o.select_set(True)
+        bpy.context.view_layer.objects.active = malhas[0]; bpy.ops.object.join()
     return vz
 def loc(vz, lx, ly, lz=0.0):
     return list((vz.matrix_world @ Vector((lx, ly, lz)))[:])
@@ -69,6 +76,7 @@ def mesa_em_pe(telas=2, w=1.6, d=0.72, tela_mat=0):
     caixa('mouse', (0.06, 0.1, 0.02), (0.32, 0.08, 1.09), BRANCO, ch=0.008)
     cil('caneca', 0.045, 0.1, (-w/2 + 0.2, 0.15, 1.13), cor_mat('#2F5A4C', 0.35), v=20)
 def planta(alt=1.4, r=0.3, folhas=10, tipo=0):
+    alt = 0.5 + alt * 0.42; r = min(r, 0.28)   # plantas de chão ficam abaixo de 1,25 m para não tampar mesa nem tela
     cil('vaso', r, r * 1.8, (0, 0, r * 0.9), CERAM if tipo != 1 else cor_mat('#20352F', 0.4), v=40, r2=r * 0.8); cil('terra', r * 0.9, 0.02, (0, 0, r * 1.8), TERRA)
     for k in range(folhas):
         a = k / folhas * math.tau + tipo; h = alt * (0.6 + (k % 3) * 0.17)
@@ -199,7 +207,6 @@ def recepcao():
     caixa('balcao', (2.6, 0.7, 1.08), (0, 0, 0.54), BRANCO, ch=0.02); caixa('frente', (2.62, 0.02, 0.5), (0, 0.36, 0.55), COMP)
     caixa('tampo', (2.7, 0.78, 0.04), (0, 0, 1.1), COMP, ch=0.008)
     caixa('notebook', (0.34, 0.24, 0.015), (-0.4, -0.05, 1.13), ALU); caixa('nb_tela', (0.34, 0.01, 0.22), (-0.4, -0.17, 1.24), TELA_P, rot=(-0.25, 0, 0))
-    caixa('letreiro', (0.9, 0.02, 0.16), (0.5, 0.37, 0.78), VERDE)
 def bike():
     R = 0.33
     for dx in (-0.52, 0.52):
@@ -253,10 +260,23 @@ for (cx, cy, w, h) in ((X/2, -2.3, X + 8, 3.0), (X/2, Y + 2.3, X + 8, 3.0), (-2.
     caixa('caminho', (w, h, 0.04), (cx, cy, -0.1), CONCRETO)
 caixa('rua', (X + 70, 9, 0.04), (X/2 + 6, Y + 13, -0.1), ASFALTO)
 for i in range(14): caixa('faixa_rua', (2.0, 0.18, 0.005), (X/2 - 26 + i * 5, Y + 13, -0.075), BRANCO)
-RUA = {'faixas': [Y + 11.4, Y + 14.6], 'x0': X/2 + 6 - (X + 70)/2, 'x1': X/2 + 6 + (X + 70)/2}
+RUA = {'faixas': [Y + 11.4, Y + 14.6], 'ciclo': [Y + 8.95, Y + 9.6], 'x0': X/2 + 6 - (X + 70)/2, 'x1': X/2 + 6 + (X + 70)/2}
+caixa('ciclofaixa', (X + 70, 1.5, 0.006), (X/2 + 6, Y + 9.28, -0.077), mat('ciclofaixa', '#B5654A', 0, 0.85))
+caixa('ciclo_divisa', (X + 70, 0.12, 0.007), (X/2 + 6, Y + 10.08, -0.076), BRANCO)
+# eletroposto na calçada da rua: cobertura com placa solar e dois carregadores (futuro próximo, sem neon)
+EP = (X/2 + 14, Y + 6.2)
+for sx in (-3.2, 3.2): caixa('ep_pilar', (0.22, 0.22, 3.0), (EP[0] + sx, EP[1], 1.4), BRANCO)
+caixa('ep_cobertura', (8.2, 3.4, 0.14), (EP[0], EP[1], 2.95), BRANCO, ch=0.03); caixa('ep_solar', (7.8, 3.0, 0.03), (EP[0], EP[1], 3.04), mat('placa_solar', '#22313A', 0.3, 0.25))
+for sx in (-1.6, 1.6):
+    caixa('ep_carregador', (0.42, 0.28, 1.35), (EP[0] + sx, EP[1] - 0.9, 0.58), VERDE, ch=0.03); caixa('ep_visor', (0.26, 0.01, 0.2), (EP[0] + sx, EP[1] - 0.755, 0.95), CREME)
+caixa('ep_piso', (9.0, 4.4, 0.03), (EP[0], EP[1], -0.085), CONCRETO)
+# ponto de entrega dos drones, na calçada ao lado do atendimento
+POUSO = (X + 2.4, Y - 4.2)
+cil('pouso', 1.15, 0.03, (POUSO[0], POUSO[1], -0.068), CREME, v=48); toro('pouso_anel', 0.95, 0.045, (POUSO[0], POUSO[1], -0.05), AREIA)
+caixa('pouso_caixa', (0.7, 0.5, 0.5), (POUSO[0] + 1.6, POUSO[1] + 0.2, 0.17), COMP, ch=0.02)
 ARVORES = []
 def arvore(x, y, s=1.0):
-    ARVORES.append({'x': round(x, 2), 'y': round(y, 2), 's': round(s, 2), 'v': len(ARVORES) % 3})
+    ARVORES.append({'x': round(x, 2), 'y': round(y, 2), 's': round(s, 2), 'v': [0, 1, 2, 0, 3, 1, 0, 4, 2, 1][len(ARVORES) % 10]})
 def arvore_dentro(x, y, s=1.0):
     cil('tronco', 0.18 * s, 2.4 * s, (x, y, 1.1 * s), mat('tronco', '#6B5440', 0, 0.85), v=10)
     for k in range(3): esfera('copa', (1.5 - k * 0.25) * s, (x + (k - 1) * 0.5 * s, y + ((k * 7) % 3 - 1) * 0.4 * s, (3.2 + k * 0.6) * s), FOLHA if k % 2 else FOLHA2, seg=14)
@@ -275,11 +295,12 @@ for i in range(30):
 for i in range(6): arvore(X + 10 + i * 1.1, -2 + i * 5.2, 0.8)
 for i in range(4):
     caixa('banco', (1.8, 0.5, 0.45), (X + 4.5, 4 + i * 6, 0.12), COMP, ch=0.03)
-# escultura V30 no gramado, atrás do lab
-caixa('plinto', (0.9, 4.6, 0.25), (-3.4, 13.0, 0.0), CONCRETO)
-for corpo, tam, z, ext in (('V30', 2.4, 1.1, 0.35),):
-    bpy.ops.object.text_add(location=(-3.4, 13.0, z + 0.05)); tx = bpy.context.object; tx.data.body = corpo; tx.data.size = tam; tx.data.extrude = ext
-    tx.data.align_x = 'CENTER'; tx.data.align_y = 'CENTER'; tx.rotation_euler = (math.pi/2, 0, math.pi * 0.75); bpy.ops.object.convert(target='MESH'); liga(tx, VERDE if tam > 1 else AREIA)
+# totem da marca no gramado, atrás do lab. Fica inclinado de frente para a câmera: o logo oficial aparece sem distorção
+TOTEM = Vector((-3.4, 13.0, 1.0)); GIRO = (math.radians(30), 0, math.radians(-45)); NORMAL = Vector((0.6123724, 0.6123724, 0.5))
+caixa('totem_base', (6.4, 1.9, 0.3), (TOTEM.x - 0.35, TOTEM.y - 0.35, 0.0), CONCRETO, rot=(0, 0, math.radians(-45)), ch=0.02)
+caixa('totem_apoio', (4.6, 0.5, 0.9), (TOTEM.x - 0.62, TOTEM.y - 0.62, 0.45), CONCRETO, rot=(0, 0, math.radians(-45)))
+caixa('totem_painel', (5.8, 0.16, 1.9), tuple(TOTEM), VERDE, rot=GIRO, ch=0.01)
+logo_em_painel(4.6, tuple(TOTEM + NORMAL * 0.083), rot=GIRO)
 
 # ---------------- áreas ----------------
 ZONAS = {
@@ -293,9 +314,13 @@ def mistura(a, b, t):
     return '#' + ''.join('%02x' % round(pa[i] * (1 - t) + pb[i] * t) for i in range(3))
 for z, (x0, y0, w, h, cor) in ZONAS.items():
     peca('tapete_' + z, x0 + w/2, y0 + h/2, 0, lambda w=w, h=h, cor=cor: tapete_area(w - 0.2, h - 0.2, mistura(cor, '#E9E2D2', 0.72)), obst=False)
+DONOS = {'estrategia': ['lia', 'davi'], 'planejamento': ['rui', 'nina'], 'comercial': ['caio', 'bela'], 'marca': ['iara', 'theo'], 'cx': ['rosa', 'beto'], 'dados': ['lara', 'otto'], 'produto': ['max', 'ana']}
 def mesas(z, n=3, telas=2, dy=2.2, x1=1.5, passo=2.05):
     x0, y0 = ZONAS[z][:2]
     for i in range(n):
+        dono = (DONOS.get(z, []) + [None] * n)[i]
+        if dono: peca(f'pessoal_{dono}', x0 + x1 + i * passo, y0 + dy, 0, lambda dono=dono: pessoais(dono, larg=1.5), obst=False)
+        else: peca(f'vasinho_{z}_{i}', x0 + x1 + i * passo - 0.6, y0 + dy - 0.12, 0, lambda i=i: em(0, 0, lambda: vasinho(i + 1, 0.9), 0.7575), obst=False)
         vz = peca(f'mesa_{z}_{i}', x0 + x1 + i * passo, y0 + dy, 0, lambda i=i: mesa_trabalho(telas, 1.5, tela_mat=i), info='mesa')
         peca(f'cadeira_{z}_{i}', x0 + x1 + i * passo, y0 + dy + 0.66, 0, lambda i=i: cadeira_escritorio(['#2E3236', '#3B4A44', '#4A3F36'][i % 3]), obst=False, info='cadeira')
         ponto('mesa_' + z, loc(vz, 0, 0.66), 'n')
@@ -318,6 +343,7 @@ peca('planta_c1', *P('comercial', 6.9, 0.5), 0, lambda: planta(1.4))
 peca('arquivos', *P('arquivo', 0.6, 0.6), 0, lambda: arquivo(5), info='arquivos')
 vz = peca('mesa_arquivo', *P('arquivo', 2.6, 3.0), 0, lambda: mesa_trabalho(1), info='mesa'); ponto('mesa_arquivo', loc(vz, 0, 0.66), 'n')
 peca('cadeira_arquivo', *P('arquivo', 2.6, 3.66), 0, cadeira_escritorio, obst=False, info='cadeira')
+peca('pessoal_nico', *P('arquivo', 2.6, 3.0), 0, lambda: pessoais('nico'), obst=False)
 peca('estante_a', *P('arquivo', 4.9, 3.6), 90, lambda: estante(1.6, 2.0, 0.4))
 # reunião
 vz = peca('mesa_reuniao', *P('reuniao', 3.0, 3.6), 0, mesa_reuniao, info='mesa_reuniao')
@@ -334,6 +360,7 @@ peca('planta_m1', *P('marca', 0.5, 6.0), 0, lambda: planta(1.3, 0.28, 9, 2))
 vz = peca('totem_trafego', *P('trafego', 4.75, 0.8), 0, lambda: totem(3.4, 1.9), info='totem'); tela('trafego', vz, 0, 0.061, 0.9 + 0.95, 3.4, 1.9)
 vz = peca('mesa_trafego', *P('trafego', 4.75, 3.0), 0, lambda: mesa_trabalho(3, 2.2), info='mesa'); ponto('mesa_trafego', loc(vz, 0, 0.66), 'n')
 peca('cadeira_trafego', *P('trafego', 4.75, 3.66), 0, lambda: cadeira_escritorio('#3B4A44'), obst=False, info='cadeira'); ponto('entrega_trafego', loc(vz, 0.9, 1.5), 'n')
+peca('pessoal_duda', *P('trafego', 4.75, 3.0), 0, lambda: pessoais('duda', larg=2.2), obst=False)
 peca('mesa_alta_t1', *P('trafego', 1.3, 5.4), 0, mesa_alta); peca('banq_t1', *P('trafego', 0.7, 6.0), 0, banqueta); peca('banq_t2', *P('trafego', 1.9, 6.1), 0, lambda: banqueta('salvia'))
 peca('mesa_alta_t2', *P('trafego', 8.2, 5.4), 0, mesa_alta); peca('banq_t3', *P('trafego', 8.8, 6.0), 0, lambda: banqueta('terracota'))
 peca('planta_t1', *P('trafego', 0.5, 0.6), 0, lambda: planta(1.7, 0.32)); peca('planta_t2', *P('trafego', 9.0, 0.6), 0, lambda: planta(1.5, 0.3, 10, 2))
@@ -362,8 +389,10 @@ peca('pufe_l1', *P('lounge', 4.6, 3.9), 0, lambda: pufe('areia')); peca('pufe_l2
 peca('planta_lo1', *P('lounge', 0.5, 4.9), 0, lambda: planta(1.6, 0.32)); peca('pend_l', *P('lounge', 6.3, 3.4), 0, lambda: luminaria_pend(2.3), obst=False)
 # atendimento
 vz = peca('recepcao', *P('atendimento', 3.0, 2.2), 0, recepcao, info='balcao'); ponto('clara', loc(vz, 0, -0.8), 's'); ponto('cliente', loc(vz, 0, 1.0), 'n')
+peca('painel_marca', *P('atendimento', 3.2, 0.32), 0, painel_marca, info='marca')
+peca('pessoal_clara', *P('atendimento', 3.0, 2.2), 0, lambda: (em(0.55, 0.12, sino, 1.12), em(1.05, -0.05, flores, 1.12), em(-1.0, -0.12, lambda: porta_retrato(COR_DA_FOTO['clara']), 1.12, 160), em(-0.95, 0.18, lambda: vasinho(5, 1.0), 1.12)), obst=False)
 peca('sofa_espera', *P('atendimento', 2.2, 4.5), 180, lambda: sofa(2.0, 'areia'))
-peca('bicicletario', *P('atendimento', 7.4, 1.4), 0, bicicletario, info='bicicletario'); peca('planta_at1', *P('atendimento', 0.5, 0.5), 0, lambda: planta(1.5))
+peca('bicicletario', *P('atendimento', 7.4, 1.4), 0, bicicletario, info='bicicletario'); peca('planta_at1', *P('atendimento', 0.45, 1.3), 0, lambda: planta(1.5))
 peca('planta_at2', *P('atendimento', 6.0, 4.9), 0, lambda: planta(1.2, 0.26, 9, 1))
 
 # divisórias verdes nas bordas das áreas e arte nas paredes
@@ -394,15 +423,27 @@ def sala(nome, x0, y0, x1, y1, portas):
             if c is not None: ini = c + 0.65
 sala('sala_reuniao', 37.3, 1.3, 43.7, 8.7, [('s', 40.2), ('o', 6.0)])
 sala('sala_lab', 31.3, 10.3, 43.7, 17.7, [('s', 37.0), ('o', 14.0), ('n', 33.5)])
-def figueira(alt=4.2):
-    cil('vaso', 0.75, 0.55, (0, 0, 0.275), COMP, v=48, r2=0.7); cil('terra', 0.7, 0.02, (0, 0, 0.55), TERRA, v=32)
-    tubo('tronco', [(0, 0, 0.5), (0.1, 0.05, alt * 0.45), (-0.05, 0, alt * 0.7)], 0.09, mat('tronco_d', '#7A6248', 0, 0.8))
-    import random as _r; g = _r.Random(int(alt * 100))
-    for k in range(26):
-        a_ = g.random() * math.tau; rr = g.random() ** 0.6 * 0.95; z = alt * (0.62 + g.random() * 0.36)
-        esfera('folhas', 0.28 + g.random() * 0.22, (math.cos(a_) * rr, math.sin(a_) * rr, z), FOLHA if k % 3 else FOLHA2, esc=(1, 1, 0.85), seg=12)
+# plantas pequenas no lugar das árvores grandes: nada dentro do deck passa de 1,25 m
 for (fx, fy) in ((10.75, 9.25), (21.0, 9.25), (21.75, 18.5), (30.75, 18.5)):
-    peca(f'figueira_{fx}', fx, fy, 0, figueira, margem=0.1)
+    peca(f'canteiro_{fx}', fx, fy, 0, canteiro, margem=0.1)
+PEQUENAS = [  # (x, y, altura do apoio, tipo, tamanho)
+    (39.7, 5.1, 1.075, 0, 1.0), (41.3, 5.1, 1.075, 4, 0.8), (43.0, 7.9, 0.0, 2, 2.0),          # sala de reunião
+    (31.75, 20.62, 0.99, 2, 1.0), (32.5, 20.3, 0.99, 3, 0.9),                                    # balcão do café
+    (24.8, 23.5, 0.0, 1, 2.2), (33.0, 22.6, 0.0, 5, 2.0),                                        # lounge
+    (27.1, 6.2, 1.07, 0, 0.9), (12.8, 15.9, 1.07, 2, 0.9), (19.7, 15.9, 1.07, 4, 0.9),           # mesas altas
+    (14.4, 20.35, 0.76, 1, 1.0), (15.4, 19.8, 1.14, 3, 1.0),                                     # arquibancada
+    (1.9, 14.3, 0.0, 4, 2.3), (9.5, 13.2, 0.0, 2, 2.0),                                          # marca
+    (1.85, 5.6, 0.0, 5, 2.0), (12.0, 6.8, 0.0, 1, 2.2), (22.0, 6.6, 0.0, 3, 2.0),                # estratégia, planejamento, comercial
+    (31.0, 7.4, 0.0, 0, 2.2), (35.4, 2.2, 0.0, 2, 2.0),                                          # arquivo
+    (23.0, 16.4, 0.0, 4, 2.1), (23.0, 11.1, 0.0, 1, 2.2),                                        # CX
+    (4.5, 24.4, 0.0, 3, 2.1), (9.6, 22.4, 0.0, 5, 1.9),                                          # dados
+    (12.0, 21.9, 0.0, 0, 2.2), (20.5, 22.0, 0.0, 2, 2.0),                                        # academia
+    (43.0, 22.8, 0.0, 1, 2.3), (35.5, 23.0, 0.0, 4, 2.0),                                        # atendimento
+    (32.0, 16.9, 0.0, 3, 2.0), (43.0, 11.0, 0.0, 5, 2.0),                                        # lab de prototipagem
+    (12.1, 13.6, 0.0, 0, 2.1),                                                                   # tráfego
+]
+for n, (px_, py_, pz_, pt_, ps_) in enumerate(PEQUENAS):
+    peca(f'pequena_{n}', px_, py_, 0, lambda pz_=pz_, pt_=pt_, ps_=ps_: em(0, 0, lambda: vasinho(pt_, ps_), pz_), obst=pz_ == 0.0, margem=0.05)
 # ---------------- câmera isométrica que enquadra o lab ----------------
 el, az = math.radians(30), math.radians(45)
 d = Vector((math.cos(el) * math.cos(az), math.cos(el) * math.sin(az), math.sin(el)))
@@ -425,7 +466,7 @@ alt_px = int(round((vmax - vmin) * k))
 cam_d.ortho_scale = umax - umin
 cena.render.resolution_x = larg; cena.render.resolution_y = alt_px
 info = {'X': X, 'Y': Y, 'AL': AL, 'k': k, 'larg': larg, 'alt': alt_px, 'R': list(R), 'U': list(U), 'D': list(d), 'centro': list(centro), 'dist': DIST,
-        'prof': [20.0, 130.0], 'zonas': {z: v[:4] for z, v in ZONAS.items()}, 'obst': [[round(v, 3) for v in r] for r in OBST], 'pontos': PONTOS, 'telas': TELAS, 'objetos': OBJETOS, 'arvores': ARVORES, 'rua': RUA}
+        'prof': [20.0, 130.0], 'zonas': {z: v[:4] for z, v in ZONAS.items()}, 'obst': [[round(v, 3) for v in r] for r in OBST], 'pontos': PONTOS, 'telas': TELAS, 'objetos': OBJETOS, 'arvores': ARVORES, 'rua': RUA, 'pouso': [round(v, 2) for v in POUSO]}
 json.dump(info, open(os.path.join(AQUI, 'lab.json'), 'w'))
 if MODO == 'json': print('JSON OK'); sys.exit(0)
 
@@ -443,14 +484,14 @@ cena.render.film_transparent = False
 cena.view_settings.view_transform = 'AgX'; cena.view_settings.look = 'AgX - Base Contrast'
 # profundidade: passe Z mapeado de [30, 110] m para 0..1 em PNG de 16 bits
 vl = cena.view_layers[0]; vl.use_pass_z = True
-cena.use_nodes = True; nt = cena.node_tree
-for n in list(nt.nodes): nt.nodes.remove(n)
-rl = nt.nodes.new('CompositorNodeRLayers'); comp = nt.nodes.new('CompositorNodeComposite')
-nt.links.new(rl.outputs['Image'], comp.inputs['Image'])
-mr = nt.nodes.new('CompositorNodeMapRange'); mr.inputs[1].default_value = 20.0; mr.inputs[2].default_value = 130.0; mr.inputs[3].default_value = 0.0; mr.inputs[4].default_value = 1.0; mr.use_clamp = True
+nt = bpy.data.node_groups.new('comp', 'CompositorNodeTree'); cena.compositing_node_group = nt   # compositor do Blender 5
+rl = nt.nodes.new('CompositorNodeRLayers')
+nt.interface.new_socket('Image', in_out='OUTPUT', socket_type='NodeSocketColor'); sai = nt.nodes.new('NodeGroupOutput')
+nt.links.new(rl.outputs['Image'], sai.inputs[0])
+mr = nt.nodes.new('ShaderNodeMapRange'); mr.inputs[1].default_value = 20.0; mr.inputs[2].default_value = 130.0; mr.inputs[3].default_value = 0.0; mr.inputs[4].default_value = 1.0; mr.clamp = True
 nt.links.new(rl.outputs['Depth'], mr.inputs[0])
-fo = nt.nodes.new('CompositorNodeOutputFile'); fo.base_path = AQUI; fo.file_slots[0].path = 'lab_prof_'
-fo.format.file_format = 'PNG'; fo.format.color_mode = 'BW'; fo.format.color_depth = '16'
+fo = nt.nodes.new('CompositorNodeOutputFile'); fo.directory = AQUI; fo.file_name = 'lab_prof_'; fo.file_output_items.new('FLOAT', '0001'); fo.save_as_render = False
+fo.format.media_type = 'IMAGE'; fo.format.file_format = 'PNG'; fo.format.color_mode = 'BW'; fo.format.color_depth = '16'
 nt.links.new(mr.outputs[0], fo.inputs[0])
 cena.render.filepath = os.path.join(AQUI, 'lab.png')
 cena.frame_set(1)
