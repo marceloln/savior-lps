@@ -24,7 +24,7 @@
   --d-rapido:.14s; --d-medio:.2s; --d-lento:.3s;
   /* superfícies e elevação */
   /* três linhas: divisória, borda de cartão e borda que precisa aparecer (campo, tracejado) */
-  --cartao:#FFFBF0; --cartao-borda:rgba(59,47,37,.25); --borda-forte:rgba(59,47,37,.4); --borda-campo:rgba(59,47,37,.65);
+  --cartao:#FFFBF0; --cartao-leve:rgba(255,250,235,.5);--realce:rgba(59,47,37,.08);--realce-forte:rgba(59,47,37,.12);--veu:rgba(32,53,47,.7);--cartao-borda:rgba(59,47,37,.25); --borda-forte:rgba(59,47,37,.4); --borda-campo:rgba(59,47,37,.65);
   --sombra-1:0 1px 0 rgba(59,47,37,.15); --sombra-2:0 2px 0 rgba(59,47,37,.18),0 6px 14px -8px rgba(59,47,37,.35);
   font-family:var(--corpo); color:var(--tinta-2); font-size:16px;
 }

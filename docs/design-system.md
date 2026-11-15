@@ -23,7 +23,7 @@ A ordem de importação em `src/estilo.css` importa. Cada arquivo pode ajustar o
 
 ## Cor
 
-A casa tem três cores de marca: verde `#20352F`, creme `#F0EAD6` e areia `#C5AA81`. O lab acrescenta os tons de papel e madeira do diário e um conjunto pequeno de cores de estado. Cor nova entra primeiro em `tokens.css`. Fora dele, CSS só usa variável.
+A casa tem três cores de marca: verde `#20352F`, creme `#F0EAD6` e areia `#C5AA81`. O lab acrescenta os tons de papel e madeira do diário e um conjunto pequeno de cores de estado. Cor nova entra primeiro em `tokens.css`. Cor de marca, de estado, de cartão, de borda e de realce só existe como variável, e o teste do estilo barra a volta do valor solto. Sobram valores de uso único, como madeira, carimbo, selo e fases da linha do tempo, que ficam no arquivo onde são usados.
 
 | Papel | Variável | Uso |
 |---|---|---|
@@ -36,6 +36,7 @@ A casa tem três cores de marca: verde `#20352F`, creme `#F0EAD6` e areia `#C5AA
 | Aviso | `--aviso`, `--aviso-fundo` | Pedido parado, data na linha das decisões |
 | Informação | `--info`, `--info-fundo` | Nota de sistema |
 | Borda | `--cartao-borda`, `--borda-forte`, `--borda-campo` | Cartão, tracejado e campo |
+| Realce | `--realce`, `--realce-forte`, `--cartao-leve`, `--veu` | Fundo sob o mouse, trilho, cartão translúcido e véu sobre o couro |
 
 Contraste conferido na auditoria de 15 de novembro: texto sobre papel acima de 4,5 para 1, borda de campo e barra de progresso acima de 3 para 1. Texto apagado usa cor própria, nunca opacidade. Cor nunca carrega o sentido sozinha: estado vem com palavra ou ícone junto.
 
@@ -147,7 +148,7 @@ Cada lei vira uma regra que dá para conferir na tela. A coluna da direita diz o
 | Fitts | Ação principal grande e perto de onde a mão já está. Alvo de 44 no celular | Console na base da tela; alvos corrigidos nesta rodada | Fechar o livro fica longe do conteúdo em tela inteira |
 | Jakob | Padrão conhecido antes de invenção: kanban, calendário, abas, conversa | Painéis; briefing em formato de conversa | Menu vertical de diário pede um primeiro uso para entender |
 | Tesler | A complexidade fica com o lab, não com o sócio | Orquestração divide o pedido; plano vem pronto para aprovar | Configuração de chave e acesso ainda é manual no painel da Cloudflare |
-| Estética e usabilidade | Tudo que parece igual é igual | Sete letras, cinco raios, três tempos, três tipos de cartão, cor só por variável | Cores de fase da linha do tempo ainda são valores próprios dentro de `ferramentas.css` |
+| Estética e usabilidade | Tudo que parece igual é igual | Sete letras, cinco raios, três tempos, três tipos de cartão, cor de sistema só por variável | Cores de fase da linha do tempo ainda são valores próprios dentro de `ferramentas.css` |
 | Pico e fim | O momento da entrega e o fecho do pedido são os mais cuidados | Carimbo de feito; resposta ao pedido em destaque | Fecho do pedido não tem um momento próprio no mapa |
 | Limiar de Doherty | Resposta em menos de 400 ms ou sinal de que algo anda | Atualização otimista; Clara digitando; balão no mapa | Primeira carga do mapa passa de um segundo |
 | Reconhecer em vez de lembrar | Opção à vista em vez de campo em branco | Respostas prontas no briefing; modelos de pedido; skills marcáveis | Dar missão ainda é um campo livre, sem sugestão |

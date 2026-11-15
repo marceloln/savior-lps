@@ -33,9 +33,9 @@
 .linha-tempo .legenda{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);margin:0 0 var(--s3);padding:0;font-size:var(--t-13);color:var(--texto-2)}
 .linha-tempo .legenda li{display:flex;align-items:center;gap:var(--s2);border:0;padding:0;margin:0}
 .linha-tempo .legenda i{width:14px;height:10px;border-radius:var(--r-4)}
-.linha-tempo .f0{background:#8E7CC3}.linha-tempo .f1{background:#5E8FC4}.linha-tempo .f2{background:#C99A3A}.linha-tempo .f3{background:#5E9A6B}
+.linha-tempo .f0{background:#8E7CC3}.linha-tempo .f1{background:#5E8FC4}.linha-tempo .f2{background:var(--ouro)}.linha-tempo .f3{background:#5E9A6B}
 .linha-tempo .legenda .m-reuniao{width:10px;height:10px;border-radius:var(--r-4);transform:rotate(45deg);background:var(--tinta)}
-.linha-tempo .legenda .m-hoje{width:3px;height:14px;background:#B5462D;border-radius:var(--r-4)}
+.linha-tempo .legenda .m-hoje{width:3px;height:14px;background:var(--telha-forte);border-radius:var(--r-4)}
 .linha-tempo .grade{position:relative;display:grid;gap:var(--s3);--nome:230px}
 .linha-tempo .cab,.linha-tempo .proj{display:grid;grid-template-columns:var(--nome) minmax(0,1fr);gap:var(--s3);align-items:center}
 .linha-tempo .trilho{position:relative;height:44px}
@@ -45,15 +45,15 @@
 .linha-tempo .nome b{font:var(--p-titulo) var(--t-16) var(--titulo);color:var(--tinta);overflow-wrap:anywhere}
 .linha-tempo .nome small{font-size:var(--t-13);color:var(--texto-2)}
 @media (hover:hover) and (pointer:fine){.linha-tempo .nome:hover b{text-decoration:underline}}
-.linha-tempo .semana{position:absolute;top:0;bottom:0;width:1px;background:rgba(59,47,37,.12)}
+.linha-tempo .semana{position:absolute;top:0;bottom:0;width:1px;background:var(--realce-forte)}
 .linha-tempo .ciclo{position:absolute;top:9px;height:26px;border-radius:var(--r-8);overflow:hidden;display:flex;box-shadow:0 1px 0 var(--cartao-borda)}
 .linha-tempo .ciclo i{height:100%;opacity:.38}
 .linha-tempo .ciclo .andou{position:absolute;inset:0 auto 0 0;background:repeating-linear-gradient(135deg,rgba(32,53,47,.5) 0 6px,rgba(32,53,47,.36) 6px 12px);border-right:2px solid var(--tinta)}
 .linha-tempo .marca{position:absolute;top:16px;width:11px;height:11px;margin-left:-5.5px;border-radius:var(--r-4);transform:rotate(45deg);background:var(--creme);border:2px solid var(--tinta)}
 .linha-tempo .marca.feita{background:var(--tinta)}
 .linha-tempo .grade>.hoje{position:absolute;top:0;bottom:0;left:calc(var(--nome) + 12px);right:0;pointer-events:none}
-.linha-tempo .grade>.hoje::before{content:'';position:absolute;top:22px;bottom:0;left:var(--x);width:2px;margin-left:-1px;background:#B5462D}
-.linha-tempo .grade>.hoje span{position:absolute;top:0;left:var(--x);transform:translateX(-50%);padding:1px var(--s2);border-radius:var(--r-pilula);background:#B5462D;color:#FFF7EA;font:var(--p-forte) var(--t-12) var(--corpo)}
+.linha-tempo .grade>.hoje::before{content:'';position:absolute;top:22px;bottom:0;left:var(--x);width:2px;margin-left:-1px;background:var(--telha-forte)}
+.linha-tempo .grade>.hoje span{position:absolute;top:0;left:var(--x);transform:translateX(-50%);padding:1px var(--s2);border-radius:var(--r-pilula);background:var(--telha-forte);color:var(--cartao);font:var(--p-forte) var(--t-12) var(--corpo)}
 .linha-tempo .nota{margin:var(--s4) 0 0;font-size:var(--t-13);color:var(--texto-2)}
 
 .calendario .navega{align-items:center;gap:var(--s2);margin-bottom:var(--s3)}
@@ -63,7 +63,7 @@
 .calendario .dia-semana{font:var(--p-forte) var(--t-12) var(--corpo);color:var(--texto-2);text-align:center;padding-bottom:var(--s0);letter-spacing:.04em;text-transform:uppercase}
 .calendario .dia{min-height:86px;padding:var(--s1) var(--s2);border-radius:var(--r-8);background:rgba(255,250,235,.7);border:1px solid var(--linha);display:flex;flex-direction:column;gap:var(--s1);min-width:0}
 .calendario .dia.fora{background:transparent;border-style:dashed;color:var(--texto-2)}
-.calendario .dia.hoje{border:2px solid #B5462D;background:#FFF4E2}
+.calendario .dia.hoje{border:2px solid var(--telha-forte);background:#FFF4E2}
 .calendario .dia b{font:var(--p-forte) var(--t-13) var(--corpo);color:var(--tinta-2)}
 .calendario .dia.hoje b{color:#9A3A24}
 .calendario .reuniao{display:block;width:100%;border:0;border-radius:var(--r-8);padding:var(--s0) var(--s2);background:var(--tinta);color:var(--creme);font:500 var(--t-12)/1.3 var(--corpo);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}

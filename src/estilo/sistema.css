@@ -21,7 +21,7 @@ button.link{min-height:var(--h-sm);display:inline-flex;align-items:center}
 /* faixa: título de bloco como fita de pano, com as pontas cortadas */
 .titulo-coluna,.para-voce h3,.briefing-fecho h4,.faixa{position:relative;display:block;width:fit-content;max-width:100%;margin:0 auto var(--s3);padding:var(--s1) var(--s5) var(--s2);background:var(--tinta);color:var(--creme);font:var(--p-titulo) var(--t-14) var(--titulo);letter-spacing:.08em;text-transform:uppercase;text-align:center;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%,9px 50%)}
 .titulo-coluna::after{content:none}
-.para-voce h3{margin-left:0;background:var(--telha-forte);color:#FFF7EA}
+.para-voce h3{margin-left:0;background:var(--telha-forte);color:var(--cartao)}
 .briefing-fecho h4{margin-left:0}
 
 /* bloco: cartão de papel com ícone no cabeçalho */
@@ -71,7 +71,7 @@ button.link{min-height:var(--h-sm);display:inline-flex;align-items:center}
 .elenco li>button::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c,var(--areia))}
 .elenco .situacao{display:flex;align-items:center;gap:var(--s2);margin-top:var(--s1);flex-wrap:wrap}
 .elenco .situacao i{font:var(--p-forte) var(--t-12) var(--corpo);font-style:normal;padding:1px var(--s2);border-radius:var(--r-pilula);letter-spacing:.02em}
-.elenco .situacao i.fazendo{background:#F1E2B4;color:#6A4E14}.elenco .situacao i.fila{background:rgba(59,47,37,.12);color:var(--tinta-2)}.elenco .situacao i.livre{background:#DCE9D4;color:#2F5A36}
+.elenco .situacao i.fazendo{background:#F1E2B4;color:#6A4E14}.elenco .situacao i.fila{background:var(--realce-forte);color:var(--tinta-2)}.elenco .situacao i.livre{background:#DCE9D4;color:#2F5A36}
 .elenco .situacao em{font:var(--p-medio) var(--t-12) var(--corpo);font-style:normal;letter-spacing:.06em;color:var(--texto-2)}
 @media (hover:hover) and (pointer:fine){.elenco li>button:hover{transform:translateY(-2px);box-shadow:var(--sombra-2)}}
 .elenco li>button:active{transform:scale(.97)}

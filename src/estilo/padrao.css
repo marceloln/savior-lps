@@ -58,7 +58,7 @@ b,strong{font-weight:var(--p-forte)}
 /* ---------- estados dos controles ---------- */
 .leve,.abas button{transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
 @media (hover:hover) and (pointer:fine){
-  .leve:hover:not(:disabled),.abas button:hover:not([aria-selected="true"]):not(:disabled){background-color:rgba(59,47,37,.08)}
+  .leve:hover:not(:disabled),.abas button:hover:not([aria-selected="true"]):not(:disabled){background-color:var(--realce)}
   .primario:hover:not(:disabled),.nova-linha button:hover:not(:disabled),.campo button:hover:not(:disabled),.perigo:hover:not(:disabled){box-shadow:inset 0 1px 0 rgba(255,255,255,.18),var(--sombra-2)}
   button.link:hover{text-decoration-color:var(--tinta)}
   .cartao:hover,.lista-lugares button:hover,.skills li:hover{border-color:var(--borda-forte)}

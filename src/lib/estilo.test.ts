@@ -18,7 +18,8 @@ describe('sistema visual', () => {
   it('cor de cartão, borda de cartão e as cores com significado só existem como degrau', () => {
     for (const [f, t] of semTokens) {
       expect(t.match(/#FFFBF0|rgba\(59,\s*47,\s*37,\s*\.25\)/g) ?? [], f).toEqual([]);
-      expect(t.match(/#3E6B2A|#8A3122|#75552A|#256B5C/gi) ?? [], f).toEqual([]);
+      expect(t.match(/#3E6B2A|#8A3122|#75552A|#256B5C|#B5462D|#FFF7EA|#A63F29|#C9603F/gi) ?? [], f).toEqual([]);
+      expect(t.match(/rgba\(59,\s*47,\s*37,\s*\.(08|12)\)|rgba\(255,\s*250,\s*235,\s*\.5\)/g) ?? [], f).toEqual([]);
     }
     for (const nome of ['--sucesso', '--erro', '--aviso', '--info', '--cartao', '--cartao-borda', '--borda-forte', '--borda-campo']) expect(tokens, nome).toContain(nome + ':');
   });

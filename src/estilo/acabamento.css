@@ -14,7 +14,7 @@ button:disabled{cursor:default}
 .selo-previa{display:block;width:max-content;margin:var(--s2) auto 0;padding:1px var(--s3);border-radius:var(--r-4);border:1px solid #B98A2E;background:var(--aviso-fundo);color:#5E4318;font:var(--p-forte) var(--t-12) var(--corpo);letter-spacing:.08em;text-transform:uppercase;cursor:help}
 .carregando{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);background:var(--fundo)}
 .carregando .placa{min-width:200px}
-.barra-carga{width:200px;height:8px;border-radius:var(--r-8);border:1px solid var(--borda-forte);background:rgba(59,47,37,.12);overflow:hidden}
+.barra-carga{width:200px;height:8px;border-radius:var(--r-8);border:1px solid var(--borda-forte);background:var(--realce-forte);overflow:hidden}
 .barra-carga i{display:block;width:100%;height:100%;background:var(--tinta);transform-origin:left;animation:carga 1.2s linear infinite}
 @keyframes carga{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 
@@ -37,7 +37,7 @@ button:disabled{cursor:default}
 /* onde estou e como volto */
 .voltar{align-self:flex-start;display:inline-flex;align-items:center;gap:var(--s1);min-height:var(--h-sm);margin:-12px 0 var(--s1) -8px;padding:0 var(--s2);border:0;border-radius:var(--r-8);background:transparent;font:var(--p-forte) var(--t-13) var(--corpo);color:var(--aviso)}
 .voltar span{font-size:var(--t-18);line-height:1}
-@media (hover:hover) and (pointer:fine){.voltar:hover{background:rgba(59,47,37,.08)}}
+@media (hover:hover) and (pointer:fine){.voltar:hover{background:var(--realce)}}
 
 /* console: mesmas colunas com e sem pessoa; as ações só mudam de opacidade */
 .console-recado{position:relative;z-index:1}
@@ -72,7 +72,7 @@ button:disabled{cursor:default}
 .resumo-proj .encerrado{color:var(--erro)}
 .notas footer .confirma,.notas footer .leve{color:var(--tinta-2)}
 .notas footer .leve.mini{border:1.5px solid var(--borda-forte);color:var(--erro);font-size:var(--t-13)}
-.notas footer .perigo.mini{color:#FFF7EA}
+.notas footer .perigo.mini{color:var(--cartao)}
 
 /* formulário de uma linha */
 .nova-linha{align-items:center}

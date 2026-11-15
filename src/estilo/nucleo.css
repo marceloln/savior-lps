@@ -69,7 +69,7 @@
 /* biblioteca de skills */
 .skills>.linha,.pedidos~.linha{align-items:center;margin-bottom:var(--s3)}.skills .nota,.elenco~.nota{margin:0;flex:1;min-width:200px}
 .skills ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
-.skills li{display:flex;gap:var(--s3);align-items:center;justify-content:space-between;padding:var(--s3) var(--s3);border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:rgba(255,250,235,.5)}
+.skills li{display:flex;gap:var(--s3);align-items:center;justify-content:space-between;padding:var(--s3) var(--s3);border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:var(--cartao-leve)}
 .skills li>div{display:flex;flex-direction:column;gap:var(--s1);min-width:0}.skills li small{color:var(--texto-2);font-size:var(--t-13);line-height:1.35}
 .skills .quem{display:flex;gap:var(--s0);align-items:center;font-size:var(--t-13);color:var(--texto-2);margin-top:var(--s0)}
 .modelo-padrao{padding-bottom:var(--s3);border-bottom:1.5px dotted var(--cartao-borda)}
@@ -79,7 +79,7 @@
 .skills li>.linha{flex-wrap:nowrap;flex:none;align-items:center}
 /* gaveta: grupo que abre e fecha, usado na biblioteca de skills, no treino e no banco de convidados */
 .gavetas,.banco{position:relative;z-index:1;display:grid;gap:var(--s2)}
-.gaveta{border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:rgba(255,250,235,.5)}
+.gaveta{border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:var(--cartao-leve)}
 .gaveta summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--s0) var(--s3);align-items:baseline;padding:var(--s3) var(--s3);cursor:pointer;list-style:none;min-height:44px}
 .gaveta summary::-webkit-details-marker{display:none}
 .gaveta summary b{font:var(--p-titulo) var(--t-16) var(--titulo);color:var(--tinta)}
