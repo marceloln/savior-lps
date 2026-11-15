@@ -77,7 +77,7 @@ export function Briefing({ b, pedir, cadastra, conversaLivre }: { b: ApiBriefing
   const [texto, setTexto] = useState('');
   const lista = useRef<HTMLDivElement>(null), campo = useRef<HTMLTextAreaElement>(null);
   // a conversa desce a cada fala nova e o campo volta a ter o foco quando a vez é de quem responde
-  useEffect(() => { const l = lista.current; if (l) l.scrollTo({ top: l.scrollHeight, behavior: 'smooth' }); }, [b.falas.length, b.digitando, b.fechado, b.leitura.estado]);
+  useEffect(() => { const l = lista.current; if (l) l.scrollTo({ top: l.scrollHeight, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, [b.falas.length, b.digitando, b.fechado, b.leitura.estado]);
   useEffect(() => { if (!b.digitando && b.passo) campo.current?.focus({ preventScroll: true }); }, [b.digitando, b.passo?.id, b.pendente]);
   if (!b.modelo) return <div className="briefing"><Escolha b={b} /><button type="button" className="link livre" onClick={conversaLivre}>Prefiro conversar livremente com a Clara</button></div>;
   // enquanto a Clara digita, a fala dela que vem a seguir ainda não aparece

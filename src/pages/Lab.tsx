@@ -97,6 +97,7 @@ export function Lab() {
   useEffect(() => { if (!aberto) setCheia(false); }, [aberto]);
   // a tela de espera só sai quando o mapa tem as texturas. Se o mapa não avisar em 8 segundos, sai assim mesmo
   const [mapaPronto, setMapaPronto] = useState(false);
+  const [respostaNova, setRespostaNova] = useState(false);
   const avisaPronto = useCallback(() => setMapaPronto(true), []);
   useEffect(() => { const t = setTimeout(avisaPronto, 8000); return () => clearTimeout(t); }, [avisaPronto]);
   // plano aprovado: o livro sai da frente para o mapa mostrar o papel chegando em cada mesa e quem está escrevendo
@@ -107,7 +108,11 @@ export function Lab() {
   useEffect(() => {
     const antes = etapaAntes.current; etapaAntes.current = etapa;
     if ((antes === 'sintetizando' && etapa === 'parado') || (etapa === 'erro' && antes !== 'erro')) setAberto(x => x ?? { tipo: 'aba', aba: 'pedidos' });
+    // com outro livro aberto, a resposta não toma a tela: fica um sinal no menu e um recado com atalho
+    if (antes === 'sintetizando' && etapa === 'parado') setRespostaNova(true);
   }, [etapa]);
+  const emPedidos = aberto?.tipo === 'aba' && aberto.aba === 'pedidos';
+  useEffect(() => { if (emPedidos) setRespostaNova(false); }, [emPedidos]);
   // o livro que acabou de fechar fica montado até a saída terminar
   const { mostrado, saindo, saiu } = useSaida(aberto);
   // fora do livro, Escape primeiro cancela o Mover e depois solta a pessoa escolhida
@@ -186,7 +191,7 @@ export function Lab() {
         pedidos: <Pedidos p={pedido} />, skills: <Skills />,
         paineis: <Ferramentas qual={ferramenta} muda={setFerramenta} abreProjeto={abreProjeto} escolhe={escolhe} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} />,
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes key={mostrado.pre ? mostrado.pre.setor + mostrado.pre.situacao : 'c'} abreProjeto={abreProjeto} novo={mostrado.novo} inicial={mostrado.pre} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
+        clientes: <Clientes key={mostrado.pre ? mostrado.pre.setor + mostrado.pre.situacao : 'c'} abreProjeto={abreProjeto} novo={mostrado.novo} inicial={mostrado.pre} volta={mostrado.pre ? { rotulo: 'Voltar ao briefing', vai: () => setAberto({ tipo: 'briefing' }) } : undefined} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <PainelPessoas abre={id => { setEscolhido(id); setZona(de(id)?.zona ?? null); setAberto({ tipo: 'ficha', id }); }} />,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = equipe.filter(e => e.zona === z.id).length;
@@ -201,7 +206,7 @@ export function Lab() {
       folha = { titulo: p.nome, sobre: p.papel, cor: z.cor, voltar: { rotulo: 'Pessoas', vai: vaiPara('pessoas') },
         ilustracao: <><figure className="foto-colada estacao"><img style={{ background: `linear-gradient(${z.cor}30, ${z.cor}12)` }} src={`assets/estacao/${p.aparencia}.webp`} alt={`${p.nome} trabalhando na ${z.nome}`} /><figcaption>{p.nome} na {z.nome}</figcaption></figure><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>,
         corpo: <FichaAgente key={p.id + (mostrado.aba ?? '')} m={p} abaInicial={mostrado.aba} focaMissao={mostrado.foca} aoDar={anota}
-          noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /> };
+          noMapa={() => escolhe(p.id)} naMesa={() => setAberto({ tipo: 'mesa', id: p.id })} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /> };
     } else if (mostrado.tipo === 'mesa') {
       const p = de(mostrado.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
       const jeito = <JeitoDe m={p} cor={z.cor} conversa={() => setAberto(p.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: p.id })}
@@ -250,7 +255,7 @@ export function Lab() {
       <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />
         <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>
-        <MenuDiario ativa={secao} abre={abreAba} />
+        <MenuDiario ativa={secao} abre={abreAba} novidade={respostaNova && !emPedidos ? 'pedidos' : null} />
         <BotaoDaRadio abre={() => setAberto({ tipo: 'radio' })} />
         <AreaDoSocio abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} />
       </aside>
@@ -275,6 +280,7 @@ export function Lab() {
       {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha} cheia={cheia} aoAmpliar={() => setCheia(c => !c)}>{folha.corpo}</Livro>}
       {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
+      {!aviso && respostaNova && !emPedidos && <div className="aviso papel-borda" role="status"><p>A resposta do seu pedido está pronta.</p><button onClick={() => setAberto({ tipo: 'aba', aba: 'pedidos' })}>Ver resposta</button></div>}
     </div>
   );
 }

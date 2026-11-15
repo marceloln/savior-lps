@@ -1,14 +1,21 @@
 /* Degraus do sistema visual do Lab V30. Tudo que é cor, letra, espaço, raio e tempo sai daqui. */
 :root{
   --tinta:#20352F; --tinta-2:#3B2F25; --texto-2:#5E4F3B; --creme:#F0EAD6; --areia:#C5AA81; --ouro:#C99A3A;
-  --papel:#F3E9D0; --papel-2:#EADBB8; --papel-3:#DCC89E; --linha:rgba(59,47,37,.18); --fundo:#DDE1CC;
-  --verde:#6E9A4A; --roxo:#7B6BA8; --teal:#5FB8A8; --telha:#C9603F;
-  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --papel:#F3E9D0; --papel-2:#EADBB8; --linha:rgba(59,47,37,.18); --fundo:#DDE1CC;
+  --verde:#6E9A4A; --verde-forte:#47702D; --roxo:#7B6BA8; --telha:#C9603F; --telha-forte:#A63F29;
+  /* cores com significado: a cor do texto e o fundo que vai com ela. Todos os pares passam de 4,5 para 1 */
+  --sucesso:#3E6B2A; --sucesso-fundo:#D8E6C8; --erro:#8A3122; --erro-fundo:#F8E4D8;
+  --aviso:#75552A; --aviso-fundo:#F2DFA6; --info:#256B5C; --info-fundo:#CFE6D8;
+  /* espaço: grade de 4. O meio degrau de 2 serve só para colar ícone em texto e linha em linha */
+  --s0:2px; --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
   --sai:cubic-bezier(.23,1,.32,1);
-  --titulo:'Alegreya',Georgia,serif; --corpo:'Alegreya Sans',system-ui,sans-serif; --mao:'Caveat',cursive;
+  /* título em Alegreya, que dá o tom de diário de campo. Corpo e controle em Roboto, a letra da marca, que lê melhor em tela pequena e alinha número */
+  --titulo:'Alegreya',Georgia,serif; --corpo:'Roboto',system-ui,sans-serif; --mao:'Caveat',cursive;
   --h-sm:32px; --h-md:40px; --h-lg:48px;
   /* letra: sete degraus. 12 etiqueta, 13 apoio, 14 controle, 16 leitura, 18 subtítulo, 22 título de bloco, 28 título de página */
   --t-12:12px; --t-13:13px; --t-14:14px; --t-16:16px; --t-18:18px; --t-22:22px; --t-28:28px;
+  /* altura de linha: título apertado, controle e etiqueta no meio, leitura solta */
+  --lh-titulo:1.15; --lh-denso:1.35; --lh-leitura:1.5;
   /* peso: normal no corpo, médio em destaque leve, forte em rótulo e ação, título só em Alegreya */
   --p-normal:400; --p-medio:500; --p-forte:700; --p-titulo:800;
   /* raio: 4 etiqueta, 8 controle, 12 cartão, 18 painel, pílula */
@@ -16,7 +23,8 @@
   /* tempo: rápido para resposta ao toque, médio para entrada, lento para o que atravessa a tela */
   --d-rapido:.14s; --d-medio:.2s; --d-lento:.3s;
   /* superfícies e elevação */
-  --cartao:#FFFBF0; --cartao-borda:rgba(59,47,37,.25);
+  /* três linhas: divisória, borda de cartão e borda que precisa aparecer (campo, tracejado) */
+  --cartao:#FFFBF0; --cartao-leve:rgba(255,250,235,.5);--realce:rgba(59,47,37,.08);--realce-forte:rgba(59,47,37,.12);--veu:rgba(32,53,47,.7);--cartao-borda:rgba(59,47,37,.25); --borda-forte:rgba(59,47,37,.4); --borda-campo:rgba(59,47,37,.65);
   --sombra-1:0 1px 0 rgba(59,47,37,.15); --sombra-2:0 2px 0 rgba(59,47,37,.18),0 6px 14px -8px rgba(59,47,37,.35);
   font-family:var(--corpo); color:var(--tinta-2); font-size:16px;
 }

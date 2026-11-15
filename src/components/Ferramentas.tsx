@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Icone } from './Icones';
 import { useEstado } from '../hooks/useEstado';
+import { useMudouDeColuna } from '../hooks/useRecem';
 import { useEquipe } from '../hooks/useEquipe';
 import { FASES, hojeLocal, type Estado } from '../lib/dados';
 import { COLUNAS_DO_QUADRO, RITMO_DO_CICLO, linhaDoTempo, mesDoCalendario, quadro } from '../lib/ferramentas';
@@ -24,6 +25,7 @@ function Quadro({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; e
   const { nome } = useEquipe();
   const [filtro, setFiltro] = useState('');
   const q = quadro(estado, filtro === '' ? null : filtro);
+  const chegou = useMudouDeColuna(estado.tarefas);
   return (
     <div className="quadro-geral">
       <div className="linha filtro">
@@ -42,7 +44,7 @@ function Quadro({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; e
             {q[c.id].map(t => {
               const p = estado.projetos.find(x => x.id === t.projeto_id), prox = PROXIMO[t.estado];
               return (
-                <article key={t.id} className={`cartao ${t.estado}`}>
+                <article key={t.id} className={`cartao ${t.estado} ${chegou(t) ? 'chegou' : ''}`}>
                   <button type="button" className="abre" onClick={() => (t.projeto_id ? abreProjeto(t.projeto_id) : escolhe(t.agente))} title={p ? `Abrir ${p.nome}` : `Ver ${nome(t.agente)} no mapa`}>{t.titulo}</button>
                   <footer>
                     <span className="dono"><Retrato id={t.agente} tamanho={22} />{nome(t.agente)}</span>

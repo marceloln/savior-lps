@@ -14,10 +14,10 @@ export function Radio() {
   return (
     <div className="radio">
       <ul className="radio-estacoes">
-        {ESTACOES.map(e => {
+        {ESTACOES.map((e, i) => {
           const esta = r.estacao.id === e.id, noAr = esta && r.tocando;
           return (
-            <li key={e.id}>
+            <li key={e.id} style={{ ['--i' as string]: i }}>
               <button type="button" className={esta ? 'on' : ''} aria-pressed={noAr} onClick={() => (noAr ? r.pausa() : r.toca(e.id))}>
                 <span className="radio-topo"><b>{e.nome}</b><Barras ligadas={noAr} /></span>
                 <small>{e.sobre}</small>

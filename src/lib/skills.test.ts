@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { EQUIPE } from './equipe';
 import { CONVIDADOS, FUNCOES } from './convidados';
-import { SKILLS_BASE, VERSAO_DA_BASE, VINCULOS_BASE, baseQueFalta, gavetasDeSkills } from './skills';
+import { SKILLS_BASE, VERSAO_DA_BASE, VINCULOS_BASE, baseQueFalta, gavetasDeSkills, buscaSkills } from './skills';
 import * as V from '../../worker/validacao';
 
 const PARTIDA = ['metodo-v30', 'tom-de-voz-v30', 'diagnostico-gut'];
@@ -77,5 +77,20 @@ describe('biblioteca em gavetas', () => {
     expect(gavetasDeSkills([nova]).map(x => x.id)).toEqual(['equipe']);
     expect(gavetasDeSkills([{ ...nova, para_todos: true }]).map(x => x.id)).toEqual(['casa']);
     expect(gavetasDeSkills([])).toEqual([]);
+  });
+});
+
+describe('buscaSkills', () => {
+  it('devolve tudo com a busca vazia ou só com espaço', () => {
+    expect(buscaSkills(SKILLS_BASE, '')).toHaveLength(SKILLS_BASE.length);
+    expect(buscaSkills(SKILLS_BASE, '   ')).toHaveLength(SKILLS_BASE.length);
+  });
+  it('acha pelo nome sem ligar para acento e maiúscula', () => {
+    const achadas = buscaSkills(SKILLS_BASE, 'PRECIFICACAO');
+    expect(achadas.length).toBeGreaterThan(0);
+    expect(achadas.some(k => k.id === 'precificacao')).toBe(true);
+  });
+  it('exige todas as palavras e devolve lista vazia quando nada casa', () => {
+    expect(buscaSkills(SKILLS_BASE, 'precificacao zzzqqq')).toHaveLength(0);
   });
 });

@@ -1,0 +1,141 @@
+/* Padrão do sistema, saído da auditoria de 15 de novembro. Este arquivo vem por último e fecha três coisas que estavam espalhadas:
+   os tipos de cartão, os estados dos controles e o movimento de entrada. Cartão novo entra numa das três listas abaixo. */
+
+/* ---------- três tipos de cartão ---------- */
+/* 1. Cartão de item: uma coisa numa lista. Borda fina, raio 8, sombra de um degrau. */
+.cartao,.cartao-missao,.elenco li>button,.lista-lugares button,.para-voce button,.notas>li,.skills li,.conexoes>li,.trofeus>li,.entrega,.manias>li,.tarefas-agente>li,.passos>li,.lista-item{
+  border:1px solid var(--cartao-borda);border-radius:var(--r-8);background:var(--cartao);box-shadow:var(--sombra-1)}
+/* 2. Cartão de bloco: um assunto inteiro, com título. Raio 12 e sombra de dois degraus. */
+.bloco,.cliente,.pedido,.pedir,.sintese,.briefing-fecho,.proxima,.contexto{
+  border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-2)}
+/* o bloco que se clica tem o mesmo raio, com sombra mais leve para não pesar */
+.modelos-briefing button,.sugestoes button,.radio-estacoes button{border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-1)}
+/* a resposta pronta e o fecho do briefing são o ponto alto da tela: mantêm a borda dourada */
+.sintese,.briefing-fecho{border-color:var(--ouro)}
+/* 3. Cartão tracejado: rascunho, formulário, vazio e convite. Sem fundo e sem sombra. */
+.form-reuniao,.form-ata,.form-decisao,.instrucoes,.treinar,.novo-especialista,.skill-form,.plano,.vazio-desenho,.banco li,.tarefas-agente>li.editando,.cartao.editando,.modelos-skill button{
+  border:1.5px dashed var(--borda-forte);border-radius:var(--r-12);background:transparent;box-shadow:none}
+.para-voce button.parado{border-color:var(--aviso);background:var(--aviso-fundo)}
+.proxima,.contexto{padding:var(--s3) var(--s4)}
+.tarefas-agente>li,.passos>li{padding:var(--s2) var(--s3)}
+.passos>li{border-bottom:1px solid var(--cartao-borda)}
+.passos{display:grid;gap:var(--s2)}
+
+/* ---------- registro em cartão ---------- */
+/* reunião, decisão e resumo do projeto eram texto solto entre linhas pontilhadas. Cada registro agora é um cartão. */
+article.reuniao{grid-template-columns:auto minmax(0,1fr) auto;padding:var(--s3) var(--s4);border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-1)}
+article.reuniao+article.reuniao{margin-top:var(--s2)}
+article.reuniao .quando{box-shadow:none;background:var(--papel);min-width:112px}
+.ainda{align-self:start;padding:var(--s0) var(--s2);border-radius:var(--r-pilula);background:var(--papel-2);font-weight:var(--p-medio);white-space:nowrap}
+ol.linha-tempo>li{border-top:0;padding:0;align-items:start}
+ol.linha-tempo>li+li{margin-top:var(--s2)}
+ol.linha-tempo>li>div,ol.linha-tempo>li>form{padding:var(--s3) var(--s4)}
+ol.linha-tempo>li>div{border:1px solid var(--cartao-borda);border-radius:var(--r-8);background:var(--cartao);box-shadow:var(--sombra-1)}
+ol.linha-tempo>li>div>b{display:block;font:var(--p-forte) var(--t-16)/var(--lh-denso) var(--corpo);color:var(--tinta)}
+ol.linha-tempo>li>time{padding-top:var(--s3)}
+.resumo-proj{padding:var(--s3) var(--s4);border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-1)}
+/* cartões do elenco com a mesma altura na linha e tudo alinhado à esquerda */
+.elenco li{display:grid}
+.elenco .situacao{flex-direction:row}
+.elenco .situacao em{flex-basis:100%}
+/* no quadro geral, dono e ação ficam na mesma linha, como no quadro do projeto */
+.quadro-geral .cartao footer{flex-direction:row;flex-wrap:wrap}
+
+/* ---------- papéis de título ---------- */
+/* título de bloco 16, subtítulo 18, cabeçalho de coluna 14. O mesmo papel tem o mesmo tamanho em toda tela. */
+.reuniao h4,.proxima h3,.contexto h4{font:var(--p-titulo) var(--t-18)/var(--lh-titulo) var(--titulo);color:var(--tinta)}
+.kanban h4,.quadro-geral h4{font:var(--p-forte) var(--t-14)/var(--lh-denso) var(--corpo)}
+.contexto h4{margin:0 0 var(--s2)}
+b,strong{font-weight:var(--p-forte)}
+/* número em coluna e em contagem alinha pela largura */
+.resumo dd,.kanban h4 span,.quadro-geral h4 span,.selo b,.etiqueta-numero{font-variant-numeric:tabular-nums}
+
+/* título de cartão de item: Roboto forte 16 em toda lista. Título de cartão de bloco segue em Alegreya 18. */
+.cartao-missao .texto>b,.elenco li>button b,.skills li b,.trofeus b,.conexoes>li b,.banco li b{font:var(--p-forte) var(--t-16)/var(--lh-denso) var(--corpo);color:var(--tinta)}
+/* dentro da resposta ao pedido o título do texto desce um degrau, para não repetir o título do bloco */
+.sintese .md h4{font:var(--p-forte) var(--t-16)/var(--lh-denso) var(--corpo);color:var(--tinta)}
+/* busca da biblioteca de skills */
+.busca-skills{display:grid;grid-template-columns:1fr auto;align-items:center;gap:var(--s1) var(--s3);margin:var(--s3) 0}
+.busca-skills label{grid-column:1/-1;font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta-2)}
+.busca-skills input{width:100%;min-width:0}
+.busca-skills small{color:var(--texto-2);font-size:var(--t-13);white-space:nowrap}
+
+/* no quadro do projeto só a ação que avança tem corpo de botão. As outras viram texto, para o cartão ter uma ação principal */
+.kanban .acoes button:not(.avanca):not(.perigo){border-color:transparent;background:transparent;color:var(--tinta-2);text-decoration:underline;text-decoration-color:var(--borda-forte);text-underline-offset:3px;padding:0 var(--s1)!important}
+
+/* os três selos do topo cabem numa linha em qualquer largura de mesa */
+.selos button{white-space:nowrap;font-size:var(--t-13);padding:var(--s1)}
+
+/* ponto de novidade no menu: algo novo espera naquele item */
+.menu-diario button{position:relative}
+.menu-diario .novidade{flex:none;width:8px;height:8px;margin-left:auto;border-radius:var(--r-pilula);background:var(--ouro)}
+.menu-recolhido .menu-diario .novidade{position:absolute;top:6px;right:14px;margin:0}
+
+/* ---------- estados dos controles ---------- */
+.leve,.abas button{transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
+@media (hover:hover) and (pointer:fine){
+  .leve:hover:not(:disabled),.abas button:hover:not([aria-selected="true"]):not(:disabled){background-color:var(--realce)}
+  .primario:hover:not(:disabled),.nova-linha button:hover:not(:disabled),.campo button:hover:not(:disabled),.perigo:hover:not(:disabled){box-shadow:inset 0 1px 0 rgba(255,255,255,.18),var(--sombra-2)}
+  button.link:hover{text-decoration-color:var(--tinta)}
+  .cartao:hover,.lista-lugares button:hover,.skills li:hover{border-color:var(--borda-forte)}
+}
+input:disabled,select:disabled,textarea:disabled{background:var(--papel-2);color:var(--texto-2);border-color:var(--cartao-borda);cursor:default}
+.primario:disabled,.nova-linha button:disabled,.campo button:disabled{color:var(--texto-2)}
+.perigo:disabled,.abas button:disabled{color:var(--texto-2);border-color:var(--cartao-borda);background:transparent;box-shadow:none;cursor:default}
+[aria-invalid="true"]{border-color:var(--erro);background:var(--erro-fundo)}
+.erro-campo{margin:var(--s1) 0 0;color:var(--erro);font:var(--p-medio) var(--t-13)/var(--lh-denso) var(--corpo)}
+/* botão ocupado: os mesmos três pontos do andamento, para a espera ter a mesma cara em todo lugar */
+button[aria-busy="true"]{cursor:progress}
+button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;background:radial-gradient(circle,currentColor 2.5px,transparent 3px) 0 0/6px 6px repeat-x;animation:pontos 1.1s steps(4) infinite}
+
+/* ---------- movimento de entrada ---------- */
+/* o que aparece em resposta a uma ação chega de baixo, em 200 ms, com a curva de saída do sistema */
+@keyframes chega{from{opacity:0;translate:0 8px}}
+.aviso,.sintese,.gaveta[open]>ul,.gaveta[open]>div{animation:chega var(--d-medio) var(--sai)}
+/* itens de uma lista que acabou de chegar entram um depois do outro */
+.plano li,.radio-estacoes li,.banco li{animation:chega var(--d-medio) var(--sai) both;animation-delay:calc(var(--i,0)*50ms)}
+/* o que falta para o botão ligar, dito embaixo do formulário */
+.falta{margin:0;color:var(--aviso);font:var(--p-medio) var(--t-13)/var(--lh-denso) var(--corpo)}
+/* plano da orquestração: rótulo à vista e título que quebra a linha em vez de cortar */
+.plano li .rotulo{margin:var(--s1) 0 0}
+.plano li textarea[id^="pt"]{font:var(--p-forte) var(--t-14)/var(--lh-denso) var(--corpo);resize:none}
+/* recado de que deu certo, no lugar onde a pessoa está olhando */
+.recado-ok{margin:0;display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;padding:var(--s2) var(--s3);border-radius:var(--r-8);background:var(--sucesso-fundo);color:var(--sucesso);font:var(--p-medio) var(--t-14)/var(--lh-denso) var(--corpo);animation:chega var(--d-medio) var(--sai)}
+.cliente.novo{border-color:var(--sucesso);animation:chega var(--d-medio) var(--sai)}
+/* a entrega que chega com a ficha aberta aparece onde a missão estava */
+.entrega-nova{display:grid;gap:var(--s2);margin:var(--s2) 0 var(--s3);animation:chega var(--d-medio) var(--sai)}
+.entrega-nova-topo{margin:0;display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
+.entregas-agente+.blocos{margin-top:var(--s4)}
+/* missão que muda de coluna, ou que acabou de nascer, chega na coluna nova */
+.cartao.chegou{animation:chega var(--d-medio) var(--sai)}
+@media (prefers-reduced-motion:reduce){
+  .aviso,.sintese,.gaveta[open]>ul,.gaveta[open]>div,.plano li,.radio-estacoes li,.banco li,.cartao.chegou,.entrega-nova,.recado-ok,.cliente.novo{animation:aparece var(--d-rapido) ease-out both;animation-delay:0s}
+  .leve,.abas button{transition:background-color var(--d-rapido) ease}
+  button[aria-busy="true"]::after{animation:none}
+}
+
+/* ---------- celular ---------- */
+@media (max-width:760px){
+  article.reuniao{grid-template-columns:minmax(0,1fr);padding:var(--s3)}
+  article.reuniao .quando{justify-self:start}
+  /* o celular guarda o contexto da página em versão compacta: a linha de apoio, os números e o andamento do briefing */
+  .pagina.esquerda{flex-wrap:wrap}
+  .pagina.esquerda .sobre{display:block;flex:0 0 100%;margin:0;font-size:var(--t-13);line-height:var(--lh-denso);text-align:left}
+  .pagina.esquerda .ilustracao{display:block;flex:0 0 100%}
+  .pagina.esquerda .ilustracao:not(:has(.resumo,.roteiro)){display:none}
+  .pagina.esquerda .ilustracao>:not(.resumo):not(.roteiro),.pagina.esquerda .resumo .nota-mao,.pagina.esquerda .roteiro ol{display:none}
+  .pagina.esquerda .resumo dl{display:flex;gap:var(--s2);margin:0;overflow-x:auto;scrollbar-width:none}
+  .pagina.esquerda .resumo dl>div{flex:1 0 auto;padding:var(--s1) var(--s2);min-height:0}
+  .ainda{justify-self:start}
+  .sintese header{flex-wrap:wrap}.sintese header h4{flex-basis:100%}
+  /* com pedido andando, o console do celular diz o que está acontecendo */
+  .pedir-rapido small.andando{display:block;font-weight:var(--p-medio);color:var(--tinta)}
+  .form-decisao select,.form-reuniao select{min-width:0;max-width:100%}
+  ol.linha-tempo>li{grid-template-columns:minmax(0,1fr);gap:var(--s1)}
+  ol.linha-tempo>li>time{padding-top:0}
+  /* alvo de toque de 44 em tudo que se toca */
+  .ver-entrega>summary,.linha-tempo .nome,.calendario .navega button,.gaveta summary{min-height:44px;display:flex;align-items:center}
+  .calendario .navega button{min-width:44px;justify-content:center}
+  .linha-tempo .nome{display:grid;align-content:center}
+  .gaveta summary{display:grid;align-items:center}
+}

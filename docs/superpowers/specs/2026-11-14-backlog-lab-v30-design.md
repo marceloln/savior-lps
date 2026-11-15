@@ -125,7 +125,7 @@ O lab precisa parecer um lugar de verdade, com a marca aplicada do jeito certo.
 - P2 Mesa montada também para quem os sócios criarem depois no lab
 - P2 Fliperama jogável e outros objetos clicáveis do lounge
 - P3 Dia e noite, chuva e estação do ano no entorno
-- P3 Decidir a letra da interface: a marca pede Roboto e o diário de campo usa Alegreya
+- Feito na frente 10: corpo em Roboto, títulos em Alegreya. Os sócios ainda podem pedir Roboto também nos títulos
 
 ### 8. Equipe maior (pedido de 15 de novembro, issue 45)
 
@@ -142,6 +142,36 @@ O lab precisa cobrir as competências que os projetos da V30 pedem, sem inchar a
 - P2 Chamar o convidado já ligado a um projeto e manter no squad até o fim do ciclo
 - P3 Busca por texto na biblioteca de skills
 - P3 Revisão dos sócios no texto dos trinta e sete métodos e das dezoito skills de ofício
+
+### 9. Lab descontraído (pedido de 15 de novembro, issue 47)
+
+O lab é de uma consultoria do Rio, não de um banco. A equipe estava de terno e o lounge não convidava a sentar.
+
+- P1 Roupa informal para os vinte e três bonecos. Sai o terno. Entram camiseta, polo, malha, jeans e bermuda acima do joelho em treze deles
+- P1 Pufes grandes com encosto no lounge, em seis posições
+- P1 Rádio V30. Um canto com aparelho de madeira, caixas, microfone e discos, com o logo oficial no painel verde. Clicar no aparelho abre a rádio
+- P1 Música composta pelo navegador, sem arquivo de áudio e sem obra de terceiros. Três estações, volume, botão no menu que pausa de qualquer tela
+- P2 Fliperama jogável
+- P2 Mais variação de roupa por dia da semana
+- P3 Programação da rádio com vinheta e recado da equipe
+
+### 10. Auditoria visual, de design system e de UX (pedido de 15 de novembro, issue 48)
+
+Auditoria feita com sete referências que o sócio mandou: movimento a serviço do uso, ciência da cor, roteiro do designer, fluxo do usuário, planta do design system e lista de auditoria de UX em oito critérios.
+
+- P1 Cor de sistema só por variável: marca, estado, cartão, borda e realce. Cores de estado com par de fundo e texto. Contraste AA conferido
+- P1 Corpo em Roboto, como a marca pede. Alegreya fica só nos títulos do diário
+- P1 Espaço na grade de 4 em todo o CSS
+- P1 Três tipos de cartão: item, bloco e tracejado. O mesmo papel de título tem o mesmo tamanho em toda tela
+- P1 Registro em cartão: reunião, decisão e resumo do projeto deixam de ser texto solto
+- P1 Estados de controle completos: mouse, apertado, desligado, inválido e ocupado
+- P1 Movimento com função: aviso, resposta pronta, gaveta, lista que chega e cartão que muda de coluna
+- P1 Sinal de resposta pronta no menu e num recado, quando o pedido termina com outro livro aberto
+- P1 Teste automático do estilo, para a regra não se perder na rodada seguinte
+- P2 Gaveta que abre com altura animada
+- P2 Primeira carga mais leve: a folha de sprites pesa 2,2 MB e o código 750 KB
+- P2 Quadro do projeto com menos botões por cartão
+- P3 Memória agrupada por pessoa
 
 ## Deixado para quem construir
 

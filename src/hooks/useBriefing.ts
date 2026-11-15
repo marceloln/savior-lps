@@ -27,7 +27,7 @@ export function useBriefing() {
   const vezDaClara = useCallback(() => {
     const semMovimento = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     setDigitando(true); clearTimeout(relogio.current);
-    relogio.current = setTimeout(() => setDigitando(false), semMovimento ? 120 : 650);
+    relogio.current = setTimeout(() => setDigitando(false), semMovimento ? 120 : 300);
   }, []);
   const grava = useCallback((id: string, texto: string) => { setR(x => ({ ...x, respostas: { ...x.respostas, [id]: texto } })); setPendente(null); setLeitura({ estado: 'parada', texto: '' }); vezDaClara(); }, [vezDaClara]);
 

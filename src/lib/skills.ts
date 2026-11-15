@@ -523,3 +523,11 @@ export function gavetasDeSkills(skills: Skill[]): { id: string; nome: string; sk
     ...FUNCOES.map(f => ({ ...f, skills: skills.filter(k => !k.para_todos && funcao(k) === f.id) })),
   ].filter(g => g.skills.length > 0);
 }
+
+const semAcento = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** Skills cujo nome, descrição ou método contém todas as palavras digitadas, sem ligar para acento e maiúscula. Busca vazia devolve tudo. */
+export function buscaSkills(skills: Skill[], texto: string): Skill[] {
+  const palavras = semAcento(texto).split(/\s+/).filter(Boolean);
+  if (!palavras.length) return skills;
+  return skills.filter(k => { const onde = semAcento(`${k.nome} ${k.descricao} ${k.conteudo}`); return palavras.every(p => onde.includes(p)); });
+}

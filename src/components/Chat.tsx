@@ -20,7 +20,7 @@ function Conversa({ agente }: { agente: string }) {
   useEffect(() => {
     const l = lista.current, ultima = falas.at(-1); if (!l) return;
     if (!ultima?.nova) l.scrollTop = l.scrollHeight;   // histórico carregado: vai direto ao fim
-    else if (perto.current || ultima.papel === 'user') l.scrollTo({ top: l.scrollHeight, behavior: perto.current ? 'smooth' : 'auto' });
+    else if (perto.current || ultima.papel === 'user') l.scrollTo({ top: l.scrollHeight, behavior: perto.current && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
   }, [falas, enviando]);
   const manda = (t = texto) => { if (envia(t)) setTexto(''); };
   return (
