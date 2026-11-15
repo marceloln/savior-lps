@@ -25,7 +25,7 @@
 /* reunião, decisão e resumo do projeto eram texto solto entre linhas pontilhadas. Cada registro agora é um cartão. */
 article.reuniao{grid-template-columns:auto minmax(0,1fr) auto;padding:var(--s3) var(--s4);border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-1)}
 article.reuniao+article.reuniao{margin-top:var(--s2)}
-article.reuniao .quando{box-shadow:none;background:var(--papel)}
+article.reuniao .quando{box-shadow:none;background:var(--papel);min-width:112px}
 .ainda{align-self:start;padding:var(--s0) var(--s2);border-radius:var(--r-pilula);background:var(--papel-2);font-weight:var(--p-medio);white-space:nowrap}
 ol.linha-tempo>li{border-top:0;padding:0;align-items:start}
 ol.linha-tempo>li+li{margin-top:var(--s2)}
@@ -37,6 +37,7 @@ ol.linha-tempo>li>time{padding-top:var(--s3)}
 /* cartões do elenco com a mesma altura na linha e tudo alinhado à esquerda */
 .elenco li{display:grid}
 .elenco .situacao{flex-direction:row}
+.elenco .situacao em{flex-basis:100%}
 /* no quadro geral, dono e ação ficam na mesma linha, como no quadro do projeto */
 .quadro-geral .cartao footer{flex-direction:row;flex-wrap:wrap}
 
@@ -48,6 +49,11 @@ ol.linha-tempo>li>time{padding-top:var(--s3)}
 b,strong{font-weight:var(--p-forte)}
 /* número em coluna e em contagem alinha pela largura */
 .resumo dd,.kanban h4 span,.quadro-geral h4 span,.selo b,.etiqueta-numero{font-variant-numeric:tabular-nums}
+
+/* ponto de novidade no menu: algo novo espera naquele item */
+.menu-diario button{position:relative}
+.menu-diario .novidade{flex:none;width:8px;height:8px;margin-left:auto;border-radius:var(--r-pilula);background:var(--ouro)}
+.menu-recolhido .menu-diario .novidade{position:absolute;top:6px;right:14px;margin:0}
 
 /* ---------- estados dos controles ---------- */
 .leve,.abas button{transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}

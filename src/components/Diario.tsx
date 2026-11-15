@@ -101,7 +101,8 @@ export function Carregando() {
   );
 }
 
-export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) => void }) {
+/** O menu do diário. `novidade` marca com um ponto o item que tem algo novo esperando, como a resposta de um pedido. */
+export function MenuDiario({ ativa, abre, novidade = null }: { ativa: Aba | null; abre: (a: Aba) => void; novidade?: Aba | null }) {
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
@@ -109,6 +110,7 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
           {a.grupo && <span className="grupo" aria-hidden="true">{a.grupo}</span>}
           <button className={a.corte ? 'corte' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)} title={a.nome}>
             <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
+            {novidade === a.id && <i className="novidade"><span className="so-leitor">, resposta pronta</span></i>}
           </button>
         </Fragment>
       ))}

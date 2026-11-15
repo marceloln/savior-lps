@@ -97,6 +97,7 @@ export function Lab() {
   useEffect(() => { if (!aberto) setCheia(false); }, [aberto]);
   // a tela de espera só sai quando o mapa tem as texturas. Se o mapa não avisar em 8 segundos, sai assim mesmo
   const [mapaPronto, setMapaPronto] = useState(false);
+  const [respostaNova, setRespostaNova] = useState(false);
   const avisaPronto = useCallback(() => setMapaPronto(true), []);
   useEffect(() => { const t = setTimeout(avisaPronto, 8000); return () => clearTimeout(t); }, [avisaPronto]);
   // plano aprovado: o livro sai da frente para o mapa mostrar o papel chegando em cada mesa e quem está escrevendo
@@ -107,7 +108,11 @@ export function Lab() {
   useEffect(() => {
     const antes = etapaAntes.current; etapaAntes.current = etapa;
     if ((antes === 'sintetizando' && etapa === 'parado') || (etapa === 'erro' && antes !== 'erro')) setAberto(x => x ?? { tipo: 'aba', aba: 'pedidos' });
+    // com outro livro aberto, a resposta não toma a tela: fica um sinal no menu e um recado com atalho
+    if (antes === 'sintetizando' && etapa === 'parado') setRespostaNova(true);
   }, [etapa]);
+  const emPedidos = aberto?.tipo === 'aba' && aberto.aba === 'pedidos';
+  useEffect(() => { if (emPedidos) setRespostaNova(false); }, [emPedidos]);
   // o livro que acabou de fechar fica montado até a saída terminar
   const { mostrado, saindo, saiu } = useSaida(aberto);
   // fora do livro, Escape primeiro cancela o Mover e depois solta a pessoa escolhida
@@ -250,7 +255,7 @@ export function Lab() {
       <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />
         <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>
-        <MenuDiario ativa={secao} abre={abreAba} />
+        <MenuDiario ativa={secao} abre={abreAba} novidade={respostaNova && !emPedidos ? 'pedidos' : null} />
         <BotaoDaRadio abre={() => setAberto({ tipo: 'radio' })} />
         <AreaDoSocio abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} />
       </aside>
@@ -275,6 +280,7 @@ export function Lab() {
       {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha} cheia={cheia} aoAmpliar={() => setCheia(c => !c)}>{folha.corpo}</Livro>}
       {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
+      {!aviso && respostaNova && !emPedidos && <div className="aviso papel-borda" role="status"><p>A resposta do seu pedido está pronta.</p><button onClick={() => setAberto({ tipo: 'aba', aba: 'pedidos' })}>Ver resposta</button></div>}
     </div>
   );
 }
