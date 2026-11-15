@@ -127,6 +127,22 @@ O lab precisa parecer um lugar de verdade, com a marca aplicada do jeito certo.
 - P3 Dia e noite, chuva e estação do ano no entorno
 - P3 Decidir a letra da interface: a marca pede Roboto e o diário de campo usa Alegreya
 
+### 8. Equipe maior (pedido de 15 de novembro, issue 45)
+
+O lab precisa cobrir as competências que os projetos da V30 pedem, sem inchar a equipe fixa. O repertório veio do repositório aberto agency-agents, reescrito em português. Crédito e lista completa em `docs/convidados.md`.
+
+- P1 Treinar os dezessete da equipe de partida. Cada um ganha ao menos uma skill do ofício dele, dezoito no total, já ligadas a quem faz aquele trabalho
+- P1 Banco de convidados por função. Trinta e sete especialistas em oito funções: pessoas e cultura, operação e rede, vendas e receita, marketing e conteúdo, dados e finanças, risco e conformidade, produto e tecnologia, estratégia e gestão
+- P1 Chamar e dispensar pela tela de pessoas. O convidado entra com um boneco sem dono e a skill do método dele. Dispensado, volta para o banco e guarda o que aprendeu
+- P1 Painel de skills populado. O método de cada convidado fica na biblioteca desde o começo, para treinar quem os sócios quiserem. A biblioteca e o treino aparecem em gavetas: método da casa, ofício da equipe e uma por função
+- P1 Banco de dados que já está no ar recebe as skills novas por semente com versão, sem desfazer edição dos sócios
+- P2 Os mesmos convidados como skill na conta do Claude, para usar fora do lab
+- P2 Mais bonecos. Hoje são seis para trinta e sete convidados e o rosto se repete com mais de três mulheres ou três homens chamados ao mesmo tempo
+- P2 Mesa montada para o convidado, com objetos e mural próprios
+- P2 Chamar o convidado já ligado a um projeto e manter no squad até o fim do ciclo
+- P3 Busca por texto na biblioteca de skills
+- P3 Revisão dos sócios no texto dos trinta e sete métodos e das dezoito skills de ofício
+
 ## Deixado para quem construir
 
 - Nome das variáveis e a ordem dos arquivos de estilo

@@ -1,5 +1,6 @@
-// Rotas do núcleo multiagente: equipe, skills, modelo de IA, execução de missão e pedido ao lab.
-import type { Cliente, Projeto, Tarefa } from '../src/lib/dados';
+// Rotas do núcleo multiagente: equipe, banco de convidados, skills, modelo de IA, execução de missão e pedido ao lab.
+import { chamada } from '../src/lib/convidados';
+import type { Cliente, Projeto, Skill, Tarefa } from '../src/lib/dados';
 import { ORQUESTRADOR, type Agente } from '../src/lib/equipe';
 import { contextoDe, corpo, json, modeloPadraoDe, ruim, skillsDe, TAREFA, type Env } from './api';
 import { sistemaDe, type Mensagem } from './conversa';
@@ -69,6 +70,22 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
       ...validas.map(k => db.prepare('INSERT INTO agente_skills (agente, skill) VALUES (?, ?)').bind(x![1], k)),
     ]);
     return json({ skills: validas });
+  }
+
+  // ---------- banco de convidados ----------
+  x = caminho.match(/^\/api\/convidados\/([a-z0-9-]+)\/chamar$/);
+  if (x && m === 'POST') {
+    const r = chamada(x[1], todos); if (!r.ok) return ruim(r.erro, r.status);
+    const a = r.agente, k = r.skill;
+    // quem já passou pelo lab só é reativado: a skill que os sócios editaram e a memória dele continuam como estavam
+    const [, , , sk] = await db.batch([
+      db.prepare('INSERT INTO agentes (id, nome, papel, zona, aparencia, modelo) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET ativo = 1, aparencia = excluded.aparencia').bind(a.id, a.nome, a.papel, a.zona, a.aparencia, a.modelo),
+      db.prepare('INSERT OR IGNORE INTO skills (id, nome, descricao, conteudo, para_todos) VALUES (?, ?, ?, ?, 0)').bind(k.id, k.nome, k.descricao, k.conteudo),
+      db.prepare('INSERT OR IGNORE INTO agente_skills (agente, skill) VALUES (?, ?)').bind(a.id, k.id),
+      db.prepare('SELECT id, nome, descricao, conteudo, para_todos FROM skills WHERE id = ?').bind(k.id),
+    ]);
+    const gravada = sk.results[0] as (Omit<Skill, 'para_todos'> & { para_todos: number }) | undefined;
+    return json({ agente: a, skill: gravada ? { ...gravada, para_todos: !!gravada.para_todos } : k }, 201);
   }
 
   // ---------- skills ----------

@@ -1,5 +1,6 @@
 // A mesa de cada especialista: a pessoa trabalhando, o que ela tem em cima da mesa e o mural atrás.
 import { useEffect, useState } from 'react';
+import { convidadoDe } from '../lib/convidados';
 import { cartoesDoMural, peculiaridadeDe, quadrosDaMesa } from '../lib/peculiaridades';
 import type { Agente } from '../lib/equipe';
 import { Retrato } from './Retrato';
@@ -40,14 +41,17 @@ export function MesaDe({ m, zona }: { m: Agente; zona: string }) {
           <section><h4 className="rotulo">Na mesa</h4><ul className="etiquetas">{p.mesa.map(x => <li key={x}>{x}</li>)}</ul></section>
           <section><h4 className="rotulo">No mural, {p.mural.titulo}</h4><ul className="etiquetas">{cartoesDoMural(p).map(x => <li key={x}>{x}</li>)}</ul></section>
         </div>
-      ) : <p className="nota">{m.nome} chegou depois ao lab. A mesa ainda está sendo montada do jeito dela.</p>}
+      ) : convidadoDe(m.id)
+        ? <p className="nota">{m.nome} veio do banco de convidados e trabalha no balcão da {zona}, perto da equipe da sala.</p>
+        : <p className="nota">{m.nome} chegou depois ao lab. A mesa ainda está sendo montada do jeito dela.</p>}
     </div>
   );
 }
 
 /** Página da esquerda: o rosto, a frase que resume a pessoa, as manias e o que fazer a seguir. */
 export function JeitoDe({ m, cor, conversa, missao, ficha }: { m: Agente; cor: string; conversa: () => void; missao: () => void; ficha: () => void }) {
-  const p = m.base ? peculiaridadeDe(m.id) : null;
+  // a equipe de partida tem peculiaridade própria; o convidado traz a frase e as manias do banco
+  const p = m.base ? peculiaridadeDe(m.id) : convidadoDe(m.id);
   return (
     <div className="mesa-jeito">
       <Retrato id={m.id} tamanho={104} cor={cor + '40'} />

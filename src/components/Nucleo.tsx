@@ -1,15 +1,16 @@
-// Telas do núcleo multiagente: pedido ao lab, entrega de missão, treino, especialista novo e biblioteca de skills.
+// Telas do núcleo multiagente: pedido ao lab, entrega de missão, treino, especialista novo, banco de convidados e biblioteca de skills.
 import { useState, type ReactNode } from 'react';
 import { useEstado } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
 import type { ApiPedido } from '../hooks/usePedido';
 import { MAX_MISSOES, type MissaoProposta, type Pedido, type Skill, type Tarefa } from '../lib/dados';
 import { MODELOS_DE_PEDIDO, documentoDoPedido, nomeDoArquivo } from '../lib/pedidos';
+import { bancoPorFuncao, convidadoDe, idDoConvidado } from '../lib/convidados';
 import { APARENCIAS, ORQUESTRADOR, type Agente } from '../lib/equipe';
 import { ZONAS } from '../lib/lab';
 import { leMarkdown, type Trecho } from '../lib/markdown';
 import { leModelo, MODELOS, nomeDoModelo } from '../lib/modelos';
-import { skillDeTreino } from '../lib/skills';
+import { gavetasDeSkills, skillDeTreino } from '../lib/skills';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { Bloco, Vazio } from './Diario';
@@ -214,6 +215,18 @@ export function Pedidos({ p, rascunho }: { p: ApiPedido; rascunho?: string }) {
 
 // ---------- treino e equipe ----------
 
+/** Gaveta que abre e fecha. Quem usa decide como ela começa; depois disso manda o clique. */
+function Gaveta({ titulo, conta, resumo, aberta = false, children }: { titulo: string; conta: string; resumo?: string; aberta?: boolean; children: ReactNode }) {
+  const [on, setOn] = useState(aberta);
+  return (
+    <details className="gaveta" open={on} onToggle={e => setOn(e.currentTarget.open)}>
+      <summary><b>{titulo}</b><small>{conta}</small>{resumo && <span>{resumo}</span>}</summary>
+      {children}
+    </details>
+  );
+}
+const quantas = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
+
 /** Treino de um especialista: modelo de IA, skills e ensino de uma tarefa nova. */
 export function Treino({ m }: { m: Agente }) {
   const { estado, mudaAgente, vinculaSkills, criaSkill } = useEstado();
@@ -228,13 +241,21 @@ export function Treino({ m }: { m: Agente }) {
       </div>
       <fieldset className="skills-do-agente">
         <legend>Skills</legend>
-        {estado.skills.map(k => (
-          <label key={k.id} className={k.para_todos || dele.includes(k.id) ? 'on' : ''}>
-            <input type="checkbox" checked={k.para_todos || dele.includes(k.id)} disabled={k.para_todos}
-              onChange={e => vinculaSkills(m.id, e.target.checked ? [...dele, k.id] : dele.filter(x => x !== k.id))} />
-            <span><b>{k.nome}</b><small>{k.para_todos ? 'Vale para todo o lab. ' : ''}{k.descricao}</small></span>
-          </label>
-        ))}
+        {gavetasDeSkills(estado.skills).map(g => {
+          // a gaveta que já tem skill de quem está sendo treinado começa aberta
+          const marcadas = g.skills.filter(k => k.para_todos || dele.includes(k.id)).length;
+          return (
+            <Gaveta key={g.id} titulo={g.nome} conta={marcadas ? `${marcadas} de ${g.skills.length}` : quantas(g.skills.length, 'skill', 'skills')} aberta={marcadas > 0}>
+              <div>{g.skills.map(k => (
+                <label key={k.id} className={k.para_todos || dele.includes(k.id) ? 'on' : ''}>
+                  <input type="checkbox" checked={k.para_todos || dele.includes(k.id)} disabled={k.para_todos}
+                    onChange={e => vinculaSkills(m.id, e.target.checked ? [...dele, k.id] : dele.filter(x => x !== k.id))} />
+                  <span><b>{k.nome}</b><small>{k.para_todos ? 'Vale para todo o lab. ' : ''}{k.descricao}</small></span>
+                </label>
+              ))}</div>
+            </Gaveta>
+          );
+        })}
       </fieldset>
       <form className="treinar" onSubmit={async e => { e.preventDefault(); if (pronto && (await criaSkill({ ...skillDeTreino(t), para_todos: false }, m.id))) { setT({ tarefa: '', passos: '', exemplo: '' }); setEnsinou(true); setTimeout(() => setEnsinou(false), 2500); } }}>
         <h4>Treinar {m.nome} em uma tarefa nova</h4>
@@ -246,7 +267,10 @@ export function Treino({ m }: { m: Agente }) {
         <textarea id="te" rows={3} value={t.exemplo} onChange={e => setT({ ...t, exemplo: e.target.value })} maxLength={5000} placeholder="Cole uma entrega que você considera no nível certo" />
         <div className="linha"><button className="primario" type="submit" disabled={!pronto}>Ensinar</button>{ensinou && <span className="ok" role="status">Virou skill de {m.nome}</span>}</div>
       </form>
-      {!m.base && <p className="nota">Especialista criado pelos sócios. <Apagar oque={`${m.nome} do lab`} verbo="Desligar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>}
+      {!m.base && !m.ativo && <p className="nota">{convidadoDe(m.id) ? `${m.nome} voltou para o banco de convidados. Dá para chamar de novo pela lista de pessoas.` : `${m.nome} não está mais no lab.`}</p>}
+      {!m.base && m.ativo && (convidadoDe(m.id)
+        ? <p className="nota">Veio do banco de convidados. Ao dispensar, volta para o banco e guarda o que aprendeu. <Apagar oque={`${m.nome} do lab`} verbo="Dispensar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>
+        : <p className="nota">Especialista criado pelos sócios. <Apagar oque={`${m.nome} do lab`} verbo="Desligar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>)}
     </div>
   );
 }
@@ -310,25 +334,59 @@ export function Skills() {
   );
   return (
     <div className="skills">
-      <div className="linha"><button className="primario" onClick={() => abre(null)}>Nova skill</button><p className="nota">Skill é o jeito V30 de fazer uma coisa, escrito uma vez e usado por quem for treinado nela.</p></div>
-      <ul>
-        {estado.skills.map(k => {
-          const quem = k.para_todos ? equipe : equipe.filter(a => (estado.vinculos[a.id] ?? []).includes(k.id));
-          return (
-            <li key={k.id}>
-              <div><b>{k.nome}</b><small>{k.descricao || k.conteudo.slice(0, 110)}</small>
-                <span className="quem">{k.para_todos ? 'Todo o lab' : quem.length ? quem.slice(0, 8).map(a => <Retrato key={a.id} id={a.id} tamanho={22} />) : 'Ninguém treinado ainda'}</span></div>
-              <span className="linha"><button className="leve mini" onClick={() => abre(k)}>Editar</button>
-                <Apagar oque={`a skill ${k.nome}`} apaga={() => apagaSkill(k.id)} /></span>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="linha"><button className="primario" onClick={() => abre(null)}>Nova skill</button><p className="nota">Skill é o jeito V30 de fazer uma coisa, escrito uma vez e usado por quem for treinado nela. Para treinar alguém, abra a ficha da pessoa e marque a skill.</p></div>
+      <div className="gavetas">{gavetasDeSkills(estado.skills).map((g, i) => (
+        <Gaveta key={g.id} titulo={g.nome} conta={quantas(g.skills.length, 'skill', 'skills')} resumo={g.skills.map(k => k.nome).join(', ')} aberta={i < 2}>
+          <ul>
+            {g.skills.map(k => {
+              const quem = k.para_todos ? equipe : equipe.filter(a => (estado.vinculos[a.id] ?? []).includes(k.id));
+              return (
+                <li key={k.id}>
+                  <div><b>{k.nome}</b><small>{k.descricao || k.conteudo.slice(0, 110)}</small>
+                    <span className="quem">{k.para_todos ? 'Todo o lab' : quem.length ? quem.slice(0, 8).map(a => <Retrato key={a.id} id={a.id} tamanho={22} />) : 'Ninguém treinado ainda'}</span></div>
+                  <span className="linha"><button className="leve mini" onClick={() => abre(k)}>Editar</button>
+                    <Apagar oque={`a skill ${k.nome}`} apaga={() => apagaSkill(k.id)} /></span>
+                </li>
+              );
+            })}
+          </ul>
+        </Gaveta>
+      ))}</div>
       <Bloco icone="skills" titulo="Comece por um modelo">
         <p className="nota">Esqueletos para você completar com o jeito V30 de fazer.</p>
         <ul className="modelos-skill">{MODELOS_DE_SKILL.filter(m => !estado.skills.some(k => k.nome === m.nome)).map(m => <li key={m.nome}><button type="button" onClick={() => comeca(m)}><b>{m.nome}</b><small>{m.descricao}</small></button></li>)}</ul>
       </Bloco>
     </div>
+  );
+}
+
+/** Banco de convidados: especialistas que ficam fora do mapa até um sócio chamar. Aparecem por função, uma gaveta para cada. */
+function Banco({ abre }: { abre: (id: string) => void }) {
+  const { estado, chamaConvidado } = useEstado();
+  const { de } = useEquipe();
+  const [chamando, setChamando] = useState<string | null>(null);
+  const funcoes = bancoPorFuncao(estado.agentes);
+  if (!funcoes.length) return null;
+  const chama = async (id: string) => { setChamando(id); try { const quem = await chamaConvidado(id); if (quem) abre(quem); } finally { setChamando(null); } };
+  return (
+    <Bloco icone="pessoas" titulo="Banco de convidados">
+      <p className="nota">Especialistas que ficam fora do mapa até o projeto pedir, separados por função. Quem é chamado entra na equipe com o método dele e já pode receber missão. Quem é dispensado volta para cá e guarda o que aprendeu.</p>
+      <div className="banco">{funcoes.map(f => (
+        <Gaveta key={f.id} titulo={f.nome} conta={quantas(f.gente.length, 'pessoa', 'pessoas')} resumo={f.gente.map(c => c.papel).join(', ')}>
+          <ul>{f.gente.map(c => {
+            // quem já passou pelo lab volta com o nome e o papel que os sócios deram
+            const antes = de(idDoConvidado(c)), nome = antes?.nome ?? c.nome, papel = antes?.papel ?? c.papel;
+            return (
+              <li key={c.id} style={{ ['--c' as string]: ZONAS.find(z => z.id === (antes?.zona ?? c.zona))?.cor ?? '#C5AA81' }}>
+                <i className="sigla" aria-hidden="true">{nome[0]}</i>
+                <span><b>{nome}</b><small>{papel}</small><em>{c.chamar}</em></span>
+                <button type="button" className="leve mini" disabled={chamando !== null} onClick={() => chama(c.id)} aria-label={`Chamar ${nome}, ${papel.toLowerCase()}`}>{chamando === c.id ? 'Chamando' : 'Chamar'}</button>
+              </li>
+            );
+          })}</ul>
+        </Gaveta>
+      ))}</div>
+    </Bloco>
   );
 }
 
@@ -344,7 +402,8 @@ export function PainelPessoas({ abre }: { abre: (id: string) => void }) {
       const dele = estado.tarefas.filter(t => t.agente === e.id), faz = dele.filter(t => t.estado === 'fazendo').length, fila = dele.filter(t => t.estado === 'fila').length;
       const z = ZONAS.find(q => q.id === e.zona);
       return <li key={e.id} style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}><button onClick={() => abre(e.id)}><Retrato id={e.id} tamanho={48} /><span><b>{e.nome}</b><small>{e.papel}</small>
-        <span className="situacao"><i className={faz ? 'fazendo' : fila ? 'fila' : 'livre'}>{faz ? `${faz} em andamento` : fila ? `${fila} na fila` : 'Livre'}</i><em>{z?.curto ?? z?.nome}</em></span></span></button></li>;
+        <span className="situacao"><i className={faz ? 'fazendo' : fila ? 'fila' : 'livre'}>{faz ? `${faz} em andamento` : fila ? `${fila} na fila` : 'Livre'}</i><em>{convidadoDe(e.id) ? 'Convidado' : z?.curto ?? z?.nome}</em></span></span></button></li>;
     })}</ul>
+    <Banco abre={abre} />
   </>);
 }
