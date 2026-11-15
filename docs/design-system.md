@@ -83,3 +83,23 @@ Grade de 4: `--s1` 4, `--s2` 8, `--s3` 12, `--s4` 16, `--s5` 24, `--s6` 32.
 - Página da esquerda do livro nunca fica só com o título: leva foto colada, etiquetas de número ou roteiro
 - Cor de sala aparece como faixa lateral no cartão, não como fundo
 - Valor novo de letra, raio ou tempo entra primeiro em `tokens.css`
+
+## Leis de UX que valem aqui
+
+Cada lei vira uma regra que dá para conferir na tela. A coluna da direita diz onde o lab ainda deve.
+
+| Lei | Regra no lab | Onde já vale | Onde ainda deve |
+|---|---|---|---|
+| Hick | Uma decisão principal por tela. Escolha com mais de sete opções vem agrupada ou com sugestão | Briefing com uma pergunta por vez; modelos de pedido | Menu com 13 itens, mesmo agrupado em quatro blocos |
+| Miller e agrupamento | Lista longa vira grupos de até sete | Menu por assunto; quadro em três colunas | Kanban do projeto com muitas missões numa coluna só |
+| Fitts | Ação principal grande e perto de onde a mão já está. Alvo de 44 no celular | Console na base da tela; alvos corrigidos nesta rodada | Fechar o livro fica longe do conteúdo em tela inteira |
+| Jakob | Padrão conhecido antes de invenção: kanban, calendário, abas, conversa | Painéis; briefing em formato de conversa | Menu vertical de diário pede um primeiro uso para entender |
+| Tesler | A complexidade fica com o lab, não com o sócio | Orquestração divide o pedido; plano vem pronto para aprovar | Configuração de chave e acesso ainda é manual no painel da Cloudflare |
+| Estética e usabilidade | Tudo que parece igual é igual | Sete letras, cinco raios, três tempos | Cores ainda têm valores soltos fora das variáveis |
+| Pico e fim | O momento da entrega e o fecho do pedido são os mais cuidados | Carimbo de feito; resposta ao pedido em destaque | Fecho do pedido não tem um momento próprio no mapa |
+| Limiar de Doherty | Resposta em menos de 400 ms ou sinal de que algo anda | Atualização otimista; Clara digitando; balão no mapa | Primeira carga do mapa passa de um segundo |
+| Reconhecer em vez de lembrar | Opção à vista em vez de campo em branco | Respostas prontas no briefing; modelos de pedido; skills marcáveis | Dar missão ainda é um campo livre, sem sugestão |
+| Gradiente de meta | Progresso sempre visível perto do fim | Roteiro do briefing; barras por projeto; dia do ciclo | Pedido em execução mostra contagem, mas não uma barra |
+| Von Restorff | Uma ação primária por tela, em verde tinta | Botão primário único por formulário | Fecho do briefing tem cinco botões lado a lado |
+| Região comum e proximidade | O que é do mesmo assunto fica no mesmo bloco | Bloco com cabeçalho; etiquetas de número | Agenda, Decisões e Memória ainda são listas soltas |
+| Prova social | Não se aplica: ferramenta interna, sem número inventado | | |
