@@ -30,7 +30,7 @@ const CASA = 0.5; // casas do piso desenhadas no modo Mover, em metros
 const TINTA = 0x3B2F25, OURO = 0xC99A3A, PAPEL = 0xfaf3df;
 const SEGUE = 7; // taxa do seguidor da câmera, por segundo
 /** Móveis que respondem ao clique, com a altura do tampo onde o clique pega (m). */
-const CLICAVEIS: Record<string, number> = { pingpong: 0.76 };
+const CLICAVEIS: Record<string, number> = { pingpong: 0.76, radio: 0.9 };
 /** Leva v até o alvo andando no máximo `passo`. */
 const rumo = (v: number, alvo: number, passo: number) => v + Math.sign(alvo - v) * Math.min(Math.abs(alvo - v), passo);
 const sai = (p: number) => p * (2 - p); // desacelera no fim

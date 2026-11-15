@@ -9,7 +9,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'base_bpy.py'
 exec(open(os.path.join(AQUI, 'moveis_bpy.py')).read())
 from mathutils import Vector, Matrix, Quaternion
 from bpy_extras.object_utils import world_to_camera_view
-sys.path.insert(0, '/home/claude/savior-lps/arte')
+sys.path.insert(0, AQUI)   # elenco.py e pessoa_mpfb.py moram ao lado deste arquivo
 from pessoa_mpfb import monta
 for _m in MATS.values(): _m.use_fake_user = True
 from elenco import ELENCO, CADEIRA

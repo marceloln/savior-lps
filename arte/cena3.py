@@ -90,7 +90,29 @@ def sofa(w=2.2, cor='salvia'):
     caixa('braco', (0.2, 0.85, 0.3), (-w/2 + 0.1, 0, 0.55), m, ch=0.07); caixa('braco', (0.2, 0.85, 0.3), (w/2 - 0.1, 0, 0.55), m, ch=0.07)
     for dx in (-w/4, w/4): caixa('almofada', (w/2 - 0.2, 0.7, 0.14), (dx, 0.03, 0.48), m, ch=0.06)
     caixa('almofada_t', (0.42, 0.14, 0.38), (w/4, -0.18, 0.7), TEC['terracota'], rot=(-0.25, 0, -0.2), ch=0.06)
-def pufe(cor): esfera('pufe', 0.32, (0, 0, 0.2), TEC[cor], esc=(1, 1, 0.62), seg=32)
+def pufe(cor, s=1.0):
+    """Pufe de sentar afundado: a base larga e as costas que sobem atrás, do lado de -y."""
+    esfera('pufe', 0.46 * s, (0, 0, 0.25 * s), TEC[cor], esc=(1, 1, 0.56), seg=32)
+    esfera('pufe_costas', 0.33 * s, (0, -0.2 * s, 0.47 * s), TEC[cor], esc=(1, 0.78, 0.95), seg=32)
+def radio_v30():
+    """Canto da Rádio V30: fundo verde com o logo oficial, aparador com o aparelho, caixas de som, microfone e discos. A frente olha para +y."""
+    caixa('radio_fundo', (1.7, 0.06, 1.25), (0, -0.27, 1.02), V_VERDE, ch=0.006); logo_em_painel(1.1, (0, -0.237, 1.42))
+    for sx in (-0.78, 0.78): caixa('radio_pe', (0.05, 0.05, 1.64), (sx, -0.27, 0.82), PRETO)
+    caixa('aparador', (1.5, 0.45, 0.05), (0, 0, 0.72), COMP, ch=0.008); caixa('prateleira', (1.38, 0.4, 0.03), (0, 0, 0.3), COMP)
+    for sx in (-0.7, 0.7): caixa('aparador_pe', (0.045, 0.4, 0.7), (sx, 0, 0.35), PRETO)
+    madeira = mat('radio_madeira', '#8A5A3A', 0, 0.5)
+    caixa('radio', (0.52, 0.2, 0.28), (0, 0, 0.885), madeira, ch=0.03); caixa('radio_tela', (0.3, 0.012, 0.19), (-0.08, 0.102, 0.885), TEC['creme'])
+    cil('radio_dial', 0.05, 0.012, (0.16, 0.104, 0.93), cor_mat('#F0EAD6', 0.3), rot=(math.pi / 2, 0, 0))
+    for dx in (0.12, 0.2): cil('radio_botao', 0.018, 0.02, (dx, 0.108, 0.82), PRETO, rot=(math.pi / 2, 0, 0))
+    cil('radio_antena', 0.004, 0.46, (0.21, -0.04, 1.22), PRETO, rot=(0, 0.4, 0))
+    for sx in (-0.56, 0.56):
+        caixa('caixa_som', (0.2, 0.2, 0.36), (sx, 0, 0.925), PRETO, ch=0.02)
+        cil('falante', 0.072, 0.01, (sx, 0.102, 0.96), cor_mat('#3A3F3C', 0.6, 0.2), rot=(math.pi / 2, 0, 0)); cil('agudo', 0.028, 0.01, (sx, 0.102, 0.82), cor_mat('#3A3F3C', 0.6, 0.2), rot=(math.pi / 2, 0, 0))
+    cil('mic_base', 0.06, 0.014, (-0.3, 0.14, 0.752), PRETO); cil('mic_haste', 0.008, 0.2, (-0.3, 0.14, 0.85), PRETO)
+    esfera('mic', 0.036, (-0.3, 0.14, 0.975), cor_mat('#9A9C98', 0.35, 0.8), esc=(1, 1, 1.25))
+    for i, c in enumerate(['#C9603F', '#2F5A4C', '#D9C29A', '#20352F', '#C5AA81', '#8FA58A', '#E9E1CE', '#C9603F', '#D9C29A']):
+        caixa('disco', (0.014, 0.31, 0.31), (-0.56 + i * 0.034, 0, 0.47), cor_mat(c, 0.7), rot=(0, 0.05 * (i % 3 - 1), 0))
+    caixa('caixote', (0.36, 0.33, 0.24), (0.42, 0, 0.435), COMP, ch=0.01)
 def mesa_centro(r=0.42, h=0.42):
     cil('tampo', r, 0.035, (0, 0, h), COMP, v=48)
     for k in range(3):
@@ -385,7 +407,10 @@ for i in range(3): ponto('sofa', loc(vz, -0.7 + i * 0.7, 0.8), 'n')
 vz = peca('cafe', *P('lounge', 9.0, 0.9), 0, cafe, info='cafe')
 for i in range(3): ponto('cafe', loc(vz, -1.0 + i * 0.7, 0.85), 'n')
 peca('fliperama', *P('lounge', 5.6, 0.7), 0, fliperama, info='fliperama'); peca('fliperama2', *P('lounge', 6.3, 0.7), 0, fliperama, info='fliperama')
-peca('pufe_l1', *P('lounge', 4.6, 3.9), 0, lambda: pufe('areia')); peca('pufe_l2', *P('lounge', 8.2, 3.6), 0, lambda: pufe('terracota')); peca('pufe_l3', *P('lounge', 4.4, 4.9), 0, lambda: pufe('verde'))
+peca('pufe_l1', *P('lounge', 4.5, 3.6), 200, lambda: pufe('areia', 1.15)); peca('pufe_l2', *P('lounge', 8.1, 3.3), 150, lambda: pufe('terracota', 1.15)); peca('pufe_l3', *P('lounge', 4.4, 4.9), 250, lambda: pufe('verde'))
+peca('pufe_l4', *P('lounge', 8.5, 4.6), 110, lambda: pufe('salvia', 1.1)); peca('pufe_l5', *P('lounge', 9.9, 3.6), 90, lambda: pufe('creme')); peca('pufe_l6', *P('lounge', 9.7, 2.3), 60, lambda: pufe('lilas', 0.95))
+# Rádio V30: encostada na borda de cima do lounge, entre a parede e a mesa de pingue-pongue
+vz = peca('radio', *P('lounge', 2.3, 0.55), 0, radio_v30, info='radio'); ponto('radio', loc(vz, 0.2, 0.75), 'n')
 peca('planta_lo1', *P('lounge', 0.5, 4.9), 0, lambda: planta(1.6, 0.32)); peca('pend_l', *P('lounge', 6.3, 3.4), 0, lambda: luminaria_pend(2.3), obst=False)
 # atendimento
 vz = peca('recepcao', *P('atendimento', 3.0, 2.2), 0, recepcao, info='balcao'); ponto('clara', loc(vz, 0, -0.8), 's'); ponto('cliente', loc(vz, 0, 1.0), 'n')

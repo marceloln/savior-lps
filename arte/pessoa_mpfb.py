@@ -59,9 +59,24 @@ def tira_camiseta(obj, cintura):
         if f.calc_center_median().z > cintura and not (b - r > 0.08): fora.append(f)
     bmesh.ops.delete(bm, geom=fora, context='FACES'); bm.to_mesh(obj.data); bm.free()
 
+def corta_bermuda(arm, corpo, base, acima):
+    """Transforma a calça da roupa de base em bermuda. O pacote de roupas não tem bermuda, então a calça
+    é cortada a tantos metros acima do joelho e o corpo ganha de volta a perna que a roupa escondia."""
+    import bmesh
+    corte = arm.data.bones['calf_l'].head_local.z + acima
+    for o in arm.children_recursive:
+        if o.type == 'MESH' and ('.' + base) in o.name:
+            bm = bmesh.new(); bm.from_mesh(o.data)
+            # corte por plano, para a barra sair reta
+            bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, corte), plane_no=(0, 0, 1), clear_inner=True)
+            bm.to_mesh(o.data); bm.free()
+    g = corpo.vertex_groups.get('Delete.' + base)
+    # a perna volta a existir até dez centímetros acima da barra, para o fim dela ficar escondido dentro da bermuda
+    if g: g.remove([v.index for v in corpo.data.vertices if v.co.z < corte + 0.10])
+
 def monta(f, nome="pessoa"):
     info = ficha_base()
-    info.update({k: v for k, v in f.items() if k not in ("tinta", "fen", "por_cima")})
+    info.update({k: v for k, v in f.items() if k not in ("tinta", "fen", "por_cima", "bermuda")})
     info["phenotype"].update(f.get("fen", {}))
     info["name"] = nome
     cfg = HumanService.get_default_deserialization_settings(); cfg["subdiv_levels"] = 0
@@ -71,7 +86,9 @@ def monta(f, nome="pessoa"):
         for o in arm.children_recursive:
             if parte in o.name: tinge(o, cor)
     if f.get("por_cima"):
-        base = f["clothes"][0].split("/")[0]
+        base = f["clothes"][0].split("/")[0]; cintura = arm.data.bones['pelvis'].head_local.z - 0.12
         for o in arm.children_recursive:
-            if ("." + base) in o.name: tira_camiseta(o, arm.data.bones['pelvis'].head_local.z - 0.12)
+            if ("." + base) in o.name: tira_camiseta(o, cintura)
+    if f.get("bermuda") is not None:
+        corta_bermuda(arm, corpo, f["clothes"][0].split("/")[0], f["bermuda"])
     return arm, corpo

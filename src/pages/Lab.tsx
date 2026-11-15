@@ -13,6 +13,7 @@ import { AreaDoSocio, Carregando, CartaoLugar, Console, FotoLugar, FasesIlustrad
 import { Retrato } from '../components/Retrato';
 import { JeitoDe, MesaDe } from '../components/Mesa';
 import { ComoJogar, Pong } from '../components/Pong';
+import { BotaoDaRadio, Radio, SobreARadio } from '../components/Radio';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
 import { ZONAS } from '../lib/lab';
@@ -27,7 +28,13 @@ import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, s
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba; novo?: boolean; pre?: { setor: string; situacao: string } } | { tipo: 'briefing' } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
-  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | { tipo: 'mesa'; id: string } | { tipo: 'pong' } | null;
+  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | { tipo: 'mesa'; id: string } | { tipo: 'pong' } | { tipo: 'radio' } | null;
+
+/** O que o mapa deixa clicar além de gente, sala e tela: o nome que aparece na dica e o convite. */
+const OBJETOS: Record<string, { nome: string; convite: string }> = {
+  pingpong: { nome: 'Mesa de pingue-pongue', convite: 'Clique para jogar Pong' },
+  radio: { nome: 'Rádio V30', convite: 'Clique para ouvir' },
+};
 
 const SOBRE_ABA: Record<Aba, string> = {
   pedidos: 'Diga o que precisa. A orquestração divide, a equipe entrega e você recebe a resposta pronta.',
@@ -129,7 +136,7 @@ export function Lab() {
     if (!alvo) { setZona(null); return; }
     if (alvo.tipo === 'zona') { abreSala(alvo.id); return; }
     if (alvo.tipo === 'tela') { abreFerramenta(alvo.ferramenta); return; }
-    if (alvo.tipo === 'objeto') { if (alvo.id === 'pingpong') setAberto({ tipo: 'pong' }); return; }
+    if (alvo.tipo === 'objeto') { if (alvo.id === 'pingpong') setAberto({ tipo: 'pong' }); if (alvo.id === 'radio') setAberto({ tipo: 'radio' }); return; }
     // clicar numa pessoa aproxima a câmera (no mapa) e abre a mesa dela
     setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false); setAberto({ tipo: 'mesa', id: alvo.agente.id });
   }, [abreSala, abreFerramenta]);
@@ -204,6 +211,8 @@ export function Lab() {
         ilustracao: jeito, corpo: <><MesaDe key={p.id} m={p} zona={z.nome} /><div className="so-celular">{jeito}</div></> };
     } else if (mostrado.tipo === 'pong') {
       folha = { titulo: 'Pingue-pongue', sobre: 'Pong clássico na mesa do lounge. Vence quem fizer sete.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, largo: true, ilustracao: <ComoJogar />, corpo: <Pong /> };
+    } else if (mostrado.tipo === 'radio') {
+      folha = { titulo: 'Rádio V30', sobre: 'A trilha do lab, composta na hora. Escolha a estação e deixe tocando.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, ilustracao: <SobreARadio />, corpo: <Radio /> };
     } else if (mostrado.tipo === 'conversa') {
       const p = de(mostrado.id) ?? equipe[0];
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');
@@ -223,13 +232,14 @@ export function Lab() {
         ilustracao: <figure className="foto-colada"><FotoLugar zona={z.id} lab={lab} larg={300} alt={190} esc={0.62} /><figcaption>{z.nome}</figcaption></figure>,
         corpo: <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }} aoDar={anota}
           conversa={id => { setEscolhido(id); setAberto({ tipo: 'conversa', id }); }} darMissao={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id, aba: 'visao', foca: true }); }}
-          briefing={() => setAberto({ tipo: 'briefing' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /> };
+          briefing={() => setAberto({ tipo: 'briefing' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })}
+          lazer={{ radio: () => setAberto({ tipo: 'radio' }), pong: () => setAberto({ tipo: 'pong' }) }} /> };
     } else if (mostrado.tipo === 'reuniao') {
       folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} /> };
     }
   }
   // onde estou: o menu marca a seção de quem está aberto, mesmo fora das abas
-  const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' || aberto.tipo === 'pong' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
+  const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' || aberto.tipo === 'pong' || aberto.tipo === 'radio' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
   const carregando = !erro && (modo === 'carregando' || !lab || !gente || !mapaPronto);
 
   return (
@@ -241,6 +251,7 @@ export function Lab() {
         <Placa />
         <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>
         <MenuDiario ativa={secao} abre={abreAba} />
+        <BotaoDaRadio abre={() => setAberto({ tipo: 'radio' })} />
         <AreaDoSocio abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} />
       </aside>
       {lab && <CartaoLugar zona={zona} lab={lab} abre={abreSala} oculto={!!aberto} />}
@@ -253,7 +264,7 @@ export function Lab() {
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>
           {dica.alvo.tipo === 'agente'
             ? <><b>{dica.alvo.agente.nome}</b><small>{dica.alvo.agente.papel}</small><small className="acao">Clique para ver a mesa</small></>
-            : dica.alvo.tipo === 'objeto' ? <><b>Mesa de pingue-pongue</b><small className="acao">Clique para jogar Pong</small></>
+            : dica.alvo.tipo === 'objeto' ? <><b>{OBJETOS[dica.alvo.id]?.nome}</b><small className="acao">{OBJETOS[dica.alvo.id]?.convite}</small></>
             : dica.alvo.tipo === 'tela' ? <><b>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.nome}</b><small>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.sobre}</small><small className="acao">Clique para abrir em tela inteira</small></>
             : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para abrir a sala</small></>}
         </div>
