@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Briefing, RoteiroBriefing } from '../components/Briefing';
+import { useBriefing } from '../hooks/useBriefing';
 import { Ferramentas, FERRAMENTAS, type Ferramenta } from '../components/Ferramentas';
 import { linhaDoTempo, resumoDasTelas } from '../lib/ferramentas';
 import { hojeLocal } from '../lib/dados';
@@ -22,7 +24,7 @@ import type { AbaFicha } from '../components/Fichas';
 import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, situacaoEquipe, trofeus } from '../lib/resumo';
 
 type Aberto =
-  | { tipo: 'aba'; aba: Aba; novo?: boolean } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
+  | { tipo: 'aba'; aba: Aba; novo?: boolean; pre?: { setor: string; situacao: string } } | { tipo: 'briefing' } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
   | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | null;
 
 const SOBRE_ABA: Record<Aba, string> = {
@@ -73,6 +75,7 @@ export function Lab() {
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
+  const briefing = useBriefing();
   // as miniaturas das telas do mapa só mudam quando o estado muda
   const telasDoMapa = useMemo(() => resumoDasTelas(estado, hojeLocal()), [estado]);
   // qual ferramenta dos Painéis está aberta e se o livro ocupa a tela inteira
@@ -132,7 +135,7 @@ export function Lab() {
     if (!m) return;
     if (a === 'mover') { setMirando(v => !v); return; }
     setMirando(false);
-    if (a === 'conversar') setAberto(m.id === 'clara' ? { tipo: 'conversa', id: 'clara' } : { tipo: 'conversa', id: m.id });
+    if (a === 'conversar') setAberto(m.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: m.id });
     if (a === 'missao') setAberto({ tipo: 'ficha', id: m.id, aba: 'visao', foca: true });
     if (a === 'memoria') setAberto({ tipo: 'ficha', id: m.id, aba: 'memoria' });
     if (a === 'reuniao') setAberto({ tipo: 'reuniao', com: [m.id] });
@@ -169,7 +172,7 @@ export function Lab() {
         pedidos: <Pedidos p={pedido} />, skills: <Skills />,
         paineis: <Ferramentas qual={ferramenta} muda={setFerramenta} abreProjeto={abreProjeto} escolhe={escolhe} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} />,
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes abreProjeto={abreProjeto} novo={mostrado.novo} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
+        clientes: <Clientes key={mostrado.pre ? mostrado.pre.setor + mostrado.pre.situacao : 'c'} abreProjeto={abreProjeto} novo={mostrado.novo} inicial={mostrado.pre} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <PainelPessoas abre={id => { setEscolhido(id); setZona(de(id)?.zona ?? null); setAberto({ tipo: 'ficha', id }); }} />,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = equipe.filter(e => e.zona === z.id).length;
@@ -189,16 +192,22 @@ export function Lab() {
       const p = de(mostrado.id) ?? equipe[0];
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');
       folha = { titulo: p.id === 'clara' ? 'Briefing com a Clara' : `Conversa com ${p.nome}`, sobre: p.id === 'clara' ? 'Uma pergunta por vez, até fechar o pedido.' : p.papel,
-        voltar: { rotulo: `Ficha de ${p.nome}`, vai: () => setAberto({ tipo: 'ficha', id: p.id }) },
+        voltar: p.id === 'clara' ? { rotulo: 'Briefing guiado', vai: () => setAberto({ tipo: 'briefing' }) } : { rotulo: `Ficha de ${p.nome}`, vai: () => setAberto({ tipo: 'ficha', id: p.id }) },
         ilustracao: <><Retrato id={p.id} tamanho={120} />{p.id === 'clara' && <button className="primario cadastrar" onClick={() => setAberto({ tipo: 'aba', aba: 'clientes', novo: true })}>Cadastrar o cliente deste briefing</button>}{dela.length > 0 && <div className="contexto"><h4>Nas mãos de {p.nome}</h4><ul>{dela.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>{t.titulo}</li>)}</ul></div>}</>,
         corpo: <Chat agente={p.id} setAgente={id => setAberto({ tipo: 'conversa', id })} so /> };
+    } else if (mostrado.tipo === 'briefing') {
+      folha = { titulo: 'Briefing com a Clara', sobre: 'Ela pergunta uma coisa por vez e o briefing vira pedido para a equipe.', largo: true,
+        ilustracao: <><Retrato id="clara" tamanho={96} /><RoteiroBriefing b={briefing} /></>,
+        corpo: <Briefing b={briefing} conversaLivre={() => setAberto({ tipo: 'conversa', id: 'clara' })}
+          pedir={texto => { pedido.planeja(texto, null); setAberto({ tipo: 'aba', aba: 'pedidos' }); }}
+          cadastra={pre => setAberto({ tipo: 'aba', aba: 'clientes', novo: true, pre })} /> };
     } else if (mostrado.tipo === 'sala') {
       const z = ZONAS.find(q => q.id === mostrado.id)!;
       folha = { titulo: z.nome, sobre: SOBRE_ZONA[z.id], cor: z.cor, voltar: { rotulo: 'Lugares', vai: vaiPara('lugares') },
         ilustracao: <figure className="foto-colada"><FotoLugar zona={z.id} lab={lab} larg={300} alt={190} esc={0.62} /><figcaption>{z.nome}</figcaption></figure>,
         corpo: <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }} aoDar={anota}
           conversa={id => { setEscolhido(id); setAberto({ tipo: 'conversa', id }); }} darMissao={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id, aba: 'visao', foca: true }); }}
-          briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /> };
+          briefing={() => setAberto({ tipo: 'briefing' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })} /> };
     } else if (mostrado.tipo === 'reuniao') {
       folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} /> };
     }
@@ -232,7 +241,7 @@ export function Lab() {
       )}
       <Console escolhido={m} mirando={mirando} registro={registro} age={age} ocupado={pedido.ocupado}
         pedir={texto => { pedido.planeja(texto, null); setAberto({ tipo: 'aba', aba: 'pedidos' }); }}
-        briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} solta={() => { setEscolhido(null); setMirando(false); }} />
+        briefing={() => setAberto({ tipo: 'briefing' })} solta={() => { setEscolhido(null); setMirando(false); }} />
       {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha} cheia={cheia} aoAmpliar={() => setCheia(c => !c)}>{folha.corpo}</Livro>}
       {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
