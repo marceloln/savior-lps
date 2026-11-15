@@ -248,3 +248,12 @@ Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao rema
 - Menu do diário agrupado em trabalho, equipe, registro e lab.
 
 109 testes. Passeio em 1440, 1280 e 390 no Worker local com IA simulada.
+
+## Ferramentas vivas, 15 de novembro (issue 32)
+
+- Painéis no menu: Quadro geral de missões, Linha do tempo dos ciclos de 30 dias e Calendário do mês.
+- As telas do cenário mostram a miniatura viva de cada ferramenta: totem do Tráfego com o quadro, tela de Dados com a linha do tempo, TV da Reunião com o calendário. Clique abre em tela inteira.
+- Botão de tela inteira no livro, para qualquer painel.
+- As faixas de fase na linha do tempo são um ritmo de referência (dias 1 a 7, 8 a 14, 15 a 26, 27 a 30). A fase real continua sendo a que o projeto marca.
+
+114 testes. Conferido em 1440, 1280 e 390.

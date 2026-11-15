@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Ferramentas, FERRAMENTAS, type Ferramenta } from '../components/Ferramentas';
+import { linhaDoTempo, resumoDasTelas } from '../lib/ferramentas';
 import { hojeLocal } from '../lib/dados';
 import { paraVoce } from '../lib/pedidos';
 import { MapaPixi, type Alvo } from '../components/MapaPixi';
@@ -25,6 +27,7 @@ type Aberto =
 
 const SOBRE_ABA: Record<Aba, string> = {
   pedidos: 'Diga o que precisa. A orquestração divide, a equipe entrega e você recebe a resposta pronta.',
+  paineis: 'O andamento dos projetos em quadro, linha do tempo e calendário. São as telas do lab, ampliadas.',
   skills: 'O jeito V30 de fazer cada coisa, para treinar a equipe.',
   missoes: 'O que a equipe tem nas mãos agora.',
   clientes: 'Por setor e situação, nunca pelo nome.', projetos: 'A mesa do método e as missões de cada projeto.',
@@ -70,6 +73,13 @@ export function Lab() {
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
+  // as miniaturas das telas do mapa só mudam quando o estado muda
+  const telasDoMapa = useMemo(() => resumoDasTelas(estado, hojeLocal()), [estado]);
+  // qual ferramenta dos Painéis está aberta e se o livro ocupa a tela inteira
+  const [ferramenta, setFerramenta] = useState<Ferramenta>('quadro');
+  const [cheia, setCheia] = useState(false);
+  const abreFerramenta = useCallback((f: Ferramenta) => { setFerramenta(f); setCheia(true); setAberto({ tipo: 'aba', aba: 'paineis' }); }, []);
+  useEffect(() => { if (!aberto) setCheia(false); }, [aberto]);
   // a tela de espera só sai quando o mapa tem as texturas. Se o mapa não avisar em 8 segundos, sai assim mesmo
   const [mapaPronto, setMapaPronto] = useState(false);
   const avisaPronto = useCallback(() => setMapaPronto(true), []);
@@ -110,8 +120,9 @@ export function Lab() {
     setDica(d => ({ ...d, alvo: null }));
     if (!alvo) { setZona(null); return; }
     if (alvo.tipo === 'zona') { abreSala(alvo.id); return; }
+    if (alvo.tipo === 'tela') { abreFerramenta(alvo.ferramenta); return; }
     setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false);
-  }, [abreSala]);
+  }, [abreSala, abreFerramenta]);
   const onMovido = useCallback((ok: boolean) => {
     if (!ok) { anota('Ali tem móvel no caminho. Escolha uma casa verde do piso.'); return; }
     setMirando(false); setEscolhido(id => { const p = id ? de(id) : null; if (p) anota(`${p.nome} está a caminho.`); return id; });
@@ -143,6 +154,7 @@ export function Lab() {
       const ilustracao = {
         pedidos: <Resumo itens={[{ n: estado.pedidos.length - entregues, rotulo: 'Em andamento' }, { n: entregues, rotulo: 'Entregues' }, { n: estado.tarefas.filter(t => t.entrega).length, rotulo: 'Entregas da equipe' }]} nota="Você aprova o plano antes de a equipe começar." />,
         skills: <Resumo itens={[{ n: estado.skills.length, rotulo: 'Skills no lab' }, { n: estado.skills.filter(k => k.para_todos).length, rotulo: 'Valem para todos' }]} nota="Quem é treinado numa skill passa a seguir o que ela diz." />,
+        paineis: <Resumo itens={[{ n: linhaDoTempo(estado, hojeLocal()).projetos.filter(x => x.dia >= 1 && x.dia <= 30).length, rotulo: 'Projetos em ciclo' }, { n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Missões andando' }, { n: estado.reunioes.filter(r => r.status === 'agendada').length, rotulo: 'Reuniões marcadas' }]} nota="As mesmas telas que estão nas paredes do lab." />,
         missoes: <Resumo itens={[{ n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Fazendo agora' }, { n: estado.tarefas.filter(t => t.estado === 'fila').length, rotulo: 'Na fila' }, { n: estado.tarefas.filter(t => t.estado === 'feito').length, rotulo: 'Feitas' }]} nota="Missão boa cabe numa frase e tem dono." />,
         clientes: <Resumo itens={clientesPorEtapa(estado).map(x => ({ n: x.n, rotulo: x.etapa }))} nota="Cliente entra em conversa e só vira projeto com diagnóstico." />,
         projetos: p ? <>{p.mesa && <figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure>}<FasesIlustradas fase={p.fase} /></> : null,
@@ -155,6 +167,7 @@ export function Lab() {
       }[a];
       const corpo = {
         pedidos: <Pedidos p={pedido} />, skills: <Skills />,
+        paineis: <Ferramentas qual={ferramenta} muda={setFerramenta} abreProjeto={abreProjeto} escolhe={escolhe} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} />,
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
         clientes: <Clientes abreProjeto={abreProjeto} novo={mostrado.novo} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <PainelPessoas abre={id => { setEscolhido(id); setZona(de(id)?.zona ?? null); setAberto({ tipo: 'ficha', id }); }} />,
@@ -165,7 +178,7 @@ export function Lab() {
         memoria: estado.memorias.length ? <ul className="notas">{estado.memorias.map(n => <li key={n.id}><p>{n.texto}</p><footer><button className="link" onClick={() => setAberto({ tipo: 'ficha', id: n.agente, aba: 'memoria' })}>{de(n.agente)?.nome ?? 'Quem saiu do lab'}</button></footer></li>)}</ul>
           : <Vazio icone="memoria" acao={{ rotulo: 'Escolher alguém da equipe', vai: vaiPara('pessoas') }}>Ninguém guardou nada ainda. A memória de cada pessoa fica na ficha dela.</Vazio>,
       }[a];
-      folha = { titulo: nome, sobre: SOBRE_ABA[a], largo: a === 'projetos', ilustracao, corpo };
+      folha = { titulo: nome, sobre: SOBRE_ABA[a], largo: a === 'projetos' || a === 'paineis', ilustracao, corpo };
     } else if (mostrado.tipo === 'ficha') {
       const p = de(mostrado.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
       folha = { titulo: p.nome, sobre: p.papel, cor: z.cor, voltar: { rotulo: 'Pessoas', vai: vaiPara('pessoas') },
@@ -197,7 +210,7 @@ export function Lab() {
   return (
     <div className={aberto ? 'lab com-livro' : 'lab'}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
-      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
+      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
         onHover={onHover} onClique={onClique} onMovido={onMovido} />}
       <div className="coluna-esquerda">
         <Placa />
@@ -213,13 +226,14 @@ export function Lab() {
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>
           {dica.alvo.tipo === 'agente'
             ? <><b>{dica.alvo.agente.nome}</b><small>{dica.alvo.agente.papel}</small><small className="acao">Clique para escolher</small></>
+            : dica.alvo.tipo === 'tela' ? <><b>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.nome}</b><small>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.sobre}</small><small className="acao">Clique para abrir em tela inteira</small></>
             : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para abrir a sala</small></>}
         </div>
       )}
       <Console escolhido={m} mirando={mirando} registro={registro} age={age} ocupado={pedido.ocupado}
         pedir={texto => { pedido.planeja(texto, null); setAberto({ tipo: 'aba', aba: 'pedidos' }); }}
         briefing={() => setAberto({ tipo: 'conversa', id: 'clara' })} solta={() => { setEscolhido(null); setMirando(false); }} />
-      {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha}>{folha.corpo}</Livro>}
+      {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha} cheia={cheia} aoAmpliar={() => setCheia(c => !c)}>{folha.corpo}</Livro>}
       {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}
     </div>
