@@ -13,7 +13,7 @@ px = C[0] + R[0] * u + U[0] * v + D[0] * t
 py = C[1] + R[1] * u + U[1] * v + D[1] * t
 X, Y = L['X'], L['Y']
 dentro = (px > -0.35) & (px < X + 0.35) & (py > -0.35) & (py < Y + 0.35)
-dentro |= (px > -4.6) & (px < -2.2) & (py > 10.2) & (py < 15.8)   # escultura V30
+dentro |= (px > -6.9) & (px < -0.6) & (py > 9.5) & (py < 16.0)   # totem da marca: o logo fica nítido
 # distância até o deck, para o desfoque crescer com a distância
 dx = np.maximum(np.maximum(-px, px - X), 0); dy = np.maximum(np.maximum(-py, py - Y), 0)
 dist = np.hypot(dx, dy)
@@ -29,7 +29,7 @@ cinza = fora.mean(axis=2, keepdims=True); fora = fora * 0.8 + cinza * 0.2
 nit = np.asarray(im).astype(np.float64)
 out = nit * m[..., None] + fora * (1 - m[..., None])
 Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save('lab.webp', quality=86, method=6)
-Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).resize((W // 3, H // 3)).save('/tmp/claude-0/-home-claude/38bcdef3-8223-5140-b391-c4a3049f88a7/scratchpad/lab_pos.jpg', quality=88)
+pass  # prévia opcional
 d = d16.astype(np.uint32); rg = np.zeros((H, W, 3), np.uint8); rg[..., 0] = d >> 8; rg[..., 1] = d & 255
 Image.fromarray(rg).save('lab_prof_rg.png', optimize=True)
 print('ok', W, H)

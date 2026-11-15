@@ -109,3 +109,28 @@ Cada lei vira uma regra que dá para conferir na tela. A coluna da direita diz o
 Menu de altura inteira em verde tinta, com a marca no topo, os itens em quatro grupos nomeados e a área do sócio no pé. Recolhe para 72 de largura e fica só nos ícones, com Vetor30 virando V30. A escolha fica guardada no navegador. A largura mora na variável `--lado`, e livro, console e cartão do lugar se posicionam a partir dela. No celular a lateral dá lugar à barra de cima.
 
 A área do sócio mostra o e-mail que o login da equipe entrega pela rota `/api/eu`. Sem o login ligado, mostra Visitante e leva às Conexões.
+
+## Marca
+
+O logo é sempre o arquivo oficial, em `src/ui/marca/`, pelo componente `Marca`. Texto em fonte no lugar do logo não entra.
+
+| Onde | Versão | Cor |
+|---|---|---|
+| Menu lateral aberto | Vetor30 | creme e areia sobre o verde |
+| Menu recolhido | V30 | creme e areia sobre o verde |
+| Celular | V30 | verde e areia sobre papel |
+| Tela de espera | Vetor30 | verde e areia sobre papel |
+| Ícone da aba | V30 | creme sobre o verde, canto arredondado |
+
+A versão cheia fica com 164 px, acima do mínimo de 140. O logo não recebe sombra, contorno nem filtro. O que vale no cenário 3D está em `arte/marca.md`.
+
+## Ambiente
+
+| Peça | Onde | O que faz |
+|---|---|---|
+| `CenaDaMesa` | `components/Mesa.tsx` | A pessoa na mesa, em dois quadros que alternam a cada 430 ms. Com movimento reduzido fica parada |
+| `MesaDe` e `JeitoDe` | `components/Mesa.tsx` | Páginas da direita e da esquerda do livro da mesa: cena, objetos, mural, frase e manias |
+| `Pong` e `ComoJogar` | `components/Pong.tsx` | Jogo no canvas, com as regras em `lib/pong.ts`. Mouse, dedo e teclado |
+| `.etiquetas` | `estilo/ambiente.css` | Lista de pílulas para objetos e cartões do mural |
+
+Movimento: a cena da mesa entra de perto para longe em 300 ms com a curva `--sai`, uma vez, na abertura. O clique na pessoa leva a câmera do mapa até ela antes de o livro abrir. Trânsito e drones param com movimento reduzido, e o drone de entrega fica pousado.

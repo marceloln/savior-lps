@@ -6,9 +6,10 @@ import { criaProjecao, velocidadeDoArrasto, zoomDaRoda, type Amostra } from '../
 import { criaSimulacao, quadroDoPasso, type Agente, type Pessoa } from '../lib/simulacao';
 import { criaPessoa } from './genteShader';
 import { TELA_DA_FERRAMENTA, type ResumoDasTelas } from '../lib/ferramentas';
+import { CICLO, criaTransito, passoDoTransito, vooDeEntrega, vooDePassagem } from '../lib/rua';
 
 export type AtlasGente = { escala: number; q: Record<string, number[]> };
-export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | { tipo: 'tela'; ferramenta: 'quadro' | 'linha' | 'calendario' } | null;
+export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | { tipo: 'tela'; ferramenta: 'quadro' | 'linha' | 'calendario' } | { tipo: 'objeto'; id: string } | null;
 type Props = {
   lab: DadosLab; gente: AtlasGente; equipe: Pessoa[]; zonaAtiva: string | null;
   selecionado: string | null; modoMover: boolean; foco: { zona: string; n: number } | null;
@@ -28,6 +29,8 @@ const QUADROS = { parado: ['parado0', 'parado1'], andar: ['andar0', 'andar1', 'a
 const CASA = 0.5; // casas do piso desenhadas no modo Mover, em metros
 const TINTA = 0x3B2F25, OURO = 0xC99A3A, PAPEL = 0xfaf3df;
 const SEGUE = 7; // taxa do seguidor da câmera, por segundo
+/** Móveis que respondem ao clique, com a altura do tampo onde o clique pega (m). */
+const CLICAVEIS: Record<string, number> = { pingpong: 0.76 };
 /** Leva v até o alvo andando no máximo `passo`. */
 const rumo = (v: number, alvo: number, passo: number) => v + Math.sign(alvo - v) * Math.min(Math.abs(alvo - v), passo);
 const sai = (p: number) => p * (2 - p); // desacelera no fim
@@ -73,25 +76,25 @@ export function MapaPixi(props: Props) {
       const mundo = new Container(); app.stage.addChild(mundo);
       mundo.addChild(new Sprite(fundo));
 
-      // entorno vivo: árvores com vento e carros na rua, desfocados como o resto de fora
+      // entorno vivo: árvores com vento e o trânsito da rua, desfocados como o resto de fora
       const fora = new Container(); const desfoque = new BlurFilter({ strength: 4, quality: 3 });
       fora.filters = [desfoque]; mundo.addChild(fora);
       // o entorno vivo não passa da borda da foto de fundo
       const recorte = new Graphics().rect(0, 0, fundo.width, fundo.height).fill(0xffffff); mundo.addChild(recorte); fora.mask = recorte;
-      const arvores = (lab as DadosLab & { arvores?: { x: number; y: number; s: number; v: number }[] }).arvores ?? [];
+      const arvores = lab.arvores ?? [];
       const copas = arvores.filter(a => texVivo['arvore' + a.v]).map((a, i) => {
         const tex = texVivo['arvore' + a.v], [ax, ay] = ancoras['arvore' + a.v];
         const p = criaPessoa({ ...base0, atlas: tex, folga: 1.6 }); fora.addChild(p.mesh);
         return { ...a, p, q: [0, 0, tex.source.width, tex.source.height, ax, ay], fase: i * 1.7 };
       }).sort((a, b) => proj.profundidade(b.x, b.y) - proj.profundidade(a.x, a.y));
       copas.forEach(c => fora.addChild(c.p.mesh));
-      const rua = (lab as DadosLab & { rua?: { faixas: number[]; x0: number; x1: number } }).rua;
-      const carros = rua ? [0, 1, 2, 3].filter(i => texVivo['carro' + i]).map(i => {
-        const s = new Sprite(texVivo['carro' + i]), [ax, ay] = ancoras['carro' + i];
+      // rua: cada veículo usa o sprite que olha para onde ele vai. De trás para a frente, a pista de menor y fica mais longe
+      const rua = lab.rua, frota = rua ? criaTransito(rua, Object.keys(texVivo)) : [];
+      const carros = [...frota].sort((a, b) => a.y - b.y).map(v => {
+        const s = new Sprite(texVivo[v.sprite]), [ax, ay] = ancoras[v.sprite];
         s.anchor.set(ax / s.texture.width, ay / s.texture.height); fora.addChild(s);
-        const faixa = i % 2;
-        return { s, faixa, x: rua.x0 + (rua.x1 - rua.x0) * (i * 0.27 + 0.1), v: (faixa ? -1 : 1) * (7 + i * 1.3) };
-      }) : [];
+        return { v, s };
+      });
 
       // nomes das salas deitados no piso: a base do texto segue o eixo do chão que vai para a direita na tela
       const nomes = new Container(); mundo.addChild(nomes);
@@ -169,6 +172,13 @@ export function MapaPixi(props: Props) {
       const anel = new Graphics(); anel.visible = false; mundo.addChild(anel);
       const sombras = new Graphics(); mundo.addChild(sombras);
       const camada = new Container(); mundo.addChild(camada);
+      // drones de entrega: voam por fora do deck, acima de tudo, com a sombra no chão
+      const ar = new Container(), nevoa = new BlurFilter({ strength: 1, quality: 2 }); ar.filters = [nevoa]; mundo.addChild(ar);
+      const drones = texVivo.drone0 ? [0, 1].map(() => {
+        const s = new Sprite(texVivo.drone0), [ax, ay] = ancoras.drone0, sombra = new Graphics().ellipse(0, 0, 0.5 * K, 0.25 * K).fill(0x28200f);
+        s.anchor.set(ax / s.texture.width, ay / s.texture.height); s.visible = sombra.visible = false; ar.addChild(sombra, s);
+        return { s, sombra };
+      }) : [];
       const papeis = new Container(); mundo.addChild(papeis);
       const baloes = new Container(); mundo.addChild(baloes);
       const pessoas = new Map(sim.agentes.map(a => { const p = criaPessoa({ ...base0, atlas }); camada.addChild(p.mesh); return [a.id, p]; }));
@@ -193,6 +203,8 @@ export function MapaPixi(props: Props) {
       // ponto do mundo que fica parado sob o cursor enquanto o zoom da roda desliza
       let ancora: { sx: number; sy: number; wx: number; wy: number } | null = null;
       let sob: string | null = null; // pessoa sob o ponteiro
+      const clicaveis = lab.objetos.filter(o => CLICAVEIS[o.info] !== undefined).map(o => ({ id: o.id, h: CLICAVEIS[o.info], r: o.r }));
+      let objetoSob: string | null = null;
       let mira: { x: number; y: number } | null = null, rotaMira: { x: number; y: number }[] = [];
       let focoVisto = 0;
       app.stage.eventMode = 'static'; app.stage.hitArea = app.screen;
@@ -206,6 +218,7 @@ export function MapaPixi(props: Props) {
         if (melhor) return { tipo: 'agente', agente: melhor };
         const tela = telasVivas.find(t => t.dentro(wx, wy));
         if (tela) return { tipo: 'tela', ferramenta: tela.ferramenta };
+        for (const o of clicaveis) { const p = proj.chao(wx, wy, o.h); if (p.x > o.r[0] && p.x < o.r[2] && p.y > o.r[1] && p.y < o.r[3]) return { tipo: 'objeto', id: o.id }; }
         const c = proj.chao(wx, wy), z = zonaEm(lab, c.x, c.y);
         return z ? { tipo: 'zona', id: z.id } : null;
       };
@@ -214,6 +227,7 @@ export function MapaPixi(props: Props) {
       const aponta = (a: Alvo, x = 0, y = 0) => {
         sob = a?.tipo === 'agente' ? a.agente.id : null;
         telaSob = a?.tipo === 'tela' ? a.ferramenta : null;
+        objetoSob = a?.tipo === 'objeto' ? a.id : null;
         app.stage.cursor = a ? 'pointer' : 'default';
         atual.current.onHover(a, x, y);
       };
@@ -268,7 +282,12 @@ export function MapaPixi(props: Props) {
           if (modoMover && selecionado) {
             const p = pontoChao(e.global.x, e.global.y);
             if (sim.livre(p)) { sim.mover(selecionado, p); mira = null; rotaMira = []; atual.current.onMovido(true); } else atual.current.onMovido(false);
-          } else atual.current.onClique(acha(e.global.x, e.global.y));
+          } else {
+            const a = acha(e.global.x, e.global.y);
+            // clicar numa pessoa aproxima a câmera dela; a página decide o que abrir
+            if (a?.tipo === 'agente') { const [fx, fy] = proj.px(a.agente.pos.x, a.agente.pos.y, 0.9); alvo.x = fx; alvo.y = fy; alvo.z = Math.min(zmax(), Math.max(alvo.z, zmax() * 0.8)); ancora = null; }
+            atual.current.onClique(a);
+          }
         }
         // soltou em movimento: o mapa segue um pouco. O alvo vai à frente o bastante para o seguidor sair na mesma velocidade do dedo
         if (arrasto?.moveu && !reduz) {
@@ -338,16 +357,24 @@ export function MapaPixi(props: Props) {
         mundo.scale.set(s); mundo.position.set(app.screen.width / 2 - cam.x * s, app.screen.height / 2 - cam.y * s);
         desfoque.strength = Math.max(1, 5 * s);
 
-        // vento: a copa inclina devagar, cada árvore no seu tempo; carros passam e voltam ao começo da rua
+        // vento: a copa inclina devagar, cada árvore no seu tempo
         for (const c of copas) {
           const [fx, fy] = proj.px(c.x, c.y), vento = reduz ? 0 : (Math.sin(t * 0.9 + c.fase) * 0.6 + Math.sin(t * 2.3 + c.fase * 2) * 0.25) * 9 * c.s;
           c.p.poe(fx, fy, proj.profundidade(c.x, c.y), c.q, false, c.s, 1, vento);
         }
-        if (rua) for (const c of carros) {
-          if (!reduz) c.x += c.v * dt;
-          if (c.x > rua.x1) c.x = rua.x0; if (c.x < rua.x0) c.x = rua.x1;
-          const [cx, cy] = proj.px(c.x, rua.faixas[c.faixa]); c.s.position.set(cx, cy);
+        if (rua) {
+          if (!reduz) passoDoTransito(frota, rua, dt);
+          for (const c of carros) { const [cx, cy] = proj.px(c.v.x, c.v.y); c.s.position.set(cx, cy); }
         }
+        // drones: o primeiro entrega no ponto da calçada, o segundo só cruza a rua lá no alto. Com movimento reduzido, fica pousado
+        nevoa.strength = Math.max(0.4, 1.4 * s);
+        drones.forEach((d, i) => {
+          const v = i === 0 ? (lab.pouso ? vooDeEntrega(reduz ? CICLO.chega + CICLO.desce + 1 : t, lab.pouso, lab) : null) : rua && !reduz ? vooDePassagem(t, rua) : null;
+          d.s.visible = d.sombra.visible = !!v?.noAr;
+          if (!v?.noAr) return;
+          const [dx, dy] = proj.px(v.x, v.y, v.z + (reduz ? 0 : Math.sin(t * 2.2 + i) * 0.06)), [sx, sy] = proj.px(v.x, v.y, 0);
+          d.s.position.set(dx, dy); d.sombra.position.set(sx, sy); d.sombra.alpha = 0.24 * Math.max(0.25, 1 - v.z / 14); d.sombra.scale.set(1 + v.z / 20);
+        });
 
         // nome das salas: só com a vista aberta, quando ainda não dá para ler as placas; some ao aproximar
         nomes.alpha = 0.7 * Math.max(0, Math.min(1, (1.5 - cam.z / zcobre()) / 0.3));
@@ -364,6 +391,8 @@ export function MapaPixi(props: Props) {
           const [x, y, w, h] = z, cor = ZONAS.find(q => q.id === zonaAtiva)!.cor;
           destaque.poly([proj.px(x, y), proj.px(x + w, y), proj.px(x + w, y + h), proj.px(x, y + h)].flat()).fill({ color: cor, alpha: 0.08 }).stroke({ color: cor, width: 3, alpha: 0.85 });
         }
+        const ob = objetoSob ? clicaveis.find(o => o.id === objetoSob) : null;
+        if (ob) destaque.poly([proj.px(ob.r[0], ob.r[1], ob.h), proj.px(ob.r[2], ob.r[1], ob.h), proj.px(ob.r[2], ob.r[3], ob.h), proj.px(ob.r[0], ob.r[3], ob.h)].flat()).fill({ color: OURO, alpha: 0.2 }).stroke({ color: OURO, width: 2 / s, alpha: 0.95 });
         const sel = selecionado ? sim.agentes.find(a => a.id === selecionado) : null;
         if (sel) {
           const cx = (Math.floor(sel.pos.x / CASA) + 0.5) * CASA, cy = (Math.floor(sel.pos.y / CASA) + 0.5) * CASA;

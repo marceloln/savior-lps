@@ -9,6 +9,10 @@ export type DadosLab = {
   pontos: Record<string, Ponto[]>;
   telas: Record<string, Vec3[]>;
   objetos: { id: string; info: string; r: [number, number, number, number]; alt: number }[];
+  /** Árvores de fora (v é o tipo do sprite), a rua com as pistas e o ponto de entrega dos drones. */
+  arvores?: { x: number; y: number; s: number; v: number }[];
+  rua?: { faixas: number[]; ciclo?: number[]; x0: number; x1: number };
+  pouso?: [number, number];
 };
 
 export type Zona = { id: string; nome: string; curto: string; cor: string };

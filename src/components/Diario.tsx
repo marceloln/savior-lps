@@ -1,4 +1,8 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
+import vetor30Creme from '../ui/marca/vetor30-creme.svg';
+import vetor30Verde from '../ui/marca/vetor30-verde.svg';
+import v30Creme from '../ui/marca/v30-creme.svg';
+import v30Verde from '../ui/marca/v30-verde.svg';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Fragment } from 'react';
 import { useEu } from '../hooks/useEu';
@@ -40,12 +44,25 @@ export const SOBRE_ZONA: Record<string, string> = {
 
 export const TEXTO_PREVIA = 'Os dados são de exemplo e o que você mudar some ao recarregar.';
 
+/**
+ * Logo oficial da Vetor30, sempre o arquivo da marca e nunca texto em fonte.
+ * Creme e areia sobre o verde do menu, verde e areia sobre papel. Com o menu recolhido entra a versão curta, V30.
+ */
+export function Marca({ soClara = false }: { soClara?: boolean }) {
+  return (
+    <span className={`marca ${soClara ? 'so-clara' : ''}`} role="img" aria-label="Vetor30">
+      <img className="marca-cheia no-escuro" src={vetor30Creme} alt="" /><img className="marca-curta no-escuro" src={v30Creme} alt="" />
+      <img className="marca-cheia no-claro" src={vetor30Verde} alt="" /><img className="marca-curta no-claro" src={v30Verde} alt="" />
+    </span>
+  );
+}
+
 /** Placa do lab. Em prévia leva um selo único, com o motivo no title. */
 export function Placa() {
   const { modo, motivo } = useEstado();
   return (
     <header className="placa papel-borda">
-      <b><span className="marca-cheia">Vetor30</span><span className="marca-curta" aria-hidden="true">V30</span></b>
+      <Marca />
       <small>Lab, diário de campo</small>
       {modo === 'previa' && <span className="selo-previa" title={`${motivo ?? 'Prévia sem servidor.'} ${TEXTO_PREVIA}`}>Prévia</span>}
     </header>
@@ -78,7 +95,7 @@ export function Vazio({ icone, children, acao }: { icone: NomeIcone; children: R
 export function Carregando() {
   return (
     <div className="carregando" role="status" aria-label="Carregando o lab">
-      <div className="placa papel-borda"><b>Lab V30</b><small>Abrindo o diário</small></div>
+      <div className="placa papel-borda"><Marca soClara /><small>Abrindo o lab</small></div>
       <div className="barra-carga"><i /></div>
     </div>
   );
