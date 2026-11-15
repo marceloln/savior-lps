@@ -10,7 +10,7 @@ import { APARENCIAS, ORQUESTRADOR, type Agente } from '../lib/equipe';
 import { ZONAS } from '../lib/lab';
 import { leMarkdown, type Trecho } from '../lib/markdown';
 import { leModelo, MODELOS, nomeDoModelo } from '../lib/modelos';
-import { gavetasDeSkills, skillDeTreino } from '../lib/skills';
+import { buscaSkills, gavetasDeSkills, skillDeTreino } from '../lib/skills';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { Bloco, Vazio } from './Diario';
@@ -69,11 +69,16 @@ export function SeletorModelo({ id, valor, aoMudar, padrao }: { id: string; valo
 }
 
 /** Botão que põe o especialista para trabalhar na missão. */
+/** Diz o que falta para o botão do formulário ligar. Sem texto, não aparece. */
+function Falta({ texto }: { texto: string }) {
+  return texto ? <p className="ajuda falta" role="status">{texto}</p> : null;
+}
+
 export function Executar({ t, rotulo }: { t: Tarefa; rotulo?: string }) {
   const { executa, executando } = useEstado();
   const rodando = executando.includes(t.id);
   if (t.id < 0) return null;
-  return <button type="button" className="leve mini executar" disabled={rodando} onClick={() => executa(t.id)}>{rodando ? 'Escrevendo' : rotulo ?? (t.entrega ? 'Refazer' : 'Executar')}</button>;
+  return <button type="button" className="leve mini executar" disabled={rodando} onClick={() => executa(t.id)}>{rodando ? 'Escrevendo' : rotulo ?? (t.entrega ? 'Refazer' : 'Pedir entrega')}</button>;
 }
 
 /** A entrega de uma missão, com quem escreveu, pedido de ajuste e o que guardar para a próxima vez. */
@@ -116,12 +121,12 @@ function Plano({ p }: { p: ApiPedido }) {
           <li key={i} style={{ ['--i' as string]: i }}>
             <Retrato id={m.agente} tamanho={36} />
             <div>
-              <label className="so-leitor" htmlFor={'pa' + i}>Quem faz a missão {i + 1}</label>
-              <select id={'pa' + i} value={m.agente} onChange={e => muda(i, { agente: e.target.value })}>{time.map(a => <option key={a.id} value={a.id}>{a.nome}, {a.papel.toLowerCase()}</option>)}</select>
-              <label className="so-leitor" htmlFor={'pt' + i}>Título da missão {i + 1}</label>
-              <input id={'pt' + i} value={m.titulo} onChange={e => muda(i, { titulo: e.target.value })} maxLength={200} />
-              <label className="so-leitor" htmlFor={'pd' + i}>O que entregar na missão {i + 1}</label>
-              <textarea id={'pd' + i} rows={2} value={m.detalhe} onChange={e => muda(i, { detalhe: e.target.value })} maxLength={2000} placeholder="O que entregar e em que formato" />
+              <label className="rotulo" htmlFor={'pa' + i}>Quem faz</label>
+              <select id={'pa' + i} aria-label={`Quem faz a missão ${i + 1}`} value={m.agente} onChange={e => muda(i, { agente: e.target.value })}>{time.map(a => <option key={a.id} value={a.id}>{a.nome}, {a.papel.toLowerCase()}</option>)}</select>
+              <label className="rotulo" htmlFor={'pt' + i}>Missão</label>
+              <textarea id={'pt' + i} rows={2} aria-label={`Título da missão ${i + 1}`} value={m.titulo} onChange={e => muda(i, { titulo: e.target.value })} maxLength={200} />
+              <label className="rotulo" htmlFor={'pd' + i}>O que entregar</label>
+              <textarea id={'pd' + i} rows={2} aria-label={`O que entregar na missão ${i + 1}`} value={m.detalhe} onChange={e => muda(i, { detalhe: e.target.value })} maxLength={2000} placeholder="O que entregar e em que formato" />
             </div>
             <button type="button" className="leve mini" onClick={() => setPlano(l => l.filter((_, j) => j !== i))} aria-label={`Tirar a missão ${i + 1} do plano`}>Tirar</button>
           </li>
@@ -202,6 +207,7 @@ export function Pedidos({ p, rascunho }: { p: ApiPedido; rascunho?: string }) {
           <select id="pedp" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(x => <option key={x.id} value={x.id}>{x.nome}</option>)}</select>
           <button className="primario" type="submit" disabled={texto.trim().length < 8 || p.ocupado} aria-busy={p.corrida.etapa === 'planejando'}>Pedir ao lab</button>
         </div>
+        <Falta texto={p.ocupado ? 'Um pedido já está andando. Espere a resposta para pedir outro.' : texto.trim() && texto.trim().length < 8 ? 'Conte um pouco mais. Uma frase com o que você precisa já basta.' : ''} />
       </form>
       {p.corrida.etapa === 'planejando' && <p className="andamento"><Retrato id={ORQUESTRADOR} tamanho={26} />{nome(ORQUESTRADOR)} está dividindo o pedido em missões.</p>}
       {p.corrida.etapa === 'plano' && <Plano key={p.corrida.texto} p={p} />}
@@ -265,6 +271,7 @@ export function Treino({ m }: { m: Agente }) {
         <textarea id="tp" rows={4} value={t.passos} onChange={e => setT({ ...t, passos: e.target.value })} maxLength={6000} placeholder="Os passos, o que nunca pode faltar e o que evitar" />
         <label htmlFor="te">Exemplo de boa entrega (se tiver)</label>
         <textarea id="te" rows={3} value={t.exemplo} onChange={e => setT({ ...t, exemplo: e.target.value })} maxLength={5000} placeholder="Cole uma entrega que você considera no nível certo" />
+        <Falta texto={!(t.tarefa || t.passos) || pronto ? '' : t.tarefa.trim().length < 3 ? 'Dê um nome à tarefa.' : 'Descreva os passos em pelo menos uma frase.'} />
         <div className="linha"><button className="primario" type="submit" disabled={!pronto}>Ensinar</button>{ensinou && <span className="ok" role="status">Virou skill de {m.nome}</span>}</div>
       </form>
       {!m.base && !m.ativo && <p className="nota">{convidadoDe(m.id) ? `${m.nome} voltou para o banco de convidados. Dá para chamar de novo pela lista de pessoas.` : `${m.nome} não está mais no lab.`}</p>}
@@ -303,6 +310,7 @@ export function NovoEspecialista({ aoCriar }: { aoCriar: (id: string) => void })
         ))}
       </fieldset>
       <p className="nota">Depois de criar, abra a ficha e treine: instruções, skills e memória. Se a sala não tiver mesa vaga, ele trabalha de pé por ali.</p>
+      <Falta texto={!(f.nome || f.papel) || pronto ? '' : f.nome.trim().length < 2 ? 'Diga o nome.' : 'Diga o papel, como Analista de preços.'} />
       <button className="primario" type="submit" disabled={!pronto}>Pôr no lab</button>
     </form>
   );
@@ -317,6 +325,8 @@ export function Skills() {
   const { equipe } = useEquipe();
   const vazia = { nome: '', descricao: '', conteudo: '', para_todos: false };
   const [edita, setEdita] = useState<string | null>(null), [f, setF] = useState(vazia);
+  const [busca, setBusca] = useState('');
+  const achadas = buscaSkills(estado.skills, busca);
   const comeca = (m: { nome: string; descricao: string; conteudo: string }) => { setEdita('nova'); setF({ ...m, para_todos: false }); };
   const abre = (k: Skill | null) => { setEdita(k ? k.id : 'nova'); setF(k ? { nome: k.nome, descricao: k.descricao, conteudo: k.conteudo, para_todos: k.para_todos } : vazia); };
   const pronto = f.nome.trim().length >= 3 && f.conteudo.trim().length >= 20;
@@ -329,14 +339,18 @@ export function Skills() {
       <label htmlFor="sc">O que o especialista precisa saber</label>
       <textarea id="sc" rows={10} value={f.conteudo} onChange={e => setF({ ...f, conteudo: e.target.value })} maxLength={12000} placeholder="Passos, critérios, formato da entrega, o que evitar. Escreva como você explicaria a um consultor novo." />
       <label className="caixa"><input type="checkbox" checked={f.para_todos} onChange={e => setF({ ...f, para_todos: e.target.checked })} /> Vale para todo o lab</label>
+      <Falta texto={!(f.nome || f.conteudo) || pronto ? '' : f.nome.trim().length < 3 ? 'Dê um nome à skill.' : 'Escreva o método em pelo menos uma frase.'} />
       <div className="linha"><button className="primario" type="submit" disabled={!pronto}>Salvar skill</button><button type="button" className="leve" onClick={() => setEdita(null)}>Voltar</button></div>
     </form>
   );
   return (
     <div className="skills">
       <div className="linha"><button className="primario" onClick={() => abre(null)}>Nova skill</button><p className="nota">Skill é o jeito V30 de fazer uma coisa, escrito uma vez e usado por quem for treinado nela. Para treinar alguém, abra a ficha da pessoa e marque a skill.</p></div>
-      <div className="gavetas">{gavetasDeSkills(estado.skills).map((g, i) => (
-        <Gaveta key={g.id} titulo={g.nome} conta={quantas(g.skills.length, 'skill', 'skills')} resumo={g.skills.map(k => k.nome).join(', ')} aberta={i < 2}>
+      <div className="busca-skills"><label htmlFor="bsk">Procurar skill</label><input id="bsk" type="search" value={busca} onChange={e => setBusca(e.target.value)} placeholder="Nome, assunto ou palavra do método" />
+        {busca.trim() && <small role="status">{quantas(achadas.length, 'skill encontrada', 'skills encontradas')}</small>}</div>
+      {busca.trim() && !achadas.length && <p className="vazio">Nenhuma skill com essas palavras. Tente uma só, ou crie a skill que falta.</p>}
+      <div className="gavetas">{gavetasDeSkills(achadas).map((g, i) => (
+        <Gaveta key={g.id + (busca.trim() ? ' busca' : '')} titulo={g.nome} conta={quantas(g.skills.length, 'skill', 'skills')} resumo={g.skills.map(k => k.nome).join(', ')} aberta={!!busca.trim() || i < 2}>
           <ul>
             {g.skills.map(k => {
               const quem = k.para_todos ? equipe : equipe.filter(a => (estado.vinculos[a.id] ?? []).includes(k.id));

@@ -186,7 +186,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:var(--t-13);font-weight:va
 .barra i{display:block;height:100%;background:var(--verde-forte);transform-origin:left;transition:transform var(--d-lento) var(--sai)}
 .barra.verde i{background:var(--verde)}.barra.roxa i{background:var(--roxo)}
 .trofeus li.ok .barra i{background:var(--ouro)}
-.tarefas-agente li{display:flex;gap:var(--s2);align-items:baseline;line-height:1.35}
+.tarefas-agente>li{display:flex;gap:var(--s2);align-items:baseline;line-height:1.35}
 .estado{font:var(--p-forte) var(--t-12) var(--corpo);text-transform:uppercase;padding:var(--s0) var(--s2);border-radius:var(--r-4);background:var(--papel-2);white-space:nowrap}.estado.fazendo{background:var(--tinta);color:var(--creme)}
 .ficha{display:flex;gap:var(--s4);align-items:center;margin-bottom:var(--s3)}
 .ficha .retrato{display:none}
@@ -260,7 +260,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:var(--t-13);font-weight:va
 /* funções novas do HUD */
 .lab.com-livro .coluna-esquerda{z-index:9}
 .console-recado .ultimo{color:var(--texto-2);font-size:var(--t-13)}
-.tarefas-agente li{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}.tarefas-agente .tit{flex:1;min-width:0}
+.tarefas-agente>li{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}.tarefas-agente .tit{flex:1;min-width:0}
 .mini{min-height:var(--h-sm)!important;padding:0 var(--s3)!important;font-size:var(--t-13)!important}
 .nova-linha input{flex:2}.nova-linha select{flex:1;min-width:0}
 .elenco .com-acoes{display:grid;gap:var(--s1)}.acoes-pessoa{display:flex;gap:var(--s2);padding-left:56px}

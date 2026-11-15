@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useEstado } from '../hooks/useEstado';
+import { clienteRepetido } from '../lib/clientes';
 import { useEquipe } from '../hooks/useEquipe';
 import { FASES, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
@@ -36,13 +37,20 @@ function AbreProjeto({ cliente, abreProjeto }: { cliente: string; abreProjeto: (
   );
 }
 
-export function Clientes({ abreProjeto, novo = false, inicial }: { abreProjeto: (id: string) => void; novo?: boolean; inicial?: { setor: string; situacao: string } }) {
+export function Clientes({ abreProjeto, novo = false, inicial, volta }: { abreProjeto: (id: string) => void; novo?: boolean; inicial?: { setor: string; situacao: string }; volta?: { rotulo: string; vai: () => void } }) {
   const { estado, criaCliente, criaProjeto } = useEstado();
   const [form, setForm] = useState(novo);
   const [f, setF] = useState({ setor: inicial?.setor ?? '', situacao: inicial?.situacao ?? '', projeto: '' });
+  const [salvo, setSalvo] = useState<{ id: string; setor: string } | null>(null);
+  const repetido = clienteRepetido(estado.clientes, f.setor, f.situacao);
+  const falta = f.setor.trim().length < 3 ? 'Diga o setor, com pelo menos três letras.' : f.situacao.trim().length < 3 ? 'Diga a situação em uma frase.' : '';
+  // o cliente que acabou de entrar sobe para o topo da lista, para ninguém procurar
+  const lista = salvo ? [...estado.clientes.filter(c => c.id === salvo.id), ...estado.clientes.filter(c => c.id !== salvo.id)] : estado.clientes;
   const salva = async () => {
+    if (repetido === 'igual') return;
     const id = await criaCliente({ setor: f.setor.trim(), situacao: f.situacao.trim() });
     if (!id) return;
+    setSalvo({ id, setor: f.setor.trim() });
     setForm(false); setF({ setor: '', situacao: '', projeto: '' });
     if (f.projeto.trim().length >= 3) { const p = await criaProjeto(id, f.projeto.trim()); if (p) abreProjeto(p); }
   };
@@ -54,13 +62,17 @@ export function Clientes({ abreProjeto, novo = false, inicial }: { abreProjeto: 
           <label>Setor<input autoFocus value={f.setor} onChange={e => setF({ ...f, setor: e.target.value })} placeholder="Rede de postos no interior" maxLength={120} /></label>
           <label>Situação<input value={f.situacao} onChange={e => setF({ ...f, situacao: e.target.value })} placeholder="O que trava a operação hoje, em uma frase" maxLength={300} /></label>
           <label>Projeto<input value={f.projeto} onChange={e => setF({ ...f, projeto: e.target.value })} placeholder="Opcional. Se tiver nome, o projeto já abre no diagnóstico" maxLength={120} /></label>
-          <div className="linha"><button className="primario" type="submit" disabled={f.setor.trim().length < 3 || f.situacao.trim().length < 3}>Cadastrar</button><button type="button" className="leve" onClick={() => setForm(false)}>Desistir</button></div>
+          {repetido === 'igual' && <p className="erro-campo" role="alert">Esse cliente já está na lista, com o mesmo setor e a mesma situação.</p>}
+          {repetido === 'mesmo-setor' && <p className="ajuda">Já existe cliente nesse setor. Se for outro, a situação diferente separa os dois.</p>}
+          {(f.setor || f.situacao) && falta && <p className="ajuda">{falta}</p>}
+          <div className="linha"><button className="primario" type="submit" disabled={!!falta || repetido === 'igual'}>Cadastrar</button><button type="button" className="leve" onClick={() => setForm(false)}>Desistir</button></div>
         </form>
       )}
-      {estado.clientes.map(c => {
+      {salvo && <p className="recado-ok" role="status">Cliente cadastrado: {salvo.setor}.{volta && <button type="button" className="leve mini" onClick={volta.vai}>{volta.rotulo}</button>}</p>}
+      {lista.map(c => {
         const projs = estado.projetos.filter(p => p.cliente_id === c.id);
         return (
-          <article key={c.id} className="cliente">
+          <article key={c.id} className={`cliente ${c.id === salvo?.id ? 'novo' : ''}`}>
             <header><h3>{c.setor}</h3>{projs.length ? <span className="fase" data-f={c.fase}>{FASES[c.fase]}</span> : <span className="fase conversa">Em conversa</span>}</header>
             <p>{c.situacao}</p>
             {projs.map(p => <button key={p.id} className="link" onClick={() => abreProjeto(p.id)}>{p.nome}, {textoDoCiclo(p.inicio, hojeLocal()).toLowerCase()}</button>)}

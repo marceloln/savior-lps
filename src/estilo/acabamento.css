@@ -60,9 +60,9 @@ button:disabled{cursor:default}
 .edita-missao{display:flex;flex-direction:column;gap:var(--s2);width:100%}
 .edita-missao textarea{resize:vertical}
 .edita-missao .linha{align-items:center}
-.tarefas-agente li.editando,.cartao.editando{padding:var(--s3);border:1.5px dashed var(--borda-forte);border-radius:var(--r-8);background:rgba(255,250,235,.6)}
-.tarefas-agente li{padding:var(--s2) 0;border-bottom:1.5px dotted var(--cartao-borda)}
-.tarefas-agente li:last-child{border-bottom:0}
+.tarefas-agente>li.editando,.cartao.editando{padding:var(--s3);border:1.5px dashed var(--borda-forte);border-radius:var(--r-8);background:rgba(255,250,235,.6)}
+.tarefas-agente>li{padding:var(--s2) 0;border-bottom:1.5px dotted var(--cartao-borda)}
+.tarefas-agente>li:last-child{border-bottom:0}
 .tarefas-agente .tit{display:flex;flex-direction:column}
 .carimbo{position:absolute;right:8px;top:6px;padding:0 var(--s2);border:2px solid var(--sucesso);border-radius:var(--r-8);color:var(--sucesso);background:rgba(255,251,240,.85);font:var(--p-forte) var(--t-12)/1.5 var(--corpo);letter-spacing:.08em;text-transform:uppercase;transform:rotate(-6deg);pointer-events:none}
 .carimbo.bate{animation:carimba var(--d-medio) var(--sai)}

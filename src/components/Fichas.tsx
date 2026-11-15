@@ -4,12 +4,14 @@ import type { Agente, Membro } from '../lib/equipe';
 import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS } from '../lib/lab';
 import { useEstado } from '../hooks/useEstado';
+import { useRecem } from '../hooks/useRecem';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { EditaMissao } from './Missao';
 import { Vazio, Bloco } from './Diario';
 import { Entrega, Executar, Treino } from './Nucleo';
 import { nomeDoModelo } from '../lib/modelos';
+import { convidadoDe } from '../lib/convidados';
 
 function Instrucoes({ m }: { m: Membro }) {
   const { estado, salvaInstrucao } = useEstado();
@@ -51,25 +53,29 @@ function Memoria({ m }: { m: Membro }) {
 
 export type AbaFicha = 'visao' | 'treino' | 'instrucoes' | 'memoria';
 
-export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao }: {
-  m: Agente; conversa: () => void; abaInicial?: AbaFicha; noMapa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
+export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, focaMissao }: {
+  m: Agente; conversa: () => void; abaInicial?: AbaFicha; noMapa?: () => void; naMesa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
 }) {
   const { estado, criaTarefa, mudaTarefa } = useEstado();
   const [aba, setAba] = useState<AbaFicha>(abaInicial ?? 'visao');
-  const [nova, setNova] = useState(''), [proj, setProj] = useState(estado.projetos[0]?.id ?? '');
+  const [nova, setNova] = useState(''), [proj, setProj] = useState('');
   const [edita, setEdita] = useState<number | null>(null);
   const z = ZONAS.find(q => q.id === m.zona)!;
   const abertas = estado.tarefas.filter(t => t.agente === m.id && t.estado !== 'feito');
   const entregas = estado.tarefas.filter(t => t.agente === m.id && t.entrega).reverse();
+  // a entrega que chega com a ficha aberta aparece no lugar onde a missão estava, aberta, e não no fim da página
+  const recem = useRecem(entregas.map(t => t.id));
+  const novas = entregas.filter(t => recem.has(t.id)), guardadas = entregas.filter(t => !recem.has(t.id));
   const nSkills = estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).length;
   return (
     <div className="ficha-agente">
       <div className="ficha">
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
-          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span></p>
+          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span>{convidadoDe(m.id) && <span>Do banco de convidados</span>}</p>
           <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
-            {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}</div></div>
+            {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}
+            {naMesa && <button className="leve" onClick={naMesa}>Ver a mesa</button>}</div></div>
       </div>
       <div className="abas" role="tablist">
         {([['visao', 'Missões'], ['treino', 'Treino'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
@@ -81,7 +87,8 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
               {t.id > 0 && <button className="leve mini" onClick={() => setEdita(t.id)} aria-label={`Editar ${t.titulo}`}>Editar</button>}
               <Executar t={t} />
               {t.id > 0 && <button className="leve mini" onClick={() => mudaTarefa(t.id, { estado: t.estado === 'fila' ? 'fazendo' : 'feito' })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}</li>)}</ul>
-          : <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
+          : !novas.length && <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
+        {novas.map(t => <section key={t.id} className="entrega-nova" aria-label={`Entrega de ${t.titulo}`}><p className="entrega-nova-topo"><span className="estado feito">Entregue</span><b>{t.titulo}</b></p><Entrega t={t} /></section>)}
         <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && (await criaTarefa({ agente: m.id, titulo, projeto_id: proj || null }))) { aoDar?.(`Missão dada a ${m.nome}: ${titulo}.`); setNova(''); } }}>
           <label className="so-leitor" htmlFor="nmis">Nova missão para {m.nome}</label>
           <input id="nmis" autoFocus={focaMissao} value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
@@ -90,6 +97,8 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
         {!nova && <div className="sugestoes-missao" role="group" aria-label="Sugestões de missão">{sugestoesDeMissao(m.zona).map(s => <button key={s} type="button" onClick={() => { setNova(s); document.getElementById('nmis')?.focus(); }}>{s}</button>)}</div>}
+        {guardadas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
+          {guardadas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
         <div className="blocos">
           <Bloco icone="skills" titulo={`No que ${m.nome} foi treinado`} acao={{ rotulo: 'Treinar', vai: () => setAba('treino') }}>
             <ul className="fichas-skill">{estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).slice(0, 6).map(k => <li key={k.id}>{k.nome}</li>)}</ul>
@@ -105,8 +114,6 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, aoDar, focaMissao
               : <p className="nota">Sem missão em projeto. O que {m.nome} faz hoje é do lab.</p>}
           </Bloco>
         </div>
-        {entregas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
-          {entregas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
       </>}
       {aba === 'treino' && <Treino m={m} />}
       {aba === 'instrucoes' && <Instrucoes key={m.id} m={m} />}

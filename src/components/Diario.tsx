@@ -252,7 +252,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
               <label htmlFor="pr">Peça ao lab</label>
               <div><input id="pr" value={pedido} onChange={e => setPedido(e.target.value)} maxLength={4000} placeholder="O que você precisa? A orquestração divide entre a equipe" />
                 <button type="submit" className="primario" disabled={pedido.trim().length < 8 || ocupado}>Pedir</button></div>
-              <small>{ocupado ? 'Um pedido está andando. Acompanhe em Pedidos.' : registro.length ? registro[registro.length - 1] : 'Ou escolha alguém no mapa para conversar e dar missão direto.'}</small>
+              <small className={ocupado ? 'andando' : undefined} role={ocupado ? 'status' : undefined}>{ocupado ? 'A equipe está escrevendo. A resposta abre em Pedidos quando ficar pronta.' : registro.length ? registro[registro.length - 1] : 'Ou escolha alguém no mapa para conversar e dar missão direto.'}</small>
             </form>}
       </div>
       {/* as ações ficam sempre no lugar: sem pessoa escolhida ficam apagadas, assim o console não muda de tamanho */}
@@ -283,6 +283,8 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
     if (!caixa.current?.contains(document.activeElement)) caixa.current?.focus({ preventScroll: true });
     return () => { if (antes?.isConnected) antes.focus({ preventScroll: true }); };
   }, []);
+  // quando o livro troca de página, a leitura recomeça do topo
+  useEffect(() => { for (const el of [caixa.current, ...(caixa.current?.querySelectorAll('.pagina') ?? [])]) if (el) el.scrollTop = 0; }, [titulo]);
   useEffect(() => {
     if (saindo) { const t = setTimeout(() => aoSair?.(), 320); return () => clearTimeout(t); }   // se a animação não tocar, sai do mesmo jeito
     const tecla = (e: KeyboardEvent) => {

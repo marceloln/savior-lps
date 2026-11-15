@@ -30,10 +30,10 @@
 .pedido summary small{color:var(--texto-2);font-size:var(--t-13);white-space:nowrap}
 .estado.feito{background:var(--sucesso-fundo);color:#3E5E2A}
 .passos{list-style:none;margin:0;padding:0 0 var(--s2);display:grid;gap:var(--s0);border-top:1.5px dotted var(--cartao-borda)}
-.passos li{border-bottom:1.5px dotted var(--linha)}.passos li:last-child{border-bottom:0}
+.passos>li{border-bottom:1.5px dotted var(--linha)}.passos>li:last-child{border-bottom:0}
 .passos summary .tit{flex:1;min-width:0;font-size:var(--t-14);line-height:1.3}.passos summary b{margin-right:var(--s1)}
-.passos li.escrevendo summary small{color:var(--tinta);font-weight:var(--p-forte)}.passos li.pronta summary small{color:#3E5E2A;font-weight:var(--p-forte)}
-.passos li.escrevendo{background:linear-gradient(90deg,rgba(95,184,168,.18),transparent)}
+.passos>li.escrevendo summary small{color:var(--tinta);font-weight:var(--p-forte)}.passos>li.pronta summary small{color:#3E5E2A;font-weight:var(--p-forte)}
+.passos>li.escrevendo{background:linear-gradient(90deg,rgba(95,184,168,.18),transparent)}
 .pedido>.linha{padding:var(--s2) 0 var(--s3);align-items:center}
 .sintese{margin:var(--s2) 0 var(--s3);padding:var(--s3) var(--s4);border-radius:var(--r-8);background:var(--cartao);border:1.5px solid var(--ouro)}
 .sintese header{display:flex;justify-content:space-between;align-items:center;gap:var(--s2)}.sintese h4{margin:0;font:var(--p-titulo) var(--t-18) var(--titulo);color:var(--tinta)}
