@@ -126,8 +126,10 @@ button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;backg
   article.reuniao{grid-template-columns:minmax(0,1fr);padding:var(--s3)}
   article.reuniao .quando{justify-self:start}
   /* o celular guarda o contexto da página em versão compacta: a linha de apoio, os números e o andamento do briefing */
-  .pagina.esquerda .sobre{display:block;margin:var(--s1) var(--s6) 0 0;font-size:var(--t-13);line-height:var(--lh-denso);text-align:left}
-  .pagina.esquerda .ilustracao{display:block;margin-top:var(--s2)}
+  .pagina.esquerda{flex-wrap:wrap}
+  .pagina.esquerda .sobre{display:block;flex:0 0 100%;margin:0;font-size:var(--t-13);line-height:var(--lh-denso);text-align:left}
+  .pagina.esquerda .ilustracao{display:block;flex:0 0 100%}
+  .pagina.esquerda .ilustracao:not(:has(.resumo,.roteiro)){display:none}
   .pagina.esquerda .ilustracao>:not(.resumo):not(.roteiro),.pagina.esquerda .resumo .nota-mao,.pagina.esquerda .roteiro ol{display:none}
   .pagina.esquerda .resumo dl{display:flex;gap:var(--s2);margin:0;overflow-x:auto;scrollbar-width:none}
   .pagina.esquerda .resumo dl>div{flex:1 0 auto;padding:var(--s1) var(--s2);min-height:0}
