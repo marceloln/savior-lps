@@ -267,3 +267,17 @@ Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao rema
 - Rascunho guardado no navegador. A conversa livre com a Clara continua a um clique.
 
 120 testes. Conferido em 1440, 1280 e 390.
+
+## Ambiente, 15 de novembro (issue 43)
+
+- Cenário: saíram as quatro árvores grandes de dentro do deck. Entraram canteiros baixos e trinta plantas pequenas em mesas, balcões e cantos. Nada passa de 1,25 m.
+- Marca em 3D: saiu a escultura V30 em fonte padrão do Blender. Entraram o totem inclinado no gramado e a parede atrás da recepção, os dois com o arquivo oficial do logo.
+- Marca na interface: logo oficial no menu, versão curta no menu recolhido e no celular, tela de espera e ícone da aba.
+- Rua: cada veículo usa o sprite que olha para onde ele vai, então ninguém anda de ré. Seis carros, van de entrega, motos e bicicletas na ciclofaixa, na mão brasileira.
+- Drones de entrega: um pousa no ponto da calçada, deixa o pacote e vai embora; o outro cruza a rua no alto. Nenhum passa por cima das mesas.
+- Árvores de fora: sibipiruna, oiti, ipê-amarelo, palmeira e araucária, com copa de tom variado.
+- Mesa de cada especialista: clicar na pessoa aproxima a câmera e abre a cena da mesa, com porta-retrato, objetos, plantinha e mural. As peculiaridades ficam em `src/lib/peculiaridades.json`.
+- Pong clássico ao clicar na mesa de pingue-pongue.
+- Futuro próximo, sem neon: eletroposto com placa solar e ponto de entrega de drone. O guia de marca proíbe visual futurista.
+
+O que não foi feito: mesa montada para quem os sócios criam depois, fliperama jogável, e a troca da letra da interface para Roboto, que é decisão dos sócios.

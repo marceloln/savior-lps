@@ -93,6 +93,40 @@ P1 primeiro, P2 logo depois, P3 pode esperar.
 - P3 Confirmar os dias de cada fase na linha do tempo
 - P3 Passada com leitor de tela
 
+### 5. Interface mais rica
+
+- P1 Blocos no lugar do vazio (feito em Ficha, Pessoas e Linha do tempo)
+- P1 Faixas e etiquetas de papel (feito)
+- P1 Conjunto de ícones para estado, prazo, anexo, fase e tipo de trabalho
+- P2 Ilustrações por assunto e para tela vazia
+- P2 Marcadores laterais no livro e tela inicial como painel
+
+### 6. Leis de UX
+
+- P1 Menu lateral com grupos (feito)
+- P1 Uma ação principal por tela (feito)
+- P2 Sugestão ao dar missão e barra no pedido em execução (feito)
+- P2 Fecho do pedido no mapa
+
+### 7. Ambiente (pedido de 15 de novembro, issue 43)
+
+O lab precisa parecer um lugar de verdade, com a marca aplicada do jeito certo.
+
+- P1 Sem árvore grande dentro do deck. Nada passa de 1,25 m. Entram canteiros baixos e plantas pequenas em mesas, balcões e cantos
+- P1 Marca oficial em 3D. Sai a escultura em fonte padrão. Entram o totem inclinado no gramado, de frente para a câmera, e a parede de marca atrás da recepção, os dois com o arquivo oficial do logo
+- P1 Marca oficial na interface. Logo Vetor30 no menu, versão curta V30 no menu recolhido e no celular, ícone da aba. Creme e areia sobre verde, verde e areia sobre claro
+- P1 Trânsito na mão certa. Cada veículo usa o sprite que olha para onde ele vai. Regra coberta por teste
+- P1 Rua viva. Carros de quatro tipos, van de entrega, motos, bicicletas na ciclofaixa e dois drones de entrega, um que pousa no ponto da calçada
+- P1 Árvores de fora mais realistas e diferentes entre si: sibipiruna, oiti, ipê-amarelo, palmeira e araucária
+- P1 Mesa de cada especialista. Clicar na pessoa aproxima a câmera e abre a cena da mesa: a pessoa trabalhando, o porta-retrato da família, os objetos dela e o mural atrás
+- P1 Peculiaridades de cada um: frase, manias, o que tem na mesa e o que está no mural, num arquivo só que alimenta a tela e o desenho do mural
+- P1 Pong clássico ao clicar na mesa de pingue-pongue
+- P2 Futuro próximo sem neon: eletroposto com placa solar na calçada e ponto de entrega de drone. O guia de marca proíbe visual futurista, então o tom é de coisa plausível
+- P2 Mesa montada também para quem os sócios criarem depois no lab
+- P2 Fliperama jogável e outros objetos clicáveis do lounge
+- P3 Dia e noite, chuva e estação do ano no entorno
+- P3 Decidir a letra da interface: a marca pede Roboto e o diário de campo usa Alegreya
+
 ## Deixado para quem construir
 
 - Nome das variáveis e a ordem dos arquivos de estilo

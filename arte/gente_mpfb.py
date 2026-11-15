@@ -3,6 +3,7 @@
 #   ../blendenv/bin/python gente_mpfb.py teste rui        -> quadros de teste em /home/claude/pessoas
 #   ../blendenv/bin/python gente_mpfb.py sprites [ids]    -> quadros em /home/claude/pessoas/q/<id>/
 #   ../blendenv/bin/python gente_mpfb.py retratos [ids]   -> retrato na estação em /home/claude/pessoas/r/<id>.png
+#   ../blendenv/bin/python gente_mpfb.py mesas [ids]      -> cena da mesa, com objetos e mural, em /home/claude/pessoas/m/<id>_<quadro>.png
 import sys, os, math, json
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'base_bpy.py')).read())
 exec(open(os.path.join(AQUI, 'moveis_bpy.py')).read())
@@ -316,3 +317,51 @@ if MODO == 'retratos':
             cena.render.resolution_x = 640; cena.render.resolution_y = 480
             render(os.path.join(SAIDA, 'r', id + '_estacao.png'))
         remove(objs); print('PRONTO', id, flush=True)
+
+if MODO == 'mesas':
+    # A pessoa trabalhando na própria mesa, com o que a caracteriza em cima dela e o mural atrás.
+    # São dois quadros por pessoa (as mãos alternam no teclado) para a tela animar. A câmera fica à direita e à frente de quem senta.
+    exec(open(os.path.join(AQUI, 'pessoais_bpy.py')).read())
+    ids = SO or list(ELENCO)
+    os.makedirs(os.path.join(SAIDA, 'm'), exist_ok=True)
+    cena.cycles.samples = int(os.environ.get('AMOSTRAS', '64')); cena.render.film_transparent = False
+    cena.render.resolution_x = 1200; cena.render.resolution_y = 900
+    dire = Vector((-0.9, -0.25, 0.42)).normalized(); alvo_e = Vector((0.3, -0.3, 1.31))
+    cam_d.ortho_scale = 3.45; cam.location = alvo_e + dire * 10; cam.rotation_euler = (-dire).to_track_quat('-Z', 'Y').to_euler()
+    luz.location = (-3.0, -1.5, 6); luz.data.energy = 2200
+    cena.view_settings.exposure = -0.55; cena.view_settings.look = 'AgX - Medium High Contrast'
+    # cenário fixo: piso de madeira e a parede do mural
+    bpy.ops.mesh.primitive_plane_add(size=16, location=(0, 0, 0)); piso = bpy.context.object
+    liga(piso, mat('carvalho', '#CDA87C', 0, 0.5, tex='carvalho.jpg', rug_tex='carvalho_rug.jpg')); uv_plano(piso, 'x', 'y', -8, 4, -8, 4)
+    caixa('parede', (0.1, 9, 3.4), (1.45, -0.6, 1.7), mat('parede_mesa', '#E3DCCB', 0, 0.9)); caixa('rodape', (0.03, 9, 0.1), (1.385, -0.6, 0.05), cor_mat('#E4DFD4', 0.6))
+    protege()
+    MW, MH = 2.6, 2.6 * 920 / 1600
+    def mural_de(id):
+        tex = f'mural_{id}.png' if os.path.exists(os.path.join(TEX, f'mural_{id}.png')) else 'lousa.png'
+        caixa('moldura_mural', (0.05, MW + 0.08, MH + 0.08), (1.385, -0.35, 1.45), cor_mat('#8A6A4A', 0.6))
+        o = caixa('mural', (0.02, MW, MH), (1.36, -0.35, 1.45), mat('mural_' + tex, '#ffffff', 0, 0.8, tex=tex)); uv_plano(o, 'y', 'z', MW / 2, -MW, -MH / 2, MH)
+    def tapete(cor): caixa('tapete', (2.6, 3.0, 0.012), (0.1, -0.45, 0.006), mat('tap' + cor, cor, 0, 0.98, sheen=0.4), ch=0.004)
+    def balcao():
+        caixa('balcao', (2.0, 0.6, 1.06), (0, 0, 0.53), BRANCO, ch=0.02); caixa('frente_b', (2.02, 0.02, 0.5), (0, -0.31, 0.55), COMP); caixa('tampo_b', (2.1, 0.68, 0.04), (0, 0, 1.08), COMP, ch=0.008)
+    COR_TAPETE = ['#D9C7B4', '#C9D2C2', '#D8CDB0', '#CDBFA8']
+    for n, id in enumerate(ids):
+        arm, objs = pessoa(id); prep = prepara_alvo(arm)
+        sentado = id in CADEIRA
+        if sentado:
+            cen = objetos_novos(lambda: mesa_trabalho(2, 1.6, 0.72, len(id) % 3)) + objetos_novos(lambda: pessoais(id, perto=True))
+            for o in cen:
+                if o.parent is None: o.location.y -= 0.66
+            cen += objetos_novos(lambda: cadeira_escritorio(CADEIRA[id]))
+        else:
+            # quem trabalha de pé atende num balcão: o que é dela fica em cima dele
+            cen = objetos_novos(balcao) + objetos_novos(lambda: pessoais(id, tampo=1.1, larg=2.0, fundo=0.0, perto=True))
+            for o in cen:
+                if o.parent is None: o.location.y -= 0.62
+        cen += objetos_novos(lambda: mural_de(id)) + objetos_novos(lambda: tapete(COR_TAPETE[n % 4])) + objetos_novos(lambda: em(1.0, 1.25, lambda: planta_folhuda(0.95 + 0.1 * (n % 3), 0.24, 9, n))) + objetos_novos(lambda: em(1.05, -2.05, lambda: vasinho(n + 2, 2.0)))
+        protege()
+        for i in range(2 if sentado else 1):   # quem está de pé fica parado: um quadro basta
+            if sentado: senta_digitando(arm, prep, i); vz = ik_maos(arm, i)
+            else: em_pe(arm, i); vz = None
+            render(os.path.join(SAIDA, 'm', f'{id}_{i}.png'))
+            if vz: tira_ik(arm, vz)
+        remove(cen); remove(objs); print('PRONTO', id, flush=True)

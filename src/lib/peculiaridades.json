@@ -1,0 +1,203 @@
+{
+  "lia": {
+    "frase": "Antes de propor qualquer coisa, vai ver a operação rodando.",
+    "manias": ["Pergunta por quê cinco vezes seguidas", "Não aceita diagnóstico feito só de planilha", "Leva a prancheta até para o café"],
+    "mesa": ["Prancheta de visita", "Lupa", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "O problema certo", "cartoes": [
+      { "t": "espinha", "r": "Causa e efeito" },
+      { "t": "lista", "r": "Roteiro de visita", "i": ["Pista", "Loja", "Caixa", "Retaguarda"] },
+      { "t": "frase", "x": "Qual é o problema certo?" },
+      { "t": "foto", "r": "Visita de campo", "c": "pista" },
+      { "t": "postits", "i": ["Ouvir o frentista", "Ver o turno da noite", "Medir a fila"] }
+    ] }
+  },
+  "davi": {
+    "frase": "Sabe o que o vizinho está fazendo antes de o vizinho anunciar.",
+    "manias": ["Lê três jornais antes das oito", "Guarda recorte de tudo", "Desconfia de número sem fonte"],
+    "mesa": ["Pilha de jornais", "Binóculo", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "De olho no mercado", "cartoes": [
+      { "t": "recorte", "r": "Movimento da semana" },
+      { "t": "mapa", "r": "Quem está onde" },
+      { "t": "frase", "x": "Fonte primeiro, opinião depois." },
+      { "t": "barras", "r": "Presença por região" },
+      { "t": "postits", "i": ["Abriu loja nova", "Mudou a bandeira", "Promoção de sábado"] }
+    ] }
+  },
+  "rui": {
+    "frase": "Trinta dias têm trinta dias. Ele conta cada um.",
+    "manias": ["Vira a ampulheta no começo de toda reunião", "Reunião sem dono vira conversa", "Fecha a semana na sexta, sem falta"],
+    "mesa": ["Ampulheta", "Caderno de prazos", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Ciclo de 30 dias", "cartoes": [
+      { "t": "cronograma", "r": "As quatro fases" },
+      { "t": "calendario", "r": "Ritmo da semana" },
+      { "t": "lista", "r": "Toda segunda", "i": ["Quem faz", "Até quando", "O que trava"] },
+      { "t": "frase", "x": "Prazo combinado não sai caro." },
+      { "t": "postits", "i": ["Checkpoint na quarta", "Ata no mesmo dia"] }
+    ] }
+  },
+  "nina": {
+    "frase": "Onde todo mundo vê rotina, ela vê desperdício.",
+    "manias": ["Cronometra a fila do café", "Cola post-it em tudo que para", "Arruma a mesa dos outros sem pedir"],
+    "mesa": ["Blocos de post-it", "Cronômetro", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Melhoria contínua", "cartoes": [
+      { "t": "fluxo", "r": "Do pedido à entrega", "i": ["Pedido", "Separa", "Confere", "Entrega"] },
+      { "t": "postits", "i": ["Espera", "Retrabalho", "Passo a mais"] },
+      { "t": "barras", "r": "Tempo por etapa" },
+      { "t": "frase", "x": "Se dá para tirar um passo, tira." },
+      { "t": "lista", "r": "Todo dia", "i": ["Ver", "Medir", "Cortar", "Padronizar"] }
+    ] }
+  },
+  "caio": {
+    "frase": "Conhece o cliente pelo nome do gerente e pelo problema do mês.",
+    "manias": ["Liga em vez de mandar mensagem", "Anota aniversário de cliente", "Não sai de reunião sem próximo passo"],
+    "mesa": ["Troféu do torneio de pingue-pongue", "Caderno de visitas", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Carteira", "cartoes": [
+      { "t": "funil", "r": "Do primeiro café ao contrato", "i": ["Conversa", "Diagnóstico", "Proposta", "Fechado"] },
+      { "t": "lista", "r": "Esta semana", "i": ["Ligar", "Visitar", "Mandar proposta"] },
+      { "t": "foto", "r": "Almoço com cliente", "c": "time" },
+      { "t": "frase", "x": "Próximo passo com data." },
+      { "t": "postits", "i": ["Perguntar da loja nova", "Levar o Beto na visita"] }
+    ] }
+  },
+  "bela": {
+    "frase": "Transforma uma conversa bagunçada em proposta de cinco páginas.",
+    "manias": ["Corta adjetivo sem dó", "Proposta com mais de sete páginas volta", "Escreve o investimento antes do resto"],
+    "mesa": ["Propostas encadernadas", "Caneta de revisão", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Proposta que fecha", "cartoes": [
+      { "t": "paginas", "r": "Modelo de proposta" },
+      { "t": "lista", "r": "Estrutura", "i": ["Problema", "Método", "Plano", "Investimento", "Próximo passo"] },
+      { "t": "frase", "x": "Menos página, mais clareza." },
+      { "t": "postits", "i": ["Espelhar a dor do cliente", "Prazo na última linha"] }
+    ] }
+  },
+  "iara": {
+    "frase": "Verde, creme e areia. O resto ela devolve.",
+    "manias": ["Enxerga logo torto a dez metros", "Carrega o leque de cores na bolsa", "Não deixa passar azul"],
+    "mesa": ["Leque de cores", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Marca V30", "cartoes": [
+      { "t": "logo", "r": "Logo oficial" },
+      { "t": "paleta", "r": "Paleta" },
+      { "t": "frase", "x": "Clareza antes do efeito." },
+      { "t": "lista", "r": "Nunca", "i": ["Neon", "Gradiente", "Mascote", "Banco de imagem"] },
+      { "t": "foto", "r": "Referência de campo", "c": "loja" }
+    ] }
+  },
+  "theo": {
+    "frase": "Escreve como quem já esteve na pista.",
+    "manias": ["Lê o texto em voz alta antes de publicar", "Uma ideia por post", "Fotografa tudo o que vê em loja"],
+    "mesa": ["Câmera", "Microfone", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Pauta", "cartoes": [
+      { "t": "calendario", "r": "Calendário editorial" },
+      { "t": "lista", "r": "Todo post", "i": ["Gancho", "Problema", "Princípio", "Consequência"] },
+      { "t": "foto", "r": "Foto de campo", "c": "loja" },
+      { "t": "frase", "x": "Sem floreio." },
+      { "t": "postits", "i": ["Série da pista", "Bastidor do lab"] }
+    ] }
+  },
+  "duda": {
+    "frase": "Recebe o pedido, divide em missão e não deixa nada sem dono.",
+    "manias": ["Sabe de cabeça quem está com o quê", "Fala pelo rádio mesmo ao lado da pessoa", "Fecha o dia com o quadro em ordem"],
+    "mesa": ["Bandeirinhas de largada", "Rádio", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Quem faz o quê", "cartoes": [
+      { "t": "fluxo", "r": "Caminho do pedido", "i": ["Pedido", "Plano", "Missões", "Síntese"] },
+      { "t": "mapa", "r": "Rotas do lab" },
+      { "t": "lista", "r": "Fila de hoje", "i": ["Aprovar plano", "Distribuir", "Juntar entregas"] },
+      { "t": "postits", "i": ["Sem dono, não anda", "Um pedido por vez"] },
+      { "t": "frase", "x": "Cada missão com um nome ao lado." }
+    ] }
+  },
+  "rosa": {
+    "frase": "Desenha a jornada inteira antes de mexer num ponto dela.",
+    "manias": ["Faz papel de cliente em toda loja em que entra", "Monta jornada com bloco de montar", "Pergunta o que o cliente sentiu, não só o que fez"],
+    "mesa": ["Blocos da jornada", "Post-its", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Jornada do cliente", "cartoes": [
+      { "t": "jornada", "r": "Do carro ao caixa", "i": ["Chega", "Abastece", "Entra", "Paga", "Volta"] },
+      { "t": "linha", "r": "Humor ao longo da visita" },
+      { "t": "postits", "i": ["Fila no caixa", "Banheiro", "Sorriso na chegada"] },
+      { "t": "frase", "x": "CX precisa aparecer." },
+      { "t": "foto", "r": "Cliente oculto", "c": "loja" }
+    ] }
+  },
+  "beto": {
+    "frase": "Muitos anos de pista. Sabe quando a loja está frouxa só de olhar o piso.",
+    "manias": ["Chega antes da troca de turno", "Confere o banheiro primeiro", "Guarda a miniatura da primeira bomba que operou"],
+    "mesa": ["Miniatura de bomba", "Cone de pista", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Loja em alta", "cartoes": [
+      { "t": "lista", "r": "Abertura", "i": ["Pista limpa", "Bomba conferida", "Loja abastecida", "Time no posto"] },
+      { "t": "foto", "r": "Troca de turno", "c": "pista" },
+      { "t": "frase", "x": "Tecnologia não segura cliente se o time estiver frouxo." },
+      { "t": "postits", "i": ["Padrão é rotina", "A noite também conta"] },
+      { "t": "calendario", "r": "Escala do mês" }
+    ] }
+  },
+  "lara": {
+    "frase": "Só acredita depois de ver a base.",
+    "manias": ["Resolve o cubo enquanto a consulta roda", "Desconfia de média", "Dá nome de gente para as planilhas"],
+    "mesa": ["Cubo mágico", "Caderno de hipóteses", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "O que o dado diz", "cartoes": [
+      { "t": "dispersao", "r": "Loja por loja" },
+      { "t": "linha", "r": "Semana a semana" },
+      { "t": "frase", "x": "Sem base, é palpite." },
+      { "t": "lista", "r": "Antes de concluir", "i": ["Fonte", "Período", "Amostra"] },
+      { "t": "barras", "r": "Por turno" }
+    ] }
+  },
+  "otto": {
+    "frase": "Toda ideia boa passa pela pergunta dele: quanto custa não fazer?",
+    "manias": ["Faz a conta de cabeça e confere na calculadora", "Põe uma moeda no cofrinho a cada decisão adiada", "Não assina sem ver o cenário ruim"],
+    "mesa": ["Calculadora", "Cofrinho", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Decisão", "cartoes": [
+      { "t": "barras", "r": "Três cenários" },
+      { "t": "lista", "r": "Antes de decidir", "i": ["Custo", "Retorno", "Risco", "Dono"] },
+      { "t": "frase", "x": "Quanto custa não fazer?" },
+      { "t": "linha", "r": "Caixa do projeto" },
+      { "t": "postits", "i": ["Decidir até sexta", "Rever o cenário ruim"] }
+    ] }
+  },
+  "max": {
+    "frase": "Prefere mostrar funcionando a explicar em reunião.",
+    "manias": ["Monta protótipo antes do almoço", "Tem sempre uma placa aberta na mesa", "Batiza cada versão com nome de rua"],
+    "mesa": ["Placa eletrônica", "Chave de fenda", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Protótipo", "cartoes": [
+      { "t": "telas", "r": "Telas do piloto" },
+      { "t": "fluxo", "r": "Do rascunho ao teste", "i": ["Rascunho", "Protótipo", "Teste", "Ajuste"] },
+      { "t": "postits", "i": ["Testar na loja", "Simples primeiro"] },
+      { "t": "frase", "x": "Funcionando vale mais." }
+    ] }
+  },
+  "ana": {
+    "frase": "Ensina máquina a trabalhar do jeito V30.",
+    "manias": ["Conversa com o robozinho da mesa", "Escreve instrução como quem treina estagiário", "Testa o agente com a pergunta mais difícil primeiro"],
+    "mesa": ["Robozinho", "Caderno de instruções", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Agentes", "cartoes": [
+      { "t": "fluxo", "r": "Como um agente trabalha", "i": ["Pedido", "Skill", "Entrega", "Revisão"] },
+      { "t": "lista", "r": "Toda skill tem", "i": ["Para quê", "Passo a passo", "Exemplo"] },
+      { "t": "frase", "x": "IA sem método é só barulho." },
+      { "t": "postits", "i": ["Testar o caso difícil", "Revisão é de gente"] },
+      { "t": "telas", "r": "Conversas de teste" }
+    ] }
+  },
+  "nico": {
+    "frase": "O que o lab aprendeu ontem, ele acha hoje em dez segundos.",
+    "manias": ["Etiqueta tudo", "Não deixa ata sem decisão", "Sabe em que pasta está cada coisa"],
+    "mesa": ["Pilha de livros", "Fichários", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Memória do lab", "cartoes": [
+      { "t": "lista", "r": "Índice", "i": ["Clientes", "Projetos", "Atas", "Decisões"] },
+      { "t": "postits", "i": ["Etiquetar", "Datar", "Guardar"] },
+      { "t": "frase", "x": "Se não está escrito, não aconteceu." },
+      { "t": "paginas", "r": "Atas da semana" },
+      { "t": "calendario", "r": "Revisão do arquivo" }
+    ] }
+  },
+  "clara": {
+    "frase": "Faz uma pergunta por vez até o pedido ficar claro.",
+    "manias": ["Toca o sino quando um briefing fecha", "Troca as flores toda segunda", "Lembra o que você pediu da última vez"],
+    "mesa": ["Sino de balcão", "Vaso de flores", "Foto da família", "Plantinha"],
+    "mural": { "titulo": "Recados", "cartoes": [
+      { "t": "lista", "r": "Um bom briefing", "i": ["O que precisa", "Para quem", "Até quando", "Como saber que deu certo"] },
+      { "t": "postits", "i": ["Bem-vindo ao lab", "Café no lounge"] },
+      { "t": "frase", "x": "Uma pergunta por vez." },
+      { "t": "foto", "r": "Visita da semana", "c": "time" }
+    ] }
+  }
+}

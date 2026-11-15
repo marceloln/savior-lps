@@ -11,6 +11,8 @@ import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
 import { AreaDoSocio, Carregando, CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
+import { JeitoDe, MesaDe } from '../components/Mesa';
+import { ComoJogar, Pong } from '../components/Pong';
 import { useEstado } from '../hooks/useEstado';
 import { useLab } from '../hooks/useLab';
 import { ZONAS } from '../lib/lab';
@@ -25,7 +27,7 @@ import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, s
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba; novo?: boolean; pre?: { setor: string; situacao: string } } | { tipo: 'briefing' } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
-  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | null;
+  | { tipo: 'conversa'; id: string } | { tipo: 'reuniao'; com: string[] } | { tipo: 'sala'; id: string } | { tipo: 'mesa'; id: string } | { tipo: 'pong' } | null;
 
 const SOBRE_ABA: Record<Aba, string> = {
   pedidos: 'Diga o que precisa. A orquestração divide, a equipe entrega e você recebe a resposta pronta.',
@@ -127,7 +129,9 @@ export function Lab() {
     if (!alvo) { setZona(null); return; }
     if (alvo.tipo === 'zona') { abreSala(alvo.id); return; }
     if (alvo.tipo === 'tela') { abreFerramenta(alvo.ferramenta); return; }
-    setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false);
+    if (alvo.tipo === 'objeto') { if (alvo.id === 'pingpong') setAberto({ tipo: 'pong' }); return; }
+    // clicar numa pessoa aproxima a câmera (no mapa) e abre a mesa dela
+    setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false); setAberto({ tipo: 'mesa', id: alvo.agente.id });
   }, [abreSala, abreFerramenta]);
   const onMovido = useCallback((ok: boolean) => {
     if (!ok) { anota('Ali tem móvel no caminho. Escolha uma casa verde do piso.'); return; }
@@ -191,6 +195,14 @@ export function Lab() {
         ilustracao: <><figure className="foto-colada estacao"><img style={{ background: `linear-gradient(${z.cor}30, ${z.cor}12)` }} src={`assets/estacao/${p.aparencia}.webp`} alt={`${p.nome} trabalhando na ${z.nome}`} /><figcaption>{p.nome} na {z.nome}</figcaption></figure><p className="nota-mao">{SOBRE_ZONA[z.id]}</p></>,
         corpo: <FichaAgente key={p.id + (mostrado.aba ?? '')} m={p} abaInicial={mostrado.aba} focaMissao={mostrado.foca} aoDar={anota}
           noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /> };
+    } else if (mostrado.tipo === 'mesa') {
+      const p = de(mostrado.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
+      folha = { titulo: `Mesa de ${p.nome}`, sobre: p.papel, cor: z.cor, largo: true, voltar: { rotulo: 'Pessoas', vai: vaiPara('pessoas') },
+        ilustracao: <JeitoDe m={p} cor={z.cor} conversa={() => setAberto(p.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: p.id })}
+          missao={() => setAberto({ tipo: 'ficha', id: p.id, aba: 'visao', foca: true })} ficha={() => setAberto({ tipo: 'ficha', id: p.id })} />,
+        corpo: <MesaDe key={p.id} m={p} zona={z.nome} /> };
+    } else if (mostrado.tipo === 'pong') {
+      folha = { titulo: 'Pingue-pongue', sobre: 'Pong clássico na mesa do lounge. Vence quem fizer sete.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, largo: true, ilustracao: <ComoJogar />, corpo: <Pong /> };
     } else if (mostrado.tipo === 'conversa') {
       const p = de(mostrado.id) ?? equipe[0];
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');
@@ -216,7 +228,7 @@ export function Lab() {
     }
   }
   // onde estou: o menu marca a seção de quem está aberto, mesmo fora das abas
-  const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
+  const secao: Aba | null = !aberto ? null : aberto.tipo === 'aba' ? aberto.aba : aberto.tipo === 'sala' || aberto.tipo === 'pong' ? 'lugares' : aberto.tipo === 'reuniao' ? 'agenda' : 'pessoas';
   const carregando = !erro && (modo === 'carregando' || !lab || !gente || !mapaPronto);
 
   return (
@@ -239,7 +251,8 @@ export function Lab() {
       {dica.alvo && !aberto && (
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>
           {dica.alvo.tipo === 'agente'
-            ? <><b>{dica.alvo.agente.nome}</b><small>{dica.alvo.agente.papel}</small><small className="acao">Clique para escolher</small></>
+            ? <><b>{dica.alvo.agente.nome}</b><small>{dica.alvo.agente.papel}</small><small className="acao">Clique para ver a mesa</small></>
+            : dica.alvo.tipo === 'objeto' ? <><b>Mesa de pingue-pongue</b><small className="acao">Clique para jogar Pong</small></>
             : dica.alvo.tipo === 'tela' ? <><b>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.nome}</b><small>{FERRAMENTAS.find(f => f.id === (dica.alvo as { ferramenta: Ferramenta }).ferramenta)?.sobre}</small><small className="acao">Clique para abrir em tela inteira</small></>
             : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para abrir a sala</small></>}
         </div>
