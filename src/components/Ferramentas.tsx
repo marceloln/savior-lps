@@ -1,6 +1,7 @@
 // Ferramentas de acompanhamento: quadro geral, linha do tempo dos ciclos e calendário do mês.
 // São as mesmas que aparecem em miniatura nas telas do lab.
 import { useState } from 'react';
+import { Icone } from './Icones';
 import { useEstado } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
 import { FASES, hojeLocal, type Estado } from '../lib/dados';
@@ -36,7 +37,7 @@ function Quadro({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; e
       <div className="colunas">
         {COLUNAS_DO_QUADRO.map(c => (
           <section key={c.id} aria-label={c.nome} className={c.id}>
-            <h4>{c.nome} <span>{q[c.id].length}</span></h4>
+            <h4><Icone nome={c.id === 'fila' ? 'relogio' : c.id === 'fazendo' ? 'raio' : 'check'} tam={18} />{c.nome} <span>{q[c.id].length}</span></h4>
             {!q[c.id].length && <p className="vazio">Nada aqui.</p>}
             {q[c.id].map(t => {
               const p = estado.projetos.find(x => x.id === t.projeto_id), prox = PROXIMO[t.estado];

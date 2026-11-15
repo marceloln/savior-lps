@@ -8,7 +8,7 @@ import { Entrega, Executar, SeletorModelo } from './Nucleo';
 import { decisoesRecentes, proximasReunioes, trofeus } from '../lib/resumo';
 import { useRecem } from '../hooks/useRecem';
 import { EditaMissao } from './Missao';
-import { TEXTO_PREVIA } from './Diario';
+import { Bloco, TEXTO_PREVIA } from './Diario';
 import { PROVEDORES, type Provedor } from '../lib/modelos';
 import { Icone, type NomeIcone } from './Icones';
 import type { Conexoes as ConexoesLab } from '../hooks/useConexoes';
@@ -89,7 +89,7 @@ function Kanban({ projeto }: { projeto: Projeto }) {
           const lista = tarefas.filter(t => t.estado === col.id);
           return (
             <section key={col.id} aria-label={col.nome}>
-              <h4>{col.nome} <span>{lista.length}</span></h4>
+              <h4><Icone nome={col.id === 'fila' ? 'relogio' : col.id === 'fazendo' ? 'raio' : 'check'} tam={18} />{col.nome} <span>{lista.length}</span></h4>
               {!lista.length && <p className="vazio">Nada aqui.</p>}
               {lista.map(t => (
                 edita === t.id ? <div key={t.id} className="cartao editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></div> :
@@ -305,7 +305,11 @@ export function Trofeus() {
   // o próximo é o que falta menos, proporcionalmente
   const abertos = lista.filter(t => t.atual < t.meta);
   const proximo = abertos.sort((a, b) => b.atual / b.meta - a.atual / a.meta)[0]?.nome;
-  return (
+  const { nome } = useEquipe();
+  const conta = new Map<string, number>();
+  for (const t of estado.tarefas) if (t.estado === 'feito') conta.set(t.agente, (conta.get(t.agente) ?? 0) + 1);
+  const porPessoa = [...conta].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  return (<>
     <ul className="trofeus">
       {lista.map(t => { const ok = t.atual >= t.meta, falta = t.meta - t.atual; return (
         <li key={t.nome} className={ok ? 'ok' : t.nome === proximo ? 'proximo' : ''}>
@@ -319,5 +323,15 @@ export function Trofeus() {
           </div>
         </li>); })}
     </ul>
-  );
+    <div className="blocos">
+      <Bloco icone="check" titulo="Últimas missões concluídas">
+        {estado.tarefas.some(t => t.estado === 'feito')
+          ? <ul className="ultimas">{estado.tarefas.filter(t => t.estado === 'feito').slice(-5).reverse().map(t => <li key={t.id}><Retrato id={t.agente} tamanho={24} /><span>{t.titulo}</span></li>)}</ul>
+          : <p className="nota">Nenhuma missão concluída ainda.</p>}
+      </Bloco>
+      <Bloco icone="pessoas" titulo="Quem mais entregou">
+        <ul className="onde">{porPessoa.map(([id, n]) => <li key={id}><b>{nome(id)}</b><span className="barra"><i style={{ transform: `scaleX(${n / (porPessoa[0]?.[1] || 1)})` }} /></span><small>{n} {n === 1 ? 'missão' : 'missões'}</small></li>)}</ul>
+      </Bloco>
+    </div>
+  </>);
 }

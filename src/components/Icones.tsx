@@ -1,6 +1,6 @@
 // Ícones desenhados no traço do diário: contorno em tinta marrom e um toque de cor dentro.
 type Nome = 'pedidos' | 'skills' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus'
-  | 'paineis' | 'ampliar' | 'reduzir'
+  | 'paineis' | 'ampliar' | 'reduzir' | 'relogio' | 'raio' | 'check'
   | 'mover' | 'conversar' | 'missao' | 'reuniao' | 'briefing' | 'fechar' | 'estrela' | 'fita';
 
 const D: Record<Nome, { cor: string; fill?: string; tracos: string }> = {
@@ -15,6 +15,9 @@ const D: Record<Nome, { cor: string; fill?: string; tracos: string }> = {
   memoria: { cor: '#8E7CC3', fill: 'M7 4c6 1 10 5 11 12l-4 3C10 15 8 10 7 4z', tracos: 'M7 4c6 1 10 5 11 12l-4 3C10 15 8 10 7 4zM7 4l7 15M4 20h8' },
   conexoes: { cor: '#E9B949', fill: 'M9 10h6v6H9z', tracos: 'M10 4h4v3h-4zM8 7h8l-1 3H9zM9 10h6v6a3 3 0 0 1-6 0zM12 19v2' },
   trofeus: { cor: '#E9B949', fill: 'M7 4h10v5a5 5 0 0 1-10 0z', tracos: 'M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M8 20h8l-1-3H9z' },
+  relogio: { cor: '#E9DDBF', fill: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', tracos: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 8v4l3 2' },
+  raio: { cor: '#E9B949', fill: 'M13 3L5 14h6l-1 7 8-11h-6z', tracos: 'M13 3L5 14h6l-1 7 8-11h-6z' },
+  check: { cor: '#7FB069', fill: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', tracos: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM8.5 12.5l2.5 2.5 4.5-5' },
   paineis: { cor: '#5FB8A8', fill: 'M4 5h16v11H4z', tracos: 'M4 5h16v11H4zM9 20h6M12 16v4M7.5 13v-3M11 13V8M14.5 13v-2M17 13v-4' },
   ampliar: { cor: 'transparent', tracos: 'M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5' },
   reduzir: { cor: 'transparent', tracos: 'M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5' },
