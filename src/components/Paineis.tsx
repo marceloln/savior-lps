@@ -6,7 +6,7 @@ import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { Entrega, Executar, SeletorModelo } from './Nucleo';
 import { decisoesRecentes, proximasReunioes, trofeus } from '../lib/resumo';
-import { useRecem } from '../hooks/useRecem';
+import { useMudouDeColuna, useRecem } from '../hooks/useRecem';
 import { EditaMissao } from './Missao';
 import { Bloco, TEXTO_PREVIA } from './Diario';
 import { PROVEDORES, type Provedor } from '../lib/modelos';
@@ -80,6 +80,7 @@ function Kanban({ projeto }: { projeto: Projeto }) {
   const tarefas = estado.tarefas.filter(t => t.projeto_id === projeto.id);
   // o carimbo só bate em quem foi concluída com a tela aberta
   const recem = useRecem(tarefas.filter(t => t.estado === 'feito').map(t => t.id));
+  const chegou = useMudouDeColuna(tarefas);
   const proximo: Record<Estado, Estado | null> = { fila: 'fazendo', fazendo: 'feito', feito: null };
   const anterior: Record<Estado, Estado | null> = { fila: null, fazendo: 'fila', feito: 'fazendo' };
   return (
@@ -93,7 +94,7 @@ function Kanban({ projeto }: { projeto: Projeto }) {
               {!lista.length && <p className="vazio">Nada aqui.</p>}
               {lista.map(t => (
                 edita === t.id ? <div key={t.id} className="cartao editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></div> :
-                <div key={t.id} className={`cartao ${t.estado}`}>
+                <div key={t.id} className={`cartao ${t.estado} ${chegou(t) ? 'chegou' : ''}`}>
                   {t.estado === 'feito' && <span className={`carimbo ${recem.has(t.id) ? 'bate' : ''}`}>Feito</span>}
                   <p>{t.titulo}</p>
                   {t.detalhe && <p className="detalhe">{t.detalhe}</p>}

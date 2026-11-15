@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { linhaDoTempo, mesDoCalendario, quadro, resumoDasTelas } from './ferramentas';
+import { chaveDaColuna, linhaDoTempo, mesDoCalendario, quadro, resumoDasTelas } from './ferramentas';
 import { SEMENTE, type EstadoLab } from './dados';
 
 const e: EstadoLab = { ...SEMENTE,
@@ -45,5 +45,17 @@ describe('ferramentas', () => {
     expect(r.linha.hoje).toBeCloseTo(17.5 / 39);
     expect(r.calendario[2]).toEqual([0, 1, 0, 2, 0, 0, 0]);
     expect(r.calendario[4][6]).toBe(-1);
+  });
+});
+
+describe('chaveDaColuna', () => {
+  it('muda quando a missão troca de coluna e fica igual quando não troca', () => {
+    expect(chaveDaColuna({ id: 7, estado: 'fila' })).not.toBe(chaveDaColuna({ id: 7, estado: 'fazendo' }));
+    expect(chaveDaColuna({ id: 7, estado: 'feito' })).toBe(chaveDaColuna({ id: 7, estado: 'feito' }));
+  });
+  it('nunca repete entre missões diferentes, inclusive as de exemplo, que têm id negativo', () => {
+    const chaves = new Set<number>();
+    for (let id = -20; id <= 20; id++) for (const estado of ['fila', 'fazendo', 'feito'] as const) chaves.add(chaveDaColuna({ id, estado }));
+    expect(chaves.size).toBe(41 * 3);
   });
 });

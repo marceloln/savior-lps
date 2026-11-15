@@ -83,3 +83,8 @@ export function resumoDasTelas(e: EstadoLab, hoje: string): ResumoDasTelas {
     calendario: mes.map(s => s.map(d => (!d.noMes ? -1 : d.hoje ? 2 : d.reunioes.length ? 1 : 0))),
   };
 }
+
+/** Número que identifica uma missão numa coluna. Muda quando a missão troca de coluna, e é assim que o quadro sabe qual cartão acabou de chegar. */
+export function chaveDaColuna(m: { id: number; estado: Estado }): number {
+  return m.id * 3 + COLUNAS_DO_QUADRO.findIndex(c => c.id === m.estado);
+}

@@ -10,7 +10,7 @@
 .marca.so-clara .marca-cheia.no-claro{display:inline-block}
 .carregando .placa{display:grid;justify-items:center;gap:var(--s2);padding:var(--s4) var(--s5)}
 @media (min-width:761px){
-  .lateral .marca{padding:var(--s2) 2px var(--s3)}
+  .lateral .marca{padding:var(--s2) var(--s0) var(--s3)}
   .lateral .marca img,.lateral .marca .marca-curta.no-claro{display:none}
   .lateral .marca .marca-cheia.no-escuro{display:inline-block}
   .menu-recolhido .lateral .marca{padding-inline:0}
@@ -26,12 +26,12 @@
 .cena-mesa.b img + img{opacity:1}
 @keyframes chega-perto{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
 .mesa-itens{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s4)}
-.etiquetas{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
-.etiquetas li{font:var(--p-medio) var(--t-14) var(--corpo);padding:3px 10px;border-radius:var(--r-pilula);background:var(--cartao);border:1px solid var(--cartao-borda)}
+.etiquetas{display:flex;flex-wrap:wrap;gap:var(--s2);list-style:none;margin:0;padding:0}
+.etiquetas li{font:var(--p-medio) var(--t-14) var(--corpo);padding:var(--s1) var(--s3);border-radius:var(--r-pilula);background:var(--cartao);border:1px solid var(--cartao-borda)}
 .mesa-jeito{display:grid;justify-items:center;gap:var(--s4);text-align:center}
 .mesa-jeito section{width:100%;text-align:left}
-.manias{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.manias li{position:relative;padding:8px 10px 8px 30px;border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);font:var(--p-normal) var(--t-14)/1.35 var(--corpo)}
+.manias{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
+.manias li{position:relative;padding:var(--s2) var(--s3) var(--s2) 30px;border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);font:var(--p-normal) var(--t-14)/1.35 var(--corpo)}
 .manias li::before{content:'';position:absolute;left:11px;top:14px;width:9px;height:9px;border-radius:50%;background:var(--areia);box-shadow:0 0 0 2px var(--tinta)}
 .mesa-acoes{display:grid;gap:var(--s2);width:100%}
 .mesa-acoes button{min-height:var(--h-md)}
@@ -48,10 +48,10 @@
 .pong-placar{margin:0;text-align:center;font:var(--p-medio) var(--t-16) var(--corpo);color:var(--texto-2)}
 .pong-regras{display:grid;gap:var(--s4);justify-items:center}
 .pong-regras ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2);width:100%}
-.pong-regras li{padding:10px 12px;border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);font:var(--p-normal) var(--t-14)/1.35 var(--corpo)}
+.pong-regras li{padding:var(--s3) var(--s3);border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);font:var(--p-normal) var(--t-14)/1.35 var(--corpo)}
 .pong-regras li b{display:block;font-weight:var(--p-forte);color:var(--tinta)}
 
 .so-celular{display:none}
 @media (max-width:760px){.so-celular{display:block;margin-top:var(--s5)}}
 
-@media (prefers-reduced-motion:reduce){.cena-mesa{animation:none}}
+@media (prefers-reduced-motion:reduce){.cena-mesa{animation:aparece var(--d-rapido) ease-out}}

@@ -113,7 +113,7 @@ function Plano({ p }: { p: ApiPedido }) {
       <header><Retrato id={ORQUESTRADOR} tamanho={32} /><p><b>Plano da orquestração.</b> Ajuste quem faz e o que entrega. Quem vem depois lê a entrega de quem veio antes.</p></header>
       <ol>
         {plano.map((m, i) => (
-          <li key={i}>
+          <li key={i} style={{ ['--i' as string]: i }}>
             <Retrato id={m.agente} tamanho={36} />
             <div>
               <label className="so-leitor" htmlFor={'pa' + i}>Quem faz a missão {i + 1}</label>
@@ -200,7 +200,7 @@ export function Pedidos({ p, rascunho }: { p: ApiPedido; rascunho?: string }) {
         <div className="linha">
           <label className="so-leitor" htmlFor="pedp">Projeto</label>
           <select id="pedp" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(x => <option key={x.id} value={x.id}>{x.nome}</option>)}</select>
-          <button className="primario" type="submit" disabled={texto.trim().length < 8 || p.ocupado}>Pedir ao lab</button>
+          <button className="primario" type="submit" disabled={texto.trim().length < 8 || p.ocupado} aria-busy={p.corrida.etapa === 'planejando'}>Pedir ao lab</button>
         </div>
       </form>
       {p.corrida.etapa === 'planejando' && <p className="andamento"><Retrato id={ORQUESTRADOR} tamanho={26} />{nome(ORQUESTRADOR)} está dividindo o pedido em missões.</p>}
@@ -373,14 +373,14 @@ function Banco({ abre }: { abre: (id: string) => void }) {
       <p className="nota">Especialistas que ficam fora do mapa até o projeto pedir, separados por função. Quem é chamado entra na equipe com o método dele e já pode receber missão. Quem é dispensado volta para cá e guarda o que aprendeu.</p>
       <div className="banco">{funcoes.map(f => (
         <Gaveta key={f.id} titulo={f.nome} conta={quantas(f.gente.length, 'pessoa', 'pessoas')} resumo={f.gente.map(c => c.papel).join(', ')}>
-          <ul>{f.gente.map(c => {
+          <ul>{f.gente.map((c, i) => {
             // quem já passou pelo lab volta com o nome e o papel que os sócios deram
             const antes = de(idDoConvidado(c)), nome = antes?.nome ?? c.nome, papel = antes?.papel ?? c.papel;
             return (
-              <li key={c.id} style={{ ['--c' as string]: ZONAS.find(z => z.id === (antes?.zona ?? c.zona))?.cor ?? '#C5AA81' }}>
+              <li key={c.id} style={{ ['--c' as string]: ZONAS.find(z => z.id === (antes?.zona ?? c.zona))?.cor ?? '#C5AA81', ['--i' as string]: i }}>
                 <i className="sigla" aria-hidden="true">{nome[0]}</i>
                 <span><b>{nome}</b><small>{papel}</small><em>{c.chamar}</em></span>
-                <button type="button" className="leve mini" disabled={chamando !== null} onClick={() => chama(c.id)} aria-label={`Chamar ${nome}, ${papel.toLowerCase()}`}>{chamando === c.id ? 'Chamando' : 'Chamar'}</button>
+                <button type="button" className="leve mini" disabled={chamando !== null} aria-busy={chamando === c.id} onClick={() => chama(c.id)} aria-label={`Chamar ${nome}, ${papel.toLowerCase()}`}>{chamando === c.id ? 'Chamando' : 'Chamar'}</button>
               </li>
             );
           })}</ul>
