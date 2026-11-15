@@ -1,5 +1,8 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Fragment } from 'react';
+import { useEu } from '../hooks/useEu';
+import { iniciaisDoSocio, nomeDoSocio } from '../lib/socio';
 import type { Atencao } from '../lib/pedidos';
 import { Icone, type NomeIcone } from './Icones';
 import { Retrato } from './Retrato';
@@ -11,12 +14,12 @@ import { criaProjecao } from '../lib/projecao';
 import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
 
 export type Aba = 'pedidos' | 'paineis' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
-export const ABAS: { id: Aba; nome: string; corte?: boolean }[] = [
+export const ABAS: { id: Aba; nome: string; corte?: boolean; grupo?: string }[] = [
   // corte marca onde começa um assunto novo no menu: trabalho, equipe, registro e o lab em si
-  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' }, { id: 'paineis', nome: 'Painéis' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
-  { id: 'pessoas', nome: 'Pessoas', corte: true }, { id: 'skills', nome: 'Skills' }, { id: 'lugares', nome: 'Lugares' },
-  { id: 'agenda', nome: 'Agenda', corte: true }, { id: 'decisoes', nome: 'Decisões' }, { id: 'memoria', nome: 'Memória' },
-  { id: 'conexoes', nome: 'Conexões', corte: true }, { id: 'trofeus', nome: 'Troféus' },
+  { id: 'pedidos', nome: 'Pedidos', grupo: 'Trabalho' }, { id: 'missoes', nome: 'Missões' }, { id: 'paineis', nome: 'Painéis' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
+  { id: 'pessoas', nome: 'Pessoas', corte: true, grupo: 'Equipe' }, { id: 'skills', nome: 'Skills' }, { id: 'lugares', nome: 'Lugares' },
+  { id: 'agenda', nome: 'Agenda', corte: true, grupo: 'Registro' }, { id: 'decisoes', nome: 'Decisões' }, { id: 'memoria', nome: 'Memória' },
+  { id: 'conexoes', nome: 'Conexões', corte: true, grupo: 'Lab' }, { id: 'trofeus', nome: 'Troféus' },
 ];
 
 export const SOBRE_ZONA: Record<string, string> = {
@@ -42,10 +45,21 @@ export function Placa() {
   const { modo, motivo } = useEstado();
   return (
     <header className="placa papel-borda">
-      <b>Lab V30</b>
-      <small>Diário de campo</small>
+      <b><span className="marca-cheia">Vetor30</span><span className="marca-curta" aria-hidden="true">V30</span></b>
+      <small>Lab, diário de campo</small>
       {modo === 'previa' && <span className="selo-previa" title={`${motivo ?? 'Prévia sem servidor.'} ${TEXTO_PREVIA}`}>Prévia</span>}
     </header>
+  );
+}
+
+/** Pé da lateral: quem está logado. Sem login ligado, leva às Conexões, onde está o passo que falta. */
+export function AreaDoSocio({ abreConexoes }: { abreConexoes: () => void }) {
+  const email = useEu();
+  return (
+    <button type="button" className="socio" onClick={abreConexoes} title={email ?? 'Login da equipe desligado. Ver em Conexões.'}>
+      <span className="socio-rosto" aria-hidden="true">{iniciaisDoSocio(email)}</span>
+      <span className="socio-texto"><b>{nomeDoSocio(email)}</b><small>{email ?? 'Login da equipe desligado'}</small></span>
+    </button>
   );
 }
 
@@ -74,9 +88,12 @@ export function MenuDiario({ ativa, abre }: { ativa: Aba | null; abre: (a: Aba) 
   return (
     <nav className="menu-diario papel-borda" aria-label="Diário">
       {ABAS.map(a => (
-        <button key={a.id} className={a.corte ? 'corte' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)}>
-          <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
-        </button>
+        <Fragment key={a.id}>
+          {a.grupo && <span className="grupo" aria-hidden="true">{a.grupo}</span>}
+          <button className={a.corte ? 'corte' : undefined} aria-pressed={ativa === a.id} onClick={() => abre(a.id)} title={a.nome}>
+            <Icone nome={(a.id === 'missoes' ? 'missao' : a.id) as NomeIcone} /><span>{a.nome}</span>
+          </button>
+        </Fragment>
       ))}
     </nav>
   );
@@ -279,6 +296,16 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
     </section>
   </>);
+}
+
+/** Cartão com ícone e título, para agrupar um assunto dentro de uma página. */
+export function Bloco({ icone, titulo, acao, children }: { icone: NomeIcone; titulo: string; acao?: { rotulo: string; vai: () => void }; children: ReactNode }) {
+  return (
+    <section className="bloco">
+      <header><span className="bloco-icone"><Icone nome={icone} tam={20} /></span><h4>{titulo}</h4>{acao && <button type="button" className="link" onClick={acao.vai}>{acao.rotulo}</button>}</header>
+      {children}
+    </section>
+  );
 }
 
 /** Números grandes para a página da esquerda: o que dá para saber de relance. */
