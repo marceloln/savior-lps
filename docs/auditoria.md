@@ -281,3 +281,15 @@ Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao rema
 - Futuro próximo, sem neon: eletroposto com placa solar e ponto de entrega de drone. O guia de marca proíbe visual futurista.
 
 O que não foi feito: mesa montada para quem os sócios criam depois, fliperama jogável, e a troca da letra da interface para Roboto, que é decisão dos sócios.
+
+## Equipe maior, 15 de novembro (issue 45)
+
+- Reforço: dezoito skills de ofício, ao menos uma para cada um dos dezessete da equipe de partida, ligadas desde a semente.
+- Banco de convidados: trinta e sete especialistas em oito funções, em `src/lib/convidados.json`. Chamar e dispensar pela tela de pessoas. A rota `POST /api/convidados/:id/chamar` cria ou reativa o especialista e liga a skill numa transação só.
+- Biblioteca de skills: cinquenta e oito skills, em gavetas. O método de cada convidado já está lá, sem dono.
+- Semente com versão: banco que já está no ar recebe só o que falta. Conferido no banco local, que estava na versão anterior.
+- Ficha de quem saiu do lab: em vez do botão de dispensar, avisa que a pessoa voltou para o banco.
+- Texto: tudo reescrito em português a partir do agency-agents (MIT), sem número de resultado pronto. Os testes barram travessão, aspas e porcentagem no catálogo.
+
+O que não foi feito: bonecos novos, mesa própria do convidado, vínculo do convidado com um projeto e revisão dos sócios no texto dos métodos.
+

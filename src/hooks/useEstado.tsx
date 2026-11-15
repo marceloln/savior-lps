@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type EstadoLab, type Memoria, type MissaoProposta, type Pedido, type Projeto, type Reuniao, type Skill, type Tarefa } from '../lib/dados';
+import { chamada, entraNoLab } from '../lib/convidados';
 import { ORQUESTRADOR, type Agente } from '../lib/equipe';
 import { entregaSimulada, planoSimulado, sinteseSimulada } from '../lib/simulado';
 import { recadoDeErro } from '../lib/rede';
@@ -22,6 +23,8 @@ type Api = {
   apagaPedido: (pedido: number) => Promise<boolean>;
   criaAgente: (a: Pick<Agente, 'nome' | 'papel' | 'zona' | 'aparencia' | 'modelo'>) => Promise<string | null>;
   mudaAgente: (id: string, m: Partial<Pick<Agente, 'nome' | 'papel' | 'zona' | 'modelo' | 'ativo'>>) => Promise<boolean>;
+  /** Traz um convidado do banco para a equipe, com a skill dele. Devolve o identificador de quem entrou. */
+  chamaConvidado: (id: string) => Promise<string | null>;
   criaSkill: (k: Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>, agente?: string) => Promise<boolean>;
   mudaSkill: (id: string, m: Partial<Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>>) => Promise<boolean>;
   apagaSkill: (id: string) => Promise<boolean>;
@@ -207,6 +210,14 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
         const ok = await grava(e => ({ ...e, agentes: [...e.agentes, { ...a, id, base: false, ativo: true }] }), () => chama<Agente>('POST', 'agentes', a).then(r => { final = r.id; return r; }),
           (e, r) => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? r : x)) }));
         return ok ? final : null;
+      }),
+      chamaConvidado: cid => trava('agente', null, async () => {
+        const r = chamada(cid, vivo.current.agentes);
+        if (!r.ok) { setAviso(r.erro); return null; }
+        // na tela, a skill que já está na biblioteca vale mais que o texto do catálogo: um sócio pode ter reescrito
+        const k = vivo.current.skills.find(s => s.id === r.skill.id) ?? r.skill;
+        const ok = await grava(e => entraNoLab(e, r.agente, k), () => chama<{ agente: Agente; skill: Skill }>('POST', `convidados/${cid}/chamar`), (e, s) => entraNoLab(e, s.agente, s.skill));
+        return ok ? r.agente.id : null;
       }),
       mudaAgente: async (id, m) => grava(e => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `agentes/${id}`, m)),
       criaSkill: (k, agente) => trava('skill', false, async () => {

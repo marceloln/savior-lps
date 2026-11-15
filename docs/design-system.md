@@ -74,6 +74,8 @@ Grade de 4: `--s1` 4, `--s2` 8, `--s3` 12, `--s4` 16, `--s5` 24, `--s6` 32.
 | Campo | `input`, `select`, `textarea` | | normal, foco, desligado |
 | Foto colada | `figure.foto-colada` | com fita adesiva | |
 | Vazio | `Vazio` em `Diario.tsx` | com ou sem ação | |
+| Gaveta | `Gaveta` em `Nucleo.tsx`, `.gaveta` | com ou sem resumo na linha fechada | fechada, aberta, foco |
+| Cartão do banco | `.banco li` | cor da sala, sigla no lugar do rosto | normal, chamando |
 | Livro | `Livro` em `Diario.tsx` | normal, largo, tela inteira | abrindo, saindo |
 
 ## Regras de uso
