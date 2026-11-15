@@ -10,10 +10,10 @@ import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
 import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
 
-export type Aba = 'pedidos' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
+export type Aba = 'pedidos' | 'paineis' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
 export const ABAS: { id: Aba; nome: string; corte?: boolean }[] = [
   // corte marca onde começa um assunto novo no menu: trabalho, equipe, registro e o lab em si
-  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
+  { id: 'pedidos', nome: 'Pedidos' }, { id: 'missoes', nome: 'Missões' }, { id: 'paineis', nome: 'Painéis' }, { id: 'projetos', nome: 'Projetos' }, { id: 'clientes', nome: 'Clientes' },
   { id: 'pessoas', nome: 'Pessoas', corte: true }, { id: 'skills', nome: 'Skills' }, { id: 'lugares', nome: 'Lugares' },
   { id: 'agenda', nome: 'Agenda', corte: true }, { id: 'decisoes', nome: 'Decisões' }, { id: 'memoria', nome: 'Memória' },
   { id: 'conexoes', nome: 'Conexões', corte: true }, { id: 'trofeus', nome: 'Troféus' },
@@ -234,9 +234,11 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
 export type Voltar = { rotulo: string; vai: () => void };
 
 /** O diário aberto. Quando saindo, toca a animação de saída e avisa em aoSair para ser desmontado. */
-export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, voltar, saindo = false, aoSair, aoFechar, children }: {
+export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, voltar, saindo = false, aoSair, aoFechar, cheia = false, aoAmpliar, children }: {
   titulo: string; sobre?: string; ilustracao?: ReactNode; cor?: string; largo?: boolean; voltar?: Voltar;
   saindo?: boolean; aoSair?: () => void; aoFechar: () => void; children: ReactNode;
+  /** Tela inteira: o livro ocupa a janela toda e a página da esquerda dá lugar ao conteúdo. */
+  cheia?: boolean; aoAmpliar?: () => void;
 }) {
   const caixa = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -264,7 +266,7 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
   }, [aoFechar, saindo, aoSair]);
   return (<>
     <div className={`cortina ${saindo ? 'saindo' : ''}`} onClick={saindo ? undefined : aoFechar} />
-    <section ref={caixa} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titulo} className={`livro ${largo ? 'largo' : ''} ${saindo ? 'saindo' : ''}`} style={{ ['--c' as string]: cor }}
+    <section ref={caixa} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titulo} className={`livro ${largo ? 'largo' : ''} ${cheia ? 'cheia' : ''} ${saindo ? 'saindo' : ''}`} style={{ ['--c' as string]: cor }}
       onAnimationEnd={e => { if (saindo && e.target === e.currentTarget) aoSair?.(); }}>
       <div className="pagina esquerda">
         {voltar && <button type="button" className="voltar" onClick={voltar.vai}><span aria-hidden="true">‹</span> {voltar.rotulo}</button>}
@@ -272,7 +274,8 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
         {sobre && <p className="sobre">{sobre}</p>}
         <div className="ilustracao">{ilustracao}</div>
       </div>
-      <div className="pagina direita">{children}</div>
+      <div className="pagina direita">{cheia && <h2 className="titulo-cheia">{titulo}</h2>}{children}</div>
+      {aoAmpliar && <button className="ampliar-livro" onClick={aoAmpliar} aria-pressed={cheia} aria-label={cheia ? 'Sair da tela inteira' : 'Abrir em tela inteira'} title={cheia ? 'Sair da tela inteira' : 'Tela inteira'}><Icone nome={cheia ? 'reduzir' : 'ampliar'} tam={16} /></button>}
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
     </section>
   </>);

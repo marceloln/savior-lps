@@ -5,9 +5,10 @@ import { zonaEm, ZONAS } from '../lib/lab';
 import { criaProjecao, velocidadeDoArrasto, zoomDaRoda, type Amostra } from '../lib/projecao';
 import { criaSimulacao, quadroDoPasso, type Agente, type Pessoa } from '../lib/simulacao';
 import { criaPessoa } from './genteShader';
+import { TELA_DA_FERRAMENTA, type ResumoDasTelas } from '../lib/ferramentas';
 
 export type AtlasGente = { escala: number; q: Record<string, number[]> };
-export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | null;
+export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | { tipo: 'tela'; ferramenta: 'quadro' | 'linha' | 'calendario' } | null;
 type Props = {
   lab: DadosLab; gente: AtlasGente; equipe: Pessoa[]; zonaAtiva: string | null;
   selecionado: string | null; modoMover: boolean; foco: { zona: string; n: number } | null;
@@ -15,6 +16,8 @@ type Props = {
   escrevendo: string[];
   /** Pedido recém-distribuído: um papel sai da mesa de quem orquestra para a mesa de cada um. n muda a cada distribuição. */
   distribuicao: { de: string; para: string[]; n: number } | null;
+  /** O que as telas do cenário mostram em miniatura: quadro, linha do tempo e calendário. Muda de referência quando os dados mudam. */
+  telas: ResumoDasTelas;
   /** Chamado uma vez, quando as texturas do mapa terminam de carregar. */
   aoPronto?: () => void;
   onHover: (a: Alvo, x: number, y: number) => void; onClique: (a: Alvo) => void; onMovido: (ok: boolean) => void;
@@ -111,6 +114,55 @@ export function MapaPixi(props: Props) {
         });
       });
 
+      // telas vivas: cada tela do cenário mostra a miniatura de uma ferramenta, desenhada no plano da própria tela
+      const VW = 200, CREME = 0xF0EAD6, AREIA = 0xC5AA81, VERDE = 0x5FB8A8, CORAL = 0xE08A6E;
+      const telasVivas = Object.entries(lab.telas ?? {}).filter(([k]) => TELA_DA_FERRAMENTA[k]).map(([k, q]) => {
+        const A = proj.px(q[0][0], q[0][1], q[0][2]), B = proj.px(q[1][0], q[1][1], q[1][2]), C = proj.px(q[3][0], q[3][1], q[3][2]);
+        // a origem é o canto de cima que fica à esquerda na foto, para o desenho não sair espelhado
+        const esq = A[0] < B[0] ? A : B, dir = A[0] < B[0] ? B : A, u = [dir[0] - esq[0], dir[1] - esq[1]], v = [C[0] - A[0], C[1] - A[1]];
+        const VH = VW * (q[0][2] - q[3][2]) / Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]);
+        const c = new Container(), g = new Graphics(); c.addChild(g);
+        c.setFromMatrix(new Matrix(u[0] / VW, u[1] / VW, v[0] / VH, v[1] / VH, esq[0], esq[1]));
+        mundo.addChild(c);
+        const det = u[0] * v[1] - v[0] * u[1];
+        /** O ponto do mundo cai dentro desta tela? */
+        const dentro = (wx: number, wy: number) => { const dx = wx - esq[0], dy = wy - esq[1], a = (dx * v[1] - v[0] * dy) / det, b = (u[0] * dy - dx * u[1]) / det; return a >= 0 && a <= 1 && b >= 0 && b <= 1; };
+        return { ferramenta: TELA_DA_FERRAMENTA[k], c, g, VH, dentro };
+      });
+      let telasVistas: ResumoDasTelas | null = null, telaSob: string | null = null, telaSobVista: string | null = null;
+      const pintaTelas = (d: ResumoDasTelas) => {
+        for (const t of telasVivas) {
+          const g = t.g, W = VW, H = t.VH, m = 12, topo = 34, sob = telaSob === t.ferramenta;
+          g.clear().rect(0, 0, W, H).fill({ color: 0x16231F, alpha: 0.92 });
+          g.rect(m, 12, 46, 6).fill({ color: CREME, alpha: 0.9 }).rect(m + 52, 12, 22, 6).fill({ color: AREIA, alpha: 0.8 });
+          if (t.ferramenta === 'quadro') {
+            const cols = [[d.quadro.fila, CREME, 0.55], [d.quadro.fazendo, AREIA, 0.95], [d.quadro.feito, VERDE, 0.9]] as const, cw = (W - m * 2 - 12) / 3;
+            const cabe = Math.max(1, Math.floor((H - topo - m) / 11));
+            cols.forEach(([n, cor, alfa], i) => {
+              const x = m + i * (cw + 6);
+              g.rect(x, topo - 8, cw, 3).fill({ color: cor, alpha: 0.9 });
+              for (let j = 0; j < Math.min(n, cabe); j++) g.roundRect(x, topo + j * 11, cw, 8, 2).fill({ color: cor, alpha: alfa });
+            });
+          } else if (t.ferramenta === 'linha') {
+            const linhas = d.linha.projetos.slice(0, 6), passo = Math.min(18, (H - topo - m) / Math.max(1, linhas.length)), lw = W - m * 2;
+            linhas.forEach((p, i) => {
+              const y = topo + i * passo;
+              g.rect(m, y + 3, lw, 1).fill({ color: CREME, alpha: 0.18 });
+              g.roundRect(m + p.de * lw, y, p.dura * lw, 8, 2).fill({ color: CREME, alpha: 0.32 });
+              if (p.andou > 0) g.roundRect(m + p.de * lw, y, p.dura * lw * p.andou, 8, 2).fill({ color: AREIA, alpha: 0.95 });
+            });
+            g.rect(m + d.linha.hoje * lw - 0.75, topo - 6, 1.5, H - topo - m + 6).fill({ color: CORAL, alpha: 0.95 });
+          } else {
+            const sem = d.calendario, cw = (W - m * 2 - 6 * 3) / 7, ch = Math.min(cw, (H - topo - m - (sem.length - 1) * 3) / Math.max(1, sem.length));
+            sem.forEach((s, i) => s.forEach((dia, j) => {
+              if (dia < 0) return;
+              g.roundRect(m + j * (cw + 3), topo + i * (ch + 3), cw, ch, 2).fill(dia === 2 ? { color: CORAL, alpha: 0.95 } : dia === 1 ? { color: AREIA, alpha: 0.95 } : { color: CREME, alpha: 0.22 });
+            }));
+          }
+          if (sob) g.rect(1.5, 1.5, W - 3, H - 3).stroke({ color: AREIA, width: 3, alpha: 1 });
+        }
+      };
+
       const casas = new Graphics(); mundo.addChild(casas);
       const destaque = new Graphics(); mundo.addChild(destaque);
       const piscas = new Container(); mundo.addChild(piscas);
@@ -152,6 +204,8 @@ export function MapaPixi(props: Props) {
           if (Math.abs(wx - fx) < 0.32 * K && wy < fy + 6 && wy > fy - alt) { const p = proj.profundidade(a.pos.x, a.pos.y); if (p < pm) { pm = p; melhor = a; } }
         }
         if (melhor) return { tipo: 'agente', agente: melhor };
+        const tela = telasVivas.find(t => t.dentro(wx, wy));
+        if (tela) return { tipo: 'tela', ferramenta: tela.ferramenta };
         const c = proj.chao(wx, wy), z = zonaEm(lab, c.x, c.y);
         return z ? { tipo: 'zona', id: z.id } : null;
       };
@@ -159,6 +213,7 @@ export function MapaPixi(props: Props) {
       /** Dica, cursor de mão e pessoa levantada andam juntos: tudo sai do que está sob o ponteiro. */
       const aponta = (a: Alvo, x = 0, y = 0) => {
         sob = a?.tipo === 'agente' ? a.agente.id : null;
+        telaSob = a?.tipo === 'tela' ? a.ferramenta : null;
         app.stage.cursor = a ? 'pointer' : 'default';
         atual.current.onHover(a, x, y);
       };
@@ -264,7 +319,8 @@ export function MapaPixi(props: Props) {
       app.ticker.add(tk => {
         const dt = Math.min(0.05, tk.deltaMS / 1000); t += dt;
         sim.passo(dt);
-        const { foco, selecionado, modoMover, zonaAtiva, escrevendo, distribuicao } = atual.current;
+        const { foco, selecionado, modoMover, zonaAtiva, escrevendo, distribuicao, telas } = atual.current;
+        if (telas !== telasVistas || telaSob !== telaSobVista) { telasVistas = telas; telaSobVista = telaSob; pintaTelas(telas); }
         if (foco && foco.n !== focoVisto) {
           focoVisto = foco.n; const r = lab.zonas[foco.zona]; ancora = null;
           if (r) { const [fx, fy] = proj.px(r[0] + r[2] / 2, r[1] + r[3] / 2, 0.8); alvo.x = fx; alvo.y = fy; alvo.z = Math.min(zmax(), 2.4); }
