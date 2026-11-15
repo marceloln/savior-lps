@@ -328,10 +328,16 @@ export function Skills() {
 /** Quem está no lab, com a porta para pôr gente nova. */
 export function PainelPessoas({ abre }: { abre: (id: string) => void }) {
   const { equipe } = useEquipe();
+  const { estado } = useEstado();
   const [novo, setNovo] = useState(false);
   if (novo) return <><NovoEspecialista aoCriar={id => { setNovo(false); abre(id); }} /><button type="button" className="leve" onClick={() => setNovo(false)}>Voltar para a equipe</button></>;
   return (<>
     <div className="linha"><button className="primario" onClick={() => setNovo(true)}>Novo especialista</button><p className="nota">Crie alguém para uma competência que falta e treine pela ficha.</p></div>
-    <ul className="elenco">{equipe.map(e => <li key={e.id}><button onClick={() => abre(e.id)}><Retrato id={e.id} tamanho={44} /><span><b>{e.nome}</b><small>{e.papel}</small></span></button></li>)}</ul>
+    <ul className="elenco">{equipe.map(e => {
+      const dele = estado.tarefas.filter(t => t.agente === e.id), faz = dele.filter(t => t.estado === 'fazendo').length, fila = dele.filter(t => t.estado === 'fila').length;
+      const z = ZONAS.find(q => q.id === e.zona);
+      return <li key={e.id} style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}><button onClick={() => abre(e.id)}><Retrato id={e.id} tamanho={48} /><span><b>{e.nome}</b><small>{e.papel}</small>
+        <span className="situacao"><i className={faz ? 'fazendo' : fila ? 'fila' : 'livre'}>{faz ? `${faz} em andamento` : fila ? `${fila} na fila` : 'Livre'}</i><em>{z?.curto ?? z?.nome}</em></span></span></button></li>;
+    })}</ul>
   </>);
 }

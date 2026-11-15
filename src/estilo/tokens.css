@@ -7,5 +7,16 @@
   --sai:cubic-bezier(.23,1,.32,1);
   --titulo:'Alegreya',Georgia,serif; --corpo:'Alegreya Sans',system-ui,sans-serif; --mao:'Caveat',cursive;
   --h-sm:32px; --h-md:40px; --h-lg:48px;
+  /* letra: sete degraus. 12 etiqueta, 13 apoio, 14 controle, 16 leitura, 18 subtítulo, 22 título de bloco, 28 título de página */
+  --t-12:12px; --t-13:13px; --t-14:14px; --t-16:16px; --t-18:18px; --t-22:22px; --t-28:28px;
+  /* peso: normal no corpo, médio em destaque leve, forte em rótulo e ação, título só em Alegreya */
+  --p-normal:400; --p-medio:500; --p-forte:700; --p-titulo:800;
+  /* raio: 4 etiqueta, 8 controle, 12 cartão, 18 painel, pílula */
+  --r-4:4px; --r-8:8px; --r-12:12px; --r-18:18px; --r-pilula:999px;
+  /* tempo: rápido para resposta ao toque, médio para entrada, lento para o que atravessa a tela */
+  --d-rapido:.14s; --d-medio:.2s; --d-lento:.3s;
+  /* superfícies e elevação */
+  --cartao:#FFFBF0; --cartao-borda:rgba(59,47,37,.25);
+  --sombra-1:0 1px 0 rgba(59,47,37,.15); --sombra-2:0 2px 0 rgba(59,47,37,.18),0 6px 14px -8px rgba(59,47,37,.35);
   font-family:var(--corpo); color:var(--tinta-2); font-size:16px;
 }

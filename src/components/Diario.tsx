@@ -281,6 +281,16 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
   </>);
 }
 
+/** Cartão com ícone e título, para agrupar um assunto dentro de uma página. */
+export function Bloco({ icone, titulo, acao, children }: { icone: NomeIcone; titulo: string; acao?: { rotulo: string; vai: () => void }; children: ReactNode }) {
+  return (
+    <section className="bloco">
+      <header><span className="bloco-icone"><Icone nome={icone} tam={20} /></span><h4>{titulo}</h4>{acao && <button type="button" className="link" onClick={acao.vai}>{acao.rotulo}</button>}</header>
+      {children}
+    </section>
+  );
+}
+
 /** Números grandes para a página da esquerda: o que dá para saber de relance. */
 export function Resumo({ itens, nota }: { itens: { n: number | string; rotulo: string; extra?: ReactNode }[]; nota?: string }) {
   return (
