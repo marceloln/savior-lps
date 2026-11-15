@@ -3,6 +3,9 @@ import { SEMENTE } from './dados';
 import { APARENCIAS, EQUIPE, agentesBase, type Agente } from './equipe';
 import { ZONAS } from './lab';
 import { CONVIDADOS, FUNCOES, bancoPorFuncao, bonecoLivre, chamada, convidadoDe, entraNoLab, idDoConvidado, noBanco, skillDoConvidado } from './convidados';
+import { CONTEUDOS } from './catalogo';
+import { EQUIPE as FIXOS } from './equipe';
+import { partesDoPerfil, perfilDe, textoDoPerfil } from './perfis';
 import * as V from '../../worker/validacao';
 
 const base = agentesBase();
@@ -13,9 +16,9 @@ const ativo = (id: string, m: Partial<Agente> = {}): Agente => {
 };
 
 describe('catálogo de convidados', () => {
-  it('tem trinta e sete, com identificador e nome que não se repetem nem batem com a equipe de partida', () => {
-    expect(CONVIDADOS).toHaveLength(37);
-    expect(new Set(CONVIDADOS.map(c => c.id)).size).toBe(37);
+  it('tem sessenta e oito, com identificador e nome que não se repetem nem batem com a equipe de partida', () => {
+    expect(CONVIDADOS).toHaveLength(68);
+    expect(new Set(CONVIDADOS.map(c => c.id)).size).toBe(68);
     const nomes = [...EQUIPE.map(e => e.nome), ...CONVIDADOS.map(c => c.nome)].map(n => n.toLowerCase());
     expect(new Set(nomes).size).toBe(nomes.length);
     const papeis = CONVIDADOS.map(c => c.papel);
@@ -33,22 +36,26 @@ describe('catálogo de convidados', () => {
       for (const a of c.aparencias) expect(SEM_DONO, c.id).toContain(a);
       const a = V.novoAgente({ nome: c.nome, papel: c.papel, zona: c.zona, aparencia: c.aparencias[0] });
       expect(a.ok, c.id).toBe(true);
-      const k = skillDoConvidado(c), v = V.novaSkill(k);
+      const k = skillDoConvidado(c, CONTEUDOS[idDoConvidado(c)]), v = V.novaSkill(k);
       expect(v.ok && v.v.conteudo === k.conteudo && v.v.descricao === k.descricao, c.id).toBe(true);
     }
   });
-  it('cada um diz quando chamar, tem frase, manias, origem e um método com as quatro partes', () => {
+  it('cada um diz quando chamar, tem frase, manias, origem, perfil e um método com texto completo', () => {
     for (const c of CONVIDADOS) {
       expect(c.chamar.length, c.id).toBeGreaterThan(20);
       expect(c.frase.length, c.id).toBeGreaterThan(10);
       expect(c.manias.length, c.id).toBeGreaterThanOrEqual(2);
       expect(c.origem.length, c.id).toBeGreaterThanOrEqual(1);
-      for (const parte of ['Quando entra.', 'Como trabalha.', 'O que entrega.', 'Cuidados.']) expect(c.skill.conteudo, c.id).toContain(parte);
+      expect(c.chamar.startsWith('Quando'), c.id).toBe(true);
+      expect(c.perfil.identidade.length, c.id).toBeGreaterThan(120);
+      expect(c.perfil.tom.length, c.id).toBeGreaterThanOrEqual(4);
+      expect(c.perfil.aprende.length, c.id).toBeGreaterThanOrEqual(3);
+      expect(CONTEUDOS[idDoConvidado(c)]?.length ?? 0, c.id).toBeGreaterThan(3000);
     }
   });
   it('o texto segue a regra da casa: sem travessão, sem aspas e sem número de resultado pronto', () => {
     for (const c of CONVIDADOS) {
-      const tudo = [c.nome, c.papel, c.chamar, c.frase, ...c.manias, c.skill.nome, c.skill.descricao, ...c.skill.conteudo].join(' ');
+      const tudo = [c.nome, c.papel, c.chamar, c.frase, ...c.manias, c.skill.nome, c.skill.descricao, c.perfil.identidade, ...c.perfil.tom, ...c.perfil.aprende].join(' ');
       expect(tudo, c.id).not.toMatch(/[—–"“”']/);
       expect(tudo, c.id).not.toMatch(/\d\s?%/);
     }
@@ -134,5 +141,30 @@ describe('banco e estado do lab', () => {
     const r = chamada('realidade', SEMENTE.agentes); if (!r.ok) throw new Error(r.erro);
     const sem = { ...SEMENTE, skills: SEMENTE.skills.filter(k => k.id !== 'conv-realidade') };
     expect(entraNoLab(sem, r.agente, r.skill).skills.at(-1)?.id).toBe('conv-realidade');
+  });
+});
+
+describe('perfil do especialista', () => {
+  it('os dezessete da equipe fixa têm perfil com identidade, tom, competências, regras e o que guardam', () => {
+    for (const m of FIXOS) {
+      const p = perfilDe(m.id);
+      expect(p, m.id).not.toBeNull();
+      expect(p!.identidade.length, m.id).toBeGreaterThan(200);
+      expect(p!.tom.length, m.id).toBeGreaterThanOrEqual(5);
+      expect(p!.competencias?.length ?? 0, m.id).toBeGreaterThanOrEqual(8);
+      expect(p!.regras?.length ?? 0, m.id).toBeGreaterThanOrEqual(4);
+      expect(textoDoPerfil(p!), m.id).not.toMatch(/[—–"“”‘’'«»`%]/);
+    }
+  });
+  it('convidado tem perfil, e quem os sócios criaram não tem', () => {
+    expect(perfilDe('conv-mudanca')?.identidade.length).toBeGreaterThan(120);
+    expect(perfilDe('especialista-novo-abc')).toBeNull();
+  });
+  it('o texto que vai para o modelo traz a identidade e cada parte com título, sem parte vazia', () => {
+    const p = perfilDe('rosa')!, t = textoDoPerfil(p);
+    expect(t.startsWith(p.identidade)).toBe(true);
+    expect(partesDoPerfil(p).map(x => x.titulo)).toEqual(['Como fala', 'O que domina', 'O que não quebra', 'O que guarda de um projeto para o outro']);
+    expect(partesDoPerfil(perfilDe('conv-mudanca')!).map(x => x.titulo)).toEqual(['Como fala', 'O que guarda de um projeto para o outro']);
+    for (const x of partesDoPerfil(p)) expect(t).toContain(x.titulo + '.');
   });
 });
