@@ -90,6 +90,8 @@ button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;backg
 @media (max-width:760px){
   article.reuniao{grid-template-columns:minmax(0,1fr);padding:var(--s3)}
   article.reuniao .quando{justify-self:start}
+  .ainda{justify-self:start}
+  .form-decisao select,.form-reuniao select{min-width:0;max-width:100%}
   ol.linha-tempo>li{grid-template-columns:minmax(0,1fr);gap:var(--s1)}
   ol.linha-tempo>li>time{padding-top:0}
   /* alvo de toque de 44 em tudo que se toca */

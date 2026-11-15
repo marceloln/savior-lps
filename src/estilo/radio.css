@@ -10,7 +10,7 @@
 .radio-estacoes em{font-style:normal;font:var(--p-forte) var(--t-12) var(--corpo);letter-spacing:.04em;text-transform:uppercase;color:var(--texto-2);margin-top:var(--s1)}
 .radio-estacoes button.on em{color:var(--tinta)}
 .radio-controles{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
-.radio-volume{display:flex;align-items:center;gap:var(--s2);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta-2);margin-left:auto}
+.radio-volume{display:flex;flex-direction:row;align-items:center;gap:var(--s2);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta-2);margin-left:auto}
 .radio-volume input{width:140px;accent-color:var(--tinta);min-height:var(--h-sm)}
 .radio-estado{margin:0;font-size:var(--t-14);color:var(--texto-2)}
 /* barrinhas: sinal de que está no ar. Só altura muda, com transform, e só enquanto toca */
