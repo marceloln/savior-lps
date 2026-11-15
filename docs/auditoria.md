@@ -257,3 +257,13 @@ Para decidir: peso 600 da Alegreya Sans não existe no Google Fonts, 409 ao rema
 - As faixas de fase na linha do tempo são um ritmo de referência (dias 1 a 7, 8 a 14, 15 a 26, 27 a 30). A fase real continua sendo a que o projeto marca.
 
 114 testes. Conferido em 1440, 1280 e 390.
+
+## Briefing guiado com a Clara, 15 de novembro (issue 34)
+
+- Seis modelos de briefing por tipo de tarefa: diagnóstico, proposta, plano de 30 dias, treinamento de equipe, conteúdo e outro pedido.
+- A Clara pergunta uma coisa por vez, mostra o direcionamento de cada resposta, oferece respostas prontas e pede um exemplo quando a resposta aberta vem curta.
+- Roteiro na página da esquerda, com progresso e o que já fechou. Clicar num item reabre a pergunta.
+- Fechamento com resumo, que vira pedido ao lab, cadastro de cliente já preenchido ou texto copiado. A leitura da Clara, pelo modelo de IA, aponta o que falta.
+- Rascunho guardado no navegador. A conversa livre com a Clara continua a um clique.
+
+120 testes. Conferido em 1440, 1280 e 390.

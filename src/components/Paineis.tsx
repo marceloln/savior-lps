@@ -36,10 +36,10 @@ function AbreProjeto({ cliente, abreProjeto }: { cliente: string; abreProjeto: (
   );
 }
 
-export function Clientes({ abreProjeto, novo = false }: { abreProjeto: (id: string) => void; novo?: boolean }) {
+export function Clientes({ abreProjeto, novo = false, inicial }: { abreProjeto: (id: string) => void; novo?: boolean; inicial?: { setor: string; situacao: string } }) {
   const { estado, criaCliente, criaProjeto } = useEstado();
   const [form, setForm] = useState(novo);
-  const [f, setF] = useState({ setor: '', situacao: '', projeto: '' });
+  const [f, setF] = useState({ setor: inicial?.setor ?? '', situacao: inicial?.situacao ?? '', projeto: '' });
   const salva = async () => {
     const id = await criaCliente({ setor: f.setor.trim(), situacao: f.situacao.trim() });
     if (!id) return;
