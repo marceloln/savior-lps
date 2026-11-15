@@ -56,7 +56,7 @@ Contraste conferido na auditoria de 15 de novembro: texto sobre papel acima de 4
 
 Três famílias: Roboto no corpo e em todo controle, como manda a marca; Alegreya nos títulos do diário; Caveat só em nota à mão. Entrelinha em três degraus: `--lh-titulo` 1,15, `--lh-denso` 1,35 e `--lh-leitura` 1,5.
 
-O mesmo papel tem o mesmo tamanho em toda tela: título de página 28, título de bloco 22, subtítulo e título de registro 18, cabeçalho de coluna 14 em Roboto forte. Número em coluna usa algarismo de largura fixa.
+O mesmo papel tem o mesmo tamanho em toda tela: título de página 28, título de seção e mês do calendário 22, título de registro 18, cabeçalho de bloco 16, cabeçalho de coluna 14 em Roboto forte. Número em coluna usa algarismo de largura fixa.
 
 ### Peso
 

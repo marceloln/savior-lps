@@ -293,3 +293,37 @@ O que não foi feito: mesa montada para quem os sócios criam depois, fliperama 
 
 O que não foi feito: bonecos novos, mesa própria do convidado, vínculo do convidado com um projeto e revisão dos sócios no texto dos métodos.
 
+
+## Lab descontraído, 15 de novembro (issue 47)
+
+- Elenco: os vinte e três bonecos saíram do terno. Camiseta, polo, malha e jeans, com bermuda acima do joelho em treze deles. A bermuda é a calça do modelo cortada no Blender, porque a biblioteca de roupas não tem uma pronta.
+- Lounge: seis pufes grandes com encosto e o canto da Rádio V30, com aparelho de madeira, caixas, microfone, discos e o logo oficial no painel verde.
+- Rádio V30: três estações compostas pelo navegador, sem arquivo de áudio e sem música de terceiros. Abre pelo aparelho no mapa, pelo botão do menu e pelo botão da sala. A música segue tocando com o livro fechado e o botão do menu pausa de qualquer tela.
+- Conferido: as três estações renderizadas fora do tempo real geram som, sem estouro e sem valor inválido. As regras de compasso, tempo e volume têm teste.
+
+O que não foi feito: fliperama jogável, roupa que varia por dia e programação da rádio com vinheta.
+
+## Auditoria visual, de design system e de UX, 15 de novembro (issue 48)
+
+Duas auditorias independentes, uma do sistema visual e do movimento e outra de UX nas telas, com os oito critérios da lista que o sócio mandou. O relatório completo está na página da auditoria.
+
+Medido no CSS, antes e depois:
+
+| Medida | Antes | Depois |
+|---|---|---|
+| Cor escrita fora das variáveis | 279 | 123, todas de uso único |
+| Espaço fora da grade de 4 | 211 de 602 | 8 de 618 |
+| Tamanhos de título dentro da página | cinco, sem regra | quatro, um por papel |
+| Variações de cartão | mais de vinte | três tipos |
+
+O que mudou:
+
+- Corpo em Roboto, como a marca pede. Alegreya ficou nos títulos do diário e Caveat na nota à mão.
+- Contraste: faixa Para você, borda de campo, barra de progresso e texto apagado por opacidade passaram a cumprir o mínimo.
+- Três tipos de cartão num arquivo só, `src/estilo/padrao.css`. Reunião, decisão e resumo do projeto viraram cartão.
+- Estados de controle: mouse só em aparelho com mouse, apertado igual em todo botão, desligado legível, campo inválido e botão ocupado.
+- Movimento: aviso, resposta pronta e gaveta chegam de baixo em 200 ms; plano, banco e estações entram em sequência; missão que muda de coluna chega na coluna nova. Tudo com variante para movimento reduzido.
+- Resposta pronta com outro livro aberto: ponto no item Pedidos do menu e recado com atalho.
+- Teste do estilo, `src/lib/estilo.test.ts`, guarda ordem de importação, cor, espaço, letra e movimento.
+
+O que não foi feito: gaveta com altura animada, primeira carga mais leve, menos botões por cartão no quadro do projeto e Memória agrupada por pessoa.
