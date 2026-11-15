@@ -1,0 +1,234 @@
+{
+ "metodo-v30": [
+  1329,
+  "A Vetor30 não é consultoria tradicional. É um método de 30 d"
+ ],
+ "tom-de-voz-v30": [
+  467,
+  "Escreva direto, com frases curtas e variação de ritmo. Fale "
+ ],
+ "diagnostico-gut": [
+  563,
+  "Sequência do diagnóstico V30: primeira conversa, entrevistas"
+ ],
+ "descoberta-em-vendas": [
+  1253,
+  "Use para preparar e para revisar conversa de descoberta com "
+ ],
+ "estrategia-de-proposta": [
+  1264,
+  "Use antes de escrever qualquer proposta. Proposta é um texto"
+ ],
+ "precificacao": [
+  1245,
+  "Use quando o pedido envolver preço, desconto, margem ou paco"
+ ],
+ "conducao-de-projeto": [
+  1104,
+  "Use para manter um projeto com várias áreas andando até o fi"
+ ],
+ "pesquisa-com-usuario": [
+  1311,
+  "Use para entender o cliente ou o usuário antes de desenhar, "
+ ],
+ "sintese-de-entrevistas": [
+  1075,
+  "Use depois de entrevistas, visitas e pesquisas, para transfo"
+ ],
+ "leitura-de-mercado": [
+  1061,
+  "Use para entender um mercado, um concorrente ou uma tendênci"
+ ],
+ "desenho-de-fluxo": [
+  1165,
+  "Use para desenhar ou redesenhar um processo de ponta a ponta"
+ ],
+ "guarda-da-marca": [
+  992,
+  "Use para revisar qualquer peça antes de sair e para decidir "
+ ],
+ "conteudo-para-linkedin": [
+  1073,
+  "Use para planejar e escrever post de empresa ou de sócio.\nPa"
+ ],
+ "divisao-de-pedido": [
+  1030,
+  "Use ao receber um pedido de um sócio e ao juntar as entregas"
+ ],
+ "rotina-de-operacao": [
+  1195,
+  "Use para transformar o jeito certo de operar em rotina que s"
+ ],
+ "painel-e-relato-de-dados": [
+  1185,
+  "Use para montar painel, relatório ou análise que alguém vai "
+ ],
+ "prototipo-rapido": [
+  1023,
+  "Use para testar uma ideia com algo que funciona, em dias.\nPa"
+ ],
+ "desenho-de-agente-de-ia": [
+  1216,
+  "Use para desenhar um agente de IA que apoia um time, inclusi"
+ ],
+ "registro-de-reuniao-e-conhecimento": [
+  1014,
+  "Use para transformar reunião, entrega e aprendizado em regis"
+ ],
+ "triagem-de-entrada": [
+  1026,
+  "Use na primeira conversa com um contato novo, para entender "
+ ],
+ "caso-de-negocio": [
+  1023,
+  "Use para mostrar se uma iniciativa se paga e do que isso dep"
+ ],
+ "conv-mudanca": [
+  1800,
+  "Você cuida do lado humano de uma mudança: sistema novo, proc"
+ ],
+ "conv-psicologia": [
+  1644,
+  "Você lê como as pessoas trabalham juntas: clima, confiança, "
+ ],
+ "conv-treinamento": [
+  1699,
+  "Você desenha treinamento que muda o que a pessoa faz no trab"
+ ],
+ "conv-recrutamento": [
+  1756,
+  "Você cuida da entrada de gente, da vaga bem descrita até os "
+ ],
+ "conv-suprimentos": [
+  1710,
+  "Você olha o caminho do produto, do fornecedor até a ponta: c"
+ ],
+ "conv-integracao": [
+  1810,
+  "Você conduz a integração de uma unidade, loja ou empresa que"
+ ],
+ "conv-hospitalidade": [
+  1620,
+  "Você cuida do padrão de atendimento no ponto de contato: loj"
+ ],
+ "conv-central": [
+  1396,
+  "Você organiza o atendimento por canal: telefone, WhatsApp, e"
+ ],
+ "conv-geografia": [
+  1501,
+  "Você lê a rede pelo território: onde estão as unidades, quem"
+ ],
+ "conv-sucesso-do-cliente": [
+  1626,
+  "Você cuida do cliente depois da venda, da entrada até a reno"
+ ],
+ "conv-contas": [
+  1245,
+  "Você cuida das contas que mais pesam. Monta o plano de cada "
+ ],
+ "conv-prospeccao": [
+  1358,
+  "Você abre conversa com quem ainda não conhece a empresa. Tra"
+ ],
+ "conv-funil": [
+  1324,
+  "Você lê o funil de vendas para dizer onde os negócios param,"
+ ],
+ "conv-treino-de-vendas": [
+  1189,
+  "Você desenvolve quem vende, um comportamento por vez, e ensi"
+ ],
+ "conv-grandes-negocios": [
+  1380,
+  "Você ajuda a ganhar negócio grande, com muitos decisores e c"
+ ],
+ "conv-seo": [
+  1448,
+  "Você faz a empresa ser encontrada na busca: site, páginas de"
+ ],
+ "conv-midia-paga": [
+  1380,
+  "Você planeja e acompanha anúncio pago em busca e em rede soc"
+ ],
+ "conv-email": [
+  1214,
+  "Você desenha a conversa com a base de contatos por e-mail e "
+ ],
+ "conv-redes": [
+  1183,
+  "Você dá direção à presença da marca nas redes: para que serv"
+ ],
+ "conv-imprensa": [
+  1442,
+  "Você cuida da relação com a imprensa e da reputação: o que c"
+ ],
+ "conv-comportamento": [
+  1569,
+  "Você redesenha o ambiente de decisão para o comportamento ce"
+ ],
+ "conv-experimentos": [
+  1555,
+  "Você desenha e acompanha pilotos e testes para a decisão vir"
+ ],
+ "conv-estatistica": [
+  1303,
+  "Você separa sinal de ruído. Desenha pesquisa e análise e diz"
+ ],
+ "conv-planejamento-financeiro": [
+  1210,
+  "Você liga o número ao negócio: orçamento, acompanhamento do "
+ ],
+ "conv-controladoria": [
+  1371,
+  "Você organiza o processo por trás do número: conciliação, fe"
+ ],
+ "conv-privacidade": [
+  1958,
+  "Você olha o projeto pela lente da proteção de dados pessoais"
+ ],
+ "conv-realidade": [
+  1487,
+  "Você é a última leitura antes de uma entrega sair. Parte do "
+ ],
+ "conv-governanca-de-ia": [
+  1441,
+  "Você põe ordem nas automações e nos agentes de IA: o que val"
+ ],
+ "conv-esg": [
+  1422,
+  "Você estrutura a agenda ambiental, social e de governança de"
+ ],
+ "conv-produto": [
+  1266,
+  "Você conduz um produto digital, como aplicativo, portal ou f"
+ ],
+ "conv-arquitetura": [
+  1267,
+  "Você desenha sistemas e integrações e ajuda a tomar as decis"
+ ],
+ "conv-engenharia-de-dados": [
+  1149,
+  "Você constrói o caminho do dado, dos sistemas de origem até "
+ ],
+ "conv-acessibilidade": [
+  1314,
+  "Você verifica se um site, aplicativo ou totem funciona para "
+ ],
+ "conv-interface": [
+  1169,
+  "Você desenha as telas de um produto digital para que a pesso"
+ ],
+ "conv-etnografia": [
+  1781,
+  "Você entende um lugar de trabalho olhando e ouvindo de perto"
+ ],
+ "conv-estrategia": [
+  1185,
+  "Você apoia as decisões que definem o rumo de uma empresa: on"
+ ],
+ "conv-gabinete": [
+  1272,
+  "Você dá ritmo e método às decisões da diretoria: o que entra"
+ ]
+}

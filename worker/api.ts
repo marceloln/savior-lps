@@ -2,7 +2,8 @@
 import { diaDoCiclo, missoesIniciais, semente, type EstadoLab, type Skill } from '../src/lib/dados';
 import { agentesBase, type Agente } from '../src/lib/equipe';
 import { MODELO_PADRAO } from '../src/lib/modelos';
-import { baseQueFalta, VERSAO_DA_BASE } from '../src/lib/skills';
+import { CONTEUDOS } from '../src/lib/catalogo';
+import { baseQueFalta, conteudoQueMudou, VERSAO_DA_BASE } from '../src/lib/skills';
 import * as V from './validacao';
 import { provedoresLigados, type Chaves } from './ia';
 
@@ -18,10 +19,13 @@ export async function semeiaNucleo(db: D1Database) {
   const s = await db.prepare("SELECT (SELECT COUNT(*) FROM agentes) AS n, (SELECT valor FROM config WHERE chave = 'versao_da_base') AS v").first<{ n: number; v: string | null }>();
   const versao = !s?.n ? 0 : Number(s.v ?? 1) || 1;
   if (versao >= VERSAO_DA_BASE) return;
-  const falta = baseQueFalta(versao), st: D1PreparedStatement[] = [];
+  const falta = baseQueFalta(versao, CONTEUDOS), st: D1PreparedStatement[] = [];
   if (versao === 0) for (const a of agentesBase()) st.push(db.prepare('INSERT OR IGNORE INTO agentes (id, nome, papel, zona, aparencia, base) VALUES (?, ?, ?, ?, ?, 1)').bind(a.id, a.nome, a.papel, a.zona, a.aparencia));
   for (const k of falta.skills) st.push(db.prepare('INSERT OR IGNORE INTO skills (id, nome, descricao, conteudo, para_todos) VALUES (?, ?, ?, ?, ?)').bind(k.id, k.nome, k.descricao, k.conteudo, k.para_todos ? 1 : 0));
   for (const [agente, k] of falta.vinculos) st.push(db.prepare('INSERT OR IGNORE INTO agente_skills (agente, skill) VALUES (?, ?)').bind(agente, k));
+  // conteúdo completo da leva 3: só troca o texto que ainda está igual ao semeado antes, para não desfazer edição dos sócios
+  for (const m of conteudoQueMudou(versao, CONTEUDOS)) st.push(db.prepare('UPDATE skills SET nome = ?, descricao = ?, conteudo = ? WHERE id = ? AND length(conteudo) = ? AND substr(conteudo, 1, 60) = ?')
+    .bind(m.skill.nome, m.skill.descricao, m.skill.conteudo, m.skill.id, m.tamanhoAntigo, m.comecoAntigo));
   st.push(db.prepare("INSERT INTO config (chave, valor) VALUES ('versao_da_base', ?) ON CONFLICT(chave) DO UPDATE SET valor = excluded.valor").bind(String(VERSAO_DA_BASE)));
   await db.batch(st);
 }

@@ -1,0 +1,164 @@
+[
+ {
+  "id": "descoberta-em-vendas",
+  "nome": "Descoberta em vendas",
+  "descricao": "Conduzir a primeira conversa para entender a dor antes de falar da solução.",
+  "para": [
+   "caio"
+  ],
+  "origem": []
+ },
+ {
+  "id": "estrategia-de-proposta",
+  "nome": "Estratégia de proposta",
+  "descricao": "Definir as ideias centrais e a estrutura de uma proposta antes de escrever.",
+  "para": [
+   "bela"
+  ],
+  "origem": []
+ },
+ {
+  "id": "precificacao",
+  "nome": "Precificação",
+  "descricao": "Decidir preço, desconto e pacote olhando custo, concorrência e valor para o cliente.",
+  "para": [
+   "otto"
+  ],
+  "origem": []
+ },
+ {
+  "id": "conducao-de-projeto",
+  "nome": "Condução de projeto",
+  "descricao": "Manter um projeto com várias áreas andando até o fim, com combinado, donos, riscos e relato franco.",
+  "para": [
+   "rui"
+  ],
+  "origem": []
+ },
+ {
+  "id": "pesquisa-com-usuario",
+  "nome": "Pesquisa com usuário",
+  "descricao": "Entender o cliente ou o usuário antes de desenhar e testar o que foi desenhado.",
+  "para": [
+   "rosa"
+  ],
+  "origem": []
+ },
+ {
+  "id": "sintese-de-entrevistas",
+  "nome": "Síntese de entrevistas",
+  "descricao": "Transformar o que foi ouvido em entrevistas e visitas em achados com evidência e peso.",
+  "para": [
+   "lia"
+  ],
+  "origem": []
+ },
+ {
+  "id": "leitura-de-mercado",
+  "nome": "Leitura de mercado e concorrência",
+  "descricao": "Entender um mercado, um concorrente ou uma tendência com fonte e data antes de recomendar posição.",
+  "para": [
+   "davi"
+  ],
+  "origem": []
+ },
+ {
+  "id": "desenho-de-fluxo",
+  "nome": "Desenho de fluxo de trabalho",
+  "descricao": "Desenhar um processo de ponta a ponta com caminho principal, desvios, passagens de bastão e desperdícios.",
+  "para": [
+   "nina"
+  ],
+  "origem": []
+ },
+ {
+  "id": "guarda-da-marca",
+  "nome": "Guarda da marca",
+  "descricao": "Revisar peças contra as regras da marca e apontar desvio com a regra e a correção.",
+  "para": [
+   "iara"
+  ],
+  "origem": []
+ },
+ {
+  "id": "conteudo-para-linkedin",
+  "nome": "Conteúdo para LinkedIn",
+  "descricao": "Planejar e escrever post de empresa ou de sócio com uma ideia, um leitor e algo que ele possa usar.",
+  "para": [
+   "theo"
+  ],
+  "origem": []
+ },
+ {
+  "id": "divisao-de-pedido",
+  "nome": "Divisão de pedido em missões",
+  "descricao": "Dividir o pedido de um sócio em poucas missões bem escritas e juntar as entregas numa resposta só.",
+  "para": [
+   "duda"
+  ],
+  "origem": []
+ },
+ {
+  "id": "rotina-de-operacao",
+  "nome": "Rotina de operação de loja",
+  "descricao": "Transformar o jeito certo de operar em padrão, checklist, indicador e ritual que se repetem em toda unidade.",
+  "para": [
+   "beto"
+  ],
+  "origem": []
+ },
+ {
+  "id": "painel-e-relato-de-dados",
+  "nome": "Painel e relato de dados",
+  "descricao": "Montar painel, relatório ou análise a partir da decisão que ele alimenta, com indicador definido e leitura escrita.",
+  "para": [
+   "lara"
+  ],
+  "origem": []
+ },
+ {
+  "id": "prototipo-rapido",
+  "nome": "Protótipo rápido",
+  "descricao": "Testar uma ideia em dias com algo que funciona, cortando até sobrar o fluxo que carrega o maior risco.",
+  "para": [
+   "max"
+  ],
+  "origem": []
+ },
+ {
+  "id": "desenho-de-agente-de-ia",
+  "nome": "Desenho de agente de IA",
+  "descricao": "Desenhar um agente de IA que apoia um time, com instruções, limites, casos de teste e passagem para o dono.",
+  "para": [
+   "ana"
+  ],
+  "origem": []
+ },
+ {
+  "id": "registro-de-reuniao-e-conhecimento",
+  "nome": "Registro de reunião e de conhecimento",
+  "descricao": "Transformar reunião, entrega e aprendizado em registro que alguém acha e usa depois.",
+  "para": [
+   "nico"
+  ],
+  "origem": []
+ },
+ {
+  "id": "triagem-de-entrada",
+  "nome": "Triagem de entrada",
+  "descricao": "Conduzir a primeira conversa com um contato novo, qualificar e passar adiante sem ninguém precisar repetir.",
+  "para": [
+   "clara"
+  ],
+  "origem": []
+ },
+ {
+  "id": "caso-de-negocio",
+  "nome": "Caso de negócio",
+  "descricao": "Mostrar se uma iniciativa se paga, com premissas escritas, cenários e as poucas variáveis que viram o resultado.",
+  "para": [
+   "otto"
+  ],
+  "origem": []
+ }
+]

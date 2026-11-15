@@ -1,13 +1,14 @@
 // Montagem das instruções de um especialista e validação do que chega na conversa. Sem dependência do Worker, para testar fácil.
 import type { Membro } from '../src/lib/equipe';
 import type { Skill } from '../src/lib/dados';
+import { perfilDe, textoDoPerfil } from '../src/lib/perfis';
 
 export type Mensagem = { role: 'user' | 'assistant'; content: string };
 const LIMITE_HISTORICO = 20;
 const LIMITE_TEXTO = 4000;
-const LIMITE_SKILL = 6000;
+const LIMITE_SKILL = 12000;
 /** Teto para todas as skills juntas: elas entram em toda chamada de quem foi treinado. */
-export const LIMITE_SKILLS = 24000;
+export const LIMITE_SKILLS = 40000;
 
 const BRIEFING = [
   'Você conduz o briefing de entrada. Faça uma pergunta por vez, curta, e espere a resposta.',
@@ -24,7 +25,9 @@ export function sistemaDe(m: Membro, skills: Skill[] = []): string {
     'Nunca invente número, métrica ou nome de cliente. Cliente é sempre setor e situação. Se faltar dado, diga o que falta.',
     ...(m.id === 'clara' ? [BRIEFING] : []),
   ].join(' ');
-  if (!skills.length) return base;
+  // quem tem perfil fala com a própria voz: identidade, tom, o que domina e o que não quebra
+  const p = perfilDe(m.id), comPerfil = p ? base + '\n\nSeu perfil.\n\n' + textoDoPerfil(p) : base;
+  if (!skills.length) return comPerfil;
   // entram na ordem em que vêm (as que valem para todos primeiro) até encher o teto
   const partes: string[] = []; let sobra = LIMITE_SKILLS;
   for (const s of skills) {
@@ -32,7 +35,7 @@ export function sistemaDe(m: Membro, skills: Skill[] = []): string {
     if (t.length > sobra) break;
     partes.push(t); sobra -= t.length;
   }
-  return base + '\n\nSkills em que você foi treinado. Siga o que elas dizem quando o assunto for o delas.\n\n' + partes.join('\n\n');
+  return comPerfil + '\n\nSkills em que você foi treinado. Siga o que elas dizem quando o assunto for o delas.\n\n' + partes.join('\n\n');
 }
 
 /** Valida o corpo da conversa e devolve as mensagens limpas, ou uma mensagem de erro. */

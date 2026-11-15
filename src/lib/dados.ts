@@ -2,7 +2,7 @@
 // Cliente aparece só por setor e situação. Nada aqui é dado real.
 import { agentesBase, type Agente } from './equipe';
 import { MODELO_PADRAO } from './modelos';
-import { SKILLS_BASE, VINCULOS_BASE } from './skills';
+import { skillsBase, VINCULOS_BASE } from './skills';
 export type Estado = 'fila' | 'fazendo' | 'feito';
 export type Cliente = { id: string; setor: string; situacao: string; fase: number };
 export type Projeto = { id: string; cliente_id: string; nome: string; fase: number; dia: number; mesa: string | null; inicio: string };
@@ -211,7 +211,8 @@ export function semente(hoje: string): Semente {
     ].reverse(),
     conversas: 0,
     agentes: agentesBase(),
-    skills: SKILLS_BASE,
+    // só nome e descrição: o texto completo chega depois, por carga à parte (ver catalogo.ts)
+    skills: skillsBase(),
     vinculos: VINCULOS_BASE,
     pedidos: [{ id: 1, texto: 'Preciso de um jeito simples de fazer a reunião de segunda ser igual em todas as praças da distribuidora.', projeto_id: 'distribuidora-ritmo', estado: 'entregue', sintese: SINTESE_EXEMPLO, criado_em: d(-1) + ' 11:00:00' }],
     modeloPadrao: MODELO_PADRAO,
