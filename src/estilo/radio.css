@@ -1,0 +1,43 @@
+/* Rádio V30: tocador no livro e botão no menu lateral. */
+.radio{display:grid;gap:var(--s4)}
+.radio-estacoes{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
+.radio-estacoes button{width:100%;display:grid;gap:2px;text-align:left;padding:var(--s3) var(--s4);border-radius:var(--r-12);border:1.5px solid var(--cartao-borda);background:var(--cartao);box-shadow:var(--sombra-1);color:var(--tinta-2);font:inherit;min-height:var(--h-lg);transition:transform var(--d-rapido) var(--sai),border-color var(--d-rapido) ease,background-color var(--d-rapido) ease}
+.radio-estacoes button.on{border-color:var(--tinta);background:var(--papel)}
+.radio-estacoes button:active{transform:scale(.98)}
+.radio-topo{display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.radio-topo b{font:var(--p-titulo) var(--t-18) var(--titulo);color:var(--tinta)}
+.radio-estacoes small{font-size:var(--t-14);line-height:1.35;color:var(--texto-2)}
+.radio-estacoes em{font-style:normal;font:var(--p-forte) var(--t-12) var(--corpo);letter-spacing:.04em;text-transform:uppercase;color:var(--texto-2);margin-top:var(--s1)}
+.radio-estacoes button.on em{color:var(--tinta)}
+.radio-controles{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
+.radio-volume{display:flex;align-items:center;gap:var(--s2);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta-2);margin-left:auto}
+.radio-volume input{width:140px;accent-color:var(--tinta);min-height:var(--h-sm)}
+.radio-estado{margin:0;font-size:var(--t-14);color:var(--texto-2)}
+/* barrinhas: sinal de que está no ar. Só altura muda, com transform, e só enquanto toca */
+.radio-barras{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex:none}
+.radio-barras i{width:3px;height:14px;border-radius:1px;background:currentColor;opacity:.35;transform:scaleY(.3);transform-origin:bottom}
+.radio-barras.on i{opacity:1;animation:radio-barra .9s ease-in-out infinite alternate}
+.radio-barras.on i:nth-child(2){animation-duration:.7s;animation-delay:-.3s}
+.radio-barras.on i:nth-child(3){animation-duration:1.1s;animation-delay:-.6s}
+@keyframes radio-barra{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.radio-barras.on i{animation:none;transform:scaleY(.7)}}
+/* botão do menu: fora da lateral de mesa ele não aparece, porque no celular a rádio abre pelo mapa e pela sala do lounge */
+.radio-mini{display:none}
+@media (min-width:761px){
+  .radio-mini{display:flex;align-items:stretch;gap:var(--s1);margin-bottom:var(--s2)}
+  .radio-abre{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:var(--s2) 10px;border-radius:var(--r-12);border:1px solid rgba(240,234,214,.25);background:rgba(240,234,214,.08);color:var(--creme);text-align:left;font:inherit;min-height:var(--h-md);transition:background-color var(--d-rapido) ease}
+  .radio-mini.on .radio-abre{border-color:var(--areia);color:var(--areia)}
+  .radio-mini-texto{display:grid;min-width:0}
+  .radio-mini-texto b{font:var(--p-forte) var(--t-14) var(--corpo);color:var(--creme)}
+  .radio-mini-texto small{font-size:var(--t-12);color:var(--areia);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .radio-pausa{flex:none;width:var(--h-md);border-radius:var(--r-12);border:1px solid rgba(240,234,214,.25);background:rgba(240,234,214,.08);color:var(--creme);font-size:var(--t-12);transition:background-color var(--d-rapido) ease}
+  .radio-abre:focus-visible,.radio-pausa:focus-visible{outline:2px solid var(--creme);outline-offset:2px}
+  .menu-recolhido .radio-mini{justify-content:center}
+  .menu-recolhido .radio-abre{flex:none;justify-content:center;padding:var(--s2);border-color:transparent;background:none}
+  .menu-recolhido .radio-mini-texto,.menu-recolhido .radio-pausa{display:none}
+}
+@media (hover:hover) and (pointer:fine){
+  .radio-estacoes button:hover{border-color:var(--tinta)}
+  .radio-abre:hover,.radio-pausa:hover{background:rgba(240,234,214,.16)}
+}
+@media (max-width:760px){.radio-volume{margin-left:0;width:100%}.radio-volume input{flex:1;width:auto}}
