@@ -197,10 +197,11 @@ export function Lab() {
           noMapa={() => escolhe(p.id)} conversa={() => setAberto({ tipo: 'conversa', id: p.id })} /> };
     } else if (mostrado.tipo === 'mesa') {
       const p = de(mostrado.id) ?? equipe[0], z = ZONAS.find(q => q.id === p.zona)!;
+      const jeito = <JeitoDe m={p} cor={z.cor} conversa={() => setAberto(p.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: p.id })}
+        missao={() => setAberto({ tipo: 'ficha', id: p.id, aba: 'visao', foca: true })} ficha={() => setAberto({ tipo: 'ficha', id: p.id })} />;
+      // no celular o livro só tem a página da direita, então o jeito da pessoa desce para baixo da cena
       folha = { titulo: `Mesa de ${p.nome}`, sobre: p.papel, cor: z.cor, largo: true, voltar: { rotulo: 'Pessoas', vai: vaiPara('pessoas') },
-        ilustracao: <JeitoDe m={p} cor={z.cor} conversa={() => setAberto(p.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: p.id })}
-          missao={() => setAberto({ tipo: 'ficha', id: p.id, aba: 'visao', foca: true })} ficha={() => setAberto({ tipo: 'ficha', id: p.id })} />,
-        corpo: <MesaDe key={p.id} m={p} zona={z.nome} /> };
+        ilustracao: jeito, corpo: <><MesaDe key={p.id} m={p} zona={z.nome} /><div className="so-celular">{jeito}</div></> };
     } else if (mostrado.tipo === 'pong') {
       folha = { titulo: 'Pingue-pongue', sobre: 'Pong clássico na mesa do lounge. Vence quem fizer sete.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, largo: true, ilustracao: <ComoJogar />, corpo: <Pong /> };
     } else if (mostrado.tipo === 'conversa') {

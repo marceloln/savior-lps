@@ -15,7 +15,7 @@
   .lateral .marca .marca-cheia.no-escuro{display:inline-block}
   .menu-recolhido .lateral .marca{padding-inline:0}
   .menu-recolhido .lateral .marca .marca-cheia.no-escuro{display:none}
-  .menu-recolhido .lateral .marca .marca-curta.no-escuro{display:inline-block}
+  .menu-recolhido .lateral .marca .marca-curta.no-escuro{display:inline-block;width:40px}
 }
 
 /* mesa de cada especialista */
@@ -50,5 +50,8 @@
 .pong-regras ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2);width:100%}
 .pong-regras li{padding:10px 12px;border-radius:var(--r-8);background:var(--cartao);border:1px solid var(--cartao-borda);font:var(--p-normal) var(--t-14)/1.35 var(--corpo)}
 .pong-regras li b{display:block;font-weight:var(--p-forte);color:var(--tinta)}
+
+.so-celular{display:none}
+@media (max-width:760px){.so-celular{display:block;margin-top:var(--s5)}}
 
 @media (prefers-reduced-motion:reduce){.cena-mesa{animation:none}}
