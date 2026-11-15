@@ -103,3 +103,9 @@ Cada lei vira uma regra que dá para conferir na tela. A coluna da direita diz o
 | Von Restorff | Uma ação primária por tela, em verde tinta | Botão primário único por formulário | Fecho do briefing tem cinco botões lado a lado |
 | Região comum e proximidade | O que é do mesmo assunto fica no mesmo bloco | Bloco com cabeçalho; etiquetas de número | Agenda, Decisões e Memória ainda são listas soltas |
 | Prova social | Não se aplica: ferramenta interna, sem número inventado | | |
+
+## Lateral
+
+Menu de altura inteira em verde tinta, com a marca no topo, os itens em quatro grupos nomeados e a área do sócio no pé. Recolhe para 72 de largura e fica só nos ícones, com Vetor30 virando V30. A escolha fica guardada no navegador. A largura mora na variável `--lado`, e livro, console e cartão do lugar se posicionam a partir dela. No celular a lateral dá lugar à barra de cima.
+
+A área do sócio mostra o e-mail que o login da equipe entrega pela rota `/api/eu`. Sem o login ligado, mostra Visitante e leva às Conexões.
