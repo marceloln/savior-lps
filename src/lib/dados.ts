@@ -51,6 +51,8 @@ export function textoDoCiclo(inicio: string, hoje: string): string {
   return `Ciclo encerrado há ${passou} ${passou === 1 ? 'dia' : 'dias'}`;
 }
 
+/** Dia curto para lista de reuniões: qua, 19 nov. */
+export const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
 export const hojeLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 
 // Entregas de exemplo do pedido que já vem pronto na história. Sem número de resultado e sem nome de cliente.

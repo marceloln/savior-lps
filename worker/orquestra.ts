@@ -79,3 +79,37 @@ export function promptSintese(pedido: string, entregas: { nome: string; papel: s
     refaz ? '\nSUA RESPOSTA ANTERIOR\n' + corta(refaz.anterior, 4000) + '\n\nAJUSTE PEDIDO PELO SÓCIO\n' + refaz.ajuste + '\nReescreva a resposta inteira já com o ajuste.' : '',
   ].filter(Boolean).join('\n');
 }
+
+export type AtaProposta = { ata: string; decisoes: { titulo: string; contexto: string }[]; missoes: MissaoProposta[] };
+
+/** A orquestração lê as anotações de uma reunião com gente de verdade e propõe ata, decisões e missões. */
+export function promptAta(anotacoes: string, titulo: string, equipe: Membro[]): string {
+  return [
+    'ANOTAÇÕES DA REUNIÃO', titulo ? `Reunião: ${titulo}` : '', corta(anotacoes.trim(), 40000),
+    'EQUIPE DO LAB', ...equipe.map(m => `- ${m.id} | ${m.nome} | ${m.papel}`),
+    '',
+    'Organize a reunião para o sócio aprovar. Regras:',
+    '- Ata em até 8 linhas, em português simples, com o que foi falado e o que ficou combinado.',
+    '- Decisão é só o que foi resolvido na reunião. Pergunta em aberto não é decisão.',
+    `- Missões de 0 a ${MAX_MISSOES}, para quem da equipe pode ajudar no que ficou combinado. Use só os identificadores da lista.`,
+    '- Não invente número, nome ou prazo que não está nas anotações.',
+    'Responda só com JSON, sem texto antes ou depois, neste formato:',
+    '{"ata":"...","decisoes":[{"titulo":"...","contexto":"..."}],"missoes":[{"agente":"identificador","titulo":"...","detalhe":"..."}]}',
+  ].filter(Boolean).join('\n');
+}
+
+/** Lê a proposta de ata. Aceita texto em volta do JSON e descarta missão para quem não existe. */
+export function leAta(texto: string, ids: Set<string>): { ok: true; v: AtaProposta } | { ok: false; erro: string } {
+  const erro = { ok: false as const, erro: 'A orquestração não devolveu uma ata legível. Tente de novo.' };
+  const a = texto.indexOf('{'), b = texto.lastIndexOf('}');
+  if (a < 0 || b <= a) return erro;
+  let bruto: Record<string, unknown>;
+  try { bruto = JSON.parse(texto.slice(a, b + 1)); } catch { return erro; }
+  const ata = typeof bruto?.ata === 'string' ? bruto.ata.trim().slice(0, 6000) : '';
+  if (!ata) return erro;
+  const decisoes = (Array.isArray(bruto.decisoes) ? bruto.decisoes : []).slice(0, 10).map(d => {
+    const o = (d ?? {}) as Record<string, unknown>;
+    return { titulo: typeof o.titulo === 'string' ? o.titulo.trim().slice(0, 200) : '', contexto: typeof o.contexto === 'string' ? o.contexto.trim().slice(0, 2000) : '' };
+  }).filter(d => d.titulo);
+  return { ok: true, v: { ata, decisoes, missoes: validaMissoes(Array.isArray(bruto.missoes) ? bruto.missoes : [], ids) } };
+}
