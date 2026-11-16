@@ -47,8 +47,16 @@ describe('conversa', () => {
     expect(s).toContain('O que domina.');
     expect(sistemaDe({ id: 'gil-abc', nome: 'Gil', papel: 'Pricing', zona: 'dados' })).not.toContain('Seu perfil.');
   });
+  it('cada um da equipe de partida recebe todas as suas skills de base inteiras, sem corte pelo teto', () => {
+    const base = skillsBase(CONTEUDOS);
+    for (const m of EQUIPE) {
+      const dele = base.filter(k => k.para_todos || (VINCULOS_BASE[m.id] ?? []).includes(k.id));
+      const s = sistemaDe(m, dele);
+      for (const k of dele) expect(s, `${m.id}: ${k.id}`).toContain(k.conteudo.slice(-80));
+    }
+  });
   it('as skills juntas não passam do teto: as últimas ficam de fora inteiras', () => {
-    const muitas = Array.from({ length: 8 }, (_, i) => ({ id: i + 1, nome: `Skill ${i + 1}`, conteudo: 'x'.repeat(5000) }));
+    const muitas = Array.from({ length: 8 }, (_, i) => ({ id: i + 1, nome: `Skill ${i + 1}`, conteudo: 'x'.repeat(14000) }));
     const s = sistemaDe(de('lia'), muitas);
     expect(s).toContain('### Skill 1');
     expect(s).not.toContain('### Skill 8');

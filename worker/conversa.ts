@@ -6,9 +6,9 @@ import { perfilDe, textoDoPerfil } from '../src/lib/perfis';
 export type Mensagem = { role: 'user' | 'assistant'; content: string };
 const LIMITE_HISTORICO = 20;
 const LIMITE_TEXTO = 4000;
-const LIMITE_SKILL = 12000;
+const LIMITE_SKILL = 24000;
 /** Teto para todas as skills juntas: elas entram em toda chamada de quem foi treinado. */
-export const LIMITE_SKILLS = 40000;
+export const LIMITE_SKILLS = 100000;
 
 const BRIEFING = [
   'Você conduz o briefing de entrada. Faça uma pergunta por vez, curta, e espere a resposta.',

@@ -4,7 +4,7 @@ import { leModelo } from '../src/lib/modelos';
 import { ZONAS } from '../src/lib/lab';
 
 /** Teto do texto de uma skill, igual ao do campo da tela. Cabe uma skill de base completa. */
-export const LIMITE_DA_SKILL = 12000;
+export const LIMITE_DA_SKILL = 24000;
 
 /** Identificadores de quem está na equipe agora. Vem do banco a cada pedido. */
 export type Ids = Set<string>;
