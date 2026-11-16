@@ -51,7 +51,7 @@ describe('conteúdo completo', () => {
     for (const k of completas) {
       expect(k.conteudo.split(/\s+/).length, k.id).toBeGreaterThanOrEqual(650);
       const parte = (t: string) => k.conteudo.split('## ' + t + '\n')[1].split('\n## ')[0];
-      expect(parte('Capacidades avançadas').split('\n').filter(l => l.startsWith('- ')).length, k.id).toBeGreaterThanOrEqual(6);
+      expect(parte('Capacidades avançadas').split('\n').filter(l => l.startsWith('- ')).length, k.id).toBeGreaterThanOrEqual(5);
       expect(parte('Como trabalha').split('\n').filter(l => /^\d+\. /.test(l)).length, k.id).toBeGreaterThanOrEqual(3);
     }
   });

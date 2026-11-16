@@ -64,7 +64,7 @@ describe('catálogo de convidados', () => {
 
 describe('chamar um convidado', () => {
   it('entra como especialista que não é de partida, ativo, com boneco sem dono e a skill dele', () => {
-    const r = chamada('mudanca', base);
+    const r = chamada('mudanca', base, CONTEUDOS);
     expect(r.ok).toBe(true); if (!r.ok) return;
     expect(r.agente).toMatchObject({ id: 'conv-mudanca', nome: 'Helena', zona: 'planejamento', aparencia: 'vera', base: false, ativo: true, modelo: '' });
     expect(r.skill).toMatchObject({ id: 'conv-mudanca', nome: 'Gestão da mudança', para_todos: false });
@@ -104,14 +104,14 @@ describe('chamar um convidado', () => {
 
 describe('banco e estado do lab', () => {
   it('o banco mostra só quem não está ativo', () => {
-    expect(noBanco(base)).toHaveLength(37);
+    expect(noBanco(base)).toHaveLength(CONVIDADOS.length);
     expect(noBanco([...base, ativo('mudanca')]).map(c => c.id)).not.toContain('mudanca');
-    expect(noBanco([...base, ativo('mudanca', { ativo: false })])).toHaveLength(37);
+    expect(noBanco([...base, ativo('mudanca', { ativo: false })])).toHaveLength(CONVIDADOS.length);
   });
   it('separa o banco por função, na ordem da tela, e some com a função em que todos já foram chamados', () => {
     const tudo = bancoPorFuncao(base);
     expect(tudo.map(f => f.id)).toEqual(FUNCOES.map(f => f.id));
-    expect(tudo.flatMap(f => f.gente)).toHaveLength(37);
+    expect(tudo.flatMap(f => f.gente)).toHaveLength(CONVIDADOS.length);
     expect(tudo[0]).toMatchObject({ id: 'pessoas', nome: 'Pessoas e cultura' });
     const semEstrategia = [...base, ...CONVIDADOS.filter(c => c.funcao === 'estrategia').map(c => ativo(c.id))];
     expect(bancoPorFuncao(semEstrategia).map(f => f.id)).not.toContain('estrategia');

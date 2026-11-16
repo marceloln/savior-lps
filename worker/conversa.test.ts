@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { montaPedido, sistemaDe, LIMITE_SKILLS } from './conversa';
 import { EQUIPE } from '../src/lib/equipe';
-import { SKILLS_BASE } from '../src/lib/skills';
+import { CONTEUDOS } from '../src/lib/catalogo';
+import { VINCULOS_BASE, skillsBase } from '../src/lib/skills';
+import { perfilDe } from '../src/lib/perfis';
 
 const ids = new Set(EQUIPE.map(e => e.id));
 const de = (id: string) => EQUIPE.find(e => e.id === id)!;
@@ -31,10 +33,19 @@ describe('conversa', () => {
     expect(sistemaDe(de('bela'))).toContain('Nunca invente');
   });
   it('as skills entram nas instruções com nome e texto', () => {
-    const s = sistemaDe(de('lia'), SKILLS_BASE);
+    const daLia = skillsBase(CONTEUDOS).filter(k => k.para_todos || VINCULOS_BASE.lia.includes(k.id));
+    const s = sistemaDe(de('lia'), daLia);
     expect(s).toContain('### Método V30');
     expect(s).toContain('Gravidade, Urgência e Tendência');
+    expect(s).toContain('### Pesquisa com usuário');
     expect(sistemaDe({ id: 'gil-abc', nome: 'Gil', papel: 'Pricing', zona: 'dados' })).toContain('Você é Gil, pricing no Lab V30');
+  });
+  it('quem tem perfil fala com a própria voz: identidade, tom e o que domina entram nas instruções', () => {
+    const s = sistemaDe(de('rosa'));
+    expect(s).toContain(perfilDe('rosa')!.identidade);
+    expect(s).toContain('Como fala.');
+    expect(s).toContain('O que domina.');
+    expect(sistemaDe({ id: 'gil-abc', nome: 'Gil', papel: 'Pricing', zona: 'dados' })).not.toContain('Seu perfil.');
   });
   it('as skills juntas não passam do teto: as últimas ficam de fora inteiras', () => {
     const muitas = Array.from({ length: 8 }, (_, i) => ({ id: i + 1, nome: `Skill ${i + 1}`, conteudo: 'x'.repeat(5000) }));
