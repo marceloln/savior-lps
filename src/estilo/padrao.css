@@ -146,3 +146,14 @@ button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;backg
   .linha-tempo .nome{display:grid;align-content:center}
   .gaveta summary{display:grid;align-items:center}
 }
+
+/* Agenda ligada ao Google: botões que são links, sub-título da lista e itens marcáveis da ata proposta */
+a.primario,a.leve{text-decoration:none}
+.agenda .botoes-agenda{display:flex;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s3)}
+.agenda .sub-secao{margin:var(--s4) 0 var(--s1);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--texto-2)}
+.organiza-ata fieldset{display:flex;flex-direction:column;gap:var(--s2);border:0;padding:0;margin:0}
+.organiza-ata legend{margin-bottom:var(--s1);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta)}
+.marca-item{display:flex;flex-direction:row;gap:var(--s2);align-items:flex-start;cursor:pointer}
+.marca-item input{margin-top:var(--s1)}
+.marca-item span{display:flex;flex-direction:column;gap:var(--s1)}
+.marca-item small{color:var(--texto-2);line-height:var(--lh-denso)}

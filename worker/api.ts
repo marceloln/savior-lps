@@ -6,8 +6,9 @@ import { CONTEUDOS } from '../src/lib/catalogo';
 import { baseQueFalta, conteudoQueMudou, VERSAO_DA_BASE } from '../src/lib/skills';
 import * as V from './validacao';
 import { provedoresLigados, type Chaves } from './ia';
+import { googleLigado, type ChavesGoogle } from './google';
 
-export type Env = Chaves & { DB: D1Database; ACESSO_EQUIPE?: string; ACESSO_AUD?: string };
+export type Env = Chaves & ChavesGoogle & { DB: D1Database; ACESSO_EQUIPE?: string; ACESSO_AUD?: string };
 export const TAREFA = 'id, agente, titulo, detalhe, estado, projeto_id, pedido_id, entrega, modelo';
 export const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 export const ruim = (erro: string, status = 400) => json({ erro }, status);
@@ -131,7 +132,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string, ids: V.
   if (caminho === '/api/conexoes' && m === 'GET') {
     const n = await db.prepare('SELECT COUNT(*) AS n FROM mensagens').first<{ n: number }>().catch(() => null);
     const ligados = provedoresLigados(env);
-    return json({ banco: n !== null, chave: Object.values(ligados).some(Boolean), provedores: ligados, acesso: Boolean(env.ACESSO_EQUIPE && env.ACESSO_AUD), mensagens: n?.n ?? 0 });
+    return json({ banco: n !== null, chave: Object.values(ligados).some(Boolean), provedores: ligados, acesso: Boolean(env.ACESSO_EQUIPE && env.ACESSO_AUD), google: googleLigado(env), mensagens: n?.n ?? 0 });
   }
   if (caminho === '/api/clientes' && m === 'POST') {
     const v = V.novoCliente(await corpo(req)); if (!v.ok) return ruim(v.erro);
@@ -217,6 +218,23 @@ export async function rotaDados(req: Request, env: Env, caminho: string, ids: V.
     if (reu.dia > V.hojeBrasil()) return ruim('A ata só abre no dia da reunião.');
     const r = await db.prepare("UPDATE reunioes SET ata = ?, status = 'feita' WHERE id = ? RETURNING id").bind(v.v.ata, Number(x[1])).first();
     return r ? json({ ok: true }) : ruim('Reunião não encontrada.', 404);
+  }
+  // reunião que já aconteceu, com o que o sócio aprovou da ata proposta: entra tudo junto ou nada
+  if (caminho === '/api/reunioes/registra' && m === 'POST') {
+    const v = V.registroDeReuniao(await corpo(req), ids); if (!v.ok) return ruim(v.erro);
+    if (v.v.projeto_id && !(await existe(db, 'projetos', v.v.projeto_id))) return ruim('Esse projeto não existe.');
+    const reu = "(SELECT seq FROM sqlite_sequence WHERE name = 'reunioes')";
+    const [r, ...resto] = await db.batch([
+      db.prepare("INSERT INTO reunioes (titulo, pauta, dia, hora, participantes, projeto_id, status, ata) VALUES (?, '', ?, ?, ?, ?, 'feita', ?) RETURNING id, titulo, pauta, dia, hora, participantes, projeto_id, status, ata")
+        .bind(v.v.titulo, v.v.dia, v.v.hora, JSON.stringify(v.v.participantes), v.v.projeto_id, v.v.ata),
+      ...v.v.decisoes.map(d => db.prepare(`INSERT INTO decisoes (titulo, contexto, projeto_id, reuniao_id) VALUES (?, ?, ?, ${reu}) RETURNING id, titulo, contexto, projeto_id, reuniao_id, criado_em`).bind(d.titulo, d.contexto, v.v.projeto_id)),
+      ...v.v.missoes.map(t => db.prepare(`INSERT INTO missoes (agente, titulo, detalhe, projeto_id) VALUES (?, ?, ?, ?) RETURNING ${TAREFA}`).bind(t.agente, t.titulo, t.detalhe, v.v.projeto_id)),
+    ]);
+    const reuniao = r.results[0] as Record<string, unknown>;
+    return json({
+      reuniao: { ...reuniao, participantes: JSON.parse(reuniao.participantes as string) },
+      decisoes: resto.slice(0, v.v.decisoes.length).map(x => x.results[0]), tarefas: resto.slice(v.v.decisoes.length).map(x => x.results[0]),
+    }, 201);
   }
   if (caminho === '/api/decisoes' && m === 'POST') {
     const v = V.novaDecisao(await corpo(req)); if (!v.ok) return ruim(v.erro);

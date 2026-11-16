@@ -41,10 +41,17 @@ type Api = {
   mudaDecisao: (id: number, m: Partial<Pick<Decisao, 'titulo' | 'contexto'>>) => Promise<boolean>;
   apagaDecisao: (id: number) => Promise<boolean>;
   criaDecisao: (d: Pick<Decisao, 'titulo' | 'contexto' | 'projeto_id' | 'reuniao_id'>) => Promise<boolean>;
+  /** A orquestração lê as anotações de uma reunião e propõe ata, decisões e missões. Nada é gravado até o sócio aprovar. */
+  organizaAta: (texto: string, titulo: string) => Promise<AtaProposta | null>;
+  /** Grava a reunião que já aconteceu com o que o sócio aprovou: ata, decisões e missões juntas. */
+  registraReuniao: (r: RegistroDeReuniao) => Promise<boolean>;
   salvaInstrucao: (agente: string, texto: string) => Promise<boolean>;
   criaMemoria: (agente: string, texto: string, origem?: Memoria['origem']) => Promise<boolean>;
   apagaMemoria: (id: number) => Promise<void>;
 };
+
+export type AtaProposta = { ata: string; decisoes: { titulo: string; contexto: string }[]; missoes: MissaoProposta[] };
+export type RegistroDeReuniao = Pick<Reuniao, 'titulo' | 'dia' | 'hora' | 'participantes' | 'projeto_id'> & AtaProposta;
 
 const Ctx = createContext<Api | null>(null);
 const agora = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -182,6 +189,29 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
         catch (err) { poe({ estado: antes }); setAviso(recadoDeErro(err)); return false; }
         }
       },
+      organizaAta: async (texto, titulo) => {
+        if (modo !== 'banco') {
+          await pausa(900);
+          const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 3).join(' ');
+          return { ata: `Prévia sem servidor. ${linhas}`, decisoes: [], missoes: [] };
+        }
+        try { return await ocupa(() => chama<AtaProposta>('POST', 'reunioes/organiza', { texto, titulo })); }
+        catch (err) { setAviso(recadoDeErro(err)); return null; }
+      },
+      registraReuniao: r => trava('reuniao', false, async () => {
+        const id = tmp(), base = { ...r, id, pauta: '', status: 'feita' as const };
+        const decisoes: Decisao[] = r.decisoes.map(d => ({ ...d, id: tmp(), projeto_id: r.projeto_id, reuniao_id: id, criado_em: agora() }));
+        const tarefas: Tarefa[] = r.missoes.map(m => ({ ...NOVA, ...m, id: tmp(), projeto_id: r.projeto_id }));
+        const quem = [...new Set([...r.participantes, ...r.missoes.map(m => m.agente)])];
+        return grava(
+          e => ({ ...e, reunioes: [...e.reunioes, { id, titulo: r.titulo, pauta: '', dia: r.dia, hora: r.hora, participantes: quem, projeto_id: r.projeto_id, status: 'feita', ata: r.ata }], decisoes: [...decisoes, ...e.decisoes], tarefas: [...e.tarefas, ...tarefas] }),
+          () => chama<{ reuniao: Reuniao; decisoes: Decisao[]; tarefas: Tarefa[] }>('POST', 'reunioes/registra', { ...base, participantes: quem }),
+          (e, n) => ({ ...e,
+            reunioes: e.reunioes.map(x => (x.id === id ? n.reuniao : x)),
+            decisoes: [...n.decisoes, ...e.decisoes.filter(d => !decisoes.some(o => o.id === d.id))],
+            tarefas: [...e.tarefas.filter(t => !tarefas.some(o => o.id === t.id)), ...n.tarefas] }),
+        );
+      }),
       planeja: async (texto, projeto_id) => {
         if (modo !== 'banco') { await pausa(900); return planoSimulado(texto, vivo.current.agentes.filter(a => a.ativo && a.id !== ORQUESTRADOR)); }
         try { return (await ocupa(() => chama<{ missoes: MissaoProposta[] }>('POST', 'pedidos/plano', { texto, projeto_id }))).missoes; }
