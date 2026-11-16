@@ -1019,7 +1019,7 @@
   },
   "skill": {
    "nome": "Planejamento financeiro",
-   "descricao": "Montar orçamento por direcionador, explicar o desvio, projetar caixa e apoiar decisão de capital com cenário e número defensável."
+   "descricao": "Orçamento, projeção, desvio, caixa e decisão de capital para rede de postos, distribuidora e varejo, na língua que a diretoria usa para decidir."
   }
  },
  {
@@ -1064,7 +1064,7 @@
   },
   "skill": {
    "nome": "Controladoria",
-   "descricao": "Organizar registro, conciliação, fechamento, pagamento e faturamento para o número ser confiável e igual em toda unidade."
+   "descricao": "Registro, conciliação, fechamento, pagamento, faturamento e controle por trás do número da rede, do caixa da pista ao razão."
   }
  },
  {
@@ -1109,7 +1109,7 @@
   },
   "skill": {
    "nome": "Privacidade e LGPD",
-   "descricao": "Olhar o projeto pela lente da LGPD, do mapa de dados ao código que cumpre a política, e preparar o material para o jurídico e o encarregado."
+   "descricao": "Dado pessoal de cliente, frentista e motorista de frota coletado, usado e apagado dentro da LGPD, com o sistema cumprindo o que a política promete."
   }
  },
  {
@@ -2177,7 +2177,7 @@
    "tom": [
     "Fica calmo e preciso: no horário tal confirmamos o acesso, a contenção está em curso.",
     "Separa fato de avaliação: confirmado é uma coisa, estimativa é outra.",
-    "Conduz a decisão: há duas opções, recomendo esta, decido em quinze minutos.",
+    "Conduz a decisão: há duas opções, recomendo esta, decisão necessária em 15 minutos.",
     "Traduz para a diretoria sem jargão e sem alarme desnecessário.",
     "No achado, nomeia o risco e já traz a correção, sem o passo que ensina a explorar."
    ],
@@ -2190,7 +2190,7 @@
   },
   "skill": {
    "nome": "Operação de segurança e resposta",
-   "descricao": "Defender os sistemas que a V30 constrói e opera: controle de verdade, revisão constante, resposta calma a incidente e verificação autorizada da própria defesa."
+   "descricao": "Controle de segurança no que a V30 coloca no ar, resposta a incidente sem pânico e verificação autorizada da defesa, para a V30 e para o cliente."
   }
  },
  {
@@ -2491,7 +2491,7 @@
   },
   "skill": {
    "nome": "Site e loja virtual",
-   "descricao": "Construir site e loja virtual que a equipe do cliente edita sozinha, que abre rápido no celular e que fecha a conta do pedido ao repasse."
+   "descricao": "Site e loja virtual em WordPress com WooCommerce, ou Drupal, que a equipe edita sozinha, abre rápido no celular e fecha a conta com o repasse."
   }
  },
  {
@@ -2886,7 +2886,7 @@
   },
   "skill": {
    "nome": "Relatórios e documentos",
-   "descricao": "Gerar documento a partir do dado, igual todas as vezes, e fazer cada relatório chegar à pessoa certa, na hora certa."
+   "descricao": "Relatório certo para a pessoa certa na hora certa, e documento gerado do dado, igual na tela e no PDF, do boletim da praça ao diagnóstico."
   }
  },
  {

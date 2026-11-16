@@ -79,8 +79,8 @@
  },
  {
   "id": "coordenacao-entre-especialistas",
-  "nome": "Coordenação e passagem de bastão",
-  "descricao": "Fazer o trabalho passar de mão em mão sem perder contexto: fases, portões de qualidade, modelos de passagem e escalada.",
+  "nome": "Coordenação entre especialistas",
+  "descricao": "Fazer especialistas independentes trabalharem como rede, com passagem de contexto, portão de qualidade e escalada clara.",
   "para": [
    "duda",
    "rui"
