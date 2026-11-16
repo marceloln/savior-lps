@@ -13,7 +13,6 @@ px = C[0] + R[0] * u + U[0] * v + D[0] * t
 py = C[1] + R[1] * u + U[1] * v + D[1] * t
 X, Y = L['X'], L['Y']
 dentro = (px > -0.35) & (px < X + 0.35) & (py > -0.35) & (py < Y + 0.35)
-dentro |= (px > -6.9) & (px < -0.6) & (py > 9.5) & (py < 16.0)   # totem da marca: o logo fica nítido
 # distância até o deck, para o desfoque crescer com a distância
 dx = np.maximum(np.maximum(-px, px - X), 0); dy = np.maximum(np.maximum(-py, py - Y), 0)
 dist = np.hypot(dx, dy)

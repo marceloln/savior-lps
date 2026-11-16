@@ -210,14 +210,14 @@ export function Missoes({ abreProjeto, escolhe, verTodas, atencao, abre }: { abr
   );
 }
 
-export type Acao = 'mover' | 'conversar' | 'missao' | 'memoria' | 'reuniao';
-const ACOES: { id: Acao; nome: string; icone: NomeIcone }[] = [
-  { id: 'mover', nome: 'Mover', icone: 'mover' }, { id: 'conversar', nome: 'Conversar', icone: 'conversar' },
-  { id: 'missao', nome: 'Missão', icone: 'missao' }, { id: 'memoria', nome: 'Memória', icone: 'memoria' }, { id: 'reuniao', nome: 'Reunião', icone: 'reuniao' },
+export type Acao = 'conversar' | 'missao' | 'perfil' | 'memoria' | 'reuniao';
+export const ACOES: { id: Acao; nome: string; icone: NomeIcone }[] = [
+  { id: 'conversar', nome: 'Conversar', icone: 'conversar' }, { id: 'missao', nome: 'Missão', icone: 'missao' },
+  { id: 'perfil', nome: 'Perfil', icone: 'perfil' }, { id: 'memoria', nome: 'Memória', icone: 'memoria' }, { id: 'reuniao', nome: 'Reunião', icone: 'reuniao' },
 ];
 
-export function Console({ escolhido, mirando, registro, age, briefing, solta, pedir, ocupado }: {
-  escolhido: Membro | null; mirando: boolean; registro: string[]; age: (a: Acao) => void; briefing: () => void; solta: () => void;
+export function Console({ escolhido, registro, age, briefing, solta, pedir, ocupado }: {
+  escolhido: Membro | null; registro: string[]; age: (a: Acao) => void; briefing: () => void; solta: () => void;
   pedir: (texto: string) => void; ocupado: boolean;
 }) {
   const [pedido, setPedido] = useState('');
@@ -246,8 +246,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
         )}
       </div>
       <div className="console-recado papel-borda" aria-live="polite">
-        {mirando ? <p className="mira">Clique numa casa do piso para {escolhido?.nome} ir até lá.</p>
-          : escolhido ? <><span className="rotulo">{z?.nome}</span><p className="situacao-console">{situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
+        {escolhido ? <><span className="rotulo">{z?.nome}</span><p className="situacao-console">{situacao}</p>{registro.length > 0 && <p className="ultimo">{registro[registro.length - 1]}</p>}</>
           : <form className="pedir-rapido" onSubmit={e => { e.preventDefault(); if (pedido.trim().length >= 8 && !ocupado) { pedir(pedido.trim()); setPedido(''); } }}>
               <label htmlFor="pr">Peça ao lab</label>
               <div><input id="pr" value={pedido} onChange={e => setPedido(e.target.value)} maxLength={4000} placeholder="O que você precisa? A orquestração divide entre a equipe" />
@@ -258,7 +257,7 @@ export function Console({ escolhido, mirando, registro, age, briefing, solta, pe
       {/* as ações ficam sempre no lugar: sem pessoa escolhida ficam apagadas, assim o console não muda de tamanho */}
       <div className="console-acoes" role="toolbar" aria-label={escolhido ? `Ações com ${escolhido.nome}` : 'Ações. Escolha alguém no mapa'}>
         {ACOES.map(a => (
-          <button key={a.id} disabled={!escolhido} aria-pressed={a.id === 'mover' && mirando} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha alguém no mapa'}>
+          <button key={a.id} disabled={!escolhido} onClick={() => age(a.id)} title={escolhido ? `${a.nome} com ${escolhido.nome}` : 'Escolha alguém no mapa'}>
             <Icone nome={a.icone} tam={26} /><span>{a.nome}</span>
           </button>
         ))}

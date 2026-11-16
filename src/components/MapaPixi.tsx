@@ -12,7 +12,7 @@ export type AtlasGente = { escala: number; q: Record<string, number[]> };
 export type Alvo = { tipo: 'agente'; agente: Agente } | { tipo: 'zona'; id: string } | { tipo: 'tela'; ferramenta: 'quadro' | 'linha' | 'calendario' } | { tipo: 'objeto'; id: string } | null;
 type Props = {
   lab: DadosLab; gente: AtlasGente; equipe: Pessoa[]; zonaAtiva: string | null;
-  selecionado: string | null; modoMover: boolean; foco: { zona: string; n: number } | null;
+  selecionado: string | null; foco: { zona: string; n: number } | null;
   /** Quem está escrevendo uma entrega ou planejando agora (ids). O mapa mostra um balão sobre a pessoa. */
   escrevendo: string[];
   /** Pedido recém-distribuído: um papel sai da mesa de quem orquestra para a mesa de cada um. n muda a cada distribuição. */
@@ -21,12 +21,12 @@ type Props = {
   telas: ResumoDasTelas;
   /** Chamado uma vez, quando as texturas do mapa terminam de carregar. */
   aoPronto?: () => void;
-  onHover: (a: Alvo, x: number, y: number) => void; onClique: (a: Alvo) => void; onMovido: (ok: boolean) => void;
+  onHover: (a: Alvo, x: number, y: number) => void; onClique: (a: Alvo) => void;
 };
 type Vivos = Record<string, [number, number]>;
 
 const QUADROS = { parado: ['parado0', 'parado1'], andar: ['andar0', 'andar1', 'andar2', 'andar3'], digitar: ['digitar0', 'digitar1'] };
-const CASA = 0.5; // casas do piso desenhadas no modo Mover, em metros
+const CASA = 0.5; // casa do piso que pisca quando um papel pousa na mesa, em metros
 const TINTA = 0x3B2F25, OURO = 0xC99A3A, PAPEL = 0xfaf3df;
 const SEGUE = 7; // taxa do seguidor da câmera, por segundo
 /** Móveis que respondem ao clique, com a altura do tampo onde o clique pega (m). */
@@ -166,7 +166,6 @@ export function MapaPixi(props: Props) {
         }
       };
 
-      const casas = new Graphics(); mundo.addChild(casas);
       const destaque = new Graphics(); mundo.addChild(destaque);
       const piscas = new Container(); mundo.addChild(piscas);
       const anel = new Graphics(); anel.visible = false; mundo.addChild(anel);
@@ -205,7 +204,6 @@ export function MapaPixi(props: Props) {
       let sob: string | null = null; // pessoa sob o ponteiro
       const clicaveis = lab.objetos.filter(o => CLICAVEIS[o.info] !== undefined).map(o => ({ id: o.id, h: CLICAVEIS[o.info], r: o.r }));
       let objetoSob: string | null = null;
-      let mira: { x: number; y: number } | null = null, rotaMira: { x: number; y: number }[] = [];
       let focoVisto = 0;
       app.stage.eventMode = 'static'; app.stage.hitArea = app.screen;
       const acha = (sx: number, sy: number): Alvo => {
@@ -222,7 +220,6 @@ export function MapaPixi(props: Props) {
         const c = proj.chao(wx, wy), z = zonaEm(lab, c.x, c.y);
         return z ? { tipo: 'zona', id: z.id } : null;
       };
-      const pontoChao = (sx: number, sy: number) => { const [wx, wy] = telaParaMundo(sx, sy); const c = proj.chao(wx, wy); return { x: (Math.floor(c.x / CASA) + 0.5) * CASA, y: (Math.floor(c.y / CASA) + 0.5) * CASA }; };
       /** Dica, cursor de mão e pessoa levantada andam juntos: tudo sai do que está sob o ponteiro. */
       const aponta = (a: Alvo, x = 0, y = 0) => {
         sob = a?.tipo === 'agente' ? a.agente.id : null;
@@ -268,26 +265,14 @@ export function MapaPixi(props: Props) {
             aponta(null); return;
           }
         }
-        const { modoMover, selecionado } = atual.current;
-        if (modoMover && selecionado) {
-          const p = pontoChao(e.global.x, e.global.y);
-          if (!mira || p.x !== mira.x || p.y !== mira.y) { mira = p; rotaMira = sim.livre(p) ? sim.caminhoAte(selecionado, p) : []; }
-          aponta(null); return;
-        }
         aponta(acha(e.global.x, e.global.y), e.global.x, e.global.y);
       });
       const solta = (e: FederatedPointerEvent) => {
         if (arrasto && !arrasto.moveu && toques.size === 1) {
-          const { modoMover, selecionado } = atual.current;
-          if (modoMover && selecionado) {
-            const p = pontoChao(e.global.x, e.global.y);
-            if (sim.livre(p)) { sim.mover(selecionado, p); mira = null; rotaMira = []; atual.current.onMovido(true); } else atual.current.onMovido(false);
-          } else {
-            const a = acha(e.global.x, e.global.y);
-            // clicar numa pessoa aproxima a câmera dela; a página decide o que abrir
-            if (a?.tipo === 'agente') { const [fx, fy] = proj.px(a.agente.pos.x, a.agente.pos.y, 0.9); alvo.x = fx; alvo.y = fy; alvo.z = Math.min(zmax(), Math.max(alvo.z, zmax() * 0.8)); ancora = null; }
-            atual.current.onClique(a);
-          }
+          const a = acha(e.global.x, e.global.y);
+          // clicar numa pessoa aproxima a câmera dela; a página decide o que abrir
+          if (a?.tipo === 'agente') { const [fx, fy] = proj.px(a.agente.pos.x, a.agente.pos.y, 0.9); alvo.x = fx; alvo.y = fy; alvo.z = Math.min(zmax(), Math.max(alvo.z, zmax() * 0.8)); ancora = null; }
+          atual.current.onClique(a);
         }
         // soltou em movimento: o mapa segue um pouco. O alvo vai à frente o bastante para o seguidor sair na mesma velocidade do dedo
         if (arrasto?.moveu && !reduz) {
@@ -338,7 +323,7 @@ export function MapaPixi(props: Props) {
       app.ticker.add(tk => {
         const dt = Math.min(0.05, tk.deltaMS / 1000); t += dt;
         sim.passo(dt);
-        const { foco, selecionado, modoMover, zonaAtiva, escrevendo, distribuicao, telas } = atual.current;
+        const { foco, selecionado, zonaAtiva, escrevendo, distribuicao, telas } = atual.current;
         if (telas !== telasVistas || telaSob !== telaSobVista) { telasVistas = telas; telaSobVista = telaSob; pintaTelas(telas); }
         if (foco && foco.n !== focoVisto) {
           focoVisto = foco.n; const r = lab.zonas[foco.zona]; ancora = null;
@@ -384,8 +369,8 @@ export function MapaPixi(props: Props) {
           r.tx.setFromMatrix(mNome.set(eb[0] / nb * e, eb[1] / nb * e, ed[0] / nd * e, ed[1] / nd * e, r.cx, r.cy));
         }
 
-        // casas do piso: área aberta, quem está escolhido e o caminho do Mover
-        casas.clear(); destaque.clear();
+        // destaque da área aberta e do objeto sob o ponteiro
+        destaque.clear();
         const z = zonaAtiva && lab.zonas[zonaAtiva];
         if (z) {
           const [x, y, w, h] = z, cor = ZONAS.find(q => q.id === zonaAtiva)!.cor;
@@ -394,16 +379,6 @@ export function MapaPixi(props: Props) {
         const ob = objetoSob ? clicaveis.find(o => o.id === objetoSob) : null;
         if (ob) destaque.poly([proj.px(ob.r[0], ob.r[1], ob.h), proj.px(ob.r[2], ob.r[1], ob.h), proj.px(ob.r[2], ob.r[3], ob.h), proj.px(ob.r[0], ob.r[3], ob.h)].flat()).fill({ color: OURO, alpha: 0.2 }).stroke({ color: OURO, width: 2 / s, alpha: 0.95 });
         const sel = selecionado ? sim.agentes.find(a => a.id === selecionado) : null;
-        if (sel) {
-          const cx = (Math.floor(sel.pos.x / CASA) + 0.5) * CASA, cy = (Math.floor(sel.pos.y / CASA) + 0.5) * CASA;
-          if (modoMover) for (let i = -6; i <= 6; i++) for (let j = -6; j <= 6; j++) {
-            if (Math.abs(i) + Math.abs(j) > 7) continue; const p = { x: cx + i * CASA, y: cy + j * CASA };
-            if (sim.livre(p)) losango(casas, p.x, p.y, CASA * 0.94, 0x5fb8a8, 0.18 + (reduz ? 0 : 0.05 * Math.sin(t * 3 - (Math.abs(i) + Math.abs(j)) * 0.5)));
-          }
-          for (const p of rotaMira) losango(casas, p.x, p.y, CASA * 0.8, 0x5fb8a8, 0.55, 1.5);
-          if (mira && modoMover) losango(casas, mira.x, mira.y, CASA, sim.livre(mira) ? 0x2f8f7c : 0xd9776a, 0.75, 2);
-          if (modoMover) losango(casas, cx, cy, CASA * 1.1, 0xe9b949, 0.35, 2.5);
-        }
         // anel de quem está escolhido: no pé da pessoa, onde ela estiver, e não na casa da grade
         if (selecionado !== anelDe.id) { anelDe.id = selecionado; anelDe.t = 0; }
         anel.visible = !!sel;
@@ -487,5 +462,5 @@ export function MapaPixi(props: Props) {
     return () => { vivo = false; mm.removeEventListener('change', aoMudarMovimento); try { app.destroy(true, { children: true }); } catch { /* ainda iniciando */ } };
   }, [lab, gente]);
 
-  return <div ref={host} className={`mapa ${props.modoMover ? 'mirando' : ''}`} aria-label="Mapa do laboratório. Arraste para mover a vista, use a roda ou a pinça para aproximar, clique numa área ou pessoa." />;
+  return <div ref={host} className="mapa" aria-label="Mapa do laboratório. Arraste para mover a vista, use a roda ou a pinça para aproximar, clique numa área ou pessoa." />;
 }

@@ -150,6 +150,5 @@ export function criaSimulacao(lab: DadosLab, equipe: Pessoa[]) {
     }
   }
   const pose = (a: Agente): Pose => a.estado === 'andando' ? (a.pausa > 0 ? 'parado' : 'andar') : a.estado === 'mesa' && a.id !== 'clara' && !a.semMesa ? 'digitar' : 'parado';
-  const caminhoAte = (id: string, alvo: P2) => { const a = agentes.find(x => x.id === id); return a ? rota(grade, a.pos, alvo) : []; };
-  return { agentes, passo, pose, grade, mover, caminhoAte, livre, fora, sincroniza };
+  return { agentes, passo, pose, grade, mover, livre, fora, sincroniza };
 }
