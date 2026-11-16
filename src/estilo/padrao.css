@@ -94,6 +94,13 @@ button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;backg
 .aviso,.sintese,.gaveta[open]>ul,.gaveta[open]>div{animation:chega var(--d-medio) var(--sai)}
 /* itens de uma lista que acabou de chegar entram um depois do outro */
 .plano li,.radio-estacoes li,.banco li{animation:chega var(--d-medio) var(--sai) both;animation-delay:calc(var(--i,0)*50ms)}
+/* perfil do especialista na ficha: um bloco de leitura, com as partes em lista */
+.perfil{display:grid;gap:var(--s3);padding:var(--s4);margin-bottom:var(--s4);border:1px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao);box-shadow:var(--sombra-2)}
+.perfil h4{margin:0;font:var(--p-titulo) var(--t-18)/var(--lh-titulo) var(--titulo);color:var(--tinta)}
+.perfil-identidade,.perfil-resumo{margin:0;font-size:var(--t-16);line-height:var(--lh-leitura);color:var(--tinta-2)}
+.perfil-resumo{font-size:var(--t-14);line-height:var(--lh-denso);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden}
+.perfil-parte h5{margin:0 0 var(--s1);font:var(--p-forte) var(--t-12) var(--corpo);letter-spacing:.06em;text-transform:uppercase;color:var(--texto-2)}
+.perfil-parte ul{margin:0;padding-left:var(--s4);display:grid;gap:var(--s1);font-size:var(--t-14);line-height:var(--lh-denso);color:var(--tinta-2)}
 /* o que falta para o botão ligar, dito embaixo do formulário */
 .falta{margin:0;color:var(--aviso);font:var(--p-medio) var(--t-13)/var(--lh-denso) var(--corpo)}
 /* plano da orquestração: rótulo à vista e título que quebra a linha em vez de cortar */

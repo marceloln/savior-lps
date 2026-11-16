@@ -337,7 +337,7 @@ export function Skills() {
       <label htmlFor="sn">Nome</label><input id="sn" value={f.nome} onChange={e => setF({ ...f, nome: e.target.value })} maxLength={80} />
       <label htmlFor="sd">Para que serve, em uma linha</label><input id="sd" value={f.descricao} onChange={e => setF({ ...f, descricao: e.target.value })} maxLength={200} />
       <label htmlFor="sc">O que o especialista precisa saber</label>
-      <textarea id="sc" rows={10} value={f.conteudo} onChange={e => setF({ ...f, conteudo: e.target.value })} maxLength={12000} placeholder="Passos, critérios, formato da entrega, o que evitar. Escreva como você explicaria a um consultor novo." />
+      <textarea id="sc" rows={10} value={f.conteudo} onChange={e => setF({ ...f, conteudo: e.target.value })} maxLength={24000} placeholder="Passos, critérios, formato da entrega, o que evitar. Escreva como você explicaria a um consultor novo." />
       <label className="caixa"><input type="checkbox" checked={f.para_todos} onChange={e => setF({ ...f, para_todos: e.target.checked })} /> Vale para todo o lab</label>
       <Falta texto={!(f.nome || f.conteudo) || pronto ? '' : f.nome.trim().length < 3 ? 'Dê um nome à skill.' : 'Escreva o método em pelo menos uma frase.'} />
       <div className="linha"><button className="primario" type="submit" disabled={!pronto}>Salvar skill</button><button type="button" className="leve" onClick={() => setEdita(null)}>Voltar</button></div>

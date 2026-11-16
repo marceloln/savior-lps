@@ -1,4 +1,5 @@
 // Rotas do núcleo multiagente: equipe, banco de convidados, skills, modelo de IA, execução de missão e pedido ao lab.
+import { CONTEUDOS } from '../src/lib/catalogo';
 import { chamada } from '../src/lib/convidados';
 import type { Cliente, Projeto, Skill, Tarefa } from '../src/lib/dados';
 import { ORQUESTRADOR, type Agente } from '../src/lib/equipe';
@@ -75,7 +76,7 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
   // ---------- banco de convidados ----------
   x = caminho.match(/^\/api\/convidados\/([a-z0-9-]+)\/chamar$/);
   if (x && m === 'POST') {
-    const r = chamada(x[1], todos); if (!r.ok) return ruim(r.erro, r.status);
+    const r = chamada(x[1], todos, CONTEUDOS); if (!r.ok) return ruim(r.erro, r.status);
     const a = r.agente, k = r.skill;
     // quem já passou pelo lab só é reativado: a skill que os sócios editaram e a memória dele continuam como estavam
     const [, , , sk] = await db.batch([

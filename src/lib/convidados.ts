@@ -15,8 +15,14 @@ export type Convidado = {
   frase: string; manias: string[];
   /** Arquivos do agency-agents que serviram de ponto de partida. */
   origem: string[];
-  skill: { nome: string; descricao: string; conteudo: string[] };
+  /** Quem a pessoa é e como fala. Entra em toda conversa com ela. */
+  perfil: Perfil;
+  /** Nome e descrição do método. O texto completo mora em conteudos.json. */
+  skill: { nome: string; descricao: string };
 };
+
+/** Identidade, tom de voz e o que a pessoa guarda. A equipe fixa tem também competências e regras, em perfis.json. */
+export type Perfil = { identidade: string; tom: string[]; competencias?: string[]; regras?: string[]; aprende: string[] };
 
 export const CONVIDADOS = dados as Convidado[];
 
@@ -32,7 +38,7 @@ const PREFIXO = 'conv-';
 /** O convidado vira especialista e skill com o mesmo identificador, sempre igual, para voltar ao lab com o que já aprendeu. */
 export const idDoConvidado = (c: Convidado) => PREFIXO + c.id;
 export const convidadoDe = (agente: string): Convidado | null => CONVIDADOS.find(c => PREFIXO + c.id === agente) ?? null;
-export const skillDoConvidado = (c: Convidado): Skill => ({ id: idDoConvidado(c), nome: c.skill.nome, descricao: c.skill.descricao, conteudo: c.skill.conteudo.join('\n'), para_todos: false });
+export const skillDoConvidado = (c: Convidado, conteudo = ''): Skill => ({ id: idDoConvidado(c), nome: c.skill.nome, descricao: c.skill.descricao, conteudo, para_todos: false });
 
 /** Quem está no banco agora: os convidados que não estão ativos na equipe. */
 export const noBanco = (agentes: Agente[]): Convidado[] => CONVIDADOS.filter(c => !agentes.some(a => a.ativo && a.id === idDoConvidado(c)));
@@ -52,7 +58,7 @@ export function bonecoLivre(c: Convidado, agentes: Agente[]): string {
 export type Chamada = { ok: true; agente: Agente; skill: Skill } | { ok: false; erro: string; status: number };
 
 /** Decide a chamada: devolve o especialista como ele entra no lab, ou o motivo de não entrar. */
-export function chamada(id: string, agentes: Agente[]): Chamada {
+export function chamada(id: string, agentes: Agente[], conteudos: Record<string, string> = {}): Chamada {
   const c = CONVIDADOS.find(x => x.id === id);
   if (!c) return { ok: false, erro: 'Esse convidado não está no banco.', status: 404 };
   const aid = idDoConvidado(c), antes = agentes.find(a => a.id === aid);
@@ -61,7 +67,7 @@ export function chamada(id: string, agentes: Agente[]): Chamada {
   const nome = antes?.nome ?? c.nome;
   if (agentes.some(a => a.ativo && a.id !== aid && a.nome.toLowerCase() === nome.toLowerCase())) return { ok: false, erro: 'Já existe alguém com esse nome no lab.', status: 409 };
   const agente: Agente = { id: aid, nome, papel: antes?.papel ?? c.papel, zona: antes?.zona ?? c.zona, aparencia: bonecoLivre(c, agentes), modelo: antes?.modelo ?? '', base: false, ativo: true };
-  return { ok: true, agente, skill: skillDoConvidado(c) };
+  return { ok: true, agente, skill: skillDoConvidado(c, conteudos[aid]) };
 }
 
 /** O estado do lab depois que o convidado entra: ele na equipe, a skill na biblioteca e os dois ligados. */
@@ -69,7 +75,8 @@ export function entraNoLab(e: EstadoLab, a: Agente, k: Skill): EstadoLab {
   return {
     ...e,
     agentes: e.agentes.some(x => x.id === a.id) ? e.agentes.map(x => (x.id === a.id ? a : x)) : [...e.agentes, a],
-    skills: e.skills.some(x => x.id === k.id) ? e.skills.map(x => (x.id === k.id ? k : x)) : [...e.skills, k],
+    // a skill que já está na biblioteca fica como está, porque pode ter sido editada pelos sócios. Só entra a que chega quando a de lá ainda está sem texto
+    skills: e.skills.some(x => x.id === k.id) ? e.skills.map(x => (x.id === k.id && !x.conteudo ? k : x)) : [...e.skills, k],
     vinculos: { ...e.vinculos, [a.id]: [...new Set([...(e.vinculos[a.id] ?? []), k.id])] },
   };
 }

@@ -83,6 +83,16 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
     chama<EstadoLab>('GET', 'estado').then(e => { setEstado(e); setModo('banco'); }).catch((e: Error) => { setMotivo(e instanceof TypeError ? null : e.message); setModo('previa'); });
   }, []);
 
+  // na prévia não há servidor para mandar o texto das skills de base: ele chega por uma carga à parte, fora da primeira tela
+  useEffect(() => {
+    if (modo !== 'previa') return;
+    let aqui = true;
+    void import('../lib/catalogo').then(({ CONTEUDOS }) => {
+      if (aqui) setEstado(e => ({ ...e, skills: e.skills.map(k => (k.conteudo || !CONTEUDOS[k.id] ? k : { ...k, conteudo: CONTEUDOS[k.id] })) }));
+    });
+    return () => { aqui = false; };
+  }, [modo, setEstado]);
+
   // o lab é de várias pessoas e várias abas: relê ao voltar para a aba e a cada minuto, sem passar por cima do que está sendo gravado
   useEffect(() => {
     if (modo !== 'banco') return;
