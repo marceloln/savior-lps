@@ -192,6 +192,8 @@ Movimento: a cena da mesa entra de perto para longe em 300 ms com a curva `--sai
 
 O canto da rádio fica no lounge, com o logo oficial no painel verde. Clicar no aparelho, no botão do menu ou no botão da sala abre o livro da rádio. A música é composta pelo navegador, compasso por compasso, em `lib/radio.ts` e `lib/tocador.ts`: não há arquivo de áudio nem música de terceiros. São três estações, o volume e a estação ficam guardados no navegador, e o som só começa por um clique. Fechar o livro não para a música.
 
+A aba Do Brasil toca rádios de verdade, do catálogo aberto Radio Browser. O Worker busca o catálogo em `worker/radios.ts`, normaliza em `lib/radios.ts` e guarda por doze horas. Entram só rádios com som seguro, checagem recente funcionando e sem HLS: cerca de 1.100. Estado vira UF mesmo quando vem escrito de outro jeito, e as etiquetas viram quinze gêneros em português. Rádio que não toca em quinze segundos avisa e pede outra. Na prévia sem servidor a aba mostra o aviso e só a casa toca.
+
 ## Voz da interface
 
 - Português falado, frase curta, sem travessão e sem aspas

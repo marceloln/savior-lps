@@ -41,3 +41,25 @@
   .radio-abre:hover,.radio-pausa:hover{background:rgba(240,234,214,.16)}
 }
 @media (max-width:760px){.radio-volume{margin-left:0;width:100%}.radio-volume input{flex:1;width:auto}}
+/* Rádios do Brasil: filtros, gêneros em pílula e a lista em cartão de item */
+.radio-brasil{display:grid;gap:var(--s3)}
+.radio-filtros{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s3)}
+.radio-filtros label{display:grid;gap:var(--s1);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta-2)}
+.radio-filtros select,.radio-filtros input{width:100%;min-width:0}
+.radio-generos{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.radio-generos button{min-height:var(--h-sm);padding:0 var(--s3);border-radius:var(--r-pilula);border:1px solid var(--cartao-borda);background:var(--cartao);color:var(--tinta-2);font:var(--p-medio) var(--t-13) var(--corpo);transition:background-color var(--d-rapido) ease,border-color var(--d-rapido) ease}
+.radio-generos button.on{background:var(--tinta);border-color:var(--tinta);color:var(--creme)}
+.radio-lista{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
+.radio-lista button{width:100%;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);text-align:left;border:1px solid var(--cartao-borda);border-radius:var(--r-8);background:var(--cartao);box-shadow:var(--sombra-1);color:var(--tinta-2);font:inherit;min-height:var(--h-lg);transition:transform var(--d-rapido) var(--sai),border-color var(--d-rapido) ease}
+.radio-lista button.on{border-color:var(--tinta);background:var(--papel)}
+.radio-lista button:active{transform:scale(.97)}
+.radio-logo{width:40px;height:40px;flex:none;border-radius:var(--r-8);object-fit:contain;background:var(--papel-2)}
+.radio-logo.letra{display:grid;place-items:center;font:var(--p-titulo) var(--t-18) var(--titulo);color:var(--tinta)}
+.radio-dados{display:grid;gap:var(--s0);min-width:0}
+.radio-dados b{font:var(--p-forte) var(--t-16)/var(--lh-denso) var(--corpo);color:var(--tinta);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.radio-dados small{font-size:var(--t-13);line-height:var(--lh-denso);color:var(--texto-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.radio-acao{font:var(--p-forte) var(--t-13) var(--corpo);color:var(--tinta);white-space:nowrap}
+.aviso-radio{margin:0;padding:var(--s2) var(--s3);border-radius:var(--r-8);background:var(--aviso-fundo);color:var(--aviso);font:var(--p-medio) var(--t-14)/var(--lh-denso) var(--corpo);animation:chega var(--d-medio) var(--sai)}
+@media (hover:hover) and (pointer:fine){.radio-lista button:hover{border-color:var(--tinta)}.radio-generos button:hover:not(.on){border-color:var(--borda-forte)}}
+@media (prefers-reduced-motion:reduce){.aviso-radio{animation:aparece var(--d-rapido) ease-out both}}
+@media (max-width:760px){.radio-filtros{grid-template-columns:minmax(0,1fr)}.radio-generos button{min-height:44px}}
