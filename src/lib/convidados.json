@@ -2667,7 +2667,7 @@
   },
   "skill": {
    "nome": "Acessos, chaves e segredos",
-   "descricao": "Cuidar de quem entra, com que chave e por quanto tempo: login, permissão, credenciais e a nuvem onde os sistemas da V30 e do cliente rodam."
+   "descricao": "Cuidar de quem entra, com que chave e por quanto tempo: login, permissão, segredos e a nuvem onde os sistemas da V30 e do cliente rodam."
   }
  },
  {
@@ -2931,7 +2931,7 @@
   },
   "skill": {
    "nome": "Segurança de aplicações",
-   "descricao": "Fazer o que a V30 constrói nascer seguro: modelo de ameaças, revisão de código, inclusive o gerado por IA, e testes na esteira de entrega."
+   "descricao": "Fazer o que a V30 constrói nascer seguro: modelo de ameaça, revisão de código, inclusive o gerado por IA, arquitetura e testes na esteira."
   }
  }
 ]
