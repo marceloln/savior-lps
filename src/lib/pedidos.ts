@@ -1,5 +1,5 @@
 // Contas do pedido ao lab: por onde começar, o que pede atenção agora e o documento que sai no fim. Sem tela.
-import type { EstadoLab, Pedido, Tarefa } from './dados';
+import { somaDias, type EstadoLab, type Pedido, type Tarefa } from './dados';
 import { aindaHoje, type ReuniaoGoogle } from './agendaGoogle';
 
 /** Pontos de partida para um pedido, nos tipos de trabalho que a V30 faz. O sócio completa o que está entre colchetes. */
@@ -22,6 +22,7 @@ export type Atencao =
   | { tipo: 'resposta'; pedido: number; texto: string }
   | { tipo: 'parado'; pedido: number; texto: string }
   | { tipo: 'reuniao'; reuniao: number; texto: string }
+  | { tipo: 'pauta'; reuniao: number | string; texto: string }
   | { tipo: 'meet'; id: string; texto: string; url: string | null };
 
 /** O que pede a atenção do sócio agora. Reunião de hoje vem primeiro, porque tem hora. Depois pedido parado e resposta recente.
@@ -33,7 +34,13 @@ export function paraVoce(e: EstadoLab, hoje: string, agora: number, andando: num
   const doLab = e.reunioes.filter(r => r.status === 'agendada' && r.dia === hoje).map(r => ({ hora: r.hora, a: { tipo: 'reuniao' as const, reuniao: r.id, texto: `${r.hora} ${r.titulo}` } }));
   const noMeet = aindaHoje(google, hoje, hora).map(r => ({ hora: r.hora, a: { tipo: 'meet' as const, id: r.id, texto: `${r.hora} ${r.titulo}`, url: r.meet } }));
   const reunioes = [...doLab, ...noMeet].sort((x, y) => x.hora.localeCompare(y.hora)).map(x => x.a);
-  return [...reunioes, ...parados, ...respostas].slice(0, 4);
+  // na véspera, a reunião de projeto sem pauta pede para a equipe preparar
+  const amanha = somaDias(hoje, 1);
+  const semPauta = [
+    ...e.reunioes.filter(r => r.status === 'agendada' && r.dia === amanha && r.projeto_id && !r.pauta.trim()).map(r => ({ hora: r.hora, id: r.id as number | string, titulo: r.titulo })),
+    ...google.filter(r => r.dia === amanha && r.projeto && !r.pauta).map(r => ({ hora: r.hora, id: r.id, titulo: r.titulo })),
+  ].sort((x, y) => x.hora.localeCompare(y.hora)).map(r => ({ tipo: 'pauta' as const, reuniao: r.id, texto: `Amanhã ${r.hora} ${r.titulo}` }));
+  return [...reunioes, ...semPauta, ...parados, ...respostas].slice(0, 4);
 }
 
 /** A resposta e as entregas de um pedido num documento só, em markdown, para levar para fora do lab. */

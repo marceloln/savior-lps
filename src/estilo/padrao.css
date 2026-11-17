@@ -194,3 +194,8 @@ select{max-width:100%;min-width:0;text-overflow:ellipsis}
 .barrinha{display:block;height:6px;border-radius:var(--r-4);background:rgba(32,53,47,.1);overflow:hidden}
 .barrinha i{display:block;height:100%;border-radius:var(--r-4);background:var(--ouro)}
 .destaque-dica{margin:0;font-size:var(--t-12);color:var(--texto-2)}
+/* pauta preparada pela equipe: recolhida na lista, aberta mostra os itens com a quebra de linha */
+.pauta{margin:var(--s1) 0}
+.pauta>summary{display:inline-flex;align-items:center;min-height:var(--h-sm);cursor:pointer;font:var(--p-forte) var(--t-13) var(--corpo);color:var(--tinta);text-decoration:underline;text-decoration-color:var(--areia);text-underline-offset:3px}
+.pauta-texto{margin:var(--s1) 0 0;white-space:pre-line;font-size:var(--t-14);line-height:1.5;color:var(--tinta-2)}
+@media (max-width:760px){.pauta>summary{min-height:44px}}

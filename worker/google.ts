@@ -69,6 +69,17 @@ export async function rotaGoogle(req: Request, env: ChavesGoogle, caminho: strin
       });
       return json(deEvento(await r.json()), 201);
     }
+    // pauta preparada pela equipe vai para a descrição do evento. Sem aviso por e-mail: o convite já foi
+    const ev = caminho.match(/^\/api\/google\/reunioes\/([\w-]{5,200})$/);
+    if (ev && req.method === 'PATCH') {
+      const o = (await corpo(req)) as { pauta?: unknown };
+      const pauta = typeof o?.pauta === 'string' ? o.pauta.trim().slice(0, V.MAX_PAUTA) : '';
+      if (!pauta) return ruim('A pauta está vazia.');
+      const r = await chamaGoogle(env, buscar, agora, `${base}/${ev[1]}?sendUpdates=none`, {
+        method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ description: pauta }),
+      });
+      return json(deEvento(await r.json()));
+    }
     const x = caminho.match(/^\/api\/google\/anotacoes\/([\w-]{10,200})$/);
     if (x && req.method === 'GET') {
       const r = await chamaGoogle(env, buscar, agora, `https://www.googleapis.com/drive/v3/files/${x[1]}/export?mimeType=text%2Fplain`);

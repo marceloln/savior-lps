@@ -25,7 +25,7 @@ describe('ferramentas', () => {
     expect(l.semanas).toHaveLength(6);
   });
   it('linha do tempo marca a reunião do Google ligada ao projeto', () => {
-    const g = { id: 'ev1', titulo: 'Status', dia: '2026-11-12', hora: '10:00', fim: '11:00', meet: null, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: 'a' };
+    const g = { id: 'ev1', titulo: 'Status', dia: '2026-11-12', hora: '10:00', fim: '11:00', meet: null, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: 'a', pauta: '' };
     const l = linhaDoTempo(e, '2026-11-18', [g, { ...g, id: 'ev2', projeto: 'outro' }]);
     expect(l.projetos[0].reunioes).toContainEqual({ id: 'gev1', titulo: 'Status, no Meet', desloca: 11, feita: true });
     expect(l.projetos[0].reunioes).toHaveLength(2);

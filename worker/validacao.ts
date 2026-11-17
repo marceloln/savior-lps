@@ -120,8 +120,12 @@ export function novoProjeto(c: unknown): Ok<{ cliente_id: string; nome: string }
   return { ok: true, v: { cliente_id: o.cliente_id, nome } };
 }
 
-export function mudancaReuniao(c: unknown): Ok<{ dia?: string; hora?: string; titulo?: string }> | Falha {
-  const o = (c ?? {}) as Record<string, unknown>, v: { dia?: string; hora?: string; titulo?: string } = {};
+/** Tamanho máximo da pauta, no lab e na descrição do evento do Google. */
+export const MAX_PAUTA = 4000;
+
+export function mudancaReuniao(c: unknown): Ok<{ dia?: string; hora?: string; titulo?: string; pauta?: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>, v: { dia?: string; hora?: string; titulo?: string; pauta?: string } = {};
+  if (o.pauta !== undefined) v.pauta = texto(o.pauta, MAX_PAUTA);
   if (o.dia !== undefined) { if (!dataReal(o.dia)) return falha('Data inválida.'); v.dia = o.dia; }
   if (o.hora !== undefined) { if (typeof o.hora !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(o.hora)) return falha('Hora inválida.'); v.hora = o.hora; }
   if (o.titulo !== undefined) { const t = texto(o.titulo, 160); if (t.length < 3) return falha('O assunto precisa de pelo menos 3 letras.'); v.titulo = t; }

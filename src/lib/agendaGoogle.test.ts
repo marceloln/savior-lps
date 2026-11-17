@@ -11,6 +11,7 @@ const evento = {
     { title: 'Apresentação', fileUrl: 'https://drive.google.com/file/d/1xyz/view' },
     { title: 'Anotações do Gemini', fileUrl: 'https://docs.google.com/document/d/1lBTGut-cHQo_ZTxiOE/edit?usp=meet_tnfm_calendar' },
   ],
+  description: '1. Onde estamos',
   extendedProperties: { private: { lab_projeto: 'piloto-pista' } },
 };
 
@@ -20,7 +21,7 @@ describe('reunião do Google Agenda', () => {
       id: 'abc_20261119T203000Z', titulo: 'Status do piloto', dia: '2026-11-19', hora: '17:30', fim: '18:00',
       meet: 'https://meet.google.com/awv-kzvi-tem', anotacoes: '1lBTGut-cHQo_ZTxiOE',
       anotacoesUrl: 'https://docs.google.com/document/d/1lBTGut-cHQo_ZTxiOE/edit?usp=meet_tnfm_calendar',
-      convidados: ['socio@vetor30.com.br', 'gerente@cliente.com.br'], projeto: 'piloto-pista',
+      convidados: ['socio@vetor30.com.br', 'gerente@cliente.com.br'], projeto: 'piloto-pista', pauta: '1. Onde estamos',
     });
   });
   it('aceita o link do Meet no campo antigo e evento sem título', () => {
@@ -63,7 +64,7 @@ describe('evento novo', () => {
 });
 
 describe('reuniões do dia', () => {
-  const r = (id: string, dia: string, hora: string, fim: string) => ({ id, titulo: id, dia, hora, fim, meet: 'https://meet.google.com/' + id, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: null });
+  const r = (id: string, dia: string, hora: string, fim: string) => ({ id, titulo: id, dia, hora, fim, meet: 'https://meet.google.com/' + id, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: null, pauta: '' });
   const lista = [r('ontem', '2026-11-16', '10:00', '11:00'), r('cedo', '2026-11-17', '08:00', '09:00'), r('agora', '2026-11-17', '10:00', '11:00'), r('tarde', '2026-11-17', '14:00', '15:00')];
   it('ainda hoje: as de hoje que não acabaram, em ordem de hora', () => {
     expect(aindaHoje(lista, '2026-11-17', '10:30').map(x => x.id)).toEqual(['agora', 'tarde']);

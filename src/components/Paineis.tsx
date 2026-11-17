@@ -5,7 +5,8 @@ import { useEquipe } from '../hooks/useEquipe';
 import { FASES, dataCurta, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
-import { Entrega, Executar, Falta, SeletorModelo } from './Nucleo';
+import { Entrega, Executar, Falta, Pauta, SeletorModelo } from './Nucleo';
+import { ehDaEquipe, pautaDaReuniao } from '../lib/pauta';
 import { decisoesRecentes, proximasReunioes, trofeus } from '../lib/resumo';
 import { useMudouDeColuna, useRecem } from '../hooks/useRecem';
 import { EditaMissao } from './Missao';
@@ -237,20 +238,20 @@ export function Agenda({ com, abreConexoes }: { com?: string[]; abreConexoes?: (
         </form>
       )}
       <h3 className="secao">No Google Agenda</h3>
-      <ReunioesDoGoogle g={g} organiza={o => { setNova(false); setNoMeet(false); setOrganiza(o); }} />
+      <ReunioesDoGoogle g={g} organiza={o => { setNova(false); setNoMeet(false); setOrganiza(o); }} prepara={r => pautaDaReuniao(estado, { projeto_id: r.projeto, dia: r.dia, pauta: r.pauta }, hoje)} />
       <h3 className="secao">Rodadas com a equipe</h3>
       {!proximas.length && <p className="vazio">Nenhuma rodada marcada. Junte dois ou três especialistas antes de uma conversa importante com o cliente.</p>}
       {proximas.map(r => (
         <article key={r.id} className="reuniao">
           <div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div>
-          <div className="o-que"><h4>{r.titulo}</h4>{r.pauta && <p>{r.pauta}</p>}<div className="rostos">{r.participantes.map(p => <Retrato key={p} id={p} tamanho={24} />)}</div>
+          <div className="o-que"><h4>{r.titulo}</h4><Pauta texto={r.pauta} /><div className="rostos">{r.participantes.map(p => <Retrato key={p} id={p} tamanho={24} />)}</div>
             {remarca?.id === r.id ? (
               <form className="linha remarca" onSubmit={async e => { e.preventDefault(); if (await mudaReuniao(r.id, { dia: remarca.dia, hora: remarca.hora })) setRemarca(null); }}>
                 <label>Dia<input type="date" value={remarca.dia} onChange={e => setRemarca({ ...remarca, dia: e.target.value })} /></label>
                 <label>Hora<input type="time" value={remarca.hora} onChange={e => setRemarca({ ...remarca, hora: e.target.value })} /></label>
                 <button className="primario mini" type="submit">Salvar</button><button type="button" className="leve mini" onClick={() => setRemarca(null)}>Desistir</button>
               </form>
-            ) : r.id > 0 && <div className="linha acoes-reuniao"><button className="leve mini" onClick={() => setRemarca({ id: r.id, dia: r.dia, hora: r.hora })}>Remarcar</button><Apagar oque={r.titulo} apaga={() => apagaReuniao(r.id)} /></div>}
+            ) : r.id > 0 && <div className="linha acoes-reuniao">{r.projeto_id && <button className="leve mini" onClick={() => mudaReuniao(r.id, { pauta: pautaDaReuniao(estado, r, hoje) })}>{ehDaEquipe(r.pauta) ? 'Refazer pauta' : 'Preparar pauta'}</button>}<button className="leve mini" onClick={() => setRemarca({ id: r.id, dia: r.dia, hora: r.hora })}>Remarcar</button><Apagar oque={r.titulo} apaga={() => apagaReuniao(r.id)} /></div>}
           </div>
           {r.dia > hoje ? <span className="ainda">Ata abre no dia</span> : ataDe !== r.id ? <button className="leve" onClick={() => { setAtaDe(r.id); setAta(''); }}>Registrar ata</button> : (
             <form className="form-ata" onSubmit={e => { e.preventDefault(); fecha(r.id, r.projeto_id); }}>

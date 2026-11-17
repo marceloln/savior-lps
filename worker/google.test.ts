@@ -14,6 +14,7 @@ function googleFalso(opcoes: { tokenFalha?: boolean; status?: number } = {}) {
     if (url.startsWith('https://oauth2.googleapis.com/token')) return opcoes.tokenFalha ? Response.json({ error: 'invalid_grant' }, { status: 400 }) : Response.json({ access_token: 'tk', expires_in: 3600 });
     if (opcoes.status) return new Response('', { status: opcoes.status });
     if (url.includes('/drive/v3/files/')) return new Response('﻿Resumo\nDecidimos o piloto.');
+    if (init?.method === 'PATCH') return Response.json({ id: 'abc_20261119T203000Z', summary: 'Status', start: { dateTime: '2026-11-19T17:30:00-03:00' }, end: { dateTime: '2026-11-19T18:00:00-03:00' }, description: JSON.parse(init.body as string).description });
     if (init?.method === 'POST') {
       const b = JSON.parse(init.body as string);
       return Response.json({ id: 'novo', summary: b.summary, start: b.start, end: b.end, attendees: b.attendees, hangoutLink: 'https://meet.google.com/abc-defg-hij', extendedProperties: b.extendedProperties });
@@ -65,6 +66,16 @@ describe('rotas do Google', () => {
     const r = (await rotaGoogle(pede('/api/google/reunioes', { method: 'POST', body: '{"titulo":"x","dia":"2026-11-24","hora":"10:00","duracao":5}' }), env, '/api/google/reunioes', g.buscar, AGORA))!;
     expect(r.status).toBe(400);
     expect(g.visto).toHaveLength(0);
+  });
+  it('troca a pauta na descrição do evento sem mandar aviso aos convidados', async () => {
+    const g = googleFalso();
+    const r = (await rotaGoogle(pede('/api/google/reunioes/abc_20261119T203000Z', { method: 'PATCH', body: JSON.stringify({ pauta: '1. Onde estamos' }) }), env, '/api/google/reunioes/abc_20261119T203000Z', g.buscar, AGORA))!;
+    expect(r.status).toBe(200);
+    expect(g.visto[1].url).toContain('/events/abc_20261119T203000Z?sendUpdates=none');
+    expect(g.visto[1].init!.method).toBe('PATCH');
+    expect(JSON.parse(g.visto[1].init!.body as string)).toEqual({ description: '1. Onde estamos' });
+    const vazia = (await rotaGoogle(pede('/api/google/reunioes/abc123', { method: 'PATCH', body: '{"pauta":"  "}' }), env, '/api/google/reunioes/abc123', g.buscar, AGORA))!;
+    expect(vazia.status).toBe(400);
   });
   it('lê as anotações do Gemini como texto', async () => {
     const g = googleFalso();

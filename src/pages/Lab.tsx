@@ -26,7 +26,7 @@ import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
 import { comecaLogo, horaLocal } from '../lib/agendaGoogle';
 import { usePedido } from '../hooks/usePedido';
 import { useSaida } from '../hooks/useSaida';
-import { PainelPessoas, Pedidos, Skills } from '../components/Nucleo';
+import { PainelPessoas, Pauta, Pedidos, Skills } from '../components/Nucleo';
 import type { AbaFicha } from '../components/Fichas';
 import { cargaDaEquipe, clientesPorEtapa, decisoesPorProjeto, decisoesRecentes, notasPorPessoa, progressoPorProjeto, projetosEmCiclo, proximasReunioes, semNota, situacaoEquipe, skillsMaisTreinadas, trofeus, ultimosPedidos } from '../lib/resumo';
 
@@ -65,7 +65,7 @@ function ProximaReuniao() {
       <h3>{r.titulo}</h3>
       <p className="quando-grande">{quandoFrase}, {r.hora}</p>
       {p && <p className="de-projeto">{p.nome}</p>}
-      {r.pauta && <p>{r.pauta}</p>}
+      <Pauta texto={r.pauta} />
       <div className="rostos">{r.participantes.map(id => <Retrato key={id} id={id} tamanho={34} />)}</div>
       <p className="nota-mao">Toda reunião termina com ata. Se não teve decisão, foi conversa.</p>
     </div>
