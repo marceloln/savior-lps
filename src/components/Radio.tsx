@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRadio } from '../hooks/useRadio';
 import { useRadiosDoBrasil } from '../hooks/useRadiosDoBrasil';
 import { ESTACOES } from '../lib/radio';
-import { GENEROS, filtra, porEstado, type RadioAoVivo } from '../lib/radios';
+import { GENEROS, alternaFavorita, filtra, porEstado, type RadioAoVivo } from '../lib/radios';
 
 /** Três barrinhas que sobem e descem enquanto toca. Paradas quando está em pausa ou quando a pessoa pediu menos movimento. */
 function Barras({ ligadas }: { ligadas: boolean }) {
@@ -14,6 +14,9 @@ function Barras({ ligadas }: { ligadas: boolean }) {
 const ABA = 'lab.radio.aba';
 const lembraAba = (): 'casa' | 'brasil' => { try { return localStorage.getItem(ABA) === 'brasil' ? 'brasil' : 'casa'; } catch { return 'casa'; } };
 const POR_PAGINA = 30;
+// favoritas valem para quem marcou, neste navegador
+const FAVORITAS = 'lab.radio.favoritas';
+const lembraFavoritas = (): string[] => { try { const v = JSON.parse(localStorage.getItem(FAVORITAS) ?? '[]'); return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []; } catch { return []; } };
 
 /** As estações da casa, em cartão. */
 function DaCasa() {
@@ -50,9 +53,11 @@ function DoBrasil() {
   const { lista, carregando, erro } = useRadiosDoBrasil(true);
   const [uf, setUf] = useState(() => r.ultimaAoVivo?.uf ?? '');
   const [genero, setGenero] = useState(''), [busca, setBusca] = useState(''), [quantas, setQuantas] = useState(POR_PAGINA);
+  const [favoritas, setFavoritas] = useState(lembraFavoritas), [so, setSo] = useState(false);
+  useEffect(() => { try { localStorage.setItem(FAVORITAS, JSON.stringify(favoritas)); } catch { /* vale só nesta visita */ } }, [favoritas]);
   const estados = useMemo(() => porEstado(lista), [lista]);
-  const achadas = useMemo(() => filtra(lista, { uf, genero, busca }), [lista, uf, genero, busca]);
-  useEffect(() => setQuantas(POR_PAGINA), [uf, genero, busca]);
+  const achadas = useMemo(() => filtra(lista, { uf, genero, busca, favoritas, so }), [lista, uf, genero, busca, favoritas, so]);
+  useEffect(() => setQuantas(POR_PAGINA), [uf, genero, busca, so]);
 
   if (carregando) return <p className="radio-estado" role="status">Buscando as rádios do Brasil.</p>;
   if (erro) return <p className="nota">{erro}</p>;
@@ -70,15 +75,16 @@ function DoBrasil() {
         </label>
       </div>
       <div className="radio-generos" role="group" aria-label="Gênero">
+        <button type="button" className={so ? 'on' : ''} aria-pressed={so} onClick={() => setSo(!so)} disabled={!favoritas.length && !so}>Favoritas{favoritas.length ? ` (${favoritas.length})` : ''}</button>
         <button type="button" className={genero === '' ? 'on' : ''} aria-pressed={genero === ''} onClick={() => setGenero('')}>Todos</button>
         {GENEROS.map(([g]) => <button key={g} type="button" className={genero === g ? 'on' : ''} aria-pressed={genero === g} onClick={() => setGenero(genero === g ? '' : g)}>{g}</button>)}
       </div>
-      <p className="radio-estado" role="status">{achadas.length ? `${achadas.length} ${achadas.length === 1 ? 'rádio' : 'rádios'}` : 'Nenhuma rádio com esse filtro. Tente outro gênero ou o Brasil inteiro.'}</p>
+      <p className="radio-estado" role="status">{achadas.length ? `${achadas.length} ${achadas.length === 1 ? 'rádio' : 'rádios'}` : so ? 'Nenhuma favorita com esse filtro.' : 'Nenhuma rádio com esse filtro. Tente outro gênero ou o Brasil inteiro.'}</p>
       <ul className="radio-lista">
         {achadas.slice(0, quantas).map(a => {
-          const esta = r.aoVivo?.id === a.id, noAr = esta && r.tocando;
+          const esta = r.aoVivo?.id === a.id, noAr = esta && r.tocando, fav = favoritas.includes(a.id);
           return (
-            <li key={a.id}>
+            <li key={a.id} className="com-favorita">
               <button type="button" className={esta ? 'on' : ''} aria-pressed={noAr} onClick={() => (noAr ? r.pausa() : r.tocaAoVivo(a))}>
                 <Logo r={a} />
                 <span className="radio-dados">
@@ -87,6 +93,8 @@ function DoBrasil() {
                 </span>
                 <span className="radio-acao">{noAr ? (r.conectando ? 'Conectando' : <Barras ligadas />) : 'Ouvir'}</span>
               </button>
+              <button type="button" className={`radio-favorita ${fav ? 'on' : ''}`} aria-pressed={fav} aria-label={fav ? `Tirar ${a.nome} das favoritas` : `Pôr ${a.nome} nas favoritas`} title={fav ? 'Tirar das favoritas' : 'Pôr nas favoritas'}
+                onClick={() => setFavoritas(f => alternaFavorita(f, a.id))}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg></button>
             </li>
           );
         })}
