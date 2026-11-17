@@ -236,7 +236,8 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:var(--t-13);font-weight:va
 @media (max-width:760px){
   .coluna-esquerda{left:8px;right:8px;top:8px;width:auto;flex-direction:row;gap:var(--s2)}
   .placa{padding:var(--s2) var(--s3)}.placa b{font-size:var(--t-18)}.placa small{display:none}
-  .menu-diario{flex-direction:row;overflow-x:auto;flex:1;padding:var(--s1);scrollbar-width:none}
+  /* a barra rola de lado: a borda direita esmaece para mostrar que tem mais */
+  .menu-diario{flex-direction:row;overflow-x:auto;flex:1;padding:var(--s1);scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
   .menu-diario button{flex-direction:column;gap:0;font-size:var(--t-12);padding:var(--s1) var(--s2);min-width:58px}
   .coluna-direita,.cartao-lugar{display:none}
   .console{left:8px;right:8px;bottom:8px;width:auto;grid-template-columns:1fr;gap:var(--s2);padding:var(--s2)}
@@ -277,7 +278,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:var(--t-13);font-weight:va
 .confirma{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-13)}
 .perigo{border:1.5px solid var(--erro);background:var(--telha-forte);color:var(--cartao)}
 .num{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:var(--s2);border:1.5px solid var(--tinta-2);border-radius:50%;font:var(--p-forte) var(--t-12) var(--corpo);font-style:normal;background:#FBF3E4;vertical-align:1px}
-.mapa-tinta text{font:var(--p-forte) 1.5px var(--titulo)}
+.mapa-tinta text{font:var(--p-forte) 2.5px var(--titulo)}
 .proxima{text-align:left;width:100%;display:grid;gap:var(--s2)}.proxima h3{margin:0;font:var(--p-forte) var(--t-22) var(--titulo);color:var(--tinta)}
 .quando-grande{margin:0;font-weight:var(--p-forte)}.de-projeto{margin:0;color:var(--texto-2);font-size:var(--t-14)}.proxima .rostos{display:flex;gap:var(--s1);margin:var(--s2) 0}
 .foto-colada.estacao img{aspect-ratio:4/3;object-fit:contain;padding:var(--s2)}

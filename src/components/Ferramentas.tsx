@@ -148,7 +148,7 @@ export function Ferramentas({ qual, muda, abreProjeto, escolhe, abreAgenda }: { 
   return (
     <div className="ferramentas">
       <div className="abas" role="tablist" aria-label="Ferramentas">
-        {FERRAMENTAS.map(f => <button key={f.id} role="tab" aria-selected={qual === f.id} aria-pressed={qual === f.id} onClick={() => muda(f.id)}>{f.nome}</button>)}
+        {FERRAMENTAS.map(f => <button key={f.id} role="tab" aria-selected={qual === f.id} onClick={() => muda(f.id)}>{f.nome}</button>)}
       </div>
       {qual === 'quadro' && <Quadro abreProjeto={abreProjeto} escolhe={escolhe} />}
       {qual === 'linha' && <LinhaDoTempo abreProjeto={abreProjeto} />}

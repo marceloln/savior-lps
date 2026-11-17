@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { SEMENTE, type EstadoLab } from './dados';
 import { EQUIPE } from './equipe';
-import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, situacaoEquipe, trofeus } from './resumo';
+import { cargaDaEquipe, clientesPorEtapa, decisoesPorProjeto, decisoesRecentes, notasPorPessoa, progressoPorProjeto, projetosEmCiclo, proximasReunioes, semNota, situacaoEquipe, skillsMaisTreinadas, trofeus, ultimosPedidos } from './resumo';
 
 const vazio: EstadoLab = { ...SEMENTE, clientes: [], projetos: [], tarefas: [], reunioes: [], decisoes: [], memorias: [], conversas: 0 };
 
@@ -36,5 +36,54 @@ describe('resumos do diário', () => {
   });
   it('troféus começam zerados num lab vazio', () => {
     expect(trofeus(vazio).every(t => t.atual === 0)).toBe(true);
+  });
+});
+
+describe('blocos da página da esquerda', () => {
+  const t = (id: number, agente: string, estado: 'fila' | 'fazendo' | 'feito', projeto_id: string | null = 'p1') => ({ id, agente, titulo: 't' + id, detalhe: '', estado, projeto_id, pedido_id: null, entrega: '', modelo: '' });
+  const base: EstadoLab = {
+    ...vazio,
+    projetos: [{ id: 'p1', cliente_id: 'c', nome: 'Piloto da pista', fase: 2, dia: 1, mesa: null, inicio: '2026-11-01' }, { id: 'p2', cliente_id: 'c', nome: 'Ritmo comercial', fase: 1, dia: 1, mesa: null, inicio: '2026-11-15' }],
+    tarefas: [t(1, 'lia', 'feito'), t(2, 'lia', 'fazendo'), t(3, 'rui', 'fila'), t(4, 'rui', 'fila'), t(5, 'otto', 'feito', 'p2'), t(6, 'otto', 'fila', null)],
+  };
+  it('progresso por projeto conta feitas sobre o total e ignora missão sem projeto', () => {
+    expect(progressoPorProjeto(base)).toEqual([
+      { id: 'p1', rotulo: 'Piloto da pista', valor: '1 de 4', parte: 0.25 },
+      { id: 'p2', rotulo: 'Ritmo comercial', valor: '1 de 1', parte: 1 },
+    ]);
+  });
+  it('carga da equipe: quem tem mais missão aberta primeiro, sem quem está livre', () => {
+    const quem = [{ id: 'lia', nome: 'Lia' }, { id: 'rui', nome: 'Rui' }, { id: 'otto', nome: 'Otto' }, { id: 'nina', nome: 'Nina' }];
+    expect(cargaDaEquipe(base, quem)).toEqual([
+      { id: 'rui', rotulo: 'Rui', valor: '2 abertas', parte: 1 },
+      { id: 'lia', rotulo: 'Lia', valor: '1 aberta', parte: 0.5 },
+      { id: 'otto', rotulo: 'Otto', valor: '1 aberta', parte: 0.5 },
+    ]);
+  });
+  it('últimos pedidos do mais novo para o mais velho', () => {
+    const e = { ...vazio, pedidos: [
+      { id: 1, texto: 'Velho', projeto_id: null, estado: 'entregue' as const, sintese: '', criado_em: '2026-11-10 10:00:00' },
+      { id: 2, texto: 'Novo', projeto_id: null, estado: 'andando' as const, sintese: '', criado_em: '2026-11-16 09:00:00' },
+    ] };
+    expect(ultimosPedidos(e)).toEqual([{ id: '2', rotulo: 'Novo', valor: 'Andando' }, { id: '1', rotulo: 'Velho', valor: 'Entregue' }]);
+  });
+  it('skills mais treinadas contam pessoas, sem as que valem para todos', () => {
+    const e = { ...vazio, skills: [{ id: 'a', nome: 'Alfa', para_todos: false }, { id: 'b', nome: 'Beta', para_todos: false }, { id: 'v', nome: 'Método', para_todos: true }] as EstadoLab['skills'], vinculos: { lia: ['a', 'b', 'v'], rui: ['a'] } };
+    expect(skillsMaisTreinadas(e)).toEqual([{ id: 'a', rotulo: 'Alfa', valor: '2 pessoas', parte: 1 }, { id: 'b', rotulo: 'Beta', valor: '1 pessoa', parte: 0.5 }]);
+  });
+  it('decisões por projeto, com as sem projeto no fim', () => {
+    const d = (id: number, projeto_id: string | null) => ({ id, titulo: 'd', contexto: '', projeto_id, reuniao_id: null, criado_em: '2026-11-16 10:00:00' });
+    expect(decisoesPorProjeto({ ...base, decisoes: [d(1, 'p1'), d(2, 'p1'), d(3, null), d(4, 'p2')] })).toEqual([
+      { id: 'p1', rotulo: 'Piloto da pista', valor: '2' }, { id: 'p2', rotulo: 'Ritmo comercial', valor: '1' }, { id: '', rotulo: 'Sem projeto', valor: '1' }]);
+  });
+  it('quem ainda não tem nota na memória', () => {
+    const e = { ...vazio, memorias: [{ id: 1, agente: 'lia', texto: 'x', origem: 'manual' as const, criado_em: '' }] };
+    expect(semNota(e, [{ id: 'lia', nome: 'Lia' }, { id: 'rui', nome: 'Rui' }])).toEqual([{ id: 'rui', rotulo: 'Rui', valor: '' }]);
+  });
+  it('projetos em ciclo mostram o dia de 30', () => {
+    expect(projetosEmCiclo(base, '2026-11-16')).toEqual([
+      { id: 'p1', rotulo: 'Piloto da pista', valor: 'dia 16 de 30', parte: 16 / 30 },
+      { id: 'p2', rotulo: 'Ritmo comercial', valor: 'dia 2 de 30', parte: 2 / 30 },
+    ]);
   });
 });

@@ -146,7 +146,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string, ids: V.
     const id = `${V.slug(v.v.nome)}-${Date.now().toString(36)}`, inicio = V.hojeBrasil();
     const [pr, ...ms] = await db.batch([
       db.prepare('INSERT INTO projetos (id, cliente_id, nome, fase, dia, mesa, inicio) VALUES (?, ?, ?, 0, 1, NULL, ?) RETURNING id, cliente_id, nome, fase, dia, mesa, inicio').bind(id, v.v.cliente_id, v.v.nome, inicio),
-      ...missoesIniciais(v.v.nome).map(t => db.prepare(`INSERT INTO missoes (agente, titulo, projeto_id) VALUES (?, ?, ?) RETURNING ${TAREFA}`).bind(t.agente, t.titulo, id)),
+      ...missoesIniciais().map(t => db.prepare(`INSERT INTO missoes (agente, titulo, projeto_id) VALUES (?, ?, ?) RETURNING ${TAREFA}`).bind(t.agente, t.titulo, id)),
     ]);
     await db.prepare('UPDATE clientes SET fase = 0 WHERE id = ?').bind(v.v.cliente_id).run();
     return json({ projeto: pr.results[0], missoes: ms.map(x => x.results[0]) }, 201);

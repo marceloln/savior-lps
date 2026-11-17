@@ -152,7 +152,7 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
       }),
       criaProjeto: (cliente_id, nome) => trava('projeto', null, async () => {
         const id = 'novo-' + Date.now().toString(36), inicio = hojeLocal();
-        const iniciais: Tarefa[] = missoesIniciais(nome).map(t => ({ ...NOVA, ...t, id: tmp(), projeto_id: id }));
+        const iniciais: Tarefa[] = missoesIniciais().map(t => ({ ...NOVA, ...t, id: tmp(), projeto_id: id }));
         let final: string | null = id;
         const ok = await grava(e => ({ ...e, projetos: [...e.projetos, { id, cliente_id, nome, fase: 0, dia: 1, mesa: null, inicio }], tarefas: [...e.tarefas, ...iniciais],
           clientes: e.clientes.map(c => (c.id === cliente_id ? { ...c, fase: 0 } : c)) }),

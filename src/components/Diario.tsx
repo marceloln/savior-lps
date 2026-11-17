@@ -1,5 +1,6 @@
 // Peças fixas da tela no tema do diário de campo: placa, abas, cartão do lugar, missões, console e o livro.
 import vetor30Creme from '../ui/marca/vetor30-creme.svg';
+import type { Linha } from '../lib/resumo';
 import vetor30Verde from '../ui/marca/vetor30-verde.svg';
 import v30Creme from '../ui/marca/v30-creme.svg';
 import v30Verde from '../ui/marca/v30-verde.svg';
@@ -309,13 +310,13 @@ export function Livro({ titulo, sobre, ilustracao, cor = '#20352F', largo, volta
     <div className={`cortina ${saindo ? 'saindo' : ''}`} onClick={saindo ? undefined : aoFechar} />
     <section ref={caixa} tabIndex={-1} role="dialog" aria-modal="true" aria-label={titulo} className={`livro ${largo ? 'largo' : ''} ${cheia ? 'cheia' : ''} ${saindo ? 'saindo' : ''}`} style={{ ['--c' as string]: cor }}
       onAnimationEnd={e => { if (saindo && e.target === e.currentTarget) aoSair?.(); }}>
-      <div className="pagina esquerda">
+      <div className="pagina esquerda" tabIndex={0} role="region" aria-label={`Resumo de ${titulo}`}>
         {voltar && <button type="button" className="voltar" onClick={voltar.vai}><span aria-hidden="true">‹</span> {voltar.rotulo}</button>}
         <h2>{titulo}</h2>
         {sobre && <p className="sobre">{sobre}</p>}
         <div className="ilustracao">{ilustracao}</div>
       </div>
-      <div className="pagina direita">{cheia && <h2 className="titulo-cheia">{titulo}</h2>}{children}</div>
+      <div className="pagina direita" tabIndex={0} role="region" aria-label={titulo}>{cheia && <h2 className="titulo-cheia">{titulo}</h2>}{children}</div>
       {aoAmpliar && <button className="ampliar-livro" onClick={aoAmpliar} aria-pressed={cheia} aria-label={cheia ? 'Sair da tela inteira' : 'Abrir em tela inteira'} title={cheia ? 'Sair da tela inteira' : 'Tela inteira'}><Icone nome={cheia ? 'reduzir' : 'ampliar'} tam={16} /></button>}
       <button className="fechar-livro" onClick={aoFechar} aria-label="Fechar o diário"><Icone nome="fechar" tam={16} /></button>
     </section>
@@ -333,12 +334,30 @@ export function Bloco({ icone, titulo, acao, children }: { icone: NomeIcone; tit
 }
 
 /** Números grandes para a página da esquerda: o que dá para saber de relance. */
-export function Resumo({ itens, nota }: { itens: { n: number | string; rotulo: string; extra?: ReactNode }[]; nota?: string }) {
+export function Resumo({ itens, nota, bloco }: { itens: { n: number | string; rotulo: string; extra?: ReactNode }[]; nota?: string; bloco?: ReactNode }) {
   return (
     <div className="resumo">
       <dl>{itens.map(i => <div key={i.rotulo} className={i.n === 0 ? 'zero' : undefined}><dt>{i.rotulo}</dt><dd>{i.n}{i.extra}</dd></div>)}</dl>
+      {bloco}
       {nota && <p className="nota-mao">{nota}</p>}
     </div>
+  );
+}
+
+/** Bloco da página da esquerda: uma lista curta com nome, valor e barrinha. Sem linha, não aparece. */
+export function Destaque({ titulo, linhas, dica }: { titulo: string; linhas: Linha[]; dica?: string }) {
+  if (!linhas.length) return null;
+  return (
+    <section className="destaque" aria-label={titulo}>
+      <h3>{titulo}</h3>
+      <ul>{linhas.map(l => (
+        <li key={l.id + l.rotulo}>
+          <span className="destaque-linha"><span className="destaque-nome" title={l.rotulo}>{l.rotulo}</span>{l.valor && <b>{l.valor}</b>}</span>
+          {l.parte !== undefined && <span className="barrinha" aria-hidden="true"><i style={{ width: `${Math.round(l.parte * 100)}%` }} /></span>}
+        </li>
+      ))}</ul>
+      {dica && <p className="destaque-dica">{dica}</p>}
+    </section>
   );
 }
 
@@ -361,8 +380,8 @@ export function MapaTinta({ lab, escolhe }: { lab: DadosLab; escolhe: (zona: str
           <g key={z.id} className="zona-tinta" tabIndex={0} role="button" aria-label={z.nome} onClick={() => escolhe(z.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); escolhe(z.id); } }}>
             <rect x={x} y={y} width={w} height={h} rx="0.5" fill={z.cor} fillOpacity=".32" stroke="#3B2F25" strokeWidth="0.08" strokeDasharray="0.4 0.25" />
             {/* número grande no mapa e o nome na lista ao lado: legível até no celular */}
-            <circle cx={x + w / 2} cy={y + h / 2} r="1.25" fill="#FBF3E4" stroke="#3B2F25" strokeWidth="0.1" />
-            <text x={x + w / 2} y={y + h / 2 + 0.06} textAnchor="middle" dominantBaseline="middle" fontSize="1.5">{i + 1}</text>
+            <circle cx={x + w / 2} cy={y + h / 2} r="2.1" fill="#FBF3E4" stroke="#3B2F25" strokeWidth="0.12" />
+            <text x={x + w / 2} y={y + h / 2 + 0.1} textAnchor="middle" dominantBaseline="middle" fontSize="2.5" fontWeight="700">{i + 1}</text>
           </g>
         );
       })}

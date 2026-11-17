@@ -28,10 +28,11 @@ export type EstadoLab = {
 export const FASES = ['Diagnóstico', 'Co-criação', 'Execução', 'Legado'] as const;
 
 /** Primeiras missões de todo projeto novo: o diagnóstico já sai andando. */
-export const missoesIniciais = (projeto: string): { agente: string; titulo: string }[] => [
-  { agente: 'rui', titulo: `Kickoff e calendário do diagnóstico de ${projeto}` },
-  { agente: 'lia', titulo: `Roteiro de entrevistas de campo para ${projeto}` },
-  { agente: 'davi', titulo: `Referências do setor para ${projeto}` },
+/** As três missões que todo projeto ganha ao abrir. O título não repete o nome do projeto: o cartão já mostra. */
+export const missoesIniciais = (): { agente: string; titulo: string }[] => [
+  { agente: 'rui', titulo: 'Kickoff e calendário do diagnóstico' },
+  { agente: 'lia', titulo: 'Roteiro de entrevistas de campo' },
+  { agente: 'davi', titulo: 'Referências do setor' },
 ];
 
 /** Soma dias a uma data AAAA-MM-DD. */

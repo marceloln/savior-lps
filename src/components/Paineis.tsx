@@ -5,7 +5,7 @@ import { useEquipe } from '../hooks/useEquipe';
 import { FASES, dataCurta, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
-import { Entrega, Executar, SeletorModelo } from './Nucleo';
+import { Entrega, Executar, Falta, SeletorModelo } from './Nucleo';
 import { decisoesRecentes, proximasReunioes, trofeus } from '../lib/resumo';
 import { useMudouDeColuna, useRecem } from '../hooks/useRecem';
 import { EditaMissao } from './Missao';
@@ -109,12 +109,12 @@ function Kanban({ projeto }: { projeto: Projeto }) {
               {lista.map(t => (
                 edita === t.id ? <div key={t.id} className="cartao editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></div> :
                 <div key={t.id} className={`cartao ${t.estado} ${chegou(t) ? 'chegou' : ''}`}>
-                  {t.estado === 'feito' && <span className={`carimbo ${recem.has(t.id) ? 'bate' : ''}`}>Feito</span>}
                   <p>{t.titulo}</p>
                   {t.detalhe && <p className="detalhe">{t.detalhe}</p>}
                   {t.entrega && <details className="ver-entrega"><summary>Ver a entrega</summary><Entrega t={t} /></details>}
                   <footer>
-                    <span className="dono"><Retrato id={t.agente} tamanho={22} />{nome(t.agente)}</span>
+                    {/* o carimbo fica na linha do dono, longe do título riscado */}
+                    <span className="dono"><Retrato id={t.agente} tamanho={22} />{nome(t.agente)}{t.estado === 'feito' && <span className={`carimbo discreto ${recem.has(t.id) ? 'bate' : ''}`}>Feito</span>}</span>
                     {t.id < 0 ? <span className="salvando">Salvando</span> : <span className="acoes">
                       {anterior[t.estado] && <button onClick={() => mudaTarefa(t.id, { estado: anterior[t.estado]! })} aria-label={`Voltar ${t.titulo}`}>Voltar</button>}
                       {t.estado !== 'feito' && <button onClick={() => setEdita(t.id)} aria-label={`Editar ${t.titulo}`}>Editar</button>}
@@ -154,7 +154,11 @@ export function Projetos({ atual, escolhe }: { atual?: string; escolhe: (id: str
   return (
     <div className="projetos">
       <div className="abas" role="tablist">
-        {estado.projetos.map(x => <button key={x.id} role="tab" aria-selected={x.id === p.id} onClick={() => { escolhe(x.id); setConfirma(false); }}>{estado.clientes.find(k => k.id === x.cliente_id)?.setor}</button>)}
+        {estado.projetos.map(x => {
+          // a aba leva o nome do projeto: o mesmo cliente pode ter mais de um
+          const setor = estado.clientes.find(k => k.id === x.cliente_id)?.setor ?? '';
+          return <button key={x.id} role="tab" className="aba-projeto" aria-selected={x.id === p.id} title={`${x.nome}. ${setor}`} onClick={() => { escolhe(x.id); setConfirma(false); }}><b>{x.nome}</b><small>{setor}</small></button>;
+        })}
       </div>
       {p.mesa && (
         <figure className="mesa">
@@ -182,7 +186,7 @@ export function Projetos({ atual, escolhe }: { atual?: string; escolhe: (id: str
   );
 }
 
-export function Agenda({ com }: { com?: string[] }) {
+export function Agenda({ com, abreConexoes }: { com?: string[]; abreConexoes?: () => void }) {
   const { equipe } = useEquipe();
   const { estado, criaReuniao, gravaAta, criaDecisao, mudaReuniao, apagaReuniao } = useEstado();
   const [remarca, setRemarca] = useState<{ id: number; dia: string; hora: string } | null>(null);
@@ -210,9 +214,11 @@ export function Agenda({ com }: { com?: string[] }) {
   return (
     <div className="agenda">
       {!nova && !noMeet && !organiza && <div className="botoes-agenda">
-        <button className="primario" onClick={() => setNoMeet(true)} disabled={g.estado !== 'ligado'} title={g.estado !== 'ligado' ? g.recado : undefined}>Marcar no Meet</button>
-        <button className="leve" onClick={() => setNova(true)}>Rodada com a equipe</button>
+        {/* sem o Google ligado, o principal é o que funciona: a rodada. Marcar no Meet vira o caminho para ligar */}
+        {g.estado === 'ligado' && <button className="primario" onClick={() => setNoMeet(true)}>Marcar no Meet</button>}
+        <button className={g.estado === 'ligado' ? 'leve' : 'primario'} onClick={() => setNova(true)}>Rodada com a equipe</button>
         <button className="leve" onClick={() => setOrganiza({ titulo: '', dia: hojeLocal(), hora: '10:00', projeto: null, docId: null })}>Organizar anotações</button>
+        {g.estado === 'desligado' && abreConexoes && <button className="link" onClick={abreConexoes}>Ligar o Google Agenda para marcar no Meet</button>}
       </div>}
       {noMeet && <MarcaNoMeet g={g} aoMarcar={() => setNoMeet(false)} desiste={() => setNoMeet(false)} />}
       {organiza && <OrganizaAta key={organiza.docId ?? organiza.titulo} origem={organiza} g={g} fecha={() => setOrganiza(null)} />}
@@ -227,6 +233,7 @@ export function Agenda({ com }: { com?: string[] }) {
             {equipe.map(m => <label key={m.id} className={f.participantes.includes(m.id) ? 'on' : ''}><input type="checkbox" checked={f.participantes.includes(m.id)} onChange={e => setF({ ...f, participantes: e.target.checked ? [...f.participantes, m.id] : f.participantes.filter(x => x !== m.id) })} />{m.nome}</label>)}
           </div></fieldset>
           <div className="linha"><button className="primario" type="submit" disabled={f.titulo.trim().length < 3 || !f.participantes.length}>Marcar</button><button type="button" className="leve" onClick={() => setNova(false)}>Desistir</button></div>
+          <Falta texto={f.titulo.trim().length < 3 ? 'Falta o assunto, com três letras ou mais.' : !f.participantes.length ? 'Escolha quem participa para marcar.' : ''} />
         </form>
       )}
       <h3 className="secao">No Google Agenda</h3>

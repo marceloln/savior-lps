@@ -409,7 +409,8 @@ vz = peca('radio', *P('lounge', 2.3, 0.55), 0, radio_v30, info='radio'); ponto('
 peca('planta_lo1', *P('lounge', 0.5, 4.9), 0, lambda: planta(1.6, 0.32)); peca('pend_l', *P('lounge', 6.3, 3.4), 0, lambda: luminaria_pend(2.3), obst=False)
 # atendimento
 vz = peca('recepcao', *P('atendimento', 3.0, 2.2), 0, recepcao, info='balcao'); ponto('clara', loc(vz, 0, -0.8), 's'); ponto('cliente', loc(vz, 0, 1.0), 'n')
-peca('painel_marca', *P('atendimento', 3.2, 0.32), 0, painel_marca, info='marca')
+# a parede da marca fica girada de frente para a câmera: o logo oficial aparece reto, sem a perspectiva de lado
+peca('painel_marca', *P('atendimento', 3.2, 0.32), -45, lambda: painel_marca(3.0, 1.5, 2.4), info='marca')
 peca('pessoal_clara', *P('atendimento', 3.0, 2.2), 0, lambda: (em(0.55, 0.12, sino, 1.12), em(1.05, -0.05, flores, 1.12), em(-1.0, -0.12, lambda: porta_retrato(COR_DA_FOTO['clara']), 1.12, 160), em(-0.95, 0.18, lambda: vasinho(5, 1.0), 1.12)), obst=False)
 peca('sofa_espera', *P('atendimento', 2.2, 4.5), 180, lambda: sofa(2.0, 'areia'))
 peca('bicicletario', *P('atendimento', 7.4, 1.4), 0, bicicletario, info='bicicletario'); peca('planta_at1', *P('atendimento', 0.45, 1.3), 0, lambda: planta(1.5))

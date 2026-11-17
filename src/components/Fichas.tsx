@@ -73,7 +73,7 @@ export type AbaFicha = 'visao' | 'treino' | 'instrucoes' | 'memoria';
 export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, focaMissao }: {
   m: Agente; conversa: () => void; abaInicial?: AbaFicha; noMapa?: () => void; naMesa?: () => void; aoDar?: (texto: string) => void; focaMissao?: boolean;
 }) {
-  const { estado, criaTarefa, mudaTarefa } = useEstado();
+  const { estado, criaTarefa, mudaTarefa, mudaAgente } = useEstado();
   const [aba, setAba] = useState<AbaFicha>(abaInicial ?? 'visao');
   const [nova, setNova] = useState(''), [proj, setProj] = useState(''), [prazo, setPrazo] = useState('');
   const [edita, setEdita] = useState<number | null>(null);
@@ -90,6 +90,7 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
           <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span>{convidadoDe(m.id) && <span>Do banco de convidados</span>}</p>
+          {convidadoDe(m.id) && m.ativo && <p className="dispensa-topo">Chamado do banco. <Apagar oque={`${m.nome} do lab`} verbo="Dispensar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>}
           <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
             {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}
             {naMesa && <button className="leve" onClick={naMesa}>Ver a mesa</button>}</div></div>

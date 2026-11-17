@@ -70,7 +70,8 @@ export function SeletorModelo({ id, valor, aoMudar, padrao }: { id: string; valo
 
 /** Botão que põe o especialista para trabalhar na missão. */
 /** Diz o que falta para o botão do formulário ligar. Sem texto, não aparece. */
-function Falta({ texto }: { texto: string }) {
+/** Linha que diz o que falta para o botão ligar. Vazia, some. */
+export function Falta({ texto }: { texto: string }) {
   return texto ? <p className="ajuda falta" role="status">{texto}</p> : null;
 }
 

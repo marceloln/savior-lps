@@ -103,17 +103,20 @@ export function MapaPixi(props: Props) {
       const nb = Math.hypot(eb[0], eb[1]), nd = Math.hypot(ed[0], ed[1]), mNome = new Matrix();
       // o texto do Pixi é pintado uma vez só, então os nomes só entram depois que a fonte da página carregou
       const fonte = getComputedStyle(host.current!).fontFamily;
-      let rotulos: { tx: Text; cx: number; cy: number; cabe: number }[] = [];
+      let rotulos: { tx: Container; cx: number; cy: number; cabe: number }[] = [];
       document.fonts.load(`700 12px ${fonte}`).catch(() => null).then(() => {
         if (!vivo) return;
         rotulos = ZONAS.filter(q => lab.zonas[q.id]).map(q => {
           const [x, y, w, h] = lab.zonas[q.id];
           const tx = new Text({ text: q.curto, resolution: 3, style: { fontFamily: fonte, fontSize: 12, fontWeight: '700', letterSpacing: 1.5, fill: TINTA } });
-          tx.anchor.set(0.5); nomes.addChild(tx);
+          tx.anchor.set(0.5);
+          // plaquinha creme atrás do nome: lê mesmo quando o nome cai em cima de mesa ou balcão
+          const placa = new Container(), fundo = new Graphics().roundRect(-tx.width / 2 - 6, -tx.height / 2 - 2, tx.width + 12, tx.height + 4, 4).fill({ color: 0xF0EAD6, alpha: 0.85 });
+          placa.addChild(fundo, tx); nomes.addChild(placa);
           // as mesas ficam no fundo da sala (em -y); o nome vai no tapete livre da frente
           const [cx, cy] = proj.px(x + w / 2, y + h * 0.82);
           // cabe: quanto o nome pode crescer sem passar de 80% da sala ao longo da base do texto
-          return { tx, cx, cy, cabe: (emX ? w : h) * nb * 0.8 / tx.width };
+          return { tx: placa, cx, cy, cabe: (emX ? w : h) * nb * 0.8 / (tx.width + 12) };
         });
       });
 
@@ -462,5 +465,5 @@ export function MapaPixi(props: Props) {
     return () => { vivo = false; mm.removeEventListener('change', aoMudarMovimento); try { app.destroy(true, { children: true }); } catch { /* ainda iniciando */ } };
   }, [lab, gente]);
 
-  return <div ref={host} className="mapa" aria-label="Mapa do laboratório. Arraste para mover a vista, use a roda ou a pinça para aproximar, clique numa área ou pessoa." />;
+  return <div ref={host} className="mapa" role="img" aria-label="Mapa do laboratório. Arraste para mover a vista, use a roda ou a pinça para aproximar, clique numa área ou pessoa. Pelo teclado, as mesmas pessoas e salas estão em Pessoas e Lugares, no menu." />;
 }
