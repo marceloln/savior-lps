@@ -11,7 +11,7 @@ const MapaPixi = lazy(() => import('../components/MapaPixi').then(m => ({ defaul
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
-import { AreaDoSocio, Carregando, CartaoLugar, Console, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
+import { AreaDoSocio, Carregando, CartaoLugar, Console, Destaque, FotoLugar, FasesIlustradas, ListaMissoes, Livro, MapaTinta, MenuDiario, Missoes, Placa, Resumo, Selos, Vazio, ABAS, SOBRE_ZONA, type Aba, type Acao, type Voltar } from '../components/Diario';
 import { Retrato } from '../components/Retrato';
 import { JeitoDe, MesaDe } from '../components/Mesa';
 import { ComoJogar, Pong } from '../components/Pong';
@@ -28,7 +28,7 @@ import { usePedido } from '../hooks/usePedido';
 import { useSaida } from '../hooks/useSaida';
 import { PainelPessoas, Pedidos, Skills } from '../components/Nucleo';
 import type { AbaFicha } from '../components/Fichas';
-import { clientesPorEtapa, decisoesRecentes, notasPorPessoa, proximasReunioes, situacaoEquipe, trofeus } from '../lib/resumo';
+import { cargaDaEquipe, clientesPorEtapa, decisoesPorProjeto, decisoesRecentes, notasPorPessoa, progressoPorProjeto, projetosEmCiclo, proximasReunioes, semNota, situacaoEquipe, skillsMaisTreinadas, trofeus, ultimosPedidos } from '../lib/resumo';
 
 type Aberto =
   | { tipo: 'aba'; aba: Aba; novo?: boolean; pre?: { setor: string; situacao: string } } | { tipo: 'briefing' } | { tipo: 'ficha'; id: string; aba?: AbaFicha; foca?: boolean }
@@ -187,17 +187,17 @@ export function Lab() {
       const ultima = decisoesRecentes(estado)[0]?.criado_em;
       const entregues = estado.pedidos.filter(x => x.estado === 'entregue').length;
       const ilustracao = {
-        pedidos: <Resumo itens={[{ n: estado.pedidos.length - entregues, rotulo: 'Em andamento' }, { n: entregues, rotulo: 'Entregues' }, { n: estado.tarefas.filter(t => t.entrega).length, rotulo: 'Entregas da equipe' }]} nota="Você aprova o plano antes de a equipe começar." />,
-        skills: <Resumo itens={[{ n: estado.skills.length, rotulo: 'Skills no lab' }, { n: estado.skills.filter(k => k.para_todos).length, rotulo: 'Valem para todos' }]} nota="Quem é treinado numa skill passa a seguir o que ela diz." />,
-        paineis: <Resumo itens={[{ n: linhaDoTempo(estado, hojeLocal()).projetos.filter(x => x.dia >= 1 && x.dia <= 30).length, rotulo: 'Projetos em ciclo' }, { n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Missões andando' }, { n: estado.reunioes.filter(r => r.status === 'agendada').length, rotulo: 'Reuniões marcadas' }]} nota="As mesmas telas que estão nas paredes do lab." />,
-        missoes: <Resumo itens={[{ n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Fazendo agora' }, { n: estado.tarefas.filter(t => t.estado === 'fila').length, rotulo: 'Na fila' }, { n: estado.tarefas.filter(t => t.estado === 'feito').length, rotulo: 'Feitas' }]} nota="Missão boa cabe numa frase e tem dono." />,
-        clientes: <Resumo itens={clientesPorEtapa(estado).map(x => ({ n: x.n, rotulo: x.etapa }))} nota="Cliente entra em conversa e só vira projeto com diagnóstico." />,
+        pedidos: <Resumo itens={[{ n: estado.pedidos.length - entregues, rotulo: 'Em andamento' }, { n: entregues, rotulo: 'Entregues' }, { n: estado.tarefas.filter(t => t.entrega).length, rotulo: 'Entregas da equipe' }]} nota="Você aprova o plano antes de a equipe começar." bloco={<Destaque titulo="Últimos pedidos" linhas={ultimosPedidos(estado)} />} />,
+        skills: <Resumo itens={[{ n: estado.skills.length, rotulo: 'Skills no lab' }, { n: estado.skills.filter(k => k.para_todos).length, rotulo: 'Valem para todos' }]} nota="Quem é treinado numa skill passa a seguir o que ela diz." bloco={<Destaque titulo="Mais treinadas" linhas={skillsMaisTreinadas(estado)} />} />,
+        paineis: <Resumo itens={[{ n: linhaDoTempo(estado, hojeLocal()).projetos.filter(x => x.dia >= 1 && x.dia <= 30).length, rotulo: 'Projetos em ciclo' }, { n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Missões andando' }, { n: estado.reunioes.filter(r => r.status === 'agendada').length, rotulo: 'Reuniões marcadas' }]} nota="As mesmas telas que estão nas paredes do lab." bloco={<Destaque titulo="Projetos no ciclo" linhas={projetosEmCiclo(estado, hojeLocal())} />} />,
+        missoes: <Resumo itens={[{ n: estado.tarefas.filter(t => t.estado === 'fazendo').length, rotulo: 'Fazendo agora' }, { n: estado.tarefas.filter(t => t.estado === 'fila').length, rotulo: 'Na fila' }, { n: estado.tarefas.filter(t => t.estado === 'feito').length, rotulo: 'Feitas' }]} nota="Missão boa cabe numa frase e tem dono." bloco={<Destaque titulo="Andamento por projeto" linhas={progressoPorProjeto(estado)} />} />,
+        clientes: <Resumo itens={clientesPorEtapa(estado).map(x => ({ n: x.n, rotulo: x.etapa }))} nota="Cliente entra em conversa e só vira projeto com diagnóstico." bloco={<Destaque titulo="Projetos no ciclo" linhas={projetosEmCiclo(estado, hojeLocal())} />} />,
         projetos: p ? <>{p.mesa && <figure className="foto-colada"><img src={`assets/${p.mesa}`} alt={`Mesa de ${p.nome}`} /><figcaption>{p.nome}</figcaption></figure>}<FasesIlustradas fase={p.fase} /></> : null,
-        pessoas: <Resumo itens={[{ n: eq.fazendo, rotulo: 'Fazendo uma missão' }, { n: eq.fila, rotulo: 'Só com fila' }, { n: eq.livres.length, rotulo: 'Livres', extra: eq.livres.length > 0 && <span className="rostos">{eq.livres.slice(0, 6).map(id => <Retrato key={id} id={id} tamanho={26} />)}</span> }]} nota={`${equipe.length} especialistas, cada um com mesa, papel e memória.`} />,
+        pessoas: <Resumo itens={[{ n: eq.fazendo, rotulo: 'Fazendo uma missão' }, { n: eq.fila, rotulo: 'Só com fila' }, { n: eq.livres.length, rotulo: 'Livres', extra: eq.livres.length > 0 && <span className="rostos">{eq.livres.slice(0, 6).map(id => <Retrato key={id} id={id} tamanho={26} />)}</span> }]} nota={`${equipe.length} especialistas, cada um com mesa, papel e memória.`} bloco={<Destaque titulo="Mais carregados" linhas={cargaDaEquipe(estado, equipe)} />} />,
         lugares: <><MapaTinta lab={lab} escolhe={abreSala} /><p className="nota-mao">Um deck de madeira solto no campus, com salas de vidro para reunião e protótipo.</p></>,
         agenda: <ProximaReuniao />,
-        decisoes: <Resumo itens={[{ n: estado.decisoes.length, rotulo: 'Decisões registradas' }, ...(ultima ? [{ n: new Date(ultima.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), rotulo: 'A última' }] : [])]} nota="Decisão sem motivo escrito vira discussão de novo daqui a um mês." />,
-        memoria: <Resumo itens={notasPorPessoa(estado).slice(0, 5).map(x => ({ n: x.n, rotulo: de(x.agente)?.nome ?? 'Quem saiu do lab', extra: <Retrato id={x.agente} tamanho={26} /> }))} nota="O que fica aqui entra em toda conversa com aquela pessoa." />,
+        decisoes: <Resumo itens={[{ n: estado.decisoes.length, rotulo: 'Decisões registradas' }, ...(ultima ? [{ n: new Date(ultima.replace(' ', 'T') + 'Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), rotulo: 'A última' }] : [])]} nota="Decisão sem motivo escrito vira discussão de novo daqui a um mês." bloco={<Destaque titulo="Por projeto" linhas={decisoesPorProjeto(estado)} />} />,
+        memoria: <Resumo itens={notasPorPessoa(estado).slice(0, 5).map(x => ({ n: x.n, rotulo: de(x.agente)?.nome ?? 'Quem saiu do lab', extra: <Retrato id={x.agente} tamanho={26} /> }))} nota="O que fica aqui entra em toda conversa com aquela pessoa." bloco={<Destaque titulo="Ainda sem nota" linhas={semNota(estado, equipe).slice(0, 6)} dica="Converse com eles e guarde o que importar." />} />,
         conexoes: <Resumo itens={[{ n: `${itensConexao(conexoes, modo === 'banco').filter(i => i.ok).length} de ${itensConexao(conexoes, modo === 'banco').length}`, rotulo: 'Ligados' }]} nota="Com Worker, banco, login e a chave de um provedor ligados, o lab abre para a equipe e os especialistas respondem de verdade." />, trofeus: <Resumo itens={[{ n: `${ganhos} de ${tr.length}`, rotulo: 'Conquistados' }]} nota="Contam o que foi feito de verdade, sem inventar número." />,
       }[a];
       const corpo = {
