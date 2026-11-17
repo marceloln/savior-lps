@@ -1,11 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { documentoDoPedido, nomeDoArquivo, paraVoce, MODELOS_DE_PEDIDO } from './pedidos';
+import { autoresDoPedido, documentoDoPedido, nomeDoArquivo, paraVoce, MODELOS_DE_PEDIDO } from './pedidos';
+import type { Tarefa } from './dados';
 import { SEMENTE, type EstadoLab, type Pedido } from './dados';
 
 const ped = (m: Partial<Pedido>): Pedido => ({ id: 1, texto: 'Plano de 30 dias', projeto_id: null, estado: 'entregue', sintese: '## Resposta', criado_em: '2026-11-14 12:00:00', ...m });
 const AGORA = Date.UTC(2026, 10, 14, 15);
 
 describe('pedidos', () => {
+  it('autores do pedido: quem entregou, uma vez cada, na ordem e sem quem orquestra', () => {
+    const t = (id: number, agente: string, pedido_id: number | null, entrega = 'feito') => ({ id, agente, pedido_id, entrega } as Tarefa);
+    const tarefas = [t(1, 'lia', 7), t(2, 'davi', 7), t(3, 'lia', 7), t(4, 'duda', 7), t(5, 'rui', 8), t(6, 'max', 7, '')];
+    expect(autoresDoPedido(tarefas, 7, 'duda')).toEqual(['lia', 'davi']);
+    expect(autoresDoPedido(tarefas, 9, 'duda')).toEqual([]);
+  });
   it('para você: reunião de hoje vem primeiro, depois pedido parado e resposta recente', () => {
     const e: EstadoLab = { ...SEMENTE,
       pedidos: [ped({ id: 3 }), ped({ id: 2, estado: 'andando', sintese: '' }), ped({ id: 1, criado_em: '2026-11-01 09:00:00' })],

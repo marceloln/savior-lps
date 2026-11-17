@@ -17,6 +17,10 @@ type Props = {
   escrevendo: string[];
   /** Pedido recém-distribuído: um papel sai da mesa de quem orquestra para a mesa de cada um. n muda a cada distribuição. */
   distribuicao: { de: string; para: string[]; n: number } | null;
+  /** Síntese pronta: o papel faz o caminho inverso, da mesa de cada autor para quem orquestra. n muda a cada fecho. */
+  fecho: { de: string[]; para: string; n: number } | null;
+  /** Quem mostra o selo de resposta pronta sobre a cabeça, até alguém abrir a resposta. */
+  selo: string | null;
   /** O que as telas do cenário mostram em miniatura: quadro, linha do tempo e calendário. Muda de referência quando os dados mudam. */
   telas: ResumoDasTelas;
   /** Chamado uma vez, quando as texturas do mapa terminam de carregar. */
@@ -315,7 +319,22 @@ export function MapaPixi(props: Props) {
         return { x: a.casa.x + Math.sin(ang) * 0.6, y: a.casa.y - Math.cos(ang) * 0.6, z: 0.78 };
       };
       type Voo = { g: Graphics; de: P3; para: P3; t0: number; dur: number; pisca: Graphics | null };
-      let voos: Voo[] = [], distVisto = atual.current.distribuicao?.n;
+      let voos: Voo[] = [], distVisto = atual.current.distribuicao?.n, fechoVisto = atual.current.fecho?.n;
+      /** Um papel voa de uma mesa para outra. Quem está longe espera um pouco mais, mas ninguém passa de 0,9 s; com movimento reduzido o papel não voa. */
+      const lanca = (de: Agente, para: Agente, i: number) => {
+        const o = mesaDe(de), d = mesaDe(para), m = Math.hypot(d.x - o.x, d.y - o.y);
+        const g = new Graphics().rect(-5, -3.5, 10, 7).fill(0xfffbf0).stroke({ color: TINTA, width: 1, alpha: 0.85 });
+        g.visible = false; papeis.addChild(g);
+        voos.push({ g, de: o, para: d, t0: t + i * 0.08, dur: reduz ? 0 : Math.min(0.9, 0.45 + m / 80), pisca: null });
+      };
+      // selo de resposta pronta: um papel com o visto em ouro, ponta para baixo como o balão
+      const selo = new Container(); selo.visible = false; baloes.addChild(selo);
+      selo.addChild(new Graphics()
+        .poly([-3, -7, 3, -7, 0, -1]).fill(PAPEL).stroke({ color: OURO, width: 1.5 })
+        .roundRect(-11, -27, 22, 20, 4).fill(PAPEL).stroke({ color: OURO, width: 1.5 })
+        .poly([-2.4, -7.75, 2.4, -7.75, 0, -2.4]).fill(PAPEL)
+        .moveTo(-5.5, -17).lineTo(-1.5, -12.5).lineTo(6, -21.5).stroke({ color: TINTA, width: 2.2, cap: 'round', join: 'round' }));
+      const seloDe = { id: null as string | null, v: 0 };
 
       const losango = (g: Graphics, x: number, y: number, lado: number, cor: number, alfa: number, borda = 0) => {
         const h = lado / 2, pts = [proj.px(x - h, y - h), proj.px(x + h, y - h), proj.px(x + h, y + h), proj.px(x - h, y + h)].flat();
@@ -326,7 +345,7 @@ export function MapaPixi(props: Props) {
       app.ticker.add(tk => {
         const dt = Math.min(0.05, tk.deltaMS / 1000); t += dt;
         sim.passo(dt);
-        const { foco, selecionado, zonaAtiva, escrevendo, distribuicao, telas } = atual.current;
+        const { foco, selecionado, zonaAtiva, escrevendo, distribuicao, fecho, telas } = atual.current;
         if (telas !== telasVistas || telaSob !== telaSobVista) { telasVistas = telas; telaSobVista = telaSob; pintaTelas(telas); }
         if (foco && foco.n !== focoVisto) {
           focoVisto = foco.n; const r = lab.zonas[foco.zona]; ancora = null;
@@ -435,13 +454,28 @@ export function MapaPixi(props: Props) {
           distVisto = distribuicao.n;
           const de = sim.agentes.find(a => a.id === distribuicao.de);
           if (de) distribuicao.para.forEach((id, i) => {
-            const a = sim.agentes.find(x => x.id === id); if (!a || a === de) return;
-            const o = mesaDe(de), d = mesaDe(a), m = Math.hypot(d.x - o.x, d.y - o.y);
-            const g = new Graphics().rect(-5, -3.5, 10, 7).fill(0xfffbf0).stroke({ color: TINTA, width: 1, alpha: 0.85 });
-            g.visible = false; papeis.addChild(g);
-            // quem está longe espera um pouco mais, mas ninguém passa de 0,9 s; com movimento reduzido o papel não voa
-            voos.push({ g, de: o, para: d, t0: t + i * 0.08, dur: reduz ? 0 : Math.min(0.9, 0.45 + m / 80), pisca: null });
+            const a = sim.agentes.find(x => x.id === id); if (a && a !== de) lanca(de, a, i);
           });
+        }
+        // síntese pronta: a entrega de cada autor volta para a mesa de quem orquestra
+        if (fecho && fecho.n !== fechoVisto) {
+          fechoVisto = fecho.n;
+          const para = sim.agentes.find(a => a.id === fecho.para);
+          if (para) fecho.de.forEach((id, i) => {
+            const a = sim.agentes.find(x => x.id === id); if (a && a !== para) lanca(a, para, i);
+          });
+        }
+        // o selo de pronto entra quando o último papel já pousou e fica até alguém abrir a resposta
+        const quemSelo = atual.current.selo, dono = quemSelo ? sim.agentes.find(a => a.id === quemSelo) : null;
+        const seloOn = !!dono && !voos.length;
+        if (dono) seloDe.id = dono.id;
+        seloDe.v = reduz ? +seloOn : rumo(seloDe.v, +seloOn, dt / 0.2);
+        const comSelo = seloDe.id ? sim.agentes.find(a => a.id === seloDe.id) : null;
+        selo.visible = seloDe.v > 0 && !!comSelo;
+        if (selo.visible && comSelo) {
+          const balanca = reduz ? 0 : Math.sin(t * 2.4) * 1.5;
+          const [ox, oy] = proj.px(comSelo.pos.x, comSelo.pos.y, sim.pose(comSelo) === 'digitar' ? 1.42 : 1.86), e = sai(seloDe.v);
+          selo.position.set(ox, oy + balanca / s); selo.scale.set((0.8 + 0.2 * e) / s); selo.alpha = e;
         }
         voos = voos.filter(v => {
           if (t < v.t0) return true;
