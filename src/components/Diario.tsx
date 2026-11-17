@@ -15,7 +15,8 @@ import type { Membro } from '../lib/equipe';
 import { useEquipe } from '../hooks/useEquipe';
 import { ZONAS, type DadosLab } from '../lib/lab';
 import { criaProjecao } from '../lib/projecao';
-import { FASES, hojeLocal, textoDoCiclo } from '../lib/dados';
+import { FASES, diaCurto, hojeLocal, textoDoCiclo } from '../lib/dados';
+import { atrasada } from '../lib/ferramentas';
 
 export type Aba = 'pedidos' | 'paineis' | 'skills' | 'missoes' | 'clientes' | 'projetos' | 'pessoas' | 'lugares' | 'agenda' | 'decisoes' | 'memoria' | 'conexoes' | 'trofeus';
 export const ABAS: { id: Aba; nome: string; corte?: boolean; grupo?: string }[] = [
@@ -170,7 +171,7 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
             <li key={t.id} className="cartao-missao" style={{ ['--c' as string]: z?.cor ?? '#C5AA81' }}>
               <button className="marcador" onClick={() => escolhe(t.agente)} aria-label={`Ver ${m?.nome} no mapa`} title={`Ver ${m?.nome} no mapa`}><Retrato id={t.agente} tamanho={30} /></button>
               <button className="texto" onClick={() => (t.projeto_id ? abreProjeto(t.projeto_id) : escolhe(t.agente))}>
-                <b>{t.titulo}</b><small>{m?.nome}{p ? `, ${p.nome}` : ''}</small>
+                <b>{t.titulo}</b><small>{m?.nome}{p ? `, ${p.nome}` : ''}</small>{t.prazo && <small className={`prazo ${atrasada(t, hojeLocal()) ? 'atrasada' : ''}`}>{atrasada(t, hojeLocal()) ? 'Atrasada, era até' : 'Até'} {diaCurto(t.prazo)}</small>}
               </button>
               <span className={`estado-fita ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span>
             </li>

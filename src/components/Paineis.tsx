@@ -88,6 +88,7 @@ export function Clientes({ abreProjeto, novo = false, inicial, volta }: { abrePr
 function Kanban({ projeto }: { projeto: Projeto }) {
   const { equipe, nome } = useEquipe();
   const { estado, criaTarefa, mudaTarefa, apagaTarefa } = useEstado();
+  const [prazo, setPrazo] = useState('');
   const [titulo, setTitulo] = useState(''), [agente, setAgente] = useState(equipe.some(m => m.id === 'rui') ? 'rui' : equipe[0]?.id ?? '');
   const [edita, setEdita] = useState<number | null>(null);
   const tarefas = estado.tarefas.filter(t => t.projeto_id === projeto.id);
@@ -128,11 +129,13 @@ function Kanban({ projeto }: { projeto: Projeto }) {
           );
         })}
       </div>
-      <form className="nova-linha" onSubmit={async e => { e.preventDefault(); if (titulo.trim() && (await criaTarefa({ agente, titulo: titulo.trim(), projeto_id: projeto.id }))) setTitulo(''); }}>
+      <form className="nova-linha" onSubmit={async e => { e.preventDefault(); if (titulo.trim() && (await criaTarefa({ agente, titulo: titulo.trim(), projeto_id: projeto.id, prazo: prazo || null }))) { setTitulo(''); setPrazo(''); } }}>
         <label className="so-leitor" htmlFor="nt">Nova missão</label>
         <input id="nt" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Nova missão para este projeto" maxLength={200} />
         <label className="so-leitor" htmlFor="nd">Quem faz</label>
         <select id="nd" value={agente} onChange={e => setAgente(e.target.value)}>{equipe.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}</select>
+        <label className="so-leitor" htmlFor="nprz">Prazo</label>
+        <input id="nprz" type="date" value={prazo} onChange={e => setPrazo(e.target.value)} title="Prazo, opcional" />
         <button type="submit" disabled={!titulo.trim()}>Dar missão</button>
       </form>
     </>
