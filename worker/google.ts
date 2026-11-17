@@ -48,7 +48,8 @@ const somaDias = (dia: string, n: number) => { const d = new Date(dia + 'T12:00:
 /** Rotas /api/google. Sem a autorização guardada, responde que o Google Agenda ainda não está ligado. */
 export async function rotaGoogle(req: Request, env: ChavesGoogle, caminho: string, buscar: Buscar = fetch, agora = Date.now()): Promise<Response | null> {
   if (!caminho.startsWith('/api/google/')) return null;
-  if (!googleLigado(env)) return json({ erro: 'O Google Agenda ainda não está ligado ao lab. O passo a passo está em Conexões.', desligado: true }, 503);
+  // ainda não ligado é um estado normal do lab, não um erro: responde 200 e a tela mostra o caminho para ligar
+  if (!googleLigado(env)) return json({ erro: 'O Google Agenda ainda não está ligado ao lab. O passo a passo está em Conexões.', desligado: true });
   const agenda = encodeURIComponent(env.AGENDA_GOOGLE || 'primary');
   const base = `https://www.googleapis.com/calendar/v3/calendars/${agenda}/events`;
   try {

@@ -33,7 +33,7 @@ describe('rotas do Google', () => {
   it('sem autorização, diz que o Google Agenda não está ligado', async () => {
     expect(googleLigado({})).toBe(false);
     const r = (await rotaGoogle(pede('/api/google/reunioes'), {}, '/api/google/reunioes'))!;
-    expect(r.status).toBe(503);
+    expect(r.status).toBe(200);
     expect(await r.json()).toMatchObject({ desligado: true });
   });
   it('não mexe em rota que não é do Google', async () => {

@@ -48,7 +48,8 @@ ol.linha-tempo>li>time{padding-top:var(--s3)}
 .contexto h4{margin:0 0 var(--s2)}
 b,strong{font-weight:var(--p-forte)}
 /* número em coluna e em contagem alinha pela largura */
-.resumo dd,.kanban h4 span,.quadro-geral h4 span,.selo b,.etiqueta-numero{font-variant-numeric:tabular-nums}
+/* a fonte do diário desenha o zero baixinho, parecendo a letra o: nos números, algarismos de altura cheia */
+.resumo dd,.kanban h4 span,.quadro-geral h4 span,.selo b,.etiqueta-numero{font-variant-numeric:lining-nums tabular-nums}
 
 /* título de cartão de item: Roboto forte 16 em toda lista. Título de cartão de bloco segue em Alegreya 18. */
 .cartao-missao .texto>b,.elenco li>button b,.skills li b,.trofeus b,.conexoes>li b,.banco li b{font:var(--p-forte) var(--t-16)/var(--lh-denso) var(--corpo);color:var(--tinta)}
@@ -131,8 +132,10 @@ button[aria-busy="true"]::after{content:'';width:18px;height:6px;flex:none;backg
   .pagina.esquerda .ilustracao{display:block;flex:0 0 100%}
   .pagina.esquerda .ilustracao:not(:has(.resumo,.roteiro)){display:none}
   .pagina.esquerda .ilustracao>:not(.resumo):not(.roteiro),.pagina.esquerda .resumo .nota-mao,.pagina.esquerda .roteiro ol{display:none}
-  .pagina.esquerda .resumo dl{display:flex;gap:var(--s2);margin:0;overflow-x:auto;scrollbar-width:none}
-  .pagina.esquerda .resumo dl>div{flex:1 0 auto;padding:var(--s1) var(--s2);min-height:0}
+  /* no celular os contadores ficam em grade de duas colunas: nada rola de lado nem sai cortado */
+  .pagina.esquerda .resumo dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2);margin:0}
+  .pagina.esquerda .resumo dl>div{min-width:0;padding:var(--s1) var(--s2);min-height:0}
+  .pagina.esquerda .resumo dt{min-width:0;overflow-wrap:anywhere;line-height:var(--lh-denso)}
   .ainda{justify-self:start}
   .sintese header{flex-wrap:wrap}.sintese header h4{flex-basis:100%}
   /* com pedido andando, o console do celular diz o que está acontecendo */
@@ -162,3 +165,15 @@ a.primario,a.leve{text-decoration:none}
 .proxima-sala .nota{margin:0}
 .prazo{display:block;margin-top:var(--s1);font:var(--p-medio) var(--t-12)/var(--lh-denso) var(--corpo);color:var(--texto-2)}
 .prazo.atrasada{color:var(--erro);font-weight:var(--p-forte)}
+
+/* aba de projeto: nome em cima, cliente embaixo, cortados com o nome inteiro no título */
+.abas .aba-projeto{display:flex;flex-direction:column;align-items:flex-start;gap:0;max-width:240px;padding-block:var(--s1);text-align:left}
+.aba-projeto b,.aba-projeto small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aba-projeto small{font-weight:var(--p-normal);font-size:var(--t-12);opacity:.8}
+.dispensa-topo{margin:var(--s1) 0 0;font-size:var(--t-14);color:var(--texto-2);display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.cartao .dono .carimbo{margin-left:auto}
+/* seletor nunca passa da borda do formulário: nome longo de projeto corta dentro dele */
+select{max-width:100%;min-width:0;text-overflow:ellipsis}
+.linha>select{flex:1 1 220px}
+/* o livro alarga só onde tem quadro. Trocar de tela anima a largura em vez de saltar */
+@media (min-width:761px) and (prefers-reduced-motion:no-preference){.livro{transition:width var(--d-medio) var(--sai)}}

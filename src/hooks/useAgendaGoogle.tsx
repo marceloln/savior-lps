@@ -12,7 +12,8 @@ async function pede<T>(rota: string, init?: RequestInit): Promise<{ ok: true; v:
     const r = await fetch('api/google/' + rota, init);
     const d = await r.json().catch(() => null);
     if (d === null) return { ok: false, erro: SEM_SERVIDOR, semServidor: true };
-    return r.ok ? { ok: true, v: d as T } : { ok: false, erro: d.erro ?? 'O Google não respondeu.', desligado: !!d.desligado };
+    if (d.desligado) return { ok: false, erro: d.erro, desligado: true };
+    return r.ok ? { ok: true, v: d as T } : { ok: false, erro: d.erro ?? 'O Google não respondeu.' };
   } catch { return { ok: false, erro: SEM_SERVIDOR, semServidor: true }; }
 }
 

@@ -204,7 +204,7 @@ export function Lab() {
         pedidos: <Pedidos p={pedido} />, skills: <Skills />,
         paineis: <Ferramentas qual={ferramenta} muda={setFerramenta} abreProjeto={abreProjeto} escolhe={escolhe} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} />,
         missoes: <div className="missoes-livro"><ListaMissoes abreProjeto={abreProjeto} escolhe={escolhe} max={30} /></div>,
-        clientes: <Clientes key={mostrado.pre ? mostrado.pre.setor + mostrado.pre.situacao : 'c'} abreProjeto={abreProjeto} novo={mostrado.novo} inicial={mostrado.pre} volta={mostrado.pre ? { rotulo: 'Voltar ao briefing', vai: () => setAberto({ tipo: 'briefing' }) } : undefined} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
+        clientes: <Clientes key={mostrado.pre ? mostrado.pre.setor + mostrado.pre.situacao : 'c'} abreProjeto={abreProjeto} novo={mostrado.novo} inicial={mostrado.pre} volta={mostrado.pre ? { rotulo: 'Voltar ao briefing', vai: () => setAberto({ tipo: 'briefing' }) } : undefined} />, projetos: <Projetos atual={p?.id} escolhe={setProjeto} />, agenda: <Agenda abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} />, decisoes: <Decisoes />, conexoes: <Conexoes c={conexoes} />, trofeus: <Trofeus />,
         pessoas: <PainelPessoas abre={id => { setEscolhido(id); setZona(de(id)?.zona ?? null); setAberto({ tipo: 'ficha', id }); }} />,
         lugares: <><ul className="lista-lugares">{ZONAS.map(z => {
           const n = equipe.filter(e => e.zona === z.id).length;
@@ -253,7 +253,7 @@ export function Lab() {
           briefing={() => setAberto({ tipo: 'briefing' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })}
           lazer={{ radio: () => setAberto({ tipo: 'radio' }), pong: () => setAberto({ tipo: 'pong' }) }} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} /> };
     } else if (mostrado.tipo === 'reuniao') {
-      folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} /> };
+      folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} abreConexoes={() => setAberto({ tipo: 'aba', aba: 'conexoes' })} /> };
     }
   }
   // onde estou: o menu marca a seção de quem está aberto, mesmo fora das abas

@@ -361,8 +361,8 @@ export function MapaTinta({ lab, escolhe }: { lab: DadosLab; escolhe: (zona: str
           <g key={z.id} className="zona-tinta" tabIndex={0} role="button" aria-label={z.nome} onClick={() => escolhe(z.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); escolhe(z.id); } }}>
             <rect x={x} y={y} width={w} height={h} rx="0.5" fill={z.cor} fillOpacity=".32" stroke="#3B2F25" strokeWidth="0.08" strokeDasharray="0.4 0.25" />
             {/* número grande no mapa e o nome na lista ao lado: legível até no celular */}
-            <circle cx={x + w / 2} cy={y + h / 2} r="1.25" fill="#FBF3E4" stroke="#3B2F25" strokeWidth="0.1" />
-            <text x={x + w / 2} y={y + h / 2 + 0.06} textAnchor="middle" dominantBaseline="middle" fontSize="1.5">{i + 1}</text>
+            <circle cx={x + w / 2} cy={y + h / 2} r="2.1" fill="#FBF3E4" stroke="#3B2F25" strokeWidth="0.12" />
+            <text x={x + w / 2} y={y + h / 2 + 0.1} textAnchor="middle" dominantBaseline="middle" fontSize="2.5" fontWeight="700">{i + 1}</text>
           </g>
         );
       })}
