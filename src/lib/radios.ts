@@ -106,14 +106,21 @@ export function catalogo(brutas: EstacaoBruta[]): RadioAoVivo[] {
   return sai;
 }
 
-export type Filtro = { uf: string; genero: string; busca: string };
+/** favoritas: ids que a pessoa marcou. Com so, a lista mostra só elas. Sem, elas vêm primeiro. */
+export type Filtro = { uf: string; genero: string; busca: string; favoritas?: string[]; so?: boolean };
 
 /** As rádios que passam no filtro. Estado e gênero vazios valem todos. A busca olha nome e cidade, sem ligar para acento. */
 export function filtra(lista: RadioAoVivo[], f: Filtro): RadioAoVivo[] {
   const palavras = plano(f.busca).split(' ').filter(Boolean);
-  return lista.filter(r => (!f.uf || r.uf === f.uf) && (!f.genero || r.generos.includes(f.genero))
+  const favs = new Set(f.favoritas ?? []);
+  const achadas = lista.filter(r => (!f.uf || r.uf === f.uf) && (!f.genero || r.generos.includes(f.genero)) && (!f.so || favs.has(r.id))
     && palavras.every(p => plano(`${r.nome} ${r.cidade} ${r.uf}`).includes(p)));
+  // a ordem do catálogo fica, só que as favoritas sobem. sort é estável
+  return favs.size ? [...achadas].sort((a, b) => Number(favs.has(b.id)) - Number(favs.has(a.id))) : achadas;
 }
+
+/** Marca ou desmarca uma favorita. Guarda no máximo 50, a mais nova na frente. */
+export const alternaFavorita = (favs: string[], id: string): string[] => (favs.includes(id) ? favs.filter(x => x !== id) : [id, ...favs].slice(0, 50));
 
 /** Quantas rádios cada estado tem, para o seletor mostrar só os que têm alguma. */
 export function porEstado(lista: RadioAoVivo[]): { sigla: string; nome: string; total: number }[] {

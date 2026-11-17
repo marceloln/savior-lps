@@ -63,3 +63,9 @@
 @media (hover:hover) and (pointer:fine){.radio-lista button:hover{border-color:var(--tinta)}.radio-generos button:hover:not(.on){border-color:var(--borda-forte)}}
 @media (prefers-reduced-motion:reduce){.aviso-radio{animation:aparece var(--d-rapido) ease-out both}}
 @media (max-width:760px){.radio-filtros{grid-template-columns:minmax(0,1fr)}.radio-generos button{min-height:44px}}
+
+/* favorita: estrela ao lado de cada rádio, cheia quando marcada */
+.radio-lista li.com-favorita{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:var(--s2);align-items:stretch}
+.radio-lista .radio-favorita{display:grid;place-items:center;grid-template-columns:none;padding:0;min-height:var(--h-lg);width:44px}
+.radio-favorita svg{width:20px;height:20px;fill:none;stroke:var(--texto-2);stroke-width:1.6;stroke-linejoin:round}
+.radio-favorita.on svg{fill:var(--ouro);stroke:var(--ouro)}

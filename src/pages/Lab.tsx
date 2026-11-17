@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Briefing, RoteiroBriefing } from '../components/Briefing';
 import { useBriefing } from '../hooks/useBriefing';
 import { Ferramentas, FERRAMENTAS, type Ferramenta } from '../components/Ferramentas';
 import { linhaDoTempo, resumoDasTelas } from '../lib/ferramentas';
 import { hojeLocal } from '../lib/dados';
 import { paraVoce } from '../lib/pedidos';
-import { MapaPixi, type Alvo } from '../components/MapaPixi';
+import type { Alvo } from '../components/MapaPixi';
+// o motor do mapa pesa mais que o resto da interface: vem em pedaço próprio, e o livro e os menus aparecem antes
+const MapaPixi = lazy(() => import('../components/MapaPixi').then(m => ({ default: m.MapaPixi })));
 import { Chat } from '../components/Chat';
 import { FichaAgente, PainelZona } from '../components/Fichas';
 import { Agenda, Clientes, Conexoes, Decisoes, Projetos, Trofeus, itensConexao } from '../components/Paineis';
@@ -261,8 +263,8 @@ export function Lab() {
   return (
     <div className={`lab ${aberto ? 'com-livro' : ''} ${recolhido ? 'menu-recolhido' : ''}`}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
-      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} foco={foco}
-        onHover={onHover} onClique={onClique} />}
+      {lab && gente && <Suspense fallback={null}><MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} foco={foco}
+        onHover={onHover} onClique={onClique} /></Suspense>}
       <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />
         <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>

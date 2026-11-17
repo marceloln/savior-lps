@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { catalogo, cidadeDe, filtra, generosDe, normaliza, porEstado, ufDe, type EstacaoBruta } from './radios';
+import { alternaFavorita, catalogo, cidadeDe, filtra, generosDe, normaliza, porEstado, ufDe, type EstacaoBruta } from './radios';
 
 const bruta = (o: Partial<EstacaoBruta>): EstacaoBruta => ({
   stationuuid: 'a', name: 'Rádio Teste', url_resolved: 'https://som.exemplo/ao-vivo', lastcheckok: 1, hls: 0, tags: '', state: '', iso_3166_2: null, ...o,
@@ -107,6 +107,16 @@ describe('filtra e porEstado', () => {
     expect(filtra(lista, { uf: '', genero: '', busca: 'fortaleza' }).map(r => r.nome)).toEqual(['Litoral FM']);
     expect(filtra(lista, { uf: '', genero: '', busca: 'radio dia' }).map(r => r.nome)).toEqual(['Rádio O Dia']);
     expect(filtra(lista, { uf: 'SP', genero: 'Samba e pagode', busca: '' })).toEqual([]);
+  });
+  it('favoritas sobem na lista e, pedindo, ficam sozinhas', () => {
+    expect(filtra(lista, { uf: '', genero: '', busca: '', favoritas: ['3'] }).map(r => r.id)).toEqual(['3', '1', '2']);
+    expect(filtra(lista, { uf: '', genero: '', busca: '', favoritas: ['3', '2'], so: true }).map(r => r.id)).toEqual(['2', '3']);
+    expect(filtra(lista, { uf: '', genero: '', busca: '', so: true })).toEqual([]);
+  });
+  it('alterna favorita sem repetir e com teto', () => {
+    expect(alternaFavorita(['a'], 'b')).toEqual(['b', 'a']);
+    expect(alternaFavorita(['a', 'b'], 'a')).toEqual(['b']);
+    expect(alternaFavorita(Array.from({ length: 50 }, (_, i) => String(i)), 'novo')).toHaveLength(50);
   });
   it('conta por estado e mostra só os estados que têm rádio', () => {
     expect(porEstado(lista)).toEqual([
