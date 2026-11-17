@@ -1,5 +1,6 @@
 // Contas das ferramentas de acompanhamento: quadro geral, linha do tempo dos ciclos e calendário do mês. Sem tela.
 import { FASES, somaDias, type EstadoLab, type Estado, type Reuniao, type Tarefa } from './dados';
+import type { ReuniaoGoogle } from './agendaGoogle';
 
 export const COLUNAS_DO_QUADRO: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
@@ -22,12 +23,13 @@ export type LinhaProjeto = {
   /** Dia do ciclo em que estamos, de 1 a 30. Zero se ainda não começou e 31 se já acabou. */
   dia: number;
   feitas: number; total: number;
-  reunioes: { id: number; titulo: string; desloca: number; feita: boolean }[];
+  /** Reuniões do lab e do Google Agenda ligadas ao projeto. As do Google têm id com g na frente. */
+  reunioes: { id: number | string; titulo: string; desloca: number; feita: boolean }[];
 };
 export type LinhaDoTempo = { de: string; dias: number; hoje: number; semanas: { desloca: number; rotulo: string }[]; projetos: LinhaProjeto[] };
 
 /** Todos os projetos numa janela só, do primeiro início ao último fim de ciclo, com hoje e as reuniões de cada um. */
-export function linhaDoTempo(e: EstadoLab, hoje: string): LinhaDoTempo {
+export function linhaDoTempo(e: EstadoLab, hoje: string, google: ReuniaoGoogle[] = []): LinhaDoTempo {
   const comData = e.projetos.filter(p => p.inicio);
   if (!comData.length) return { de: hoje, dias: 30, hoje: 0, semanas: [], projetos: [] };
   const de = comData.map(p => p.inicio).sort()[0];
@@ -42,7 +44,10 @@ export function linhaDoTempo(e: EstadoLab, hoje: string): LinhaDoTempo {
     return {
       id: p.id, nome: p.nome, fase: FASES[p.fase] ?? FASES[0], inicio: p.inicio, fim: somaDias(p.inicio, 29), desloca: dias(de, p.inicio),
       dia: n < 1 ? 0 : n > 30 ? 31 : n, feitas: dele.filter(t => t.estado === 'feito').length, total: dele.length,
-      reunioes: e.reunioes.filter(r => r.projeto_id === p.id).map(r => ({ id: r.id, titulo: r.titulo, desloca: dias(de, r.dia), feita: r.status === 'feita' })).filter(r => r.desloca >= 0 && r.desloca < total),
+      reunioes: [
+        ...e.reunioes.filter(r => r.projeto_id === p.id).map(r => ({ id: r.id, titulo: r.titulo, desloca: dias(de, r.dia), feita: r.status === 'feita' })),
+        ...google.filter(r => r.projeto === p.id).map(r => ({ id: 'g' + r.id, titulo: `${r.titulo}, no Meet`, desloca: dias(de, r.dia), feita: r.dia < hoje })),
+      ].filter(r => r.desloca >= 0 && r.desloca < total),
     };
   });
   return { de, dias: total, hoje: dias(de, hoje), semanas, projetos };

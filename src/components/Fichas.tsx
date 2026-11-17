@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ProximaNaSala } from './AgendaGoogle';
 import { sugestoesDeMissao } from '../lib/sugestoes';
 import type { Agente, Membro } from '../lib/equipe';
 import { useEquipe } from '../hooks/useEquipe';
@@ -142,8 +143,8 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
 type AbaZona = 'equipe' | 'missoes' | 'reunioes';
 
 /** O que acontece numa sala: quem trabalha ali, o que está em aberto e as reuniões com essa turma. */
-export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa, darMissao, aoDar, lazer }: {
-  zona: string; abreAgente: (id: string) => void; briefing: () => void; marcaReuniao: (com: string[]) => void;
+export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa, darMissao, aoDar, lazer, abreAgenda }: {
+  zona: string; abreAgente: (id: string) => void; briefing: () => void; marcaReuniao: (com: string[]) => void; abreAgenda?: () => void;
   conversa: (id: string) => void; darMissao: (id: string) => void; aoDar?: (texto: string) => void;
   /** O que o lounge tem para abrir sem depender de clicar no mapa: a rádio e o Pong. */
   lazer?: { radio: () => void; pong: () => void };
@@ -170,6 +171,7 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
               <div className="acoes-pessoa"><button className="leve mini" onClick={() => conversa(m.id)}>Conversar</button><button className="leve mini" onClick={() => darMissao(m.id)}>Missão</button></div></li>))}</ul>
           : <p className="vazio">Ninguém tem mesa fixa aqui. É área de uso comum, cada um passa quando precisa.</p>}
         {zona === 'atendimento' && <button className="primario" onClick={briefing}>Começar briefing com a Clara</button>}
+        {zona === 'reuniao' && abreAgenda && <ProximaNaSala abreAgenda={abreAgenda} />}
         {zona === 'lounge' && lazer && <div className="linha"><button className="primario" onClick={lazer.radio}>Abrir a Rádio V30</button><button className="leve" onClick={lazer.pong}>Jogar Pong</button></div>}
       </>}
       {aba === 'missoes' && <>

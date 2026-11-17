@@ -20,6 +20,8 @@ import { ZONAS } from '../lib/lab';
 import { useEquipe } from '../hooks/useEquipe';
 import { ORQUESTRADOR } from '../lib/equipe';
 import { useConexoes } from '../hooks/useConexoes';
+import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
+import { comecaLogo, horaLocal } from '../lib/agendaGoogle';
 import { usePedido } from '../hooks/usePedido';
 import { useSaida } from '../hooks/useSaida';
 import { PainelPessoas, Pedidos, Skills } from '../components/Nucleo';
@@ -80,6 +82,21 @@ export function Lab() {
   const [projeto, setProjeto] = useState<string | undefined>();
   const [registro, setRegistro] = useState<string[]>([]);
   const anota = (s: string) => setRegistro(r => [...r.slice(-5), s]);
+  // meia hora antes de uma reunião do Google Agenda, o aviso do console lembra uma vez
+  const google = useAgendaGoogle(), lembradas = useRef(new Set<string>());
+  useEffect(() => {
+    const confere = () => {
+      for (const { r, faltam } of comecaLogo(google.lista, hojeLocal(), horaLocal())) {
+        const chave = r.id + r.dia;
+        if (lembradas.current.has(chave)) continue;
+        lembradas.current.add(chave);
+        anota(`Daqui a ${faltam} ${faltam === 1 ? 'minuto' : 'minutos'}: ${r.titulo}. O link do Meet está em Para você e na Agenda.`);
+      }
+    };
+    confere();
+    const t = setInterval(confere, 60_000);
+    return () => clearInterval(t);
+  }, [google.lista]);
   const pedido = usePedido();
   const escrevendo = [...estado.tarefas.filter(t => executando.includes(t.id)).map(t => t.agente), ...(pedido.corrida.etapa === 'planejando' || pedido.corrida.etapa === 'sintetizando' ? [ORQUESTRADOR] : [])];
   const fecha = useCallback(() => setAberto(null), []);
@@ -232,7 +249,7 @@ export function Lab() {
         corpo: <PainelZona key={z.id} zona={z.id} abreAgente={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id }); }} aoDar={anota}
           conversa={id => { setEscolhido(id); setAberto({ tipo: 'conversa', id }); }} darMissao={id => { setEscolhido(id); setAberto({ tipo: 'ficha', id, aba: 'visao', foca: true }); }}
           briefing={() => setAberto({ tipo: 'briefing' })} marcaReuniao={com => setAberto({ tipo: 'reuniao', com })}
-          lazer={{ radio: () => setAberto({ tipo: 'radio' }), pong: () => setAberto({ tipo: 'pong' }) }} /> };
+          lazer={{ radio: () => setAberto({ tipo: 'radio' }), pong: () => setAberto({ tipo: 'pong' }) }} abreAgenda={() => setAberto({ tipo: 'aba', aba: 'agenda' })} /> };
     } else if (mostrado.tipo === 'reuniao') {
       folha = { titulo: 'Agenda', sobre: SOBRE_ABA.agenda, ilustracao: <ProximaReuniao />, corpo: <Agenda com={mostrado.com} /> };
     }
@@ -257,7 +274,7 @@ export function Lab() {
       <div className="coluna-direita">
         <Selos abre={abreAba} />
         <Missoes abreProjeto={abreProjeto} escolhe={escolhe} verTodas={() => setAberto({ tipo: 'aba', aba: 'missoes' })} abre={a => setAberto({ tipo: 'aba', aba: a })}
-          atencao={paraVoce(estado, hojeLocal(), Date.now(), pedido.ocupado ? pedido.corrida.pedido : null)} />
+          atencao={paraVoce(estado, hojeLocal(), Date.now(), pedido.ocupado ? pedido.corrida.pedido : null, google.lista, horaLocal())} />
       </div>
       {dica.alvo && !aberto && (
         <div className="dica papel-borda" style={{ left: Math.min(dica.x + 18, innerWidth - 280), top: dica.y + 18 }}>

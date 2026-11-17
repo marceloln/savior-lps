@@ -3,7 +3,7 @@
 
 /* ---------- três tipos de cartão ---------- */
 /* 1. Cartão de item: uma coisa numa lista. Borda fina, raio 8, sombra de um degrau. */
-.cartao,.cartao-missao,.elenco li>button,.lista-lugares button,.para-voce button,.notas>li,.skills li,.conexoes>li,.trofeus>li,.entrega,.manias>li,.tarefas-agente>li,.passos>li,.lista-item{
+.cartao,.cartao-missao,.elenco li>button,.lista-lugares button,.para-voce button,.para-voce a,.notas>li,.skills li,.conexoes>li,.trofeus>li,.entrega,.manias>li,.tarefas-agente>li,.passos>li,.lista-item{
   border:1px solid var(--cartao-borda);border-radius:var(--r-8);background:var(--cartao);box-shadow:var(--sombra-1)}
 /* 2. Cartão de bloco: um assunto inteiro, com título. Raio 12 e sombra de dois degraus. */
 .bloco,.cliente,.pedido,.pedir,.sintese,.briefing-fecho,.proxima,.contexto{
@@ -157,3 +157,6 @@ a.primario,a.leve{text-decoration:none}
 .marca-item input{margin-top:var(--s1)}
 .marca-item span{display:flex;flex-direction:column;gap:var(--s1)}
 .marca-item small{color:var(--texto-2);line-height:var(--lh-denso)}
+.proxima-sala{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) var(--s4);border:1.5px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao)}
+.proxima-sala h4{margin:0;font:var(--p-titulo) var(--t-18)/var(--lh-titulo) var(--titulo);color:var(--tinta)}
+.proxima-sala .nota{margin:0}

@@ -74,3 +74,18 @@ export function eventoNovo(r: NovaReuniaoMeet, requestId: string) {
     ...(r.projeto_id ? { extendedProperties: { private: { lab_projeto: r.projeto_id } } } : {}),
   };
 }
+
+const minutos = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
+
+/** Reuniões de hoje que ainda não acabaram, pela hora de início. agora vem em HH:MM, no horário do sócio. */
+export function aindaHoje(lista: ReuniaoGoogle[], hoje: string, agora: string): ReuniaoGoogle[] {
+  return lista.filter(r => r.dia === hoje && minutos(r.fim) > minutos(agora)).sort((a, b) => a.hora.localeCompare(b.hora));
+}
+
+/** Reuniões de hoje que começam dentro da janela, com os minutos que faltam. A que já começou fica de fora. */
+export function comecaLogo(lista: ReuniaoGoogle[], hoje: string, agora: string, janela = 30): { r: ReuniaoGoogle; faltam: number }[] {
+  return lista.filter(r => r.dia === hoje).map(r => ({ r, faltam: minutos(r.hora) - minutos(agora) })).filter(x => x.faltam > 0 && x.faltam <= janela);
+}
+
+/** Hora local em HH:MM, para comparar com a hora das reuniões. */
+export const horaLocal = (d = new Date()) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;

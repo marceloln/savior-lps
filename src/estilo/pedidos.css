@@ -8,7 +8,7 @@
 .para-voce{margin-bottom:var(--s3);padding-bottom:var(--s3);border-bottom:1.5px dashed var(--cartao-borda)}
 .para-voce h3{margin:0 0 var(--s2);font:var(--p-titulo) var(--t-16) var(--titulo);color:var(--tinta)}
 .para-voce ul{list-style:none;margin:0;padding:0;display:grid;gap:var(--s2)}
-.para-voce button{width:100%;display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:var(--cartao);text-align:left;font:inherit;color:var(--tinta-2);transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
+.para-voce button,.para-voce a{width:100%;text-decoration:none;display:flex;align-items:center;gap:var(--s3);padding:var(--s2) var(--s3);border-radius:var(--r-8);border:1.5px solid var(--cartao-borda);background:var(--cartao);text-align:left;font:inherit;color:var(--tinta-2);transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
 .para-voce button.parado{border-color:#A8742A;background:#FBF0D6}
 .para-voce button.resposta{border-color:#4E7A4B;background:#EEF4E4}
 .para-voce button:active{transform:scale(.98)}

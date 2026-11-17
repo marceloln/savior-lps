@@ -3,4 +3,5 @@ import { Lab } from './pages/Lab';
 import { EstadoProvider } from './hooks/useEstado';
 import './estilo.css';
 import { RadioProvider } from './hooks/useRadio';
-createRoot(document.getElementById('raiz')!).render(<EstadoProvider><RadioProvider><Lab /></RadioProvider></EstadoProvider>);
+import { AgendaGoogleProvider } from './hooks/useAgendaGoogle';
+createRoot(document.getElementById('raiz')!).render(<EstadoProvider><AgendaGoogleProvider><RadioProvider><Lab /></RadioProvider></AgendaGoogleProvider></EstadoProvider>);
