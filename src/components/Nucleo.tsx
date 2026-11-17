@@ -3,7 +3,8 @@ import { useState, type ReactNode } from 'react';
 import { useEstado } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
 import type { ApiPedido } from '../hooks/usePedido';
-import { MAX_MISSOES, type MissaoProposta, type Pedido, type Skill, type Tarefa } from '../lib/dados';
+import { MAX_MISSOES, dataCurta, hojeLocal, type MissaoProposta, type Pedido, type Skill, type Tarefa } from '../lib/dados';
+import { fimDoSquad, podeReceber } from '../lib/squad';
 import { MODELOS_DE_PEDIDO, documentoDoPedido, nomeDoArquivo } from '../lib/pedidos';
 import { bancoPorFuncao, convidadoDe, idDoConvidado } from '../lib/convidados';
 import { APARENCIAS, ORQUESTRADOR, type Agente } from '../lib/equipe';
@@ -118,7 +119,9 @@ export function Entrega({ t }: { t: Tarefa }) {
 
 function Plano({ p }: { p: ApiPedido }) {
   const { equipe } = useEquipe();
-  const time = equipe.filter(a => a.id !== ORQUESTRADOR);
+  const { estado } = useEstado();
+  // quem está no squad de outro projeto não aparece para este pedido
+  const time = equipe.filter(a => a.id !== ORQUESTRADOR && podeReceber(a, p.corrida.projeto, estado.projetos, hojeLocal()));
   const [plano, setPlano] = useState<MissaoProposta[]>(p.corrida.plano);
   const muda = (i: number, m: Partial<MissaoProposta>) => setPlano(l => l.map((x, j) => (j === i ? { ...x, ...m } : x)));
   const pronto = plano.length > 0 && plano.every(m => m.titulo.trim());
@@ -388,12 +391,20 @@ function Banco({ abre }: { abre: (id: string) => void }) {
   const { estado, chamaConvidado } = useEstado();
   const { de } = useEquipe();
   const [chamando, setChamando] = useState<string | null>(null);
+  // projeto para o qual o convidado vem. Vazio é o lab todo
+  const [para, setPara] = useState('');
+  const hoje = hojeLocal(), emCiclo = estado.projetos.filter(p => hoje <= fimDoSquad(p));
   const funcoes = bancoPorFuncao(estado.agentes);
   if (!funcoes.length) return null;
-  const chama = async (id: string) => { setChamando(id); try { const quem = await chamaConvidado(id); if (quem) abre(quem); } finally { setChamando(null); } };
+  const chama = async (id: string) => { setChamando(id); try { const quem = await chamaConvidado(id, para || null); if (quem) abre(quem); } finally { setChamando(null); } };
   return (
     <Bloco icone="pessoas" titulo="Banco de convidados">
       <p className="nota">Especialistas que ficam fora do mapa até o projeto pedir, separados por função. Quem é chamado entra na equipe com o método dele e já pode receber missão. Quem é dispensado volta para cá e guarda o que aprendeu.</p>
+      {emCiclo.length > 0 && <label className="chama-para">Chamar para<select value={para} onChange={e => setPara(e.target.value)}>
+        <option value="">O lab todo</option>
+        {emCiclo.map(p => <option key={p.id} value={p.id}>{p.nome}, até {dataCurta(fimDoSquad(p))}</option>)}
+      </select></label>}
+      {para && <p className="ajuda">Fica no squad desse projeto até o fim do ciclo e só recebe missão de pedido dele.</p>}
       <div className="banco">{funcoes.map(f => (
         <Gaveta key={f.id} titulo={f.nome} conta={quantas(f.gente.length, 'pessoa', 'pessoas')} resumo={f.gente.map(c => c.papel).join(', ')}>
           <ul>{f.gente.map((c, i) => {

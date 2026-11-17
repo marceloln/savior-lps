@@ -199,3 +199,6 @@ select{max-width:100%;min-width:0;text-overflow:ellipsis}
 .pauta>summary{display:inline-flex;align-items:center;min-height:var(--h-sm);cursor:pointer;font:var(--p-forte) var(--t-13) var(--corpo);color:var(--tinta);text-decoration:underline;text-decoration-color:var(--areia);text-underline-offset:3px}
 .pauta-texto{margin:var(--s1) 0 0;white-space:pre-line;font-size:var(--t-14);line-height:1.5;color:var(--tinta-2)}
 @media (max-width:760px){.pauta>summary{min-height:44px}}
+/* banco de convidados: para qual projeto o convidado vem */
+.chama-para{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;flex-wrap:wrap;gap:var(--s2);margin:0 0 var(--s2);font:var(--p-forte) var(--t-14) var(--corpo);color:var(--tinta)}
+.chama-para select{flex:1 1 220px}

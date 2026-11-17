@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { missoesIniciais, SEMENTE, hojeLocal, type Cliente, type Decisao, type EstadoLab, type Memoria, type MissaoProposta, type Pedido, type Projeto, type Reuniao, type Skill, type Tarefa } from '../lib/dados';
 import { chamada, entraNoLab } from '../lib/convidados';
+import { podeReceber } from '../lib/squad';
 import { ORQUESTRADOR, type Agente } from '../lib/equipe';
 import { entregaSimulada, planoSimulado, sinteseSimulada } from '../lib/simulado';
 import { recadoDeErro } from '../lib/rede';
@@ -24,7 +25,8 @@ type Api = {
   criaAgente: (a: Pick<Agente, 'nome' | 'papel' | 'zona' | 'aparencia' | 'modelo'>) => Promise<string | null>;
   mudaAgente: (id: string, m: Partial<Pick<Agente, 'nome' | 'papel' | 'zona' | 'modelo' | 'ativo'>>) => Promise<boolean>;
   /** Traz um convidado do banco para a equipe, com a skill dele. Devolve o identificador de quem entrou. */
-  chamaConvidado: (id: string) => Promise<string | null>;
+  /** Chama do banco. Com projeto, o convidado fica no squad dele até o fim do ciclo. */
+  chamaConvidado: (id: string, projeto_id?: string | null) => Promise<string | null>;
   criaSkill: (k: Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>, agente?: string) => Promise<boolean>;
   mudaSkill: (id: string, m: Partial<Pick<Skill, 'nome' | 'descricao' | 'conteudo' | 'para_todos'>>) => Promise<boolean>;
   apagaSkill: (id: string) => Promise<boolean>;
@@ -213,7 +215,7 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
         );
       }),
       planeja: async (texto, projeto_id) => {
-        if (modo !== 'banco') { await pausa(900); return planoSimulado(texto, vivo.current.agentes.filter(a => a.ativo && a.id !== ORQUESTRADOR)); }
+        if (modo !== 'banco') { await pausa(900); return planoSimulado(texto, vivo.current.agentes.filter(a => a.ativo && a.id !== ORQUESTRADOR && podeReceber(a, projeto_id, vivo.current.projetos, hojeLocal()))); }
         try { return (await ocupa(() => chama<{ missoes: MissaoProposta[] }>('POST', 'pedidos/plano', { texto, projeto_id }))).missoes; }
         catch (err) { setAviso(recadoDeErro(err)); return null; }
       },
@@ -251,12 +253,13 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
           (e, r) => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? r : x)) }));
         return ok ? final : null;
       }),
-      chamaConvidado: cid => trava('agente', null, async () => {
-        const r = chamada(cid, vivo.current.agentes);
-        if (!r.ok) { setAviso(r.erro); return null; }
+      chamaConvidado: (cid, projeto_id = null) => trava('agente', null, async () => {
+        const c = chamada(cid, vivo.current.agentes);
+        if (!c.ok) { setAviso(c.erro); return null; }
+        const r = { ...c, agente: { ...c.agente, projeto_id } };
         // na tela, a skill que já está na biblioteca vale mais que o texto do catálogo: um sócio pode ter reescrito
         const k = vivo.current.skills.find(s => s.id === r.skill.id) ?? r.skill;
-        const ok = await grava(e => entraNoLab(e, r.agente, k), () => chama<{ agente: Agente; skill: Skill }>('POST', `convidados/${cid}/chamar`), (e, s) => entraNoLab(e, s.agente, s.skill));
+        const ok = await grava(e => entraNoLab(e, r.agente, k), () => chama<{ agente: Agente; skill: Skill }>('POST', `convidados/${cid}/chamar`, { projeto_id }), (e, s) => entraNoLab(e, s.agente, s.skill));
         return ok ? r.agente.id : null;
       }),
       mudaAgente: async (id, m) => grava(e => ({ ...e, agentes: e.agentes.map(x => (x.id === id ? { ...x, ...m } : x)) }), () => chama('PATCH', `agentes/${id}`, m)),

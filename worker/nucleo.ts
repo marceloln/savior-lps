@@ -1,6 +1,7 @@
 // Rotas do núcleo multiagente: equipe, banco de convidados, skills, modelo de IA, execução de missão e pedido ao lab.
 import { CONTEUDOS } from '../src/lib/catalogo';
 import { chamada } from '../src/lib/convidados';
+import { podeReceber } from '../src/lib/squad';
 import type { Cliente, Projeto, Skill, Tarefa } from '../src/lib/dados';
 import { ORQUESTRADOR, type Agente } from '../src/lib/equipe';
 import { contextoDe, corpo, json, modeloPadraoDe, ruim, skillsDe, TAREFA, type Env } from './api';
@@ -77,10 +78,14 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
   x = caminho.match(/^\/api\/convidados\/([a-z0-9-]+)\/chamar$/);
   if (x && m === 'POST') {
     const r = chamada(x[1], todos, CONTEUDOS); if (!r.ok) return ruim(r.erro, r.status);
-    const a = r.agente, k = r.skill;
+    // chamado para um projeto, fica no squad dele até o fim do ciclo
+    const pid = (await corpo(req) as { projeto_id?: unknown } | null)?.projeto_id;
+    const projeto_id = typeof pid === 'string' && pid ? pid : null;
+    if (projeto_id && !(await db.prepare('SELECT 1 FROM projetos WHERE id = ?').bind(projeto_id).first())) return ruim('Esse projeto não existe.');
+    const a = { ...r.agente, projeto_id }, k = r.skill;
     // quem já passou pelo lab só é reativado: a skill que os sócios editaram e a memória dele continuam como estavam
     const [, , , sk] = await db.batch([
-      db.prepare('INSERT INTO agentes (id, nome, papel, zona, aparencia, modelo) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET ativo = 1, aparencia = excluded.aparencia').bind(a.id, a.nome, a.papel, a.zona, a.aparencia, a.modelo),
+      db.prepare('INSERT INTO agentes (id, nome, papel, zona, aparencia, modelo, projeto_id) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET ativo = 1, aparencia = excluded.aparencia, projeto_id = excluded.projeto_id').bind(a.id, a.nome, a.papel, a.zona, a.aparencia, a.modelo, projeto_id),
       db.prepare('INSERT OR IGNORE INTO skills (id, nome, descricao, conteudo, para_todos) VALUES (?, ?, ?, ?, 0)').bind(k.id, k.nome, k.descricao, k.conteudo),
       db.prepare('INSERT OR IGNORE INTO agente_skills (agente, skill) VALUES (?, ?)').bind(a.id, k.id),
       db.prepare('SELECT id, nome, descricao, conteudo, para_todos FROM skills WHERE id = ?').bind(k.id),
@@ -160,7 +165,10 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
     if (v.v.projeto_id && !proj) return ruim('Esse projeto não existe.');
     if (!(await reserva(db, 'plano'))) return cheio();
     const { results } = await db.prepare("SELECT agente, COUNT(*) AS n FROM missoes WHERE estado != 'feito' GROUP BY agente").all<{ agente: string; n: number }>();
-    const time = todos.filter(a => a.ativo && a.id !== ORQUESTRADOR).map(a => ({ ...a, abertas: results.find(r => r.agente === a.id)?.n ?? 0 }));
+    // quem está no squad de outro projeto não entra no plano
+    const { results: projetos } = await db.prepare('SELECT id, cliente_id, nome, fase, dia, mesa, inicio FROM projetos').all<Projeto>();
+    const hoje = V.hojeBrasil(Date.now());
+    const time = todos.filter(a => a.ativo && a.id !== ORQUESTRADOR && podeReceber(a, v.v.projeto_id, projetos, hoje)).map(a => ({ ...a, abertas: results.find(r => r.agente === a.id)?.n ?? 0 }));
     const r = await fala(env, orq, [{ role: 'user', content: promptPlano(v.v.texto, time, proj, proj ? { id: proj.cliente_id, setor: proj.setor, situacao: proj.situacao, fase: proj.fase } : null) }], 4000, PAPEL_ORQUESTRA);
     if (!r.ok) return ruim(r.erro, r.status);
     const plano = lePlano(r.texto, new Set(time.map(a => a.id)));

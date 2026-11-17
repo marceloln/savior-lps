@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { diaCurto, hojeLocal } from '../lib/dados';
+import { dataCurta, diaCurto, hojeLocal } from '../lib/dados';
+import { fimDoSquad } from '../lib/squad';
 import { atrasada } from '../lib/ferramentas';
 import { ProximaNaSala } from './AgendaGoogle';
 import { sugestoesDeMissao } from '../lib/sugestoes';
@@ -84,13 +85,16 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
   const recem = useRecem(entregas.map(t => t.id));
   const novas = entregas.filter(t => recem.has(t.id)), guardadas = entregas.filter(t => !recem.has(t.id));
   const nSkills = estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).length;
+  // convidado chamado para um projeto: o squad vale até o fim do ciclo, e depois a ficha sugere dispensar
+  const doSquad = m.projeto_id ? estado.projetos.find(p => p.id === m.projeto_id) : undefined;
+  const squadVale = doSquad && hojeLocal() <= fimDoSquad(doSquad);
   return (
     <div className="ficha-agente">
       <div className="ficha">
         <Retrato id={m.id} tamanho={88} cor={z.cor + '40'} />
         <div><p className="rotulo">{z.nome}</p><p className="papel">{m.papel}</p>
-          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span>{convidadoDe(m.id) && <span>Do banco de convidados</span>}</p>
-          {convidadoDe(m.id) && m.ativo && <p className="dispensa-topo">Chamado do banco. <Apagar oque={`${m.nome} do lab`} verbo="Dispensar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>}
+          <p className="selos-ficha"><span>{nomeDoModelo(m.modelo || estado.modeloPadrao)}</span><span>{nSkills} {nSkills === 1 ? 'skill' : 'skills'}</span>{convidadoDe(m.id) && <span>Do banco de convidados</span>}{doSquad && squadVale && <span>No squad de {doSquad.nome} até {dataCurta(fimDoSquad(doSquad))}</span>}</p>
+          {convidadoDe(m.id) && m.ativo && <p className="dispensa-topo">{doSquad && !squadVale ? `O ciclo de ${doSquad.nome} acabou em ${dataCurta(fimDoSquad(doSquad))}.` : 'Chamado do banco.'} <Apagar oque={`${m.nome} do lab`} verbo="Dispensar" apaga={() => mudaAgente(m.id, { ativo: false })} /></p>}
           <div className="linha"><button className="primario" onClick={conversa}>{m.id === 'clara' ? 'Começar briefing' : `Conversar com ${m.nome}`}</button>
             {noMapa && <button className="leve" onClick={noMapa}>Ver no mapa</button>}
             {naMesa && <button className="leve" onClick={naMesa}>Ver a mesa</button>}</div></div>

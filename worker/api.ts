@@ -34,7 +34,7 @@ export async function semeiaNucleo(db: D1Database) {
 /** Quem está na equipe. O conjunto de ids só tem quem está ativo. */
 export async function equipe(db: D1Database): Promise<{ todos: Agente[]; ids: Set<string> }> {
   await semeiaNucleo(db);
-  const { results } = await db.prepare('SELECT id, nome, papel, zona, aparencia, modelo, base, ativo FROM agentes ORDER BY base DESC, criado_em, rowid').all<Omit<Agente, 'base' | 'ativo'> & { base: number; ativo: number }>();
+  const { results } = await db.prepare('SELECT id, nome, papel, zona, aparencia, modelo, base, ativo, projeto_id FROM agentes ORDER BY base DESC, criado_em, rowid').all<Omit<Agente, 'base' | 'ativo'> & { base: number; ativo: number }>();
   const todos = results.map(a => ({ ...a, base: !!a.base, ativo: !!a.ativo }));
   return { todos, ids: new Set(todos.filter(a => a.ativo).map(a => a.id)) };
 }
