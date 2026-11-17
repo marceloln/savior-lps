@@ -8,13 +8,14 @@ import { Apagar } from './Apagar';
 export function EditaMissao({ t, aoFechar }: { t: Tarefa; aoFechar: () => void }) {
   const { mudaTarefa, apagaTarefa } = useEstado();
   const { equipe, nome } = useEquipe();
-  const [f, setF] = useState({ titulo: t.titulo, detalhe: t.detalhe, agente: t.agente });
+  const [f, setF] = useState({ titulo: t.titulo, detalhe: t.detalhe, agente: t.agente, prazo: t.prazo ?? '' });
   const [gravando, setGravando] = useState(false);
   const salva = async () => {
-    const m: Partial<Pick<Tarefa, 'titulo' | 'detalhe' | 'agente'>> = {};
+    const m: Partial<Pick<Tarefa, 'titulo' | 'detalhe' | 'agente' | 'prazo'>> = {};
     if (f.titulo.trim() !== t.titulo) m.titulo = f.titulo.trim();
     if (f.detalhe.trim() !== t.detalhe) m.detalhe = f.detalhe.trim();
     if (f.agente !== t.agente) m.agente = f.agente;
+    if (f.prazo !== (t.prazo ?? '')) m.prazo = f.prazo || null;
     if (!Object.keys(m).length) { aoFechar(); return; }
     setGravando(true);
     const ok = await mudaTarefa(t.id, m);
@@ -29,6 +30,7 @@ export function EditaMissao({ t, aoFechar }: { t: Tarefa; aoFechar: () => void }
         {!equipe.some(m => m.id === t.agente) && <option value={t.agente}>{nome(t.agente)}</option>}
         {equipe.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
       </select></label>
+      <label>Prazo<input type="date" value={f.prazo} onChange={e => setF({ ...f, prazo: e.target.value })} /></label>
       <div className="linha">
         <button className="primario mini" type="submit" disabled={!f.titulo.trim() || gravando}>Salvar</button>
         <button type="button" className="leve mini" onClick={aoFechar}>Desistir</button>

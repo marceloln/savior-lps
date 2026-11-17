@@ -7,7 +7,7 @@ import { useEstado } from '../hooks/useEstado';
 import { useMudouDeColuna } from '../hooks/useRecem';
 import { useEquipe } from '../hooks/useEquipe';
 import { FASES, hojeLocal, type Estado } from '../lib/dados';
-import { COLUNAS_DO_QUADRO, RITMO_DO_CICLO, linhaDoTempo, mesDoCalendario, quadro } from '../lib/ferramentas';
+import { COLUNAS_DO_QUADRO, RITMO_DO_CICLO, atrasada, linhaDoTempo, mesDoCalendario, quadro } from '../lib/ferramentas';
 import { Retrato } from './Retrato';
 import { Bloco } from './Diario';
 import { proximasReunioes } from '../lib/resumo';
@@ -70,7 +70,7 @@ function LinhaDoTempo({ abreProjeto }: { abreProjeto: (id: string) => void }) {
   const hojeVisivel = l.hoje >= 0 && l.hoje < l.dias;
   return (
     <div className="linha-tempo">
-      <ul className="legenda">{FASES.map((f, i) => <li key={f}><i className={`f${i}`} />{f}</li>)}<li><i className="m-reuniao" />Reunião</li><li><i className="m-hoje" />Hoje</li></ul>
+      <ul className="legenda">{FASES.map((f, i) => <li key={f}><i className={`f${i}`} />{f}</li>)}<li><i className="m-reuniao" />Reunião</li><li><i className="m-prazo" />Prazo de missão</li><li><i className="m-hoje" />Hoje</li></ul>
       <div className="grade">
         <div className="cab"><span />
           <div className="trilho">{l.semanas.map(s => <span key={s.desloca} style={{ left: pct(s.desloca) }}>{s.rotulo}</span>)}</div>
@@ -88,6 +88,7 @@ function LinhaDoTempo({ abreProjeto }: { abreProjeto: (id: string) => void }) {
                 {p.dia > 0 && <span className="andou" style={{ width: `${(Math.min(30, p.dia) / 30) * 100}%` }} />}
               </div>
               {p.reunioes.map(r => <span key={r.id} className={`marca ${r.feita ? 'feita' : ''}`} style={{ left: pct(r.desloca + 0.5) }} title={`${r.titulo}${r.feita ? ', com ata' : ''}`} />)}
+              {p.prazos.map(t => <span key={t.id} className={`prazo-marca ${t.feita ? 'feita' : t.atrasada ? 'atrasada' : ''}`} style={{ left: pct(t.desloca + 0.5) }} title={`Prazo: ${t.titulo}${t.feita ? ', feita' : t.atrasada ? ', atrasada' : ''}`} />)}
             </div>
           </div>
         ))}
@@ -134,6 +135,7 @@ function Calendario({ abreAgenda }: { abreAgenda: () => void }) {
             <b>{d.dia}</b>
             {d.reunioes.map(r => <button type="button" key={r.id} className={`reuniao ${r.status}`} onClick={abreAgenda} title={`${r.hora} ${r.titulo}${r.status === 'feita' ? ', com ata' : ''}`}><span>{r.hora}</span> {r.titulo}</button>)}
             {d.marcos.map(m => <small key={m} className="marco">{m}</small>)}
+            {d.entregas.map(t => <small key={t.id} className={`entrega-dia ${t.estado === 'feito' ? 'feita' : atrasada(t, hojeLocal()) ? 'atrasada' : ''}`} title={`Prazo de ${t.titulo}`}>{t.titulo}</small>)}
           </div>
         ))}
       </div>

@@ -7,7 +7,9 @@ export type Estado = 'fila' | 'fazendo' | 'feito';
 export type Cliente = { id: string; setor: string; situacao: string; fase: number };
 export type Projeto = { id: string; cliente_id: string; nome: string; fase: number; dia: number; mesa: string | null; inicio: string };
 /** Missão. Quando o especialista executa, a entrega fica guardada com o modelo que escreveu. */
-export type Tarefa = { id: number; agente: string; titulo: string; detalhe: string; estado: Estado; projeto_id: string | null; pedido_id: number | null; entrega: string; modelo: string };
+export type Tarefa = { id: number; agente: string; titulo: string; detalhe: string; estado: Estado; projeto_id: string | null; pedido_id: number | null; entrega: string; modelo: string;
+  /** Dia da entrega, AAAA-MM-DD. Sem prazo, fica de fora do calendário. */
+  prazo?: string | null };
 export type Skill = { id: string; nome: string; descricao: string; conteudo: string; para_todos: boolean };
 /** Pedido de um sócio ao lab: vira missões, cada uma com entrega, e fecha com a síntese da orquestração. */
 export type Pedido = { id: number; texto: string; projeto_id: string | null; estado: 'andando' | 'entregue'; sintese: string; criado_em: string };
@@ -51,6 +53,8 @@ export function textoDoCiclo(inicio: string, hoje: string): string {
   return `Ciclo encerrado há ${passou} ${passou === 1 ? 'dia' : 'dias'}`;
 }
 
+/** Dia e mês curtos para prazo: 20 nov. */
+export const diaCurto = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace(/\./g, '');
 /** Dia curto para lista de reuniões: qua, 19 nov. */
 export const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
 export const hojeLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };

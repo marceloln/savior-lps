@@ -160,3 +160,5 @@ a.primario,a.leve{text-decoration:none}
 .proxima-sala{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) var(--s4);border:1.5px solid var(--cartao-borda);border-radius:var(--r-12);background:var(--cartao)}
 .proxima-sala h4{margin:0;font:var(--p-titulo) var(--t-18)/var(--lh-titulo) var(--titulo);color:var(--tinta)}
 .proxima-sala .nota{margin:0}
+.prazo{display:block;margin-top:var(--s1);font:var(--p-medio) var(--t-12)/var(--lh-denso) var(--corpo);color:var(--texto-2)}
+.prazo.atrasada{color:var(--erro);font-weight:var(--p-forte)}

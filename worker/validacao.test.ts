@@ -8,7 +8,15 @@ describe('validação da API', () => {
   it('missão precisa de dono e título', () => {
     expect(V.novaTarefa({ titulo: 'x' }, ids)).toEqual({ ok: false, erro: 'Escolha quem faz a missão.' });
     expect(V.novaTarefa({ agente: 'rui', titulo: '   ' }, ids).ok).toBe(false);
-    expect(V.novaTarefa({ agente: 'rui', titulo: ' Agenda ', projeto_id: '' }, ids)).toEqual({ ok: true, v: { agente: 'rui', titulo: 'Agenda', detalhe: '', projeto_id: null } });
+    expect(V.novaTarefa({ agente: 'rui', titulo: ' Agenda ', projeto_id: '' }, ids)).toEqual({ ok: true, v: { agente: 'rui', titulo: 'Agenda', detalhe: '', projeto_id: null, prazo: null } });
+    expect(V.novaTarefa({ agente: 'rui', titulo: 'Agenda', prazo: '2026-11-28' }, ids)).toMatchObject({ ok: true, v: { prazo: '2026-11-28' } });
+    expect(V.novaTarefa({ agente: 'rui', titulo: 'Agenda', prazo: '2026-02-30' }, ids)).toEqual({ ok: false, erro: 'Prazo inválido.' });
+  });
+  it('prazo da missão muda, sai com vazio e fica igual quando não vem', () => {
+    expect(V.mudancaTarefa({ prazo: '2026-12-01' }, ids)).toEqual({ ok: true, v: { prazo: '2026-12-01' } });
+    expect(V.mudancaTarefa({ prazo: '' }, ids)).toEqual({ ok: true, v: { prazo: null } });
+    expect(V.mudancaTarefa({ estado: 'feito' }, ids)).toEqual({ ok: true, v: { estado: 'feito' } });
+    expect(V.mudancaTarefa({ prazo: 'amanhã' }, ids).ok).toBe(false);
   });
   it('mudança de tarefa só aceita campos conhecidos e valores válidos', () => {
     expect(V.mudancaTarefa({ estado: 'feito' }, ids)).toEqual({ ok: true, v: { estado: 'feito' } });

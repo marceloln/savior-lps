@@ -79,3 +79,13 @@
   .calendario .navega{flex-wrap:wrap}.calendario .navega h4{min-width:0;flex:1}
 }
 @media (prefers-reduced-motion:reduce){.ampliar-livro{transition:none}.ampliar-livro:active{transform:none}}
+
+/* Prazo de missão: triângulo pequeno na linha do tempo, linha fina no calendário e etiqueta no cartão. Atrasada fica em vermelho de erro */
+.linha-tempo .legenda .m-prazo{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid var(--ouro)}
+.linha-tempo .prazo-marca{position:absolute;top:30px;width:0;height:0;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid var(--ouro)}
+.linha-tempo .prazo-marca.feita{border-bottom-color:var(--sucesso)}
+.linha-tempo .prazo-marca.atrasada{border-bottom-color:var(--erro)}
+.calendario .entrega-dia{font-size:var(--t-12);line-height:1.25;color:var(--tinta-2);border-left:3px solid var(--ouro);padding-left:var(--s1);overflow-wrap:anywhere}
+.calendario .entrega-dia.feita{border-left-color:var(--sucesso);text-decoration:line-through}
+.calendario .entrega-dia.atrasada{border-left-color:var(--erro);color:var(--erro)}
+@media (max-width:640px){.calendario .entrega-dia{display:none}}

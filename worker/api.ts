@@ -9,7 +9,7 @@ import { provedoresLigados, type Chaves } from './ia';
 import { googleLigado, type ChavesGoogle } from './google';
 
 export type Env = Chaves & ChavesGoogle & { DB: D1Database; ACESSO_EQUIPE?: string; ACESSO_AUD?: string };
-export const TAREFA = 'id, agente, titulo, detalhe, estado, projeto_id, pedido_id, entrega, modelo';
+export const TAREFA = 'id, agente, titulo, detalhe, estado, projeto_id, pedido_id, entrega, modelo, prazo';
 export const json = (dados: unknown, status = 200) => Response.json(dados, { status, headers: { 'cache-control': 'no-store' } });
 export const ruim = (erro: string, status = 400) => json({ erro }, status);
 export async function corpo(req: Request): Promise<unknown> { try { return await req.json(); } catch { return null; } }
@@ -156,7 +156,7 @@ export async function rotaDados(req: Request, env: Env, caminho: string, ids: V.
     if (v.v.projeto_id && !(await db.prepare('SELECT 1 FROM projetos WHERE id = ?').bind(v.v.projeto_id).first())) return ruim('Esse projeto não existe.');
     const igual = await db.prepare("SELECT 1 FROM missoes WHERE agente = ? AND estado != 'feito' AND lower(trim(titulo)) = lower(?)").bind(v.v.agente, v.v.titulo).first();
     if (igual) return ruim('Essa missão já está aberta com essa pessoa.', 409);
-    const r = await db.prepare(`INSERT INTO missoes (agente, titulo, detalhe, projeto_id) VALUES (?, ?, ?, ?) RETURNING ${TAREFA}`).bind(v.v.agente, v.v.titulo, v.v.detalhe, v.v.projeto_id).first();
+    const r = await db.prepare(`INSERT INTO missoes (agente, titulo, detalhe, projeto_id, prazo) VALUES (?, ?, ?, ?, ?) RETURNING ${TAREFA}`).bind(v.v.agente, v.v.titulo, v.v.detalhe, v.v.projeto_id, v.v.prazo).first();
     return json(r, 201);
   }
   let x = caminho.match(/^\/api\/tarefas\/(\d+)$/);

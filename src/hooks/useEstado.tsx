@@ -11,8 +11,8 @@ type Api = {
   /** Missões que um especialista está escrevendo neste momento. */
   executando: number[];
   /** Devolve true só quando a missão foi gravada. */
-  criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'> & { detalhe?: string }) => Promise<boolean>;
-  mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente' | 'detalhe'>>) => Promise<boolean>;
+  criaTarefa: (t: Pick<Tarefa, 'agente' | 'titulo' | 'projeto_id'> & { detalhe?: string; prazo?: string | null }) => Promise<boolean>;
+  mudaTarefa: (id: number, m: Partial<Pick<Tarefa, 'estado' | 'titulo' | 'agente' | 'detalhe' | 'prazo'>>) => Promise<boolean>;
   /** O especialista executa a missão com o modelo dele e a entrega fica guardada. Com ajuste, refaz a partir da versão anterior. */
   executa: (id: number, ajuste?: string) => Promise<boolean>;
   /** A orquestração propõe as missões de um pedido. Nada é gravado até o sócio aprovar. */

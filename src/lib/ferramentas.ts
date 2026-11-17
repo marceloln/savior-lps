@@ -25,6 +25,8 @@ export type LinhaProjeto = {
   feitas: number; total: number;
   /** Reuniões do lab e do Google Agenda ligadas ao projeto. As do Google têm id com g na frente. */
   reunioes: { id: number | string; titulo: string; desloca: number; feita: boolean }[];
+  /** Missões do projeto com prazo dentro da janela. */
+  prazos: { id: number; titulo: string; desloca: number; feita: boolean; atrasada: boolean }[];
 };
 export type LinhaDoTempo = { de: string; dias: number; hoje: number; semanas: { desloca: number; rotulo: string }[]; projetos: LinhaProjeto[] };
 
@@ -48,12 +50,17 @@ export function linhaDoTempo(e: EstadoLab, hoje: string, google: ReuniaoGoogle[]
         ...e.reunioes.filter(r => r.projeto_id === p.id).map(r => ({ id: r.id, titulo: r.titulo, desloca: dias(de, r.dia), feita: r.status === 'feita' })),
         ...google.filter(r => r.projeto === p.id).map(r => ({ id: 'g' + r.id, titulo: `${r.titulo}, no Meet`, desloca: dias(de, r.dia), feita: r.dia < hoje })),
       ].filter(r => r.desloca >= 0 && r.desloca < total),
+      prazos: dele.filter(t => t.prazo).map(t => ({ id: t.id, titulo: t.titulo, desloca: dias(de, t.prazo!), feita: t.estado === 'feito', atrasada: atrasada(t, hoje) }))
+        .filter(t => t.desloca >= 0 && t.desloca < total),
     };
   });
   return { de, dias: total, hoje: dias(de, hoje), semanas, projetos };
 }
 
-export type DiaDoMes = { data: string; dia: number; noMes: boolean; hoje: boolean; reunioes: Reuniao[]; marcos: string[] };
+/** Missão que passou do prazo sem ficar pronta. */
+export const atrasada = (t: Pick<Tarefa, 'prazo' | 'estado'>, hoje: string) => !!t.prazo && t.estado !== 'feito' && t.prazo < hoje;
+
+export type DiaDoMes = { data: string; dia: number; noMes: boolean; hoje: boolean; reunioes: Reuniao[]; marcos: string[]; entregas: Tarefa[] };
 
 /** As semanas de um mês, de domingo a sábado, com as reuniões e o começo e o fim de ciclo de cada projeto. mes vai de 0 a 11. */
 export function mesDoCalendario(e: EstadoLab, ano: number, mes: number, hoje: string): DiaDoMes[][] {
@@ -63,7 +70,7 @@ export function mesDoCalendario(e: EstadoLab, ano: number, mes: number, hoje: st
     const data = somaDias(inicio, s * 7 + d);
     const marcos = e.projetos.flatMap(p => !p.inicio ? [] : p.inicio === data ? [`Começa ${p.nome}`] : somaDias(p.inicio, 29) === data ? [`Fecha ${p.nome}`] : []);
     return { data, dia: Number(data.slice(8)), noMes: Number(data.slice(5, 7)) === mes + 1, hoje: data === hoje,
-      reunioes: e.reunioes.filter(r => r.dia === data).sort((a, b) => a.hora.localeCompare(b.hora)), marcos };
+      reunioes: e.reunioes.filter(r => r.dia === data).sort((a, b) => a.hora.localeCompare(b.hora)), marcos, entregas: e.tarefas.filter(t => t.prazo === data) };
   }));
 }
 

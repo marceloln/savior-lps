@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { chaveDaColuna, linhaDoTempo, mesDoCalendario, quadro, resumoDasTelas } from './ferramentas';
+import { atrasada, chaveDaColuna, linhaDoTempo, mesDoCalendario, quadro, resumoDasTelas } from './ferramentas';
 import { SEMENTE, type EstadoLab } from './dados';
 
 const e: EstadoLab = { ...SEMENTE,
@@ -30,6 +30,18 @@ describe('ferramentas', () => {
     expect(l.projetos[0].reunioes).toContainEqual({ id: 'gev1', titulo: 'Status, no Meet', desloca: 11, feita: true });
     expect(l.projetos[0].reunioes).toHaveLength(2);
   });
+  it('linha do tempo marca o prazo das missões do projeto, com atraso', () => {
+    const comPrazo = { ...e, tarefas: [{ ...e.tarefas[0], prazo: '2026-11-10' }, { ...e.tarefas[1], prazo: '2026-11-15' }, { ...e.tarefas[2], prazo: '2026-11-20' }] };
+    expect(linhaDoTempo(comPrazo, '2026-11-18').projetos[0].prazos).toEqual([
+      { id: 1, titulo: 'x', desloca: 9, feita: true, atrasada: false }, { id: 2, titulo: 'y', desloca: 14, feita: false, atrasada: true }]);
+    expect(linhaDoTempo(e, '2026-11-18').projetos[0].prazos).toEqual([]);
+  });
+  it('atrasada: só com prazo vencido e sem estar feita', () => {
+    expect(atrasada({ prazo: '2026-11-17', estado: 'fazendo' }, '2026-11-18')).toBe(true);
+    expect(atrasada({ prazo: '2026-11-18', estado: 'fazendo' }, '2026-11-18')).toBe(false);
+    expect(atrasada({ prazo: '2026-11-17', estado: 'feito' }, '2026-11-18')).toBe(false);
+    expect(atrasada({ prazo: null, estado: 'fila' }, '2026-11-18')).toBe(false);
+  });
   it('linha do tempo marca ciclo que ainda não começou e ciclo que já acabou', () => {
     expect(linhaDoTempo(e, '2026-10-20').projetos[0].dia).toBe(0);
     expect(linhaDoTempo(e, '2026-12-20').projetos[0].dia).toBe(31);
@@ -43,6 +55,11 @@ describe('ferramentas', () => {
     expect(m[2][3].hoje).toBe(true);
     expect(m[4][1].marcos).toEqual(['Fecha Piloto']);
     expect(m[4][6]).toMatchObject({ data: '2026-12-05', noMes: false });
+  });
+  it('calendário põe a missão no dia do prazo', () => {
+    const m = mesDoCalendario({ ...e, tarefas: [{ ...e.tarefas[1], prazo: '2026-11-20' }] }, 2026, 10, '2026-11-18');
+    expect(m[2][5].entregas.map(t => t.id)).toEqual([2]);
+    expect(m[2][4].entregas).toEqual([]);
   });
   it('resumo das telas traz contagem do quadro, frações da linha e o mês com hoje e reunião marcados', () => {
     const r = resumoDasTelas(e, '2026-11-18');

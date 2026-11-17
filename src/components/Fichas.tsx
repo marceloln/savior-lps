@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { diaCurto, hojeLocal } from '../lib/dados';
+import { atrasada } from '../lib/ferramentas';
 import { ProximaNaSala } from './AgendaGoogle';
 import { sugestoesDeMissao } from '../lib/sugestoes';
 import type { Agente, Membro } from '../lib/equipe';
@@ -73,7 +75,7 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
 }) {
   const { estado, criaTarefa, mudaTarefa } = useEstado();
   const [aba, setAba] = useState<AbaFicha>(abaInicial ?? 'visao');
-  const [nova, setNova] = useState(''), [proj, setProj] = useState('');
+  const [nova, setNova] = useState(''), [proj, setProj] = useState(''), [prazo, setPrazo] = useState('');
   const [edita, setEdita] = useState<number | null>(null);
   const z = ZONAS.find(q => q.id === m.zona)!;
   const abertas = estado.tarefas.filter(t => t.agente === m.id && t.estado !== 'feito');
@@ -98,17 +100,19 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
       </div>
       {aba === 'visao' && <>
         {abertas.length
-          ? <ul className="tarefas-agente">{abertas.map(t => edita === t.id ? <li key={t.id} className="editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></li> : <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}</span>
+          ? <ul className="tarefas-agente">{abertas.map(t => edita === t.id ? <li key={t.id} className="editando"><EditaMissao t={t} aoFechar={() => setEdita(null)} /></li> : <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}{t.prazo && <small className={`prazo ${atrasada(t, hojeLocal()) ? 'atrasada' : ''}`}>{atrasada(t, hojeLocal()) ? 'Atrasada, era até' : 'Até'} {diaCurto(t.prazo)}</small>}</span>
               {t.id > 0 && <button className="leve mini" onClick={() => setEdita(t.id)} aria-label={`Editar ${t.titulo}`}>Editar</button>}
               <Executar t={t} />
               {t.id > 0 && <button className="leve mini" onClick={() => mudaTarefa(t.id, { estado: t.estado === 'fila' ? 'fazendo' : 'feito' })}>{t.estado === 'fila' ? 'Começar' : 'Concluir'}</button>}</li>)}</ul>
           : !novas.length && <p className="vazio">Nenhuma missão aberta com {m.nome}.</p>}
         {novas.map(t => <section key={t.id} className="entrega-nova" aria-label={`Entrega de ${t.titulo}`}><p className="entrega-nova-topo"><span className="estado feito">Entregue</span><b>{t.titulo}</b></p><Entrega t={t} /></section>)}
-        <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && (await criaTarefa({ agente: m.id, titulo, projeto_id: proj || null }))) { aoDar?.(`Missão dada a ${m.nome}: ${titulo}.`); setNova(''); } }}>
+        <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && (await criaTarefa({ agente: m.id, titulo, projeto_id: proj || null, prazo: prazo || null }))) { aoDar?.(`Missão dada a ${m.nome}: ${titulo}.`); setNova(''); setPrazo(''); } }}>
           <label className="so-leitor" htmlFor="nmis">Nova missão para {m.nome}</label>
           <input id="nmis" autoFocus={focaMissao} value={nova} onChange={e => setNova(e.target.value)} placeholder={`Nova missão para ${m.nome}`} maxLength={200} />
           <label className="so-leitor" htmlFor="nproj">Projeto</label>
           <select id="nproj" value={proj} onChange={e => setProj(e.target.value)}><option value="">Sem projeto</option>{estado.projetos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}</select>
+          <label className="so-leitor" htmlFor="nprazo">Prazo</label>
+          <input id="nprazo" type="date" value={prazo} onChange={e => setPrazo(e.target.value)} title="Prazo, opcional" />
           <button type="submit" disabled={!nova.trim()}>Dar missão</button>
         </form>
         {!nova && <div className="sugestoes-missao" role="group" aria-label="Sugestões de missão">{sugestoesDeMissao(m.zona).map(s => <button key={s} type="button" onClick={() => { setNova(s); document.getElementById('nmis')?.focus(); }}>{s}</button>)}</div>}
@@ -176,7 +180,7 @@ export function PainelZona({ zona, abreAgente, briefing, marcaReuniao, conversa,
       </>}
       {aba === 'missoes' && <>
         {abertas.length
-          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}</span><small>{nome(t.agente)}</small></li>)}</ul>
+          ? <ul className="tarefas-agente">{abertas.map(t => <li key={t.id}><span className={`estado ${t.estado}`}>{t.estado === 'fazendo' ? 'Fazendo' : 'Na fila'}</span><span className="tit">{t.titulo}{t.detalhe && <small className="detalhe">{t.detalhe}</small>}{t.prazo && <small className={`prazo ${atrasada(t, hojeLocal()) ? 'atrasada' : ''}`}>{atrasada(t, hojeLocal()) ? 'Atrasada, era até' : 'Até'} {diaCurto(t.prazo)}</small>}</span><small>{nome(t.agente)}</small></li>)}</ul>
           : <p className="vazio">A equipe daqui não tem missão aberta.</p>}
         {time.length > 0 && <form className="nova-linha" onSubmit={async e => { e.preventDefault(); const titulo = nova.trim(); if (titulo && quem && (await criaTarefa({ agente: quem, titulo, projeto_id: null }))) { aoDar?.(`Missão dada a ${nome(quem)}: ${titulo}.`); setNova(''); } }}>
           <label className="so-leitor" htmlFor="zmis">Nova missão</label>

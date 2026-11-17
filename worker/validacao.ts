@@ -25,21 +25,32 @@ export function dataReal(x: unknown): x is string {
 /** Data de hoje no horário de Brasília, para comparar com o dia das reuniões. */
 export const hojeBrasil = (agora = Date.now()) => new Date(agora - 3 * 3600e3).toISOString().slice(0, 10);
 
-export function novaTarefa(c: unknown, ids: Ids): Ok<{ agente: string; titulo: string; detalhe: string; projeto_id: string | null }> | Falha {
+/** Prazo de missão: dia que existe, ou vazio para tirar o prazo. undefined quando o campo não veio. */
+function prazoDe(x: unknown): { ok: true; v: string | null | undefined } | Falha {
+  if (x === undefined) return { ok: true, v: undefined };
+  if (x === null || x === '') return { ok: true, v: null };
+  return dataReal(x) ? { ok: true, v: x } : falha('Prazo inválido.');
+}
+
+export function novaTarefa(c: unknown, ids: Ids): Ok<{ agente: string; titulo: string; detalhe: string; projeto_id: string | null; prazo: string | null }> | Falha {
   const o = (c ?? {}) as Record<string, unknown>;
   if (!ehAgente(o.agente, ids)) return falha('Escolha quem faz a missão.');
   const titulo = texto(o.titulo, 200);
   if (!titulo) return falha('A missão precisa de um título.');
-  return { ok: true, v: { agente: o.agente, titulo, detalhe: texto(o.detalhe, 2000), projeto_id: typeof o.projeto_id === 'string' && o.projeto_id ? o.projeto_id : null } };
+  const prazo = prazoDe(o.prazo); if (!prazo.ok) return prazo;
+  return { ok: true, v: { agente: o.agente, titulo, detalhe: texto(o.detalhe, 2000), projeto_id: typeof o.projeto_id === 'string' && o.projeto_id ? o.projeto_id : null, prazo: prazo.v ?? null } };
 }
 
-export function mudancaTarefa(c: unknown, ids: Ids): Ok<{ estado?: (typeof ESTADOS)[number]; titulo?: string; agente?: string; detalhe?: string; entrega?: string }> | Falha {
-  const o = (c ?? {}) as Record<string, unknown>, v: { estado?: (typeof ESTADOS)[number]; titulo?: string; agente?: string; detalhe?: string; entrega?: string } = {};
+type Mudanca = { estado?: (typeof ESTADOS)[number]; titulo?: string; agente?: string; detalhe?: string; entrega?: string; prazo?: string | null };
+export function mudancaTarefa(c: unknown, ids: Ids): Ok<Mudanca> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>, v: Mudanca = {};
   if (o.estado !== undefined) { if (!ESTADOS.includes(o.estado as never)) return falha('Estado inválido.'); v.estado = o.estado as (typeof ESTADOS)[number]; }
   if (o.titulo !== undefined) { const t = texto(o.titulo, 200); if (!t) return falha('O título não pode ficar vazio.'); v.titulo = t; }
   if (o.agente !== undefined) { if (!ehAgente(o.agente, ids)) return falha('Especialista desconhecido.'); v.agente = o.agente; }
   if (o.detalhe !== undefined) v.detalhe = texto(o.detalhe, 2000);
   if (o.entrega !== undefined) v.entrega = texto(o.entrega, 20000);
+  const prazo = prazoDe(o.prazo); if (!prazo.ok) return prazo;
+  if (prazo.v !== undefined) v.prazo = prazo.v;
   if (!Object.keys(v).length) return falha('Nada para mudar.');
   return { ok: true, v };
 }
