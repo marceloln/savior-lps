@@ -1,7 +1,9 @@
 // Quem trabalha no lab. Os 17 abaixo são a equipe de partida; o banco guarda a equipe viva, que os sócios podem ampliar.
 export type Membro = { id: string; nome: string; papel: string; zona: string };
 /** Especialista como fica no banco: aparência é o boneco do mapa, modelo vazio usa o padrão do lab. */
-export type Agente = Membro & { aparencia: string; modelo: string; base: boolean; ativo: boolean };
+export type Agente = Membro & { aparencia: string; modelo: string; base: boolean; ativo: boolean;
+  /** Convidado chamado para um projeto: só recebe missão dele até o fim do ciclo. Vazio é o lab todo. */
+  projeto_id?: string | null };
 
 export const EQUIPE: Membro[] = [
   { id: 'lia', nome: 'Lia', papel: 'Analista de diagnóstico', zona: 'estrategia' },
