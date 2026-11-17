@@ -68,7 +68,7 @@ button:disabled{cursor:default}
 .carimbo.bate{animation:carimba var(--d-medio) var(--sai)}
 @keyframes carimba{from{opacity:0;transform:rotate(-6deg) scale(1.15)}}
 .carimbo.discreto{position:static;flex:none;border-width:1.5px;background:transparent}
-.cartao.feito>p:first-of-type{padding-right:58px}
+.cartao.feito>p:first-of-type{padding-right:56px}
 .resumo-proj .encerrado{color:var(--erro)}
 .notas footer .confirma,.notas footer .leve{color:var(--tinta-2)}
 .notas footer .leve.mini{border:1.5px solid var(--borda-forte);color:var(--erro);font-size:var(--t-13)}

@@ -27,8 +27,17 @@ describe('sistema visual', () => {
     const fora: string[] = [];
     for (const [f, t] of semTokens) for (const m of t.matchAll(/(?<![\w-])((?:padding|margin)(?:-(?:top|right|bottom|left|inline|block))?|gap|row-gap|column-gap)\s*:\s*([^;}]+)/g))
       for (const x of m[2].matchAll(/(?<![\w.#(])(-?\d+(?:\.\d+)?)px\b/g)) { const n = Math.abs(Number(x[1])); if (n % 4 !== 0 && n > 2) fora.push(`${f}: ${m[0].slice(0, 60)}`); }
-    // exceções conhecidas: o recuo do botão de fechar do livro, a margem da folha, a régua do calendário e o marcador das manias
-    expect(fora.length, fora.join('\n')).toBeLessThanOrEqual(5);
+    // única exceção: o meio pixel que centra o marco da linha do tempo sobre a régua
+    expect(fora, fora.join('\n')).toEqual(['ferramentas.css: margin-left:-5.5px']);
+  });
+  it('controle escrito em pixel fica na régua de altura: 32, 40 e 48, mais 44 para o toque', () => {
+    const fora: string[] = [];
+    for (const f of arquivos) for (const m of le(f).matchAll(/([^{}]*(?:button|summary|select|input)[^{}]*)\{([^}]*)\}/g)) {
+      if (/::(before|after)|checkbox|radio/.test(m[1])) continue;
+      for (const h of m[2].matchAll(/(?:^|;)\s*(?:min-)?height\s*:\s*(\d+)px/g)) if (Number(h[1]) > 2 && ![32, 40, 44, 48].includes(Number(h[1]))) fora.push(`${f}: ${m[1].trim().slice(-40)} ${h[0]}`);
+    }
+    expect(fora, fora.join('\n')).toEqual([]);
+    expect(tokens).toMatch(/--h-sm:32px; --h-md:40px; --h-lg:48px;/);
   });
   it('o corpo usa a letra da marca e o título segue em Alegreya', () => {
     expect(tokens).toMatch(/--corpo:'Roboto'/);

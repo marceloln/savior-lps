@@ -19,7 +19,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .placa b{display:block;font:var(--p-titulo) var(--t-22)/1.1 var(--titulo);color:var(--tinta)}
 .placa small{font:500 var(--t-16) var(--mao);color:var(--texto-2)}
 .menu-diario{display:flex;flex-direction:column;gap:var(--s0);padding:var(--s2)}
-.menu-diario button{display:flex;align-items:center;gap:var(--s3);border:0;background:transparent;border-radius:var(--r-8);padding:var(--s1) var(--s3);min-height:32px;font:var(--p-forte) var(--t-14) var(--corpo);text-align:left;transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
+.menu-diario button{display:flex;align-items:center;gap:var(--s3);border:0;background:transparent;border-radius:var(--r-8);padding:0 var(--s3);min-height:var(--h-sm);font:var(--p-forte) var(--t-14) var(--corpo);text-align:left;transition:transform var(--d-rapido) var(--sai),background-color var(--d-rapido) ease}
 @media (hover:hover) and (pointer:fine){.menu-diario button:hover{background:var(--realce)}}
 .menu-diario button[aria-pressed="true"]{background:linear-gradient(var(--veu),var(--veu)),url(../ui/couro.webp) var(--tinta);background-size:auto,256px;color:var(--creme);box-shadow:inset 0 0 0 1px rgba(0,0,0,.3)}
 .menu-diario button[aria-pressed="true"] .icone path:last-child{stroke:var(--creme)}
@@ -45,7 +45,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .cartao-missao button{border:0;background:transparent;padding:0;text-align:left;color:inherit}
 .cartao-missao::before{content:'';position:absolute;inset:0 auto 0 0;width:38px;background:var(--c);opacity:.85}
 .marcador{position:relative;z-index:1;padding-left:var(--s1)!important;border-radius:50%}
-.cartao-missao .texto{display:flex;flex-direction:column;min-width:0;padding-right:58px}
+.cartao-missao .texto{display:flex;flex-direction:column;min-width:0;padding-right:56px}
 .cartao-missao .texto b{font-size:var(--t-14);line-height:1.25}
 .cartao-missao .texto small{color:var(--texto-2);font-size:var(--t-13);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .estado-fita{position:absolute;right:6px;top:6px;font:var(--p-forte) var(--t-12) var(--corpo);text-transform:uppercase;letter-spacing:.05em;padding:var(--s0) var(--s2);border-radius:var(--r-4);background:#E9D9A6;color:var(--tinta-2)}
@@ -64,7 +64,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .medidor em{font-style:normal;font-variant-numeric:tabular-nums;text-align:right}
 .soltar{position:absolute;right:2px;top:2px;width:32px;height:32px;display:grid;place-items:center;border:0;background:transparent;border-radius:50%}
 @media (hover:hover) and (pointer:fine){.soltar:hover{background:rgba(59,47,37,.1)}}
-.console .briefing{display:flex;align-items:center;gap:var(--s3);border:0;background:transparent;text-align:left;width:100%}
+.console .briefing{display:flex;align-items:center;gap:var(--s3);border:0;background:transparent;text-align:left;width:100%;min-height:var(--h-lg)}
 .console .briefing b{display:block;font:var(--p-forte) var(--t-18) var(--titulo)}.console .briefing small{color:var(--texto-2)}
 .console-recado{padding:var(--s3) var(--s4);display:flex;flex-direction:column;justify-content:center;gap:var(--s0);border-radius:var(--r-12);min-height:84px}
 .console-recado p{margin:0;font-size:var(--t-14);line-height:1.35}
@@ -85,7 +85,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @keyframes some{to{opacity:0}}
 .livro.saindo{animation:fecha var(--d-rapido) var(--sai) forwards;pointer-events:none}
 .cortina.saindo{animation:some var(--d-rapido) var(--sai) forwards;pointer-events:none}
-.pagina{background:var(--papel) url(../ui/papel.webp);background-size:256px;overflow:auto;padding:26px 28px;min-height:0}
+.pagina{background:var(--papel) url(../ui/papel.webp);background-size:256px;overflow:auto;padding:var(--s5) 28px;min-height:0}
 .pagina.esquerda{border-radius:var(--r-8) var(--r-4) var(--r-4) var(--r-8);box-shadow:inset -18px 0 22px -16px var(--borda-forte);display:flex;flex-direction:column}
 .pagina.direita{border-radius:var(--r-4) var(--r-8) var(--r-8) var(--r-4);box-shadow:inset 18px 0 22px -16px var(--borda-forte);display:flex;flex-direction:column}
 .pagina.esquerda h2{font:var(--p-titulo) var(--t-28)/1.05 var(--titulo);margin:0;color:var(--tinta);text-align:center}
@@ -96,7 +96,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .foto-colada img{display:block;width:100%;height:auto;border-radius:var(--r-4)}
 .foto-colada figcaption{font:500 var(--t-18) var(--mao);text-align:center;margin-top:var(--s1)}
 .nota-mao{font:500 var(--t-22)/1.25 var(--mao);color:var(--tinta-2);text-align:center;max-width:32ch;margin:0}
-.fechar-livro{position:absolute;top:-10px;right:22px;width:34px;height:44px;border:0;background:var(--telha);border-radius:0 0 var(--r-4) var(--r-4);display:grid;place-items:center;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.fechar-livro{position:absolute;top:-10px;right:22px;width:32px;height:var(--h-md);border:0;background:var(--telha);border-radius:0 0 var(--r-4) var(--r-4);display:grid;place-items:center;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 2px 0 rgba(0,0,0,.25)}
 .fechar-livro .icone path{stroke:#FFF4DE}
 .ilustracao .retrato{border:2px solid var(--tinta-2)}
 .fases-ilustradas{list-style:none;margin:0;padding:0;display:flex;gap:var(--s2);flex-wrap:wrap;justify-content:center}
@@ -295,7 +295,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-size:var(--t-13);font-weight:va
 /* console sem ninguém escolhido: o recado ocupa o espaço, as ações chegam com a pessoa */
 /* página da esquerda: conteúdo perto do título, números de relance */
 .ilustracao{justify-content:flex-start;padding-top:var(--s2)}
-.resumo{width:100%;display:grid;gap:var(--s5)}
+.resumo{width:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s5)}
 .resumo dl{margin:0}
 .resumo dl div{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s3) var(--s1);border-bottom:1.5px dotted var(--borda-forte)}
 .resumo dt{font-weight:var(--p-forte)}
