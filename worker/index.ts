@@ -4,6 +4,7 @@ import { equipe, json, rotaDados, type Env } from './api';
 import { fala, reserva, rotaNucleo } from './nucleo';
 import { rotaRadios } from './radios';
 import { portaria, quemEntrou } from './acesso';
+import { rotaGoogle } from './google';
 import type { Agente } from '../src/lib/equipe';
 
 export type { Env };
@@ -49,6 +50,8 @@ async function atende(req: Request, env: EnvWorker): Promise<Response> {
   // quem entrou, para a área do sócio. Sem o login da equipe ligado, não há e-mail para mostrar
   if (url.pathname === '/api/radios' && req.method === 'GET') return rotaRadios();
   if (url.pathname === '/api/eu') return json({ email: env.ACESSO_EQUIPE && env.ACESSO_AUD ? await quemEntrou(req, env.ACESSO_EQUIPE, env.ACESSO_AUD) : null });
+  const google = await rotaGoogle(req, env, url.pathname);
+  if (google) return google;
   if (url.pathname.startsWith('/api/')) {
     const { todos, ids } = await equipe(env.DB);
     if (url.pathname === '/api/conversa' && req.method === 'POST') return conversa(req, env, todos, ids);

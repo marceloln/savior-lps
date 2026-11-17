@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useEstado } from '../hooks/useEstado';
 import { clienteRepetido } from '../lib/clientes';
 import { useEquipe } from '../hooks/useEquipe';
-import { FASES, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
+import { FASES, dataCurta, hojeLocal, textoDoCiclo, type Estado, type Projeto } from '../lib/dados';
 import { Retrato } from './Retrato';
 import { Apagar } from './Apagar';
 import { Entrega, Executar, SeletorModelo } from './Nucleo';
@@ -13,8 +13,9 @@ import { Bloco, TEXTO_PREVIA } from './Diario';
 import { PROVEDORES, type Provedor } from '../lib/modelos';
 import { Icone, type NomeIcone } from './Icones';
 import type { Conexoes as ConexoesLab } from '../hooks/useConexoes';
+import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
+import { MarcaNoMeet, OrganizaAta, ReunioesDoGoogle, type Origem } from './AgendaGoogle';
 
-const dataCurta = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '');
 const COLUNAS: { id: Estado; nome: string }[] = [{ id: 'fila', nome: 'Na fila' }, { id: 'fazendo', nome: 'Fazendo' }, { id: 'feito', nome: 'Feito' }];
 
 /** Aviso completo de prévia. Fica só em Conexões; no resto da tela basta o selo da placa. */
@@ -182,7 +183,9 @@ export function Agenda({ com }: { com?: string[] }) {
   const { equipe } = useEquipe();
   const { estado, criaReuniao, gravaAta, criaDecisao, mudaReuniao, apagaReuniao } = useEstado();
   const [remarca, setRemarca] = useState<{ id: number; dia: string; hora: string } | null>(null);
-  const [nova, setNova] = useState(!!com);
+  // com gente escolhida no console, abre direto a rodada com a equipe; senão a Agenda abre na lista
+  const [nova, setNova] = useState(!!com), [noMeet, setNoMeet] = useState(false), [organiza, setOrganiza] = useState<Origem | null>(null);
+  const g = useAgendaGoogle();
   const [f, setF] = useState({ titulo: '', pauta: '', dia: hojeLocal(), hora: '09:30', participantes: com ?? [] as string[], projeto_id: '' });
   const [ataDe, setAtaDe] = useState<number | null>(null), [ata, setAta] = useState(''), [decisao, setDecisao] = useState('');
   const salva = async () => { if (await criaReuniao({ ...f, projeto_id: f.projeto_id || null })) { setNova(false); setF({ ...f, titulo: '', pauta: '', participantes: [] }); } };
@@ -203,7 +206,14 @@ export function Agenda({ com }: { com?: string[] }) {
   const feitas = estado.reunioes.filter(r => r.status === 'feita').sort((a, b) => (b.dia + b.hora).localeCompare(a.dia + a.hora));
   return (
     <div className="agenda">
-      {!nova ? <button className="primario" onClick={() => setNova(true)}>Marcar reunião</button> : (
+      {!nova && !noMeet && !organiza && <div className="botoes-agenda">
+        <button className="primario" onClick={() => setNoMeet(true)} disabled={g.estado !== 'ligado'} title={g.estado !== 'ligado' ? g.recado : undefined}>Marcar no Meet</button>
+        <button className="leve" onClick={() => setNova(true)}>Rodada com a equipe</button>
+        <button className="leve" onClick={() => setOrganiza({ titulo: '', dia: hojeLocal(), hora: '10:00', projeto: null, docId: null })}>Organizar anotações</button>
+      </div>}
+      {noMeet && <MarcaNoMeet g={g} aoMarcar={() => setNoMeet(false)} desiste={() => setNoMeet(false)} />}
+      {organiza && <OrganizaAta key={organiza.docId ?? organiza.titulo} origem={organiza} g={g} fecha={() => setOrganiza(null)} />}
+      {!nova ? null : (
         <form className="form-reuniao" onSubmit={e => { e.preventDefault(); salva(); }}>
           <label>Assunto<input required autoFocus value={f.titulo} maxLength={160} onChange={e => setF({ ...f, titulo: e.target.value })} placeholder="Ritual semanal do piloto" /></label>
           <label>Pauta<input value={f.pauta} maxLength={1000} onChange={e => setF({ ...f, pauta: e.target.value })} placeholder="O que precisa sair decidido" /></label>
@@ -216,8 +226,10 @@ export function Agenda({ com }: { com?: string[] }) {
           <div className="linha"><button className="primario" type="submit" disabled={f.titulo.trim().length < 3 || !f.participantes.length}>Marcar</button><button type="button" className="leve" onClick={() => setNova(false)}>Desistir</button></div>
         </form>
       )}
-      <h3 className="secao">Próximas</h3>
-      {!proximas.length && <p className="vazio">Nada marcado. Uma reunião curta por semana por projeto segura o ritmo.</p>}
+      <h3 className="secao">No Google Agenda</h3>
+      <ReunioesDoGoogle g={g} organiza={o => { setNova(false); setNoMeet(false); setOrganiza(o); }} />
+      <h3 className="secao">Rodadas com a equipe</h3>
+      {!proximas.length && <p className="vazio">Nenhuma rodada marcada. Junte dois ou três especialistas antes de uma conversa importante com o cliente.</p>}
       {proximas.map(r => (
         <article key={r.id} className="reuniao">
           <div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora}</span></div>
@@ -281,6 +293,7 @@ export function itensConexao(c: ConexoesLab | null, noAr: boolean) {
     { nome: 'Worker na Cloudflare', ok: noAr, txt: 'Respondendo', passo: 'Esta é a prévia, sem Worker por trás. O deploy roda sozinho quando as pull requests entram na main.' },
     { nome: 'Banco D1', ok: !!c?.banco, txt: `Ligado, ${c?.mensagens ?? 0} mensagens guardadas`, passo: 'O deploy cria as tabelas sozinho no banco agencia-v30.' },
     { nome: 'Login da equipe', ok: !!c?.acesso, txt: 'Só entra quem faz parte da equipe', passo: 'No painel da Cloudflare, ligue o Access para o endereço do lab e preencha ACESSO_EQUIPE e ACESSO_AUD no Worker. O passo a passo está em docs/publicar.md.' },
+    { nome: 'Google Agenda e Meet', ok: !!c?.google, txt: 'Reuniões da V30 na Agenda, com Meet e anotações do Gemini', passo: 'Crie o cliente OAuth no Google Cloud, gere a autorização com a conta que organiza as reuniões e guarde os segredos GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SEGREDO e GOOGLE_OAUTH_RENOVACAO no Worker. O passo a passo está em docs/google-agenda.md.' },
     ...(Object.keys(PROVEDORES) as Provedor[]).map(p => ({ nome: `IA da ${PROVEDORES[p].nome}`, ok: !!c?.provedores?.[p], txt: 'Chave ligada. Dá para usar os modelos dela.',
       passo: `No Worker agencia-v30, em Configurações, Variáveis e segredos, crie o segredo ${PROVEDORES[p].segredo}.${p === 'anthropic' ? '' : ' Só precisa se algum especialista usar modelo dela.'}` })),
   ];

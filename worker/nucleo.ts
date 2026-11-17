@@ -1,11 +1,12 @@
 // Rotas do núcleo multiagente: equipe, banco de convidados, skills, modelo de IA, execução de missão e pedido ao lab.
+import { CONTEUDOS } from '../src/lib/catalogo';
 import { chamada } from '../src/lib/convidados';
 import type { Cliente, Projeto, Skill, Tarefa } from '../src/lib/dados';
 import { ORQUESTRADOR, type Agente } from '../src/lib/equipe';
 import { contextoDe, corpo, json, modeloPadraoDe, ruim, skillsDe, TAREFA, type Env } from './api';
 import { sistemaDe, type Mensagem } from './conversa';
 import { chamaIA, type Resposta } from './ia';
-import { lePlano, promptExecucao, promptPlano, promptSintese, validaMissoes } from './orquestra';
+import { leAta, lePlano, promptAta, promptExecucao, promptPlano, promptSintese, validaMissoes } from './orquestra';
 import * as V from './validacao';
 
 /** Toda chamada a modelo custa dinheiro: no máximo 60 a cada 10 minutos para o lab inteiro. */
@@ -75,7 +76,7 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
   // ---------- banco de convidados ----------
   x = caminho.match(/^\/api\/convidados\/([a-z0-9-]+)\/chamar$/);
   if (x && m === 'POST') {
-    const r = chamada(x[1], todos); if (!r.ok) return ruim(r.erro, r.status);
+    const r = chamada(x[1], todos, CONTEUDOS); if (!r.ok) return ruim(r.erro, r.status);
     const a = r.agente, k = r.skill;
     // quem já passou pelo lab só é reativado: a skill que os sócios editaram e a memória dele continuam como estavam
     const [, , , sk] = await db.batch([
@@ -164,6 +165,17 @@ export async function rotaNucleo(req: Request, env: Env, caminho: string, todos:
     if (!r.ok) return ruim(r.erro, r.status);
     const plano = lePlano(r.texto, new Set(time.map(a => a.id)));
     return plano.ok ? json({ missoes: plano.missoes }) : ruim(plano.erro, 502);
+  }
+  // anotações de uma reunião com gente de verdade viram ata, decisões e missões propostas. Nada é gravado aqui
+  if (caminho === '/api/reunioes/organiza' && m === 'POST') {
+    const v = V.anotacoes(await corpo(req)); if (!v.ok) return ruim(v.erro);
+    const orq = quem(ORQUESTRADOR); if (!orq) return ruim('A orquestração não está na equipe.', 503);
+    if (!(await reserva(db, 'plano'))) return cheio();
+    const time = todos.filter(a => a.ativo && a.id !== ORQUESTRADOR);
+    const r = await fala(env, orq, [{ role: 'user', content: promptAta(v.v.texto, v.v.titulo, time) }], 4000, PAPEL_ORQUESTRA);
+    if (!r.ok) return ruim(r.erro, r.status);
+    const ata = leAta(r.texto, new Set(time.map(a => a.id)));
+    return ata.ok ? json(ata.v) : ruim(ata.erro, 502);
   }
   if (caminho === '/api/pedidos' && m === 'POST') {
     const c = await corpo(req), v = V.textoDoPedido(c); if (!v.ok) return ruim(v.erro);

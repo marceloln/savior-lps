@@ -317,12 +317,7 @@ for i in range(30):
 for i in range(6): arvore(X + 10 + i * 1.1, -2 + i * 5.2, 0.8)
 for i in range(4):
     caixa('banco', (1.8, 0.5, 0.45), (X + 4.5, 4 + i * 6, 0.12), COMP, ch=0.03)
-# totem da marca no gramado, atrás do lab. Fica inclinado de frente para a câmera: o logo oficial aparece sem distorção
-TOTEM = Vector((-3.4, 13.0, 1.0)); GIRO = (math.radians(30), 0, math.radians(-45)); NORMAL = Vector((0.6123724, 0.6123724, 0.5))
-caixa('totem_base', (6.4, 1.9, 0.3), (TOTEM.x - 0.35, TOTEM.y - 0.35, 0.0), CONCRETO, rot=(0, 0, math.radians(-45)), ch=0.02)
-caixa('totem_apoio', (4.6, 0.5, 0.9), (TOTEM.x - 0.62, TOTEM.y - 0.62, 0.45), CONCRETO, rot=(0, 0, math.radians(-45)))
-caixa('totem_painel', (5.8, 0.16, 1.9), tuple(TOTEM), VERDE, rot=GIRO, ch=0.01)
-logo_em_painel(4.6, tuple(TOTEM + NORMAL * 0.083), rot=GIRO)
+# o gramado fica sem placa da marca: o logo aparece dentro do lab, na parede da recepção e na rádio
 
 # ---------------- áreas ----------------
 ZONAS = {

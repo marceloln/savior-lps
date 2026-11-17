@@ -76,7 +76,6 @@ export function Lab() {
   const conexoes = useConexoes(aberto?.tipo === 'aba' && aberto.aba === 'conexoes');
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [zona, setZona] = useState<string | null>(null);
-  const [mirando, setMirando] = useState(false);
   const [foco, setFoco] = useState<{ zona: string; n: number } | null>(null);
   const [projeto, setProjeto] = useState<string | undefined>();
   const [registro, setRegistro] = useState<string[]>([]);
@@ -115,13 +114,13 @@ export function Lab() {
   useEffect(() => { if (emPedidos) setRespostaNova(false); }, [emPedidos]);
   // o livro que acabou de fechar fica montado até a saída terminar
   const { mostrado, saindo, saiu } = useSaida(aberto);
-  // fora do livro, Escape primeiro cancela o Mover e depois solta a pessoa escolhida
+  // fora do livro, Escape solta a pessoa escolhida
   useEffect(() => {
-    if (aberto || (!mirando && !escolhido)) return;
-    const tecla = (e: KeyboardEvent) => { if (e.key !== 'Escape') return; if (mirando) setMirando(false); else setEscolhido(null); };
+    if (aberto || !escolhido) return;
+    const tecla = (e: KeyboardEvent) => { if (e.key === 'Escape') setEscolhido(null); };
     addEventListener('keydown', tecla);
     return () => removeEventListener('keydown', tecla);
-  }, [aberto, mirando, escolhido]);
+  }, [aberto, escolhido]);
   const { equipe, de } = useEquipe();
   const m = (escolhido && de(escolhido)) || null;
 
@@ -131,7 +130,7 @@ export function Lab() {
   /** Escolhe alguém, leva a câmera até a sala da pessoa e fecha o livro. */
   const escolhe = useCallback((id: string) => {
     const p = de(id); if (!p) return;
-    setEscolhido(id); setZona(p.zona); setMirando(false); setAberto(null);
+    setEscolhido(id); setZona(p.zona); setAberto(null);
     setFoco(f => ({ zona: p.zona, n: (f?.n ?? 0) + 1 }));
   }, []);
   const abreAba = (a: Aba) => setAberto(x => (x?.tipo === 'aba' && x.aba === a ? null : { tipo: 'aba', aba: a }));
@@ -143,19 +142,14 @@ export function Lab() {
     if (alvo.tipo === 'tela') { abreFerramenta(alvo.ferramenta); return; }
     if (alvo.tipo === 'objeto') { if (alvo.id === 'pingpong') setAberto({ tipo: 'pong' }); if (alvo.id === 'radio') setAberto({ tipo: 'radio' }); return; }
     // clicar numa pessoa aproxima a câmera (no mapa) e abre a mesa dela
-    setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setMirando(false); setAberto({ tipo: 'mesa', id: alvo.agente.id });
+    setEscolhido(alvo.agente.id); setZona(alvo.agente.zona); setAberto({ tipo: 'mesa', id: alvo.agente.id });
   }, [abreSala, abreFerramenta]);
-  const onMovido = useCallback((ok: boolean) => {
-    if (!ok) { anota('Ali tem móvel no caminho. Escolha uma casa verde do piso.'); return; }
-    setMirando(false); setEscolhido(id => { const p = id ? de(id) : null; if (p) anota(`${p.nome} está a caminho.`); return id; });
-  }, []);
   const abreProjeto = (id: string) => { setProjeto(id); setAberto({ tipo: 'aba', aba: 'projetos' }); };
   const age = (a: Acao) => {
     if (!m) return;
-    if (a === 'mover') { setMirando(v => !v); return; }
-    setMirando(false);
     if (a === 'conversar') setAberto(m.id === 'clara' ? { tipo: 'briefing' } : { tipo: 'conversa', id: m.id });
     if (a === 'missao') setAberto({ tipo: 'ficha', id: m.id, aba: 'visao', foca: true });
+    if (a === 'perfil') setAberto({ tipo: 'ficha', id: m.id, aba: 'instrucoes' });
     if (a === 'memoria') setAberto({ tipo: 'ficha', id: m.id, aba: 'memoria' });
     if (a === 'reuniao') setAberto({ tipo: 'reuniao', com: [m.id] });
   };
@@ -250,8 +244,8 @@ export function Lab() {
   return (
     <div className={`lab ${aberto ? 'com-livro' : ''} ${recolhido ? 'menu-recolhido' : ''}`}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
-      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} modoMover={mirando} foco={foco}
-        onHover={onHover} onClique={onClique} onMovido={onMovido} />}
+      {lab && gente && <MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} foco={foco}
+        onHover={onHover} onClique={onClique} />}
       <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />
         <button type="button" className="recolher" onClick={alternaMenu} aria-pressed={recolhido} aria-label={recolhido ? 'Abrir o menu' : 'Recolher o menu'} title={recolhido ? 'Abrir o menu' : 'Recolher o menu'}><span aria-hidden="true">{recolhido ? '›' : '‹'}</span></button>
@@ -274,9 +268,9 @@ export function Lab() {
             : <><b>{ZONAS.find(q => q.id === (dica.alvo as { id: string }).id)?.nome}</b><small className="acao">Clique para abrir a sala</small></>}
         </div>
       )}
-      <Console escolhido={m} mirando={mirando} registro={registro} age={age} ocupado={pedido.ocupado}
+      <Console escolhido={m} registro={registro} age={age} ocupado={pedido.ocupado}
         pedir={texto => { pedido.planeja(texto, null); setAberto({ tipo: 'aba', aba: 'pedidos' }); }}
-        briefing={() => setAberto({ tipo: 'briefing' })} solta={() => { setEscolhido(null); setMirando(false); }} />
+        briefing={() => setAberto({ tipo: 'briefing' })} solta={() => setEscolhido(null)} />
       {folha && <Livro titulo={folha.titulo} sobre={folha.sobre} cor={folha.cor} largo={folha.largo} voltar={folha.voltar} ilustracao={folha.ilustracao} saindo={saindo} aoSair={saiu} aoFechar={fecha} cheia={cheia} aoAmpliar={() => setCheia(c => !c)}>{folha.corpo}</Livro>}
       {carregando && <Carregando />}
       {aviso && <div className="aviso papel-borda" role="alert"><p>{aviso}</p><button onClick={limpaAviso}>Entendi</button></div>}

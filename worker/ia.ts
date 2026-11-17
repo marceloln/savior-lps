@@ -45,6 +45,10 @@ function simula(c: Chamada): string {
     const equipe = [...t.matchAll(/^- (\S+) \| ([^|]+) \| ([^|]+) \|/gm)].map(m => ({ id: m[1], nome: m[2].trim(), papel: m[3].trim(), zona: '' }));
     return JSON.stringify({ missoes: planoSimulado(t.split('\n')[1] ?? '', equipe) });
   }
+  if (t.startsWith('ANOTAÇÕES DA REUNIÃO')) {
+    const linhas = t.split('\nEQUIPE DO LAB\n')[0].split('\n').slice(1).filter(l => l.trim()).slice(0, 3);
+    return JSON.stringify({ ata: `Ata simulada. ${linhas.join(' ')}`, decisoes: [{ titulo: 'Decisão simulada', contexto: 'Com um provedor de IA ligado, aqui vêm as decisões de verdade.' }], missoes: [] });
+  }
   if (t.startsWith('MISSÃO')) return entregaSimulada(quem?.[1] ?? 'o especialista', quem?.[2] ?? 'especialista', t.split('\n')[1] ?? 'Missão');
   if (t.startsWith('CONSOLIDAR')) {
     // só as entregas contam: a resposta anterior, quando vem, fica de fora da leitura

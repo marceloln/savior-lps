@@ -173,6 +173,17 @@ Auditoria feita com sete referências que o sócio mandou: movimento a serviço 
 - P2 Quadro do projeto com menos botões por cartão
 - P3 Memória agrupada por pessoa
 
+### 11. Skills completas e equipe com repertório (pedido de 16 de novembro, issue 49)
+
+As skills traduzidas tinham ficado rasas perto da original. A equipe fixa não carregava as competências no jeito de falar, e o banco de convidados era pequeno.
+
+- P1 Skill no formato de dez seções, com o conteúdo inteiro da original trazido para posto, conveniência, distribuidora e varejo com várias lojas
+- P1 Perfil da equipe fixa: identidade, tom, competências, regras e o que aprende, dentro das instruções de cada um
+- P1 Banco de sessenta e oito convidados por função, cada um com perfil e skill própria
+- P1 Base versionada: o que os sócios editaram no banco fica, o resto sobe para o texto novo
+- P2 Rever à mão as duas skills de segurança, que ficaram mais curtas de propósito
+- P2 Revisão dos sócios no texto das skills, começando por precificação e trocas e devoluções
+- P3 Primeira carga do catálogo mais leve, hoje perto de 1 MB
 ### 12. Rádios do Brasil (pedido de 16 de novembro, issue 52)
 
 A Rádio V30 tocava só as três estações compostas pelo navegador. O sócio pediu rádios de verdade, do Brasil inteiro, para escolher.

@@ -2,6 +2,10 @@
 import { APARENCIAS } from '../src/lib/equipe';
 import { leModelo } from '../src/lib/modelos';
 import { ZONAS } from '../src/lib/lab';
+import type { NovaReuniaoMeet } from '../src/lib/agendaGoogle';
+
+/** Teto do texto de uma skill, igual ao do campo da tela. Cabe uma skill de base completa. */
+export const LIMITE_DA_SKILL = 24000;
 
 /** Identificadores de quem está na equipe agora. Vem do banco a cada pedido. */
 export type Ids = Set<string>;
@@ -148,7 +152,7 @@ export function mudancaAgente(c: unknown): Ok<{ nome?: string; papel?: string; z
 
 export function novaSkill(c: unknown): Ok<{ nome: string; descricao: string; conteudo: string; para_todos: number }> | Falha {
   const o = (c ?? {}) as Record<string, unknown>;
-  const nome = texto(o.nome, 80), conteudo = texto(o.conteudo, 6000);
+  const nome = texto(o.nome, 80), conteudo = texto(o.conteudo, LIMITE_DA_SKILL);
   if (nome.length < 3) return falha('Dê um nome à skill.');
   if (conteudo.length < 20) return falha('Escreva o que o especialista precisa saber para fazer isso bem.');
   return { ok: true, v: { nome, descricao: texto(o.descricao, 200), conteudo, para_todos: o.para_todos === true ? 1 : 0 } };
@@ -158,7 +162,7 @@ export function mudancaSkill(c: unknown): Ok<{ nome?: string; descricao?: string
   const o = (c ?? {}) as Record<string, unknown>, v: { nome?: string; descricao?: string; conteudo?: string; para_todos?: number } = {};
   if (o.nome !== undefined) { const t = texto(o.nome, 80); if (t.length < 3) return falha('Dê um nome à skill.'); v.nome = t; }
   if (o.descricao !== undefined) v.descricao = texto(o.descricao, 200);
-  if (o.conteudo !== undefined) { const t = texto(o.conteudo, 6000); if (t.length < 20) return falha('O texto da skill ficou curto demais.'); v.conteudo = t; }
+  if (o.conteudo !== undefined) { const t = texto(o.conteudo, LIMITE_DA_SKILL); if (t.length < 20) return falha('O texto da skill ficou curto demais.'); v.conteudo = t; }
   if (o.para_todos !== undefined) { if (typeof o.para_todos !== 'boolean') return falha('Valor inválido.'); v.para_todos = o.para_todos ? 1 : 0; }
   return Object.keys(v).length ? { ok: true, v } : falha('Nada para mudar.');
 }
@@ -182,3 +186,56 @@ export function modeloPadrao(c: unknown): Ok<string> | Falha {
 }
 
 export const ajuste = (c: unknown) => texto((c as Record<string, unknown> | null)?.ajuste, 2000);
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+const HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
+const projetoDe = (x: unknown) => (typeof x === 'string' && x ? x : null);
+
+/** Reunião no Google Meet: e-mails limpos e sem repetição, duração de 15 minutos a 8 horas. */
+export function novaReuniaoMeet(c: unknown): Ok<NovaReuniaoMeet> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>;
+  const titulo = texto(o.titulo, 160);
+  if (!titulo) return falha('A reunião precisa de um título.');
+  if (!dataReal(o.dia)) return falha('Data inválida.');
+  if (typeof o.hora !== 'string' || !HORA.test(o.hora)) return falha('Hora inválida.');
+  const duracao = Number(o.duracao);
+  if (!Number.isInteger(duracao) || duracao < 15 || duracao > 480) return falha('A duração vai de 15 minutos a 8 horas.');
+  const lista = Array.isArray(o.convidados) ? o.convidados : [];
+  if (lista.length > 50) return falha('São no máximo 50 convidados.');
+  const convidados: string[] = [];
+  for (const x of lista) {
+    const e = typeof x === 'string' ? x.trim().toLowerCase() : '';
+    if (!e) continue;
+    if (!EMAIL.test(e)) return falha(`Este e-mail não parece certo: ${e}`);
+    if (!convidados.includes(e)) convidados.push(e);
+  }
+  return { ok: true, v: { titulo, pauta: texto(o.pauta, 2000), dia: o.dia, hora: o.hora, duracao, convidados, projeto_id: projetoDe(o.projeto_id) } };
+}
+
+/** Anotações de uma reunião para a orquestração organizar. Vêm do documento do Gemini ou coladas pelo sócio. */
+export function anotacoes(c: unknown): Ok<{ texto: string; titulo: string }> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>;
+  const t = texto(o.texto, 60000);
+  if (t.length < 40) return falha('As anotações estão curtas demais para virar ata. Cole o texto inteiro da reunião.');
+  return { ok: true, v: { texto: t, titulo: texto(o.titulo, 160) } };
+}
+
+/** Reunião que já aconteceu, com ata, decisões e missões aprovadas pelo sócio, para gravar de uma vez. */
+export function registroDeReuniao(c: unknown, ids: Ids): Ok<{
+  titulo: string; dia: string; hora: string; projeto_id: string | null; participantes: string[]; ata: string;
+  decisoes: { titulo: string; contexto: string }[]; missoes: { agente: string; titulo: string; detalhe: string }[];
+}> | Falha {
+  const o = (c ?? {}) as Record<string, unknown>;
+  const titulo = texto(o.titulo, 160);
+  if (!titulo) return falha('A reunião precisa de um título.');
+  if (!dataReal(o.dia)) return falha('Data inválida.');
+  if (typeof o.hora !== 'string' || !HORA.test(o.hora)) return falha('Hora inválida.');
+  const a = texto(o.ata, 6000);
+  if (!a) return falha('A ata está vazia.');
+  const decisoes = (Array.isArray(o.decisoes) ? o.decisoes : []).slice(0, 10).map(d => ({ titulo: texto((d as Record<string, unknown>)?.titulo, 200), contexto: texto((d as Record<string, unknown>)?.contexto, 2000) })).filter(d => d.titulo);
+  const missoes = (Array.isArray(o.missoes) ? o.missoes : []).slice(0, 10).map(x => x as Record<string, unknown>)
+    .filter(x => ehAgente(x?.agente, ids) && texto(x?.titulo, 200)).map(x => ({ agente: x.agente as string, titulo: texto(x.titulo, 200), detalhe: texto(x.detalhe, 2000) }));
+  const participantes = [...new Set([...(Array.isArray(o.participantes) ? o.participantes.filter((x): x is string => ehAgente(x, ids)) : []), ...missoes.map(m => m.agente)])];
+  if (!participantes.length) return falha('Diga quem da equipe acompanha esta reunião.');
+  return { ok: true, v: { titulo, dia: o.dia, hora: o.hora, projeto_id: projetoDe(o.projeto_id), participantes, ata: a, decisoes, missoes } };
+}

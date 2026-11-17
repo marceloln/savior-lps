@@ -19,7 +19,6 @@ A família oficial tem também VetorLAB, VLAB, VetorRUN e VRUN. Eles não entrar
 | Menu recolhido | v30-creme | versão curta |
 | Celular e tela de espera | v30-verde e vetor30-verde | sobre papel claro |
 | Ícone da aba | v30-creme sobre o verde | `public/favicon.svg`, montado a partir do arquivo oficial |
-| Totem no gramado | vetor30-creme como textura | painel inclinado de frente para a câmera, sem distorção |
 | Parede da recepção | vetor30-creme como textura | parede baixa, 1,5 m, para não tampar o corredor |
 | Mural da Iara | vetor30-verde | cartão do mural, sobre creme |
 
@@ -28,7 +27,8 @@ A família oficial tem também VetorLAB, VLAB, VetorRUN e VRUN. Eles não entrar
 - Fundo escuro pede creme com areia. Fundo claro pede verde com areia.
 - Sem bisel, brilho, sombra, contorno ou gradiente novo. O degradê do V faz parte do arquivo.
 - Área de respiro em volta do logo, da altura do zero.
-- Nunca esticar. No 3D, o totem fica inclinado para a câmera justamente para o logo aparecer reto.
+- Nunca esticar. No 3D, o logo só entra em face de frente para a câmera.
+- Nada de marca do lado de fora do prédio. O gramado fica limpo, pedido dos sócios em 16 de novembro.
 - Verde nunca vira preto.
 
 ## Como refazer as texturas do 3D

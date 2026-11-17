@@ -1,0 +1,348 @@
+[
+ {
+  "id": "agentes-em-producao",
+  "nome": "Agentes em produção",
+  "descricao": "Ligar o agente ao mundo real: ferramentas que ele sabe usar, áudio e e-mail virando dado limpo e roteamento de modelos com trava de custo.",
+  "para": [
+   "ana"
+  ],
+  "origem": [
+   "specialized/specialized-mcp-builder.md",
+   "engineering/engineering-voice-ai-integration-engineer.md",
+   "engineering/engineering-autonomous-optimization-architect.md",
+   "engineering/engineering-email-intelligence-engineer.md"
+  ]
+ },
+ {
+  "id": "busca-e-base-de-conhecimento",
+  "nome": "Busca e base de conhecimento",
+  "descricao": "Fazer o agente achar a informação certa na base do cliente: corte de documento, busca híbrida, relevância medida e grafo com origem rastreável.",
+  "para": [
+   "ana"
+  ],
+  "origem": [
+   "engineering/engineering-rag-pipeline-engineer.md",
+   "engineering/engineering-search-relevance-engineer.md",
+   "engineering/engineering-knowledge-graph-engineer.md"
+  ]
+ },
+ {
+  "id": "caso-de-negocio",
+  "nome": "Caso de negócio",
+  "descricao": "Modelo financeiro, cenários e disciplina de capital para sustentar a decisão: quanto custa, quanto volta, o que pode dar errado.",
+  "para": [
+   "otto"
+  ],
+  "origem": [
+   "finance/finance-financial-analyst.md",
+   "specialized/chief-financial-officer.md"
+  ]
+ },
+ {
+  "id": "conducao-de-projeto",
+  "nome": "Condução de projeto",
+  "descricao": "Levar o ciclo do combinado à entrega: escopo em tarefa, prioridade da semana, prazo, risco e gente alinhada, sem surpresa no fim.",
+  "para": [
+   "rui"
+  ],
+  "origem": [
+   "project-management/project-management-project-shepherd.md",
+   "project-management/project-manager-senior.md",
+   "project-management/project-management-studio-producer.md",
+   "product/product-sprint-prioritizer.md"
+  ]
+ },
+ {
+  "id": "consolidacao-de-dados",
+  "nome": "Consolidação de dados",
+  "descricao": "Juntar dado espalhado em planilha e sistema numa base confiável, com trilha de origem, e auditar modelo e número antes de alguém decidir em cima.",
+  "para": [
+   "lara"
+  ],
+  "origem": [
+   "specialized/data-consolidation-agent.md",
+   "specialized/sales-data-extraction-agent.md",
+   "specialized/specialized-model-qa.md"
+  ]
+ },
+ {
+  "id": "conteudo-para-linkedin",
+  "nome": "Conteúdo para LinkedIn",
+  "descricao": "Transformar o que a casa e os sócios sabem de operação em conteúdo de LinkedIn e de outros canais que gera conversa com a pessoa certa.",
+  "para": [
+   "theo"
+  ],
+  "origem": [
+   "marketing/marketing-linkedin-content-creator.md",
+   "marketing/marketing-content-creator.md"
+  ]
+ },
+ {
+  "id": "coordenacao-entre-especialistas",
+  "nome": "Coordenação entre especialistas",
+  "descricao": "Fazer especialistas independentes trabalharem como rede, com passagem de contexto, portão de qualidade e escalada clara.",
+  "para": [
+   "duda",
+   "rui"
+  ],
+  "origem": [
+   "strategy/coordination/handoff-templates.md",
+   "strategy/nexus-strategy.md",
+   "strategy/playbooks/phase-0-discovery.md",
+   "strategy/playbooks/phase-3-build.md"
+  ]
+ },
+ {
+  "id": "cuidado-com-o-codigo",
+  "nome": "Cuidado com o código",
+  "descricao": "Revisar, mudar e versionar código com o menor risco: diff mínimo, histórico limpo e auditoria das divergências que várias sessões deixaram.",
+  "para": [
+   "max"
+  ],
+  "origem": [
+   "engineering/engineering-code-reviewer.md",
+   "engineering/engineering-minimal-change-engineer.md",
+   "engineering/engineering-git-workflow-master.md",
+   "specialized/specialized-codebase-archaeologist.md"
+  ]
+ },
+ {
+  "id": "descoberta-em-vendas",
+  "nome": "Descoberta em vendas",
+  "descricao": "Conduzir e treinar a conversa que descobre o problema real, a causa, o custo e quem decide, antes de qualquer proposta.",
+  "para": [
+   "caio"
+  ],
+  "origem": [
+   "sales/sales-discovery-coach.md"
+  ]
+ },
+ {
+  "id": "desenho-de-agente-de-ia",
+  "nome": "Desenho de agente de IA",
+  "descricao": "Desenhar agente que aguenta a operação: instrução escrita como contrato, equipe de agentes com plano de falha e modelo em produção com medida.",
+  "para": [
+   "ana"
+  ],
+  "origem": [
+   "engineering/engineering-prompt-engineer.md",
+   "engineering/engineering-multi-agent-systems-architect.md",
+   "engineering/engineering-ai-engineer.md"
+  ]
+ },
+ {
+  "id": "desenho-de-fluxo",
+  "nome": "Desenho de fluxo de trabalho",
+  "descricao": "Mapear cada caminho do processo, do feliz ao que quebra, cortar desperdício e deixar procedimento que loja e sistema conseguem rodar.",
+  "para": [
+   "nina"
+  ],
+  "origem": [
+   "specialized/specialized-workflow-architect.md",
+   "testing/testing-workflow-optimizer.md",
+   "project-management/project-management-studio-operations.md"
+  ]
+ },
+ {
+  "id": "direcao-de-imagem",
+  "nome": "Direção de imagem",
+  "descricao": "Dirigir imagem, vídeo e infográfico: prompt com precisão de fotógrafo, história visual com começo, meio e fim, e gente retratada sem estereótipo.",
+  "para": [
+   "iara"
+  ],
+  "origem": [
+   "design/design-image-prompt-engineer.md",
+   "design/design-visual-storyteller.md",
+   "design/design-inclusive-visuals-specialist.md"
+  ]
+ },
+ {
+  "id": "divisao-de-pedido",
+  "nome": "Divisão de pedido em missões",
+  "descricao": "Receber o pedido do sócio, dividir em missões com dono, critério e conferência, e levar cada uma até passar, sem atalho.",
+  "para": [
+   "duda"
+  ],
+  "origem": [
+   "specialized/agents-orchestrator.md",
+   "strategy/coordination/agent-activation-prompts.md",
+   "strategy/QUICKSTART.md"
+  ]
+ },
+ {
+  "id": "documentacao-tecnica",
+  "nome": "Documentação técnica",
+  "descricao": "Escrever documentação que as pessoas leem e explicar uma base de código desconhecida só com fato tirado do código, para quem chega produzir logo.",
+  "para": [
+   "max",
+   "nico"
+  ],
+  "origem": [
+   "engineering/engineering-technical-writer.md",
+   "engineering/engineering-codebase-onboarding-engineer.md"
+  ]
+ },
+ {
+  "id": "estrategia-de-proposta",
+  "nome": "Estratégia de proposta",
+  "descricao": "Transformar pedido de proposta e oportunidade em argumento que convence: temas de vitória, narrativa em três atos e resumo executivo.",
+  "para": [
+   "bela"
+  ],
+  "origem": [
+   "sales/sales-proposal-strategist.md"
+  ]
+ },
+ {
+  "id": "guarda-da-marca",
+  "nome": "Guarda da marca",
+  "descricao": "Construir a base da marca, manter a mesma cara em todo ponto de contato e proteger o valor que ela acumulou.",
+  "para": [
+   "iara"
+  ],
+  "origem": [
+   "design/design-brand-guardian.md"
+  ]
+ },
+ {
+  "id": "leitura-de-mercado",
+  "nome": "Leitura de mercado e concorrência",
+  "descricao": "Ler mercado, concorrência e conversa pública com fonte e confiança declaradas, e ensaiar a jogada antes de uma disputa.",
+  "para": [
+   "davi"
+  ],
+  "origem": [
+   "product/product-trend-researcher.md",
+   "marketing/marketing-x-twitter-intelligence-analyst.md",
+   "specialized/specialized-strategy-duel-agent.md"
+  ]
+ },
+ {
+  "id": "narrativa-e-texto-longo",
+  "nome": "Narrativa e texto longo",
+  "descricao": "Transformar áudio e anotação do sócio em texto longo com a voz dele, e consertar a estrutura de qualquer história com teoria narrativa.",
+  "para": [
+   "theo"
+  ],
+  "origem": [
+   "marketing/marketing-book-co-author.md",
+   "academic/academic-narratologist.md"
+  ]
+ },
+ {
+  "id": "painel-e-relato-de-dados",
+  "nome": "Painel e relato de dados",
+  "descricao": "Transformar dado bruto em painel e relato que levam a decisão: análise com confiança declarada e gráfico que diz a verdade rápido.",
+  "para": [
+   "lara"
+  ],
+  "origem": [
+   "support/support-analytics-reporter.md",
+   "engineering/engineering-data-visualization-engineer.md"
+  ]
+ },
+ {
+  "id": "passeio-de-persona",
+  "nome": "Passeio de persona",
+  "descricao": "Atravessar página ou tela na pele de uma persona, dobra por dobra, e devolver o que trava a confiança e o contato.",
+  "para": [
+   "rosa"
+  ],
+  "origem": [
+   "design/design-persona-walkthrough.md"
+  ]
+ },
+ {
+  "id": "pesquisa-com-usuario",
+  "nome": "Pesquisa com usuário",
+  "descricao": "Entender como cliente, frentista, atendente e gerente se comportam de verdade, e transformar isso em decisão de desenho.",
+  "para": [
+   "rosa",
+   "lia"
+  ],
+  "origem": [
+   "design/design-ux-researcher.md"
+  ]
+ },
+ {
+  "id": "precificacao",
+  "nome": "Precificação",
+  "descricao": "Tirar o preço do palpite: custo, mercado, valor e elasticidade viram modelo de preço, pacote e política de desconto com a conta à mostra.",
+  "para": [
+   "otto"
+  ],
+  "origem": [
+   "specialized/specialized-pricing-analyst.md"
+  ]
+ },
+ {
+  "id": "prototipo-rapido",
+  "nome": "Protótipo rápido",
+  "descricao": "Pôr a ideia para funcionar em poucos dias, numa tela rápida e acessível, para testar a hipótese com quem opera antes de investir em sistema.",
+  "para": [
+   "max"
+  ],
+  "origem": [
+   "engineering/engineering-rapid-prototyper.md",
+   "engineering/engineering-frontend-developer.md"
+  ]
+ },
+ {
+  "id": "registro-de-reuniao-e-conhecimento",
+  "nome": "Registro de reunião e de conhecimento",
+  "descricao": "Tirar de cada reunião decisões, tarefas e perguntas em aberto, e guardar o que o lab aprende em notas ligadas, que se acham depois.",
+  "para": [
+   "nico"
+  ],
+  "origem": [
+   "project-management/project-management-meeting-notes-specialist.md",
+   "specialized/zk-steward.md"
+  ]
+ },
+ {
+  "id": "resumo-executivo",
+  "nome": "Resumo executivo",
+  "descricao": "Transformar material longo em resumo que a diretoria lê em menos de três minutos e sai sabendo o que decidir, quem faz e até quando.",
+  "para": [
+   "lia",
+   "bela"
+  ],
+  "origem": [
+   "support/support-executive-summary-generator.md"
+  ]
+ },
+ {
+  "id": "rotina-de-operacao",
+  "nome": "Rotina de operação de loja",
+  "descricao": "Tratar a loja como sistema de processos: mapear, medir, padronizar, dimensionar equipe e deixar rotina que roda sem herói.",
+  "para": [
+   "beto"
+  ],
+  "origem": [
+   "specialized/operations-manager.md"
+  ]
+ },
+ {
+  "id": "sintese-de-entrevistas",
+  "nome": "Síntese de entrevistas",
+  "descricao": "Juntar entrevista, visita, pesquisa e avaliação num mapa do que a evidência sustenta, com peso de cada fonte e prioridade do que fazer.",
+  "para": [
+   "lia"
+  ],
+  "origem": [
+   "product/product-feedback-synthesizer.md",
+   "research/research-synthesist.md"
+  ]
+ },
+ {
+  "id": "triagem-de-entrada",
+  "nome": "Triagem de entrada",
+  "descricao": "Receber quem chega, qualificar o pedido, checar conflito, colher o caso e entregar ao sócio um resumo pronto antes da conversa.",
+  "para": [
+   "clara"
+  ],
+  "origem": [
+   "specialized/legal-client-intake.md"
+  ]
+ }
+]

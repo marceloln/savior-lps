@@ -12,6 +12,20 @@ import { Vazio, Bloco } from './Diario';
 import { Entrega, Executar, Treino } from './Nucleo';
 import { nomeDoModelo } from '../lib/modelos';
 import { convidadoDe } from '../lib/convidados';
+import { partesDoPerfil, perfilDe } from '../lib/perfis';
+
+/** Quem a pessoa é, como fala, o que domina e o que guarda. É o que o lab diz ao modelo antes de qualquer conversa com ela. */
+function PerfilDaPessoa({ m }: { m: Membro }) {
+  const p = perfilDe(m.id);
+  if (!p) return <p className="nota">{m.nome} foi criado por vocês e ainda não tem perfil escrito. O que estiver nas instruções abaixo vale como o jeito dele.</p>;
+  return (
+    <section className="perfil" aria-label={`Perfil de ${m.nome}`}>
+      <h4>Quem é {m.nome}</h4>
+      <p className="perfil-identidade">{p.identidade}</p>
+      {partesDoPerfil(p).map(x => <div key={x.titulo} className="perfil-parte"><h5>{x.titulo}</h5><ul>{x.linhas.map(l => <li key={l}>{l}</li>)}</ul></div>)}
+    </section>
+  );
+}
 
 function Instrucoes({ m }: { m: Membro }) {
   const { estado, salvaInstrucao } = useEstado();
@@ -78,7 +92,7 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
             {naMesa && <button className="leve" onClick={naMesa}>Ver a mesa</button>}</div></div>
       </div>
       <div className="abas" role="tablist">
-        {([['visao', 'Missões'], ['treino', 'Treino'], ['instrucoes', 'Instruções'], ['memoria', 'Memória']] as const).map(([id, n]) =>
+        {([['visao', 'Missões'], ['treino', 'Treino'], ['instrucoes', 'Perfil'], ['memoria', 'Memória']] as const).map(([id, n]) =>
           <button key={id} role="tab" aria-selected={aba === id} onClick={() => setAba(id)}>{n}</button>)}
       </div>
       {aba === 'visao' && <>
@@ -100,6 +114,9 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
         {guardadas.length > 0 && <section className="entregas-agente"><h4>Entregas de {m.nome}</h4>
           {guardadas.slice(0, 8).map(t => <details key={t.id} className="ver-entrega"><summary>{t.titulo}</summary><Entrega t={t} /></details>)}</section>}
         <div className="blocos">
+          {perfilDe(m.id) && <Bloco icone="pessoas" titulo={`Jeito de ${m.nome}`} acao={{ rotulo: 'Ver perfil', vai: () => setAba('instrucoes') }}>
+            <p className="perfil-resumo">{perfilDe(m.id)!.identidade}</p>
+          </Bloco>}
           <Bloco icone="skills" titulo={`No que ${m.nome} foi treinado`} acao={{ rotulo: 'Treinar', vai: () => setAba('treino') }}>
             <ul className="fichas-skill">{estado.skills.filter(k => k.para_todos || (estado.vinculos[m.id] ?? []).includes(k.id)).slice(0, 6).map(k => <li key={k.id}>{k.nome}</li>)}</ul>
           </Bloco>
@@ -116,7 +133,7 @@ export function FichaAgente({ m, conversa, abaInicial, noMapa, naMesa, aoDar, fo
         </div>
       </>}
       {aba === 'treino' && <Treino m={m} />}
-      {aba === 'instrucoes' && <Instrucoes key={m.id} m={m} />}
+      {aba === 'instrucoes' && <><PerfilDaPessoa m={m} /><Instrucoes key={m.id} m={m} /></>}
       {aba === 'memoria' && <Memoria m={m} />}
     </div>
   );
