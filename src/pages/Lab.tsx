@@ -211,7 +211,7 @@ export function Lab() {
     } else if (mostrado.tipo === 'pong') {
       folha = { titulo: 'Pingue-pongue', sobre: 'Pong clássico na mesa do lounge. Vence quem fizer sete.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, largo: true, ilustracao: <ComoJogar />, corpo: <Pong /> };
     } else if (mostrado.tipo === 'radio') {
-      folha = { titulo: 'Rádio V30', sobre: 'A trilha do lab, composta na hora. Escolha a estação e deixe tocando.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, ilustracao: <SobreARadio />, corpo: <Radio /> };
+      folha = { titulo: 'Rádio V30', sobre: 'A trilha do lab. Estações da casa ou rádios de todo o Brasil, e deixe tocando.', cor: ZONAS.find(q => q.id === 'lounge')!.cor, ilustracao: <SobreARadio />, corpo: <Radio /> };
     } else if (mostrado.tipo === 'conversa') {
       const p = de(mostrado.id) ?? equipe[0];
       const dela = estado.tarefas.filter(t => t.agente === p.id && t.estado !== 'feito');

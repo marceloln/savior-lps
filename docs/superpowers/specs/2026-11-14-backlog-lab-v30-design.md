@@ -184,6 +184,16 @@ As skills traduzidas tinham ficado rasas perto da original. A equipe fixa não c
 - P2 Rever à mão as duas skills de segurança, que ficaram mais curtas de propósito
 - P2 Revisão dos sócios no texto das skills, começando por precificação e trocas e devoluções
 - P3 Primeira carga do catálogo mais leve, hoje perto de 1 MB
+### 12. Rádios do Brasil (pedido de 16 de novembro, issue 52)
+
+A Rádio V30 tocava só as três estações compostas pelo navegador. O sócio pediu rádios de verdade, do Brasil inteiro, para escolher.
+
+- P1 Aba Do Brasil com rádios abertas do catálogo Radio Browser, só as de som seguro que responderam na última checagem
+- P1 Filtro por estado, por gênero e busca por nome ou cidade
+- P1 O servidor guarda a lista por doze horas e troca de espelho quando um cai
+- P1 Aviso claro quando a rádio não conecta em quinze segundos
+- P2 Favoritas de cada pessoa
+- P3 Nome da música no ar, quando a rádio informa
 
 ## Deixado para quem construir
 
