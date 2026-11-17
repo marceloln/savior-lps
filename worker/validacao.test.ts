@@ -62,6 +62,8 @@ describe('validação da API', () => {
     expect(V.mudancaReuniao({ dia: '2026-12-01', hora: '09:00' }).ok).toBe(true);
     expect(V.mudancaReuniao({ dia: '2026-02-30' }).ok).toBe(false);
     expect(V.mudancaReuniao({}).ok).toBe(false);
+    expect(V.mudancaReuniao({ pauta: '  1. Onde estamos  ' })).toEqual({ ok: true, v: { pauta: '1. Onde estamos' } });
+    expect(V.mudancaReuniao({ pauta: 'x'.repeat(5000) }).ok && (V.mudancaReuniao({ pauta: 'x'.repeat(5000) }) as { v: { pauta: string } }).v.pauta.length).toBe(4000);
     expect(V.mudancaDecisao({ titulo: '  ' }).ok).toBe(false);
     expect(V.mudancaDecisao({ contexto: 'Porque sim' })).toEqual({ ok: true, v: { contexto: 'Porque sim' } });
   });

@@ -41,10 +41,17 @@ function useLeitura() {
     return r;
   }, []);
 
+  /** Grava a pauta na descrição do evento, sem mandar aviso aos convidados. */
+  const mudaPauta = useCallback(async (id: string, pauta: string) => {
+    const r = await pede<ReuniaoGoogle>(`reunioes/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pauta }) });
+    if (r.ok) setLista(l => l.map(x => (x.id === id ? { ...x, pauta: r.v.pauta } : x)));
+    return r;
+  }, []);
+
   /** Texto das Anotações do Gemini presas no evento. */
   const anotacoes = useCallback(async (docId: string) => pede<{ texto: string; cortado: boolean }>(`anotacoes/${encodeURIComponent(docId)}`), []);
 
-  return { lista, estado, recado, recarrega, marca, anotacoes };
+  return { lista, estado, recado, recarrega, marca, mudaPauta, anotacoes };
 }
 
 type Api = ReturnType<typeof useLeitura>;

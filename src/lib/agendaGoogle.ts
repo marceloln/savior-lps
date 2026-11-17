@@ -10,6 +10,8 @@ export type ReuniaoGoogle = {
   convidados: string[];
   /** Projeto do lab, quando o evento foi marcado pelo lab. */
   projeto: string | null;
+  /** Descrição do evento, onde mora a pauta. */
+  pauta: string;
 };
 
 /** O que o lab manda para marcar uma reunião no Meet. */
@@ -18,7 +20,7 @@ export type NovaReuniaoMeet = { titulo: string; pauta: string; dia: string; hora
 export const FUSO = 'America/Sao_Paulo';
 
 type Evento = {
-  id?: unknown; status?: unknown; summary?: unknown;
+  id?: unknown; status?: unknown; summary?: unknown; description?: unknown;
   start?: { dateTime?: unknown }; end?: { dateTime?: unknown };
   attendees?: { email?: unknown; resource?: unknown }[];
   hangoutLink?: unknown;
@@ -52,6 +54,7 @@ export function deEvento(bruto: unknown): ReuniaoGoogle | null {
     anotacoes: nota ? docIdDe(nota.fileUrl) : null, anotacoesUrl: nota ? texto(nota.fileUrl) : null,
     convidados: (e.attendees ?? []).filter(a => !a.resource).map(a => texto(a.email)).filter(Boolean),
     projeto: projeto || null,
+    pauta: texto(e.description).trim(),
   };
 }
 

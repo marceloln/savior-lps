@@ -6,6 +6,8 @@ import { useEquipe } from '../hooks/useEquipe';
 import { aindaHoje, horaLocal, type NovaReuniaoMeet, type ReuniaoGoogle } from '../lib/agendaGoogle';
 import { dataCurta, hojeLocal } from '../lib/dados';
 import { ORQUESTRADOR } from '../lib/equipe';
+import { Pauta } from './Nucleo';
+import { ehDaEquipe } from '../lib/pauta';
 import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
 
 type Google = ReturnType<typeof useAgendaGoogle>;
@@ -46,7 +48,8 @@ export function MarcaNoMeet({ g, aoMarcar, desiste }: { g: Google; aoMarcar: () 
 }
 
 /** Lista do Google Agenda: as próximas com Entrar no Meet e as que já aconteceram com as anotações para organizar. */
-export function ReunioesDoGoogle({ g, organiza }: { g: Google; organiza: (o: Origem) => void }) {
+export function ReunioesDoGoogle({ g, organiza, prepara }: { g: Google; organiza: (o: Origem) => void; prepara: (r: ReuniaoGoogle) => string }) {
+  const [preparando, setPreparando] = useState<string | null>(null), [erro, setErro] = useState('');
   if (g.estado === 'carregando') return <p className="nota" role="status">Lendo o Google Agenda.</p>;
   if (g.estado !== 'ligado') return <p className="nota">{g.recado}{g.estado === 'erro' && <> <button className="link" onClick={g.recarrega}>Tentar de novo</button></>}</p>;
   const hoje = hojeLocal();
@@ -55,8 +58,14 @@ export function ReunioesDoGoogle({ g, organiza }: { g: Google; organiza: (o: Ori
     <article key={r.id + r.dia} className={`reuniao google ${passada ? 'feita' : ''}`}>
       <div className="quando"><b>{dataCurta(r.dia)}</b><span>{r.hora} às {r.fim}</span></div>
       <div className="o-que"><h4>{r.titulo}</h4><p>{r.convidados.length ? `${r.convidados.length} ${r.convidados.length === 1 ? 'convidado' : 'convidados'}` : 'Sem convidados'}</p>
+        <Pauta texto={r.pauta} />
         <div className="linha acoes-reuniao">
           {!passada && r.meet && <a className="primario mini" href={r.meet} target="_blank" rel="noreferrer">Entrar no Meet</a>}
+          {!passada && r.projeto && <button className="leve mini" disabled={preparando === r.id} onClick={async () => {
+            setPreparando(r.id); setErro('');
+            const x = await g.mudaPauta(r.id, prepara(r));
+            setPreparando(null); if (!x.ok) setErro(x.erro);
+          }}>{preparando === r.id ? 'A equipe está montando' : ehDaEquipe(r.pauta) ? 'Refazer pauta' : 'Preparar pauta'}</button>}
           {r.anotacoesUrl && <a className="leve mini" href={r.anotacoesUrl} target="_blank" rel="noreferrer">Anotações do Gemini</a>}
         </div>
       </div>
@@ -64,6 +73,7 @@ export function ReunioesDoGoogle({ g, organiza }: { g: Google; organiza: (o: Ori
     </article>
   );
   return (<>
+    {erro && <p className="ajuda falta" role="alert">{erro}</p>}
     {!proximas.length && <p className="vazio">Nada no Google Agenda nas próximas três semanas.</p>}
     {proximas.map(r => linha(r, false))}
     {passadas.length > 0 && <><h4 className="sub-secao">Com anotações para organizar</h4>{passadas.map(r => linha(r, true))}</>}

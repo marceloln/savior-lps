@@ -71,6 +71,14 @@ export function SeletorModelo({ id, valor, aoMudar, padrao }: { id: string; valo
 /** Botão que põe o especialista para trabalhar na missão. */
 /** Diz o que falta para o botão do formulário ligar. Sem texto, não aparece. */
 /** Linha que diz o que falta para o botão ligar. Vazia, some. */
+/** Pauta da reunião. Uma linha só aparece como frase; a pauta da equipe, com itens numerados, fica recolhida. */
+export function Pauta({ texto }: { texto: string }) {
+  if (!texto.trim()) return null;
+  if (!texto.includes('\n')) return <p>{texto}</p>;
+  const itens = texto.split('\n').filter(l => /^\d+\./.test(l)).length;
+  return <details className="pauta"><summary>Pauta, {itens} {itens === 1 ? 'item' : 'itens'}</summary><p className="pauta-texto">{texto}</p></details>;
+}
+
 export function Falta({ texto }: { texto: string }) {
   return texto ? <p className="ajuda falta" role="status">{texto}</p> : null;
 }
