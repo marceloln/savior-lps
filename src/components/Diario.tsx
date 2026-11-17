@@ -182,7 +182,8 @@ export function ListaMissoes({ abreProjeto, escolhe, verTodas, max = 5 }: { abre
   );
 }
 
-const ROTULO_ATENCAO = { resposta: 'Resposta pronta', parado: 'Pedido parado', reuniao: 'Reunião hoje' } as const;
+const ROTULO_ATENCAO = { resposta: 'Resposta pronta', parado: 'Pedido parado', reuniao: 'Reunião hoje', meet: 'Hoje no Meet' } as const;
+const chaveAtencao = (a: Atencao) => a.tipo + ('pedido' in a ? a.pedido : 'reuniao' in a ? a.reuniao : a.id);
 
 export function Missoes({ abreProjeto, escolhe, verTodas, atencao, abre }: { abreProjeto: (id: string) => void; escolhe: (id: string) => void; verTodas: () => void; atencao: Atencao[]; abre: (a: Aba) => void }) {
   const { estado } = useEstado();
@@ -198,9 +199,11 @@ export function Missoes({ abreProjeto, escolhe, verTodas, atencao, abre }: { abr
       {atencao.length > 0 && <section className="para-voce" aria-label="Para você">
         <h3>Para você</h3>
         <ul>{atencao.map(a => (
-          <li key={a.tipo + ('pedido' in a ? a.pedido : a.reuniao)}><button className={a.tipo} onClick={() => { if (a.tipo === 'resposta') viu(a.pedido); abre(a.tipo === 'reuniao' ? 'agenda' : 'pedidos'); }}>
-            <Icone nome={a.tipo === 'reuniao' ? 'agenda' : 'pedidos'} tam={18} /><span><b>{ROTULO_ATENCAO[a.tipo]}</b><small>{a.texto}</small></span>
-          </button></li>
+          <li key={chaveAtencao(a)}>{a.tipo === 'meet' && a.url
+            ? <a className="meet" href={a.url} target="_blank" rel="noreferrer"><Icone nome="agenda" tam={18} /><span><b>{ROTULO_ATENCAO.meet}</b><small>{a.texto}. Entrar no Meet</small></span></a>
+            : <button className={a.tipo} onClick={() => { if (a.tipo === 'resposta') viu(a.pedido); abre(a.tipo === 'reuniao' || a.tipo === 'meet' ? 'agenda' : 'pedidos'); }}>
+              <Icone nome={a.tipo === 'reuniao' || a.tipo === 'meet' ? 'agenda' : 'pedidos'} tam={18} /><span><b>{ROTULO_ATENCAO[a.tipo]}</b><small>{a.texto}</small></span>
+            </button>}</li>
         ))}</ul>
       </section>}
       <h3 className="titulo-coluna">Missões</h3>

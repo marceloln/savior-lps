@@ -24,6 +24,12 @@ describe('ferramentas', () => {
     expect(l.projetos[0].reunioes).toEqual([{ id: 5, titulo: 'Ritual', desloca: 15, feita: false }]);
     expect(l.semanas).toHaveLength(6);
   });
+  it('linha do tempo marca a reunião do Google ligada ao projeto', () => {
+    const g = { id: 'ev1', titulo: 'Status', dia: '2026-11-12', hora: '10:00', fim: '11:00', meet: null, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: 'a' };
+    const l = linhaDoTempo(e, '2026-11-18', [g, { ...g, id: 'ev2', projeto: 'outro' }]);
+    expect(l.projetos[0].reunioes).toContainEqual({ id: 'gev1', titulo: 'Status, no Meet', desloca: 11, feita: true });
+    expect(l.projetos[0].reunioes).toHaveLength(2);
+  });
   it('linha do tempo marca ciclo que ainda não começou e ciclo que já acabou', () => {
     expect(linhaDoTempo(e, '2026-10-20').projetos[0].dia).toBe(0);
     expect(linhaDoTempo(e, '2026-12-20').projetos[0].dia).toBe(31);

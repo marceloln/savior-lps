@@ -1,8 +1,10 @@
-// Reuniões do Google Agenda da V30, lidas pelo Worker. Sem servidor ou sem a autorização do Google, diz o motivo e não quebra a Agenda.
-import { useCallback, useEffect, useState } from 'react';
+// Reuniões do Google Agenda da V30, lidas pelo Worker uma vez para o lab inteiro e relidas a cada cinco minutos.
+// Sem servidor ou sem a autorização do Google, diz o motivo e não quebra nada.
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { NovaReuniaoMeet, ReuniaoGoogle } from '../lib/agendaGoogle';
 
 export type EstadoGoogle = 'carregando' | 'ligado' | 'desligado' | 'sem-servidor' | 'erro';
+const RELE = 5 * 60_000;
 const SEM_SERVIDOR = 'Esta é a prévia, sem servidor. Com o lab publicado, as reuniões do Google Agenda aparecem aqui.';
 
 async function pede<T>(rota: string, init?: RequestInit): Promise<{ ok: true; v: T } | { ok: false; erro: string; desligado?: boolean; semServidor?: boolean }> {
@@ -14,7 +16,7 @@ async function pede<T>(rota: string, init?: RequestInit): Promise<{ ok: true; v:
   } catch { return { ok: false, erro: SEM_SERVIDOR, semServidor: true }; }
 }
 
-export function useAgendaGoogle(ativo = true) {
+function useLeitura() {
   const [lista, setLista] = useState<ReuniaoGoogle[]>([]);
   const [estado, setEstado] = useState<EstadoGoogle>('carregando');
   const [recado, setRecado] = useState('');
@@ -24,7 +26,11 @@ export function useAgendaGoogle(ativo = true) {
     if (r.ok) { setLista(r.v.reunioes); setEstado('ligado'); setRecado(''); return; }
     setEstado(r.semServidor ? 'sem-servidor' : r.desligado ? 'desligado' : 'erro'); setRecado(r.erro);
   }, []);
-  useEffect(() => { if (ativo) recarrega(); }, [ativo, recarrega]);
+  useEffect(() => {
+    recarrega();
+    const t = setInterval(() => { if (document.visibilityState === 'visible') recarrega(); }, RELE);
+    return () => clearInterval(t);
+  }, [recarrega]);
 
   /** Marca no Google Agenda, com link do Meet e convite por e-mail. Devolve a reunião criada ou o motivo da recusa. */
   const marca = useCallback(async (n: NovaReuniaoMeet): Promise<{ ok: true; v: ReuniaoGoogle } | { ok: false; erro: string }> => {
@@ -38,4 +44,17 @@ export function useAgendaGoogle(ativo = true) {
   const anotacoes = useCallback(async (docId: string) => pede<{ texto: string; cortado: boolean }>(`anotacoes/${encodeURIComponent(docId)}`), []);
 
   return { lista, estado, recado, recarrega, marca, anotacoes };
+}
+
+type Api = ReturnType<typeof useLeitura>;
+const Ctx = createContext<Api | null>(null);
+
+export function AgendaGoogleProvider({ children }: { children: ReactNode }) {
+  return <Ctx.Provider value={useLeitura()}>{children}</Ctx.Provider>;
+}
+
+export function useAgendaGoogle(): Api {
+  const v = useContext(Ctx);
+  if (!v) throw new Error('useAgendaGoogle fora do AgendaGoogleProvider');
+  return v;
 }

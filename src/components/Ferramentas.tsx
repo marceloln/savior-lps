@@ -1,6 +1,7 @@
 // Ferramentas de acompanhamento: quadro geral, linha do tempo dos ciclos e calendário do mês.
 // São as mesmas que aparecem em miniatura nas telas do lab.
 import { useState } from 'react';
+import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
 import { Icone } from './Icones';
 import { useEstado } from '../hooks/useEstado';
 import { useMudouDeColuna } from '../hooks/useRecem';
@@ -63,7 +64,7 @@ function Quadro({ abreProjeto, escolhe }: { abreProjeto: (id: string) => void; e
 
 function LinhaDoTempo({ abreProjeto }: { abreProjeto: (id: string) => void }) {
   const { estado } = useEstado();
-  const l = linhaDoTempo(estado, hojeLocal());
+  const l = linhaDoTempo(estado, hojeLocal(), useAgendaGoogle().lista);
   if (!l.projetos.length) return <p className="vazio">Nenhum projeto com ciclo aberto. Abra um projeto em Clientes para ele aparecer aqui.</p>;
   const pct = (n: number) => `${(n / l.dias) * 100}%`;
   const hojeVisivel = l.hoje >= 0 && l.hoje < l.dias;

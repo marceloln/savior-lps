@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useEstado, type AtaProposta } from '../hooks/useEstado';
 import { useEquipe } from '../hooks/useEquipe';
-import type { NovaReuniaoMeet, ReuniaoGoogle } from '../lib/agendaGoogle';
+import { aindaHoje, horaLocal, type NovaReuniaoMeet, type ReuniaoGoogle } from '../lib/agendaGoogle';
 import { dataCurta, hojeLocal } from '../lib/dados';
 import { ORQUESTRADOR } from '../lib/equipe';
-import type { useAgendaGoogle } from '../hooks/useAgendaGoogle';
+import { useAgendaGoogle } from '../hooks/useAgendaGoogle';
 
 type Google = ReturnType<typeof useAgendaGoogle>;
 /** De onde a ata vem: uma reunião do Google Agenda ou anotações coladas à mão. */
@@ -130,5 +130,24 @@ export function OrganizaAta({ origem, g, fecha }: { origem: Origem; g: Google; f
         <div className="linha"><button type="button" className="primario" onClick={aprova} disabled={!p.ata.trim() || !cab.titulo.trim()}>Aprovar e guardar</button><button type="button" className="leve" onClick={() => setP(null)}>Voltar às anotações</button></div>
       </>)}
     </section>
+  );
+}
+
+/** Na sala de reunião do mapa: a próxima reunião de hoje, do Google ou do lab, com Entrar no Meet e o caminho para a Agenda. */
+export function ProximaNaSala({ abreAgenda }: { abreAgenda: () => void }) {
+  const g = useAgendaGoogle(), { estado } = useEstado();
+  const hoje = hojeLocal(), agora = horaLocal();
+  const doMeet = aindaHoje(g.lista, hoje, agora)[0];
+  const doLab = estado.reunioes.filter(r => r.status === 'agendada' && r.dia === hoje && r.hora >= agora).sort((a, b) => a.hora.localeCompare(b.hora))[0];
+  const proxima = doMeet && (!doLab || doMeet.hora <= doLab.hora) ? { titulo: doMeet.titulo, quando: `${doMeet.hora} às ${doMeet.fim}`, meet: doMeet.meet }
+    : doLab ? { titulo: doLab.titulo, quando: `${doLab.hora}, rodada com a equipe`, meet: null } : null;
+  return (
+    <div className="proxima-sala">
+      {proxima ? <><span className="rotulo">Próxima de hoje</span><h4>{proxima.titulo}</h4><p className="nota">{proxima.quando}</p></> : <p className="nota">Nenhuma reunião hoje nesta sala.</p>}
+      <div className="linha">
+        {proxima?.meet && <a className="primario" href={proxima.meet} target="_blank" rel="noreferrer">Entrar no Meet</a>}
+        <button type="button" className={proxima?.meet ? 'leve' : 'primario'} onClick={abreAgenda}>Abrir a Agenda</button>
+      </div>
+    </div>
   );
 }

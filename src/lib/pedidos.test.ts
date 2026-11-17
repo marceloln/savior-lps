@@ -6,13 +6,19 @@ const ped = (m: Partial<Pedido>): Pedido => ({ id: 1, texto: 'Plano de 30 dias',
 const AGORA = Date.UTC(2026, 10, 14, 15);
 
 describe('pedidos', () => {
-  it('para você: pedido parado vem primeiro, depois resposta recente e reunião de hoje', () => {
+  it('para você: reunião de hoje vem primeiro, depois pedido parado e resposta recente', () => {
     const e: EstadoLab = { ...SEMENTE,
       pedidos: [ped({ id: 3 }), ped({ id: 2, estado: 'andando', sintese: '' }), ped({ id: 1, criado_em: '2026-11-01 09:00:00' })],
       reunioes: [{ id: 9, titulo: 'Ritual', pauta: '', dia: '2026-11-14', hora: '16:00', participantes: [], projeto_id: null, status: 'agendada', ata: '' },
         { id: 8, titulo: 'Kickoff', pauta: '', dia: '2026-11-15', hora: '10:00', participantes: [], projeto_id: null, status: 'agendada', ata: '' }] };
-    expect(paraVoce(e, '2026-11-14', AGORA).map(x => x.tipo)).toEqual(['parado', 'resposta', 'reuniao']);
-    expect(paraVoce(e, '2026-11-14', AGORA).at(-1)).toMatchObject({ reuniao: 9, texto: '16:00 Ritual' });
+    expect(paraVoce(e, '2026-11-14', AGORA).map(x => x.tipo)).toEqual(['reuniao', 'parado', 'resposta']);
+    expect(paraVoce(e, '2026-11-14', AGORA)[0]).toMatchObject({ reuniao: 9, texto: '16:00 Ritual' });
+  });
+  it('para você: reunião do Google de hoje entra na ordem da hora, e a que já acabou some', () => {
+    const g = (id: string, hora: string, fim: string) => ({ id, titulo: id, dia: '2026-11-14', hora, fim, meet: 'https://meet.google.com/' + id, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: null });
+    const e: EstadoLab = { ...SEMENTE, pedidos: [], reunioes: [{ id: 9, titulo: 'Ritual', pauta: '', dia: '2026-11-14', hora: '16:00', participantes: [], projeto_id: null, status: 'agendada', ata: '' }] };
+    const l = paraVoce(e, '2026-11-14', AGORA, null, [g('cedo', '08:00', '09:00'), g('status', '11:00', '11:30')], '10:00');
+    expect(l).toEqual([{ tipo: 'meet', id: 'status', texto: '11:00 status', url: 'https://meet.google.com/status' }, { tipo: 'reuniao', reuniao: 9, texto: '16:00 Ritual' }]);
   });
   it('para você: o pedido que está andando agora não aparece como parado', () => {
     const e: EstadoLab = { ...SEMENTE, reunioes: [], pedidos: [ped({ id: 2, estado: 'andando', sintese: '' })] };

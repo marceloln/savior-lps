@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { deEvento, docIdDe, eventoNovo, fimDe } from './agendaGoogle';
+import { aindaHoje, comecaLogo, deEvento, docIdDe, eventoNovo, fimDe } from './agendaGoogle';
 
 // formato que o Google Agenda devolve, com os campos que o lab usa
 const evento = {
@@ -59,5 +59,19 @@ describe('evento novo', () => {
   });
   it('sem projeto, não marca nada no evento', () => {
     expect(eventoNovo({ titulo: 'x', pauta: '', dia: '2026-11-24', hora: '10:00', duracao: 30, convidados: [], projeto_id: null }, 'r').extendedProperties).toBeUndefined();
+  });
+});
+
+describe('reuniões do dia', () => {
+  const r = (id: string, dia: string, hora: string, fim: string) => ({ id, titulo: id, dia, hora, fim, meet: 'https://meet.google.com/' + id, anotacoes: null, anotacoesUrl: null, convidados: [], projeto: null });
+  const lista = [r('ontem', '2026-11-16', '10:00', '11:00'), r('cedo', '2026-11-17', '08:00', '09:00'), r('agora', '2026-11-17', '10:00', '11:00'), r('tarde', '2026-11-17', '14:00', '15:00')];
+  it('ainda hoje: as de hoje que não acabaram, em ordem de hora', () => {
+    expect(aindaHoje(lista, '2026-11-17', '10:30').map(x => x.id)).toEqual(['agora', 'tarde']);
+    expect(aindaHoje(lista, '2026-11-17', '15:00')).toEqual([]);
+  });
+  it('começa logo: só as que começam dentro da janela, com os minutos que faltam', () => {
+    expect(comecaLogo(lista, '2026-11-17', '13:40')).toEqual([{ r: lista[3], faltam: 20 }]);
+    expect(comecaLogo(lista, '2026-11-17', '13:20')).toEqual([]);
+    expect(comecaLogo(lista, '2026-11-17', '14:00')).toEqual([]);
   });
 });
