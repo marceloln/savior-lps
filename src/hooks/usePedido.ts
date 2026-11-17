@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { useEstado } from './useEstado';
 import type { MissaoProposta } from '../lib/dados';
+import { autoresDoPedido } from '../lib/pedidos';
+import { ORQUESTRADOR } from '../lib/equipe';
 
 export type Corrida = {
   etapa: 'parado' | 'planejando' | 'plano' | 'executando' | 'sintetizando' | 'erro';
@@ -14,6 +16,8 @@ export function usePedido() {
   const [c, setC] = useState<Corrida>(PARADA);
   // o mapa mostra o papel saindo da orquestração para cada mesa quando o plano é aprovado
   const [distribuicao, setDistribuicao] = useState<{ n: number; para: string[] } | null>(null);
+  // e, quando a síntese chega, o caminho inverso: a entrega de cada um volta para quem orquestra
+  const [fecho, setFecho] = useState<{ n: number; de: string[] } | null>(null);
 
   const roda = useCallback(async (pedido: number, tarefas: number[]) => {
     setC(x => ({ ...x, etapa: 'executando', pedido }));
@@ -23,6 +27,7 @@ export function usePedido() {
     }
     setC(x => ({ ...x, etapa: 'sintetizando', atual: null }));
     const ok = await agora.current.sintetiza(pedido);
+    if (ok) setFecho({ n: Date.now(), de: autoresDoPedido(agora.current.estado.tarefas, pedido, ORQUESTRADOR) });
     setC(x => (ok ? { ...PARADA, pedido } : { ...x, etapa: 'erro' }));
   }, []);
 
@@ -48,6 +53,6 @@ export function usePedido() {
     return roda(pedido, faltam);
   }, [roda]);
 
-  return { corrida: c, distribuicao, planeja, aprova, continua, desiste: () => setC(PARADA), ocupado: c.etapa === 'planejando' || c.etapa === 'executando' || c.etapa === 'sintetizando' };
+  return { corrida: c, distribuicao, fecho, planeja, aprova, continua, desiste: () => setC(PARADA), ocupado: c.etapa === 'planejando' || c.etapa === 'executando' || c.etapa === 'sintetizando' };
 }
 export type ApiPedido = ReturnType<typeof usePedido>;

@@ -125,9 +125,15 @@ export function Lab() {
   const etapa = pedido.corrida.etapa, etapaAntes = useRef(etapa);
   useEffect(() => {
     const antes = etapaAntes.current; etapaAntes.current = etapa;
-    if ((antes === 'sintetizando' && etapa === 'parado') || (etapa === 'erro' && antes !== 'erro')) setAberto(x => x ?? { tipo: 'aba', aba: 'pedidos' });
-    // com outro livro aberto, a resposta não toma a tela: fica um sinal no menu e um recado com atalho
-    if (antes === 'sintetizando' && etapa === 'parado') setRespostaNova(true);
+    const abrePedidos = () => setAberto(x => x ?? { tipo: 'aba', aba: 'pedidos' });
+    if (etapa === 'erro' && antes !== 'erro') abrePedidos();
+    if (antes !== 'sintetizando' || etapa !== 'parado') return;
+    // com outro livro aberto, a resposta não toma a tela: fica um sinal no menu, o selo no mapa e um recado com atalho
+    setRespostaNova(true); anota('Resposta pronta. Está em Pedidos.');
+    // o livro espera o papel voltar e o selo aparecer no mapa. Com movimento reduzido, abre na hora
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { abrePedidos(); return; }
+    const t = setTimeout(abrePedidos, 1600);
+    return () => clearTimeout(t);
   }, [etapa]);
   const emPedidos = aberto?.tipo === 'aba' && aberto.aba === 'pedidos';
   useEffect(() => { if (emPedidos) setRespostaNova(false); }, [emPedidos]);
@@ -263,7 +269,7 @@ export function Lab() {
   return (
     <div className={`lab ${aberto ? 'com-livro' : ''} ${recolhido ? 'menu-recolhido' : ''}`}>
       {erro && <p className="falha-carga" role="alert">{erro}</p>}
-      {lab && gente && <Suspense fallback={null}><MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} zonaAtiva={zona} selecionado={escolhido} foco={foco}
+      {lab && gente && <Suspense fallback={null}><MapaPixi lab={lab} gente={gente} equipe={equipe} telas={telasDoMapa} aoPronto={avisaPronto} escrevendo={escrevendo} distribuicao={pedido.distribuicao ? { de: ORQUESTRADOR, ...pedido.distribuicao } : null} fecho={pedido.fecho ? { para: ORQUESTRADOR, ...pedido.fecho } : null} selo={respostaNova ? ORQUESTRADOR : null} zonaAtiva={zona} selecionado={escolhido} foco={foco}
         onHover={onHover} onClique={onClique} /></Suspense>}
       <aside className="coluna-esquerda lateral" aria-label="Menu do lab">
         <Placa />

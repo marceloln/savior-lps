@@ -1,5 +1,5 @@
 // Contas do pedido ao lab: por onde começar, o que pede atenção agora e o documento que sai no fim. Sem tela.
-import type { EstadoLab, Pedido } from './dados';
+import type { EstadoLab, Pedido, Tarefa } from './dados';
 import { aindaHoje, type ReuniaoGoogle } from './agendaGoogle';
 
 /** Pontos de partida para um pedido, nos tipos de trabalho que a V30 faz. O sócio completa o que está entre colchetes. */
@@ -11,6 +11,10 @@ export const MODELOS_DE_PEDIDO: { rotulo: string; texto: string }[] = [
   { rotulo: 'Treinamento de equipe', texto: 'Criar o material de treino para [equipe e turno], com o padrão de atendimento em passos curtos e um roteiro que o gerente consegue aplicar sozinho.' },
   { rotulo: 'Post de LinkedIn', texto: 'Escrever um post de LinkedIn da V30 sobre [tema ou aprendizado de campo], no nosso tom, sem citar cliente pelo nome e sem número inventado.' },
 ];
+
+/** Quem entregou alguma missão do pedido, uma vez cada e na ordem das missões. Quem orquestra fica de fora: é para ele que as entregas voltam. */
+export const autoresDoPedido = (tarefas: Tarefa[], pedido: number, orquestrador: string): string[] =>
+  [...new Set(tarefas.filter(t => t.pedido_id === pedido && t.entrega && t.agente !== orquestrador).map(t => t.agente))];
 
 const quando = (iso: string) => new Date(iso.replace(' ', 'T') + 'Z').getTime();
 
