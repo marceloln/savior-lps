@@ -42,7 +42,7 @@
 .entrega>header{display:flex;align-items:center;gap:var(--s2);padding-bottom:var(--s2);border-bottom:1.5px dotted var(--cartao-borda);margin-bottom:var(--s2)}
 .entrega>header span{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.2}.entrega>header small{color:var(--texto-2);font-size:var(--t-13)}
 .entrega .nova-linha{margin-top:var(--s2)}.entrega .nova-linha input{font-size:var(--t-13)}
-.ver-entrega>summary{padding:var(--s1) 0;font-weight:var(--p-forte);font-size:var(--t-13);color:var(--tinta);text-decoration:underline;text-underline-offset:3px}
+.ver-entrega>summary{min-height:var(--h-sm);padding:var(--s1) 0;font-weight:var(--p-forte);font-size:var(--t-13);color:var(--tinta);text-decoration:underline;text-underline-offset:3px}
 .entregas-agente{margin-top:var(--s5)}.entregas-agente h4{margin:0 0 var(--s2);font:var(--p-titulo) var(--t-16) var(--titulo)}
 .md{line-height:1.5;font-size:var(--t-16);overflow-wrap:anywhere}
 .md h4{font:var(--p-titulo) var(--t-18)/1.25 var(--titulo);color:var(--tinta);margin:0 0 var(--s2)}.md h5{font:var(--p-forte) var(--t-14) var(--corpo);margin:var(--s4) 0 var(--s1);color:var(--tinta-2)}

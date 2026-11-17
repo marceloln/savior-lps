@@ -13,7 +13,7 @@ button.link{min-height:var(--h-sm);display:inline-flex;align-items:center}
 @media (max-width:760px){
   .cartao-missao .marcador{min-width:44px;min-height:44px}
   .quadro-geral .cartao .abre{min-height:44px;display:flex;align-items:center}
-  .fechar-livro{width:44px}
+  .fechar-livro{width:44px;height:44px}
   button.link{min-height:44px;min-width:44px}
   .console .briefing{min-height:44px}
 }

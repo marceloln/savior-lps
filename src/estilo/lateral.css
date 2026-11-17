@@ -17,14 +17,14 @@
   .menu-recolhido .lateral .placa{text-align:center;padding-inline:0}
   .menu-recolhido .lateral .placa b{font-size:var(--t-22)}
   /* botão de recolher, na borda da lateral */
-  .recolher{display:grid;place-items:center;position:absolute;top:22px;right:-14px;width:28px;height:28px;border-radius:50%;border:1.5px solid #14231F;background:var(--creme);color:var(--tinta);font:var(--p-forte) var(--t-18)/1 var(--corpo);box-shadow:0 1px 3px rgba(0,0,0,.35);z-index:1;transition:transform var(--d-rapido) var(--sai)}
+  .recolher{display:grid;place-items:center;position:absolute;top:20px;right:-16px;width:var(--h-sm);height:var(--h-sm);border-radius:50%;border:1.5px solid #14231F;background:var(--creme);color:var(--tinta);font:var(--p-forte) var(--t-18)/1 var(--corpo);box-shadow:0 1px 3px rgba(0,0,0,.35);z-index:1;transition:transform var(--d-rapido) var(--sai)}
   .recolher span{margin-top:-2px}
   .recolher:active{transform:scale(.97)}
   /* itens */
   .lateral .menu-diario{background:none;border:0;box-shadow:none;padding:0;flex:1;gap:var(--s0);border-radius:0}
   .lateral .menu-diario .grupo{display:block;margin:var(--s3) var(--s3) var(--s0);font:var(--p-forte) var(--t-12) var(--corpo);letter-spacing:.1em;text-transform:uppercase;color:var(--areia)}
   .lateral .menu-diario .grupo:first-child{margin-top:var(--s2)}
-  .lateral .menu-diario button{color:var(--creme);border-radius:var(--r-8);min-height:36px;padding:var(--s1) var(--s3)}
+  .lateral .menu-diario button{color:var(--creme);border-radius:var(--r-8);min-height:var(--h-sm);padding:var(--s1) var(--s3)}
   .lateral .menu-diario button .icone path:last-child{stroke:var(--creme)}
   .lateral .menu-diario button.corte{margin-top:0}.lateral .menu-diario button.corte::before{content:none}
   .lateral .menu-diario button[aria-pressed="true"]{background:var(--creme);color:var(--tinta);box-shadow:0 1px 0 rgba(0,0,0,.3);font-weight:var(--p-forte)}
@@ -59,8 +59,12 @@
 @media (prefers-reduced-motion:reduce){.coluna-esquerda.lateral,.recolher{transition:none}.recolher:active{transform:none}}
 /* tela baixa: os 13 itens cabem sem rolar */
 @media (min-width:761px) and (max-height:780px){
-  .lateral .menu-diario button{min-height:32px;padding-block:var(--s0)}
-  .lateral .menu-diario .grupo{margin-top:var(--s2)}
+  .lateral .menu-diario button{min-height:var(--h-sm);padding-block:var(--s0)}
+  .lateral .menu-diario .grupo{margin-top:var(--s1)}
+  .lateral .menu-diario .grupo:first-child{margin-top:0}
   .coluna-esquerda.lateral{padding-top:var(--s3);gap:var(--s1)}
   .lateral .placa{padding-bottom:var(--s2)}
+  .lateral .placa small{display:none}
+  .lateral .radio-mini{margin-bottom:0}
+  .socio{padding-block:var(--s1)}
 }
